@@ -148,7 +148,16 @@
                 <div class="row mt-2">
                     <div class="col-md-12 col-sm-12">
                         @Html.LabelFor(model => model.TC_COMMENTS, "User Comments", new { @class = "pb-2" })
-                        @Html.TextAreaFor(model => model.TC_COMMENTS, new { @class = "form-control custom-textarea", placeholder = "Please enter your comments here....", rows = "10", cols = "70", required = "required", tabindex = "5" })
+                        @Html.TextAreaFor(model => model.TC_COMMENTS, new
+                        {
+                            @class = "form-control custom-textarea",
+                            placeholder = "Please enter your comments here....",
+                            rows = "10",
+                            cols = "70",
+                            required = "required",
+                            tabindex = "5",
+                            @onkeydown = "return restrictKeys(event)"
+                        })
                     </div>
                     <div class="col-md-12 col-sm-12 mt-2">
                         @Html.Label("myfile", "Attachments:")
@@ -203,7 +212,24 @@
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
     <script src="~/Scripts/Formatcheck.js"></script>
+    <script>
+        function restrictKeys(event) {
+            // Prevent Enter key press (key code 13)
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                return false;
+            }
 
+            // Restrict single quotes (key code 222) and double quotes (key code 34)
+            if (event.key === "'" || event.key === "\"") {
+                event.preventDefault();
+                return false;
+            }
+
+            return true;
+        }
+
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const sidebarLinks = document.querySelectorAll(".sidebar a");

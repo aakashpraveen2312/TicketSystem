@@ -18,7 +18,7 @@ namespace PSS_CMS.Controllers
 {
     public class TicketsController : Controller
     {
-        // GET: Tickets changes by prathesh
+        // GET: Tickets changes by aakash
         [HttpGet]
         public async Task<ActionResult> Ticket()
         {

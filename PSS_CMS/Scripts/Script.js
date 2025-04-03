@@ -64,7 +64,7 @@ function setupEvents() {
     const configItems = document.querySelectorAll('.menu-links .nav-link:nth-child(2), .menu-links .nav-link:nth-child(3)');
 
     const configMenu1 = document.querySelector('.menu-links .nav-link:nth-child(4)');
-    const configItems1 = document.querySelectorAll('.menu-links .nav-link:nth-child(5), .menu-links .nav-link:nth-child(6)');
+    const configItems1 = document.querySelectorAll('.menu-links .nav-link:nth-child(5), .menu-links .nav-link:nth-child(6), .menu-links .nav-link:nth-child(7), .menu-links .nav-link:nth-child(8), .menu-links .nav-link:nth-child(9)');
 
     // Settings menu and submenu items
     //const settingsMenu = document.querySelector('.menu-links .nav-link:nth-child(12)');

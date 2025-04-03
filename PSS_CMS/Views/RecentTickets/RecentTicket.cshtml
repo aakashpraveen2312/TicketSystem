@@ -1,8 +1,6 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Recenttickets>
 @using GridMvc.Html
-@{
-    Layout = null;
-}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -78,65 +76,6 @@
 </head>
 
 <body>
-
-
-    <nav class="sidebar close">
-        <header>
-            <div class="text logo-text" style="display:inline-block"> <a href="@Url.Action("Dashboard", "DashBoard")"><img src="~/assets/img/Infinity logo bgremove.png" alt="PSS Logo" class="logo"></a></div>
-            <a href="@Url.Action("RecentTicket", "RecentTickets")" title="Tickets">
-                <i class="bi bi-card-list text logo-text" style="position: absolute; top: 50%; left: 52%; color: #695cfe;font-size:27px;"></i>
-            </a>
-            <i class="bx bx-chevron-right toggle" style="margin-right:28px;"></i>
-        </header>
-
-
-        <div class="menu-bar">
-            <div class="menu">
-                <ul class="menu-links" style="margin-left:20px">
-                    <!-- Configuration Section -->
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/closefolder.png" class="settingsIcon" style="width:25px;height:25px;" />
-                        <img src="~/assets/img/open.png" class="openIcon" style="display:none;width:25px;height:25px;" />
-                        <span class="text nav-text" style="margin-left:15px">KNOWLEDGE BASED </span>
-                    </li>
-                    <!-- User Group -->
-                    <li class="nav-link">
-                        <a href="@Url.Action("FAQADMIN", "RecentTickets")">
-                            <i class='bx bxs-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">FAQ</span>
-                        </a>
-                    </li>
-                    <!-- App User -->
-                    <li class="nav-link">
-                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
-                            <i class='bx bxs-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">White Paper</span>
-                        </a>
-                    </li>
-                    <!-- Settings Section -->
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/closefolder.png" class="settingsIcon" style="width:25px;height:25px;" />
-                        <img src="~/assets/img/open.png" class="openIcon" style="display:none;width:25px;height:25px;" />
-                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
-                    </li>
-                    <!-- Change Password -->
-                    <li class="nav-link">
-                        <a href="@Url.Action("ChangePassword", "RecentTickets")">
-                            <i class='bx bx-user-voice' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
-                        </a>
-                    </li>
-                    <!-- Logout -->
-                    <li class="nav-link">
-                        <a href="javascript:void(0);" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
-                            <i class='bx bx-log-out' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Logout</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
 
     <div class="content" style=" overflow-x: hidden!important;">
 

@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Tickethistory>
-
+@{
+    Layout = null;
+}
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -40,6 +42,7 @@
             width: auto;
             line-height: normal;
         }
+
         .daterangepicker .btn-reset {
             margin-left: 10px;
             background-color: green;
@@ -376,7 +379,7 @@
     });
     </script>
 
-  
+
 
     @*swett alert Script for user closed ticket*@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

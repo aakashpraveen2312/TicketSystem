@@ -1,0 +1,203 @@
+﻿@model IEnumerable<PSS_CMS.Models.Recenttickets>
+@using GridMvc.Html
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+    @*Bootstrap Icons and Boxicons link*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="">
+
+        <div class="sidebar">
+            <a class="text-decoration-none" href="@Url.Action("RecentTicket","RecentTickets")">Recent Tickets</a>
+            @*<a href="@Url.Action("Clients","RecentTickets")" class="text-decoration-none">Client</a>*@
+            <a href="javascript:void(0);" class="dropdown-btn text-decoration-none">CMS <i class="bi bi-chevron-down dropdown-btn"></i></a>
+            <div class="dropdown-container">
+                <a href='@Url.Action("Index","RecentTickets")' class="text-decoration-none">Menu</a>
+                <a href='@Url.Action("HomeMainContent","RecentTickets")' class="text-decoration-none">Home</a>
+                <div class="text-decoration-none servicemenu">
+                    <a href='@Url.Action("SubmenuForServices","RecentTickets")' class="text-decoration-none">
+                        Services<i class="bi bi-chevron-down dropdown-btns"></i>
+                    </a>
+                    <div class="submenu" id="submenu-services">
+
+                        <div class="deep-dropdown">
+                            <a href='@Url.Action("SubmenuForHRMS","RecentTickets")' class="text-decoration-none">
+                                HRMS <i class="bi bi-chevron-down"></i>
+                            </a>
+                            <div class="deep-submenu">
+                                <a href="@Url.Action("#", "#")" class="text-decoration-none">Recruitment</a>
+                                <a href="@Url.Action("OLearningAndDevelopmentMain", "RecentLearninganddevelopment")" class="text-decoration-none">Learning and Development</a>
+                                <a href="@Url.Action("#", "#")" class="text-decoration-none">Attendance</a>
+                                <a href="@Url.Action("#", "#")" class="text-decoration-none">Payroll</a>
+                                <a href="@Url.Action("#", "#")" class="text-decoration-none">TDS</a>
+                                <a href="@Url.Action("#", "#")" class="text-decoration-none">Appraisal</a>
+                                <a href="@Url.Action("#", "#")" class="text-decoration-none">Exit Process</a>
+                            </div>
+                        </div>
+
+
+                        <a href='@Url.Action("#","#")' class="text-decoration-none">Canteen Management System</a>
+                        <a href='@Url.Action("#","#")' class="text-decoration-none">Visitor Management System</a>
+                        <a href='@Url.Action("#","#")' class="text-decoration-none">Security Patrol Management</a>
+                        <a href='@Url.Action("#","#")' class="text-decoration-none">Biometric Devices Outsource</a>
+
+                    </div>
+                </div>
+                <a href='@Url.Action("Clients","RecentTickets")' class="text-decoration-none">Clients</a>
+                <a href='@Url.Action("ClientImageGet","ClientImage", new { section = "Client Section"})' class="text-decoration-none">Client Section</a>
+
+                <a href="#clients" class="text-decoration-none">Gallery</a>
+                <a href="#clients" class="text-decoration-none">FAQ</a>
+                <a href="#clients" class="text-decoration-none">About</a>
+                <a href='@Url.Action("Clients","RecentTickets")' class="text-decoration-none">Contact Us</a>
+
+
+            </div>
+            <a href="@Url.Action("Logout", "Login")" class="text-decoration-none align-baseline" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                <i class='bx bx-log-out' style="font-size:24px !important;color:red !important;"></i>
+                Logout
+            </a>
+        </div>
+
+
+        <nav class="nav">
+            <h3 class="" id="navheading">TICKET SYSTEM</h3>
+        </nav>
+        <div class="content">
+
+            <div class="row" style="margin-top:10px">
+                <div class="col-lg-9 col-sm-8">
+                    <ul class="breadcrumb mt-3">
+                        <li><a href="@Url.Action("Index", "Home")">Site</a></li>
+                        <li>Recent Tickets</li>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="table  mt-5">
+                @Html.Grid(Model).Columns(columns =>
+           {
+               //columns.Add(c => c.Serialnumber).Titled("S.No");
+               columns.Add(c => c.TC_TICKETDATES).Titled("Date");
+               columns.Add(c => c.TC_RECID).Titled("RecordID");
+               columns.Add(c => c.TC_PROJECTID).Titled("Project");             
+               columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority");
+               columns.Add().Titled("Action")
+              .Encoded(false)
+               .Sanitized(false)
+               .SetWidth(30)
+            .RenderValueAs(o =>
+            {
+
+
+                var LineItemsurl = Url.Action("AdminTickets", "RecentTickets",new { recid=o.TC_RECID });
+                var LineItemiconHtml = "<i class='bx bx-basket bx-sm'></i>";
+                var LineItemlinkHtml = $"<a href='{LineItemsurl}' data-toggle='tooltip' data-placement='top' title='Line Item'>{LineItemiconHtml}</a>";
+
+
+                return MvcHtmlString.Create($"{LineItemlinkHtml}");
+            });
+
+           }).WithPaging(10).Sortable(true)
+            </div>
+
+        </div>
+
+        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+                <h4>Are you sure you want to log out?</h4>
+            </div>
+            <div class="offcanvas-footer d-flex justify-content-center">
+                <input type="button" class="btn btn-success me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+                <input type="button" class="btn btn-danger" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+            </div>
+        </div>
+    </div>
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+
+    <script>
+    @* Script for active menu *@
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const sidebarLinks = document.querySelectorAll(".sidebar a");
+
+        // Highlight the active link based on the current URL
+        sidebarLinks.forEach(link => {
+            if (link.href === window.location.href) {
+                link.classList.add("active");
+            }
+        });
+
+        // Add click event to update the active class
+        sidebarLinks.forEach(link => {
+            link.addEventListener("click", function () {
+                // Remove active class from all links
+                sidebarLinks.forEach(l => l.classList.remove("active"));
+
+                // Add active class to the clicked link
+                this.classList.add("active");
+            });
+        });
+    });
+
+
+    @* Script for dropdown *@
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const dropdownBtn = document.querySelector(".dropdown-btn");
+        const dropdownContainer = document.querySelector(".dropdown-container");
+
+        dropdownBtn.addEventListener("click", function () {
+            this.classList.toggle("active");
+        dropdownContainer.style.display = dropdownContainer.style.display === "block" ? "none" : "block";
+            });
+        });
+
+
+        @* Script for deep dropdown *@
+        document.addEventListener("DOMContentLoaded", function () {
+            const deepDropdown = document.querySelector(".deep-dropdown");
+            const deepSubmenu = deepDropdown.querySelector(".deep-submenu");
+
+            deepDropdown.addEventListener("mouseenter", function () {
+                deepSubmenu.style.display = "block";
+            });
+
+            deepDropdown.addEventListener("mouseleave", function () {
+                deepSubmenu.style.display = "none";
+            });
+        });
+
+
+    </script>
+
+
+
+
+</body>
+</html>

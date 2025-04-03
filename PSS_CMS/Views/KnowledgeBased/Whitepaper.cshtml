@@ -1,0 +1,442 @@
+﻿@model IEnumerable<PSS_CMS.Models.WhitePaper>
+@using GridMvc.Html
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+    @*Bootstrap Icons and Boxicons link*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <script src="~/Scripts/Script.js"></script>
+    <style>
+
+       
+
+        .whitepapers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .whitepaper {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+            .whitepaper .heading  {
+                margin: 0 0 10px;
+                color: #754599
+            }
+
+            .whitepaper p {
+                font-size: 14px;
+                margin-bottom: 15px;
+            }
+
+        .download-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2888bb;
+           /* background-color: #f0a72d;*/
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btncolorsubmit {
+            padding: 5px 10px;
+            font-size: 14px;
+            height: 35px;
+            width: auto;
+            line-height: normal;
+        }
+        select#projectTypeFilter2 {
+            font-size: 15px;
+            background-color: #e4e9f7;
+            width: 50%;
+            border: none;
+            border-bottom: 2px solid #3498db;
+            outline: none;
+            padding-bottom: 10px;
+        }
+    
+    </style>
+
+
+</head>
+
+<body>
+
+
+    <nav class="sidebar close">
+        @*<header>
+                <div class="text logo-text"> <a href="@Url.Action("RecentTicket", "RecentTickets")"><img src="~/assets/img/Infinity logo bgremove.png" alt="PSS Logo" class="logo"></a> </div>
+                <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:7px"></i>
+            </header>*@
+        <header>
+            <div class="text logo-text" style="display:inline-block"> <a href="@Url.Action("Dashboard", "DashBoard")"><img src="~/assets/img/Infinity logo bgremove.png" alt="PSS Logo" class="logo"></a></div>
+            <a href="@Url.Action("RecentTicket", "RecentTickets")" title="Tickets">
+                <i class="bi bi-card-list text logo-text" style="position: absolute; top: 50%; left: 52%; color: #695cfe;font-size:27px;"></i>
+            </a>
+            <i class="bx bx-chevron-right toggle" style="margin-right:28px;"></i>
+        </header>
+        <div class="menu-bar">
+            <div class="menu">
+                <ul class="menu-links" style="margin-left:20px">
+                    <!-- Configuration Section -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/closefolder.png" class="settingsIcon" style="width:25px;height:25px;" />
+                        <img src="~/assets/img/open.png" class="openIcon" style="display:none;width:25px;height:25px;" />
+                        <span class="text nav-text" style="margin-left:15px">KNOWLEDGE BASED </span>
+                    </li>
+                    <!-- User Group -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("FAQADMIN", "RecentTickets")">
+                            <i class='bx bxs-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">FAQ</span>
+                        </a>
+                    </li>
+                    <!-- App User -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")" >
+                            <i class='bx bxs-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">White Paper</span>
+                        </a>
+                    </li>
+                    <!-- Settings Section -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/closefolder.png" class="settingsIcon" style="width:25px;height:25px;" />
+                        <img src="~/assets/img/open.png" class="openIcon" style="display:none;width:25px;height:25px;" />
+                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
+                    </li>
+                    <!-- Change Password -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("ChangePassword", "RecentTickets")">
+                            <i class='bx bx-user-voice' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                        </a>
+                    </li>
+                    <!-- Logout -->
+                    <li class="nav-link">
+                        <a href="javascript:void(0);" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
+                            <i class='bx bx-log-out' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content">
+
+        <nav class="nav d-flex">
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
+
+
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+
+            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+
+                </a>
+            </div>
+
+
+        </nav>
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-12 col-sm-12">
+
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    <li class="reswhietlist" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">TICKETS</a></li>
+                    <li class="reswhietlist" style="color: #2888bb;">KNOWLEDGE BASED</li>
+                    <li class="reswhietlist">WHITE PAPERS</li>
+
+                </ul>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col mt-3 mb-3 ms-5">
+                @{ var projectTypeList = ViewBag.ProjectTypes as IEnumerable<SelectListItem>;
+                    var defaultSelectedValue = projectTypeList?.FirstOrDefault()?.Value ?? ""; // Get first project ID }
+                }
+                @if (projectTypeList != null && projectTypeList.Any())
+                {
+                    @Html.DropDownList("SelectedProjectType2",
+                                       projectTypeList,
+                                       new { @class = "", id = "projectTypeFilter2", data_default = defaultSelectedValue }) }
+                else
+                {
+                    @Html.DropDownList("SelectedProjectType2",
+                                      projectTypeList,
+                                      "No project's are avialble",
+                                      new { @class = "", id = "projectTypeFilter2", data_default = defaultSelectedValue })}
+
+            </div>
+            <div class="col d-flex justify-content-end mb-3 me-4">
+                <button class="btncolorsubmit d-flex align-items-center justify-content-center px-3 py-2"
+                        style="width: 150px; margin-top: 10px;"
+                        onclick="window.location.href='@Url.Action("WhitepaperPost","KnowledgeBased")'">
+                    New Whitepapers <i class="bi bi-plus-circle ms-1"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="ms-4">
+            <div class="row">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var whitepaper in Model)
+                    {
+                        if (whitepaper.WP_DISABLE == "N") // Only display if WP_DISABLE is "N"
+                        {
+                            <div class="col-md-6 whitepaper ms-4 mt-3">
+
+                                <p class="heading"><b>@whitepaper.WP_TITLE</b></p>
+
+
+                                <p>@whitepaper.WP_Description</p>
+
+                                @if (!string.IsNullOrEmpty(whitepaper.WP_ATTACHEMENT))
+                                {
+                                    string base64String = whitepaper.WP_ATTACHEMENT;
+
+
+                                    // Detect file type from Base64 prefix
+                                    string fileType = "";
+                                    string mimeType = "";
+
+                                    if (base64String.StartsWith("iVBORw0KGgo")) // PNG file signature
+                                    {
+                                        fileType = "png";
+                                        mimeType = "image/png";
+                                    }
+                                    else if (base64String.StartsWith("/9j/")) // JPG/JPEG file signature
+                                    {
+                                        fileType = "jpg";
+                                        mimeType = "image/jpeg";
+                                    }
+                                    else if (base64String.StartsWith("JVBER")) // PDF file signature
+                                    {
+                                        fileType = "pdf";
+                                        mimeType = "application/pdf";
+                                    }
+                                    else if (base64String.StartsWith("UEsDB")) // XLSX or DOCX file signature (ZIP format)
+                                    {
+                                        // Check if the Base64 contains "xl/" (XLSX format)
+                                        if (base64String.Contains("xl/"))
+                                        {
+                                            fileType = "xlsx";
+                                            mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                                        }
+                                        // Check if the Base64 contains "word/" (DOCX format)
+                                        else if (base64String.Contains("word/"))
+                                        {
+                                            fileType = "docx";
+                                            mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                                        }
+                                    }
+                                    else if (base64String.StartsWith("U1RB") || base64String.StartsWith("R2V0")) // TXT file signature
+                                    {
+                                        fileType = "txt";
+                                        mimeType = "text/plain";
+                                    }
+                                    else if (base64String.StartsWith("Q0N2")) // CSV file signature
+                                    {
+                                        fileType = "csv";
+                                        mimeType = "text/csv";
+                                    }
+                                    else
+                                    {
+                                        fileType = "unknown";
+                                        mimeType = "application/octet-stream"; // Default for unknown file types
+                                    }
+                                    <div class="row">
+                                        <div class="col">
+                                            <a href="data:@mimeType;base64,@whitepaper.WP_ATTACHEMENT"
+                                               download="@whitepaper.WP_TITLE.@fileType"
+                                               class="download-btn text-decoration-none text-white">
+                                                Download
+                                            </a>
+                                        </div>
+                                        <div class="col d-flex justify-content-end align-items-center">
+                                            <a href="@Url.Action("Edit", "KnowledgeBased", new {WP_RECID = whitepaper.WP_RECID, WP_PROJECTID = whitepaper.WP_PROJECTID, WP_USERID = whitepaper.WP_USERID})"
+                                               class="text-decoration-none"
+                                               data-toggle="tooltip"
+                                               title="Edit">
+                                                <i class="bx bxs-pencil"></i>
+                                            </a>
+
+                                            <a href="@Url.Action("Delete", "KnowledgeBased", new { WP_RECID = whitepaper.WP_RECID })"
+                                               class="text-decoration-none ms-2"
+                                               onclick='return confirmDelete(this);'
+                                               data-toggle="tooltip"
+                                               title="Delete">
+                                                <i class="bx bxs-trash red"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="col">
+                                            <span><b>No files uploaded</b></span>
+                                        </div>
+                                        <div class="col d-flex justify-content-end">
+                                            <a href="@Url.Action("Edit", "KnowledgeBased", new {WP_RECID = whitepaper.WP_RECID, WP_PROJECTID = whitepaper.WP_PROJECTID, WP_USERID = whitepaper.WP_USERID})"
+                                               class="text-decoration-none"
+                                               data-toggle="tooltip"
+                                               title="Edit">
+                                                <i class="bx bxs-pencil"></i>
+                                            </a>
+
+                                            <a href="@Url.Action("Delete", "KnowledgeBased", new { WP_RECID = whitepaper.WP_RECID })"
+                                               class="text-decoration-none ms-2"
+                                               onclick='return confirmDelete(this);'
+                                               data-toggle="tooltip"
+                                               title="Delete">
+                                                <i class="bx bxs-trash red"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                }
+
+
+                            </div>
+                        }
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-warning text-center">
+                        <b>No Whitepaper's are available</b>
+                    </div>}
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+            <h4>Are you sure you want to log out?</h4>
+        </div>
+        <div class="offcanvas-footer d-flex justify-content-center">
+            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+        </div>
+    </div>
+   
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+  
+    <script>
+        $(document).ready(function () {
+            $('#searchPharse').on('keyup', function () {
+                $('#searchForm').submit(); // Submit the form when the user types
+            });
+        });
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    document.getElementById("logoutLink").addEventListener("click", function () {
+        Swal.fire({
+            title: "Are you sure you want to log out?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#dc3545",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '@Url.Action("Logout", "Login")';
+            }
+        });
+    });
+    </script>
+    <script>
+    $(document).ready(function () {
+        var firstProjectId = $("#projectTypeFilter2").val(); // Get initially selected project ID
+        var urlParams = new URLSearchParams(window.location.search);
+        var currentProjectId = urlParams.get("projectID");
+
+        // Check if there's a stored project ID in sessionStorage
+        var storedProjectId = sessionStorage.getItem("selectedProjectID");
+
+        if (storedProjectId) {
+            $("#projectTypeFilter2").val(storedProjectId);
+        }
+
+        // Redirect only if no projectID exists in the URL to avoid infinite loop
+        if (!currentProjectId) {
+            if (storedProjectId) {
+                redirectToPage(storedProjectId);
+            } else if (firstProjectId) {
+                redirectToPage(firstProjectId);
+            }
+        }
+
+        $("#projectTypeFilter2").change(function () {
+            var selectedProjectId = $(this).val();
+            if (selectedProjectId) {
+                sessionStorage.setItem("selectedProjectID", selectedProjectId); // Store selected value
+                redirectToPage(selectedProjectId);
+            }
+        });
+
+        function redirectToPage(projectId) {
+            var url = '@Url.Action("Whitepaper", "KnowledgeBased")' + "?projectID=" + encodeURIComponent(projectId);
+            window.location.href = url;
+        }
+        // Clear sessionStorage when navigating to a different action
+        $(document).on("click", "a, button,li", function () {
+            var targetUrl = $(this).attr("href");
+            if (targetUrl && !targetUrl.includes("Whitepaper")) {
+                sessionStorage.removeItem("selectedProjectID");
+            }
+        });
+    });
+    </script>
+    <script src="~/Scripts/Fordelete.js"></script>
+
+
+</body>
+</html>

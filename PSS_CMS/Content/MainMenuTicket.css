@@ -1,0 +1,76 @@
+﻿.card {
+    height: auto; /* Allow card height to adjust based on content */
+    width: 100%;
+    max-width: 100%; /* Ensure cards take up the full width available in the column */
+}
+.container-fluid {
+    padding: 0 15px !important; /* Ensure consistent container padding */
+}
+textarea.form-control {
+    height: 150px !important;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Ensure it fills available width */
+    /* resize:vertical;*/
+}
+
+@media (max-width: 768px) {
+    textarea.form-control {
+        height: 250px !important; /* Increase height for smaller screens */
+    }
+
+    .card {
+        width: 90vw; /* Make cards slightly wider on smaller screens */
+        height: auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .card {
+        width: 100%; /* Full width for very small screens */
+    }
+
+    textarea.form-control {
+        height: 200px !important; /* Adjust textarea height on small screens */
+    }
+
+    .img-fluid {
+        width: 80px; /* Scale down image on smaller screens */
+    }
+
+    .d-flex {
+        flex-direction: column; /* Stack image and input field vertically on smaller screens */
+        align-items: center; /* Center align items */
+    }
+
+    .d-grid {
+        width: 100%; /* Make buttons take full width on small screens */
+    }
+}
+
+@media (max-width: 350px) {
+    .d-grid {
+        width: 80%; /* Reduce button width on very small screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .img-fluid {
+        width: 120px; /* Slightly larger image size on tablets */
+    }
+}
+
+button.btn.btn-success.me-2.login, button.btn.btn-danger.login {
+    width: 80px !important;
+}
+
+
+.card ul {
+    list-style: none;
+    padding-top: 5px;
+    padding-left: 0px;
+}
+
+

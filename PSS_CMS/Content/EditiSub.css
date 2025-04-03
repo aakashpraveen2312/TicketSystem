@@ -1,0 +1,30 @@
+﻿/* Position the edit icon in the right corner of the dropdown */
+.dropdown {
+    position: relative; /* Ensure this is set so the icon can be positioned inside it */
+}
+
+.edit-icon {
+    font-size: 20px; /* Adjust the size of the icon */
+    cursor: pointer; /* Change the cursor to indicate clickability */
+    color: black; /* Add a color to match your design */
+    transition: color 0.3s;
+}
+
+    .edit-icon:hover {
+        color: color-mix(in srgb, var(--accent-color), transparent 20%);
+    }
+
+#editiconforservice {
+    position: absolute;
+    bottom: 0px;
+    left: 80%;
+    z-index: 10;
+}
+
+#editiconforhrms {
+    position: absolute;
+    bottom: 0px;
+    left: 80%;
+    z-index: 10;
+}
+

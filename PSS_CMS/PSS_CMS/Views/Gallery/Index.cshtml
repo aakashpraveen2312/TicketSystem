@@ -1,0 +1,319 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title Gallery</title>
+
+
+    <!-- Favicons -->
+    <link href="~/assets/img/PSSlogo.png" rel="icon">
+    <link href="~/assets/img/PSSlogo.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/assets/vendor/aos/aos.css" rel="stylesheet" />
+    <link href="~/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+    <!-- Main CSS File -->
+    <link href="~/Content/main.css" rel="stylesheet" />
+    <link href="~/Content/EditiSub.css" rel="stylesheet" />
+    <link href="~/Content/Gallery.css" rel="stylesheet" />
+
+    <!-- Bootstrap JS (and dependencies) -->
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    @*SWIPPER JS*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+
+
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <!-- =======================================================
+    * Template Name: Arsha
+    * Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
+    * Updated: Aug 07 2024 with Bootstrap v5.3.3
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Section Title -->
+    <div class="container section-title mt-5" data-aos="fade-up">
+
+        <h2>Gallery</h2>
+        <p><b>Discover Moments Captured in Our Stunning Gallery!</b></p>
+    </div><!-- End Section Title -->
+    <!--<div class="container">
+
+        <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
+
+            <ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
+                <li data-filter="*" class="filter-active">All</li>
+                <li data-filter=".filter-app">Conference</li>
+                <li data-filter=".filter-product">Event</li>
+                <li data-filter=".filter-branding">Group</li>
+            </ul>-->
+    <!-- End Portfolio Filters -->
+    <!--<div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
+
+        <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
+            <img src="~/assets/img/istockphoto-493958679-612x612.jpg" class="img-fluid" alt="">
+            <div class="portfolio-info">
+                <h4>Conference</h4>
+
+                <a href="~/assets/img/istockphoto-493958679-612x612.jpg" title="App 1" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+                <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+            </div>
+        </div>-->
+    <!-- End Portfolio Item -->
+    <!--<div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
+        <img src="assets/img/istockphoto-613897214-612x612.jpg" class="img-fluid" alt="">
+        <div class="portfolio-info">
+            <h4>Events</h4>
+            <a href="~/assets/img/masonry-portfolio/masonry-portfolio-2.jpg" title="Product 1" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+        </div>
+    </div>-->
+    <!-- End Portfolio Item -->
+    <!--<div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-branding">
+        <img src="~/assets/img/photo-1507207611509-ec012433ff52.avif" class="img-fluid" alt="">
+        <div class="portfolio-info">
+            <h4>Group</h4>
+            <a href="~/assets/img/masonry-portfolio/masonry-portfolio-3.jpg" title="Branding 1" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+        </div>
+    </div>-->
+    <!-- End Portfolio Item -->
+    <!--<div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
+        <img src="~/assets/img/istockphoto-1400623377-612x612.jpg" class="img-fluid" alt="">
+        <div class="portfolio-info">
+            <h4>speaker</h4>
+            <a href="~/assets/img/masonry-portfolio/masonry-portfolio-4.jpg" title="App 2" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+        </div>
+    </div>-->
+    <!-- End Portfolio Item -->
+    <!--<div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
+        <img src="~/photo-1581093808268-7a25a3625207 (2).avif" class="img-fluid" alt="">
+        <div class="portfolio-info">
+            <h4>events</h4>
+            <a href="~/assets/img/masonry-portfolio/masonry-portfolio-5.jpg" title="Product 2" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+        </div>
+    </div>-->
+    <!-- End Portfolio Item -->
+    <!--<div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-branding">
+
+        <img src="~/assets/img/istockphoto-931516624-640x640.jpg" class="img-fluid" alt="">
+        <div class="portfolio-info">
+            <h4>group</h4>
+            <a href="~/assets/img/masonry-portfolio/masonry-portfolio-6.jpg" title="Branding 2" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+        </div>
+    </div>-->
+    <!-- End Portfolio Item -->
+    <!--<div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
+        <img src="~/assets/img/istockphoto-520791880-612x612.jpg" class="img-fluid" alt="">
+        <div class="portfolio-info">
+            <h4>Meetings</h4>
+            <a href="~/assets/img/masonry-portfolio/masonry-portfolio-7.jpg" title="App 3" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+        </div>
+    </div>-->
+    <!-- End Portfolio Item -->
+    <!--<div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
+        <img src="" class="img-fluid" alt="">
+        <div class="portfolio-info">
+            <h4>Group</h4>
+
+            <a href="~/assets/img/masonry-portfolio/masonry-portfolio-8.jpg" title="Product 3" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+        </div>
+    </div>-->
+    <!-- End Portfolio Item -->
+    <!--<div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-branding">
+        <img src="premium_photo-1661386039533-c638967d8e21.avif" class="img-fluid" alt="">
+        <div class="portfolio-info">
+            <h4>Group</h4>
+            <a href="~/assets/img/masonry-portfolio/masonry-portfolio-9.jpg" title="Branding 2" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+            <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+        </div>
+    </div>-->
+    <!-- End Portfolio Item -->
+    <!--</div>--><!-- End Portfolio Container -->
+    <!--</div>
+
+    </div>-->
+
+
+    <div id="carouselExampleControls" class="carousel slide">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="card">
+                    <div class="portfolio-item isotope-item filter-app">
+                        <div class="img-wrapper">
+                            <img src="~/assets/img/istockphoto-493958679-612x612.jpg" alt="...">
+                        </div>
+                        <div class="portfolio-info">
+                            <h4>Conference</h4>
+                            @*<div class="links">
+                                    <a href="~/assets/img/istockphoto-493958679-612x612.jpg" title="Event 1" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+                                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="portfolio-item isotope-item filter-app">
+                        <div class="img-wrapper">
+                            <img src="assets/img/istockphoto-613897214-612x612.jpg" alt="...">
+                        </div>
+                        <div class="portfolio-info">
+                            <h4>Events</h4>
+                            @*<div class="links">
+                                    <a href="assets/img/istockphoto-613897214-612x612.jpg" title="Event 1" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+                                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="portfolio-item isotope-item filter-app">
+                        <div class="img-wrapper">
+                            <img src="~/assets/img/istockphoto-493958679-612x612.jpg" alt="...">
+                        </div>
+                        <div class="portfolio-info">
+                            <h4>Group</h4>
+                            @*<div class="links">
+                                    <a href="~/assets/img/istockphoto-493958679-612x612.jpg" title="Event 3" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+                                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="portfolio-item isotope-item filter-app">
+                        <div class="img-wrapper">
+                            <img src="~/assets/img/masonry-portfolio/masonry-portfolio-8.jpg" alt="...">
+                        </div>
+                        <div class="portfolio-info">
+                            <h4>Meetings</h4>
+                            @*<div class="links">
+                                    <a href="~/assets/img/masonry-portfolio/masonry-portfolio-8.jpg" title="Event 4" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+                                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="portfolio-item isotope-item filter-app">
+                        <div class="img-wrapper">
+                            <img src="assets/img/istockphoto-613897214-612x612.jpg" alt="...">
+                        </div>
+                        <div class="portfolio-info">
+                            <h4>Speaker</h4>
+                            @*<div class="links">
+                                    <a href="assets/img/istockphoto-613897214-612x612.jpg" title="Event 5" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+                                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="portfolio-item isotope-item filter-app">
+                        <div class="img-wrapper">
+                            <img src="~/assets/img/masonry-portfolio/masonry-portfolio-8.jpg" alt="...">
+                        </div>
+                        <div class="portfolio-info">
+                            <h4>Conference</h4>
+                            @*<div class="links">
+                                    <a href="~/assets/img/masonry-portfolio/masonry-portfolio-8.jpg" title="Event 6" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+                                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="card">
+                    <div class="portfolio-item isotope-item filter-app">
+                        <div class="img-wrapper">
+                            <img src="~/assets/img/masonry-portfolio/masonry-portfolio-9.jpg" alt="...">
+                        </div>
+                        <div class="portfolio-info">
+                            <h4>Conference</h4>
+                            @*<div class="links">
+                                    <a href="~/assets/img/masonry-portfolio/masonry-portfolio-9.jpg" title="Event 7" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+                                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+
+
+
+
+    <script src="~/Scripts/SwiperJS.js"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/isotope/3.0.6/isotope.pkgd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.0.8/glightbox.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.0.8/css/glightbox.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+</body>
+</html>

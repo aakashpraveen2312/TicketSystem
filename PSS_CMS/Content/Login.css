@@ -1,0 +1,111 @@
+﻿:root {
+    --preloader-background: #ffffff;
+    --preloader-color: #47b2e4;
+}
+
+
+body {
+    /*background: url('c') no-repeat center center fixed;*/
+    background-size: contain;
+    /* background-color: #004e92;*/
+    overflow-y: hidden;
+    background-image: url('../assets/img/helpdesk-ticketing-system-02.jpg');
+   
+}
+
+.login-container {
+    /* background: rgb(249, 251, 255);*/
+    background-color: #DAE6F2;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+/*@media (max-width:2000px) and (min-width:1200px)
+{
+    .login-container {
+        margin: 200px auto;
+    }
+    
+}
+@media (max-width:1199px) and (min-width:350px) {
+    .login-container {
+        margin: 200px auto;
+    }
+}*/
+
+.logo {
+    display: block;
+    margin: 0 auto 20px;
+    max-width: 100px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.btn-login {
+    background-color: #004e92;
+    color: whitesmoke;
+    border: #004e92;
+    width: 50%;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-top: 10px;
+}
+
+#preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    overflow: hidden;
+    background: var(--preloader-background);
+    transition: all 0.6s ease-out;
+}
+
+    #preloader:before {
+        content: "";
+        position: fixed;
+        top: calc(50% - 30px);
+        left: calc(50% - 30px);
+        border: 6px solid #ffffff;
+        border-color: var(--preloader-color) transparent var(--preloader-color) transparent;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: animate-preloader 1.5s linear infinite;
+    }
+
+@keyframes animate-preloader {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.text-danger {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px; /* Adds space between the input field and the error message */
+}
+
+.form-group {
+    margin-bottom: 15px; /* Gives some space below each form group */
+}
+
+.col-md-8 {
+    position: relative;
+}
+
+ul {
+    list-style-type: none;
+}
+

@@ -1,0 +1,449 @@
+﻿@model PSS_CMS.Models.WhitePaper
+@using GridMvc.Html
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+    @*Bootstrap Icons and Boxicons link*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <script src="~/Scripts/Script.js"></script>
+    <style>
+
+        .container-fluid {
+            width: 80%;
+            margin: 20px 1px;
+        }
+
+
+        .whitepapers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .whitepaper {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+            .whitepaper h3 {
+                margin: 0 0 10px;
+                color: #754599
+            }
+
+            .whitepaper p {
+                font-size: 14px;
+                margin-bottom: 15px;
+            }
+
+        .download-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2888bb;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        select#projectTypeFilter2 {
+            font-size: 15px;
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+
+    <nav class="sidebar close">
+        <header>
+            <div class="text logo-text" style="display:inline-block"> <a href="@Url.Action("Dashboard", "DashBoard")"><img src="~/assets/img/Infinity logo bgremove.png" alt="PSS Logo" class="logo"></a></div>
+            <a href="@Url.Action("RecentTicket", "RecentTickets")" title="Tickets">
+                <i class="bi bi-card-list text logo-text" style="position: absolute; top: 50%; left: 52%; color: #695cfe;font-size:27px;"></i>
+            </a>
+            <i class="bx bx-chevron-right toggle" style="margin-right:28px;"></i>
+        </header>
+        <div class="menu-bar">
+            <div class="menu">
+                <ul class="menu-links" style="margin-left:20px">
+                    <!-- Configuration Section -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/closefolder.png" class="settingsIcon" style="width:25px;height:25px;" />
+                        <img src="~/assets/img/open.png" class="openIcon" style="display:none;width:25px;height:25px;" />
+                        <span class="text nav-text" style="margin-left:15px">KNOWLEDGE BASED </span>
+                    </li>
+                    <!-- User Group -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("FAQADMIN", "RecentTickets")">
+                            <i class='bx bxs-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">FAQ</span>
+                        </a>
+                    </li>
+                    <!-- App User -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
+                            <i class='bx bxs-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">White Paper</span>
+                        </a>
+                    </li>
+                    <!-- Settings Section -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/closefolder.png" class="settingsIcon" style="width:25px;height:25px;" />
+                        <img src="~/assets/img/open.png" class="openIcon" style="display:none;width:25px;height:25px;" />
+                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
+                    </li>
+                    <!-- Change Password -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("ChangePassword", "RecentTickets")">
+                            <i class='bx bx-user-voice' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                        </a>
+                    </li>
+                    <!-- Logout -->
+                    <li class="nav-link">
+                        <a href="javascript:void(0);" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
+                            <i class='bx bx-log-out' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content">
+
+        <nav class="nav d-flex">
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
+
+
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+
+            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+
+                </a>
+            </div>
+
+
+        </nav>
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-12">
+
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Whitepaper", "KnowledgeBased")">WHITE PAPERS</a></li>
+
+                    <li class="resadminwhitepaper">EDIT</li>
+                </ul>
+            </div>
+
+        </div>
+
+
+        <div class="mt-3">
+            @using (Html.BeginForm("Edit", "KnowledgeBased", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <form>
+
+                    <div class="row ms-2">
+                        <div class="col-md-5">
+                            @Html.LabelFor(model => model.WP_TITLE, "Title:", new { @class = "pb-2" })
+                            @Html.TextBoxFor(model => model.WP_TITLE, new { @class = "form-control", id = "", tabindex = "1", required = "required" })
+                        </div>
+
+                    </div>
+                    <div class="row mt-2 ms-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.WP_Description, "Description", new { @class = "pb-2" })
+                            @Html.TextAreaFor(model => model.WP_Description, new { @class = "form-control custom-textarea", placeholder = "Please enter your description here....", rows = "10", cols = "70", required = "required", tabindex = "5" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-2 ms-2">
+                        <div class="col-md-12 mt-2">
+                            @if (!string.IsNullOrEmpty(ViewBag.IMAGEWHITEPAPER))
+                            {
+                                string base64String = ViewBag.IMAGEWHITEPAPER;
+
+                                // Detect file type from Base64 prefix
+                                string fileType = "";
+                                string mimeType = "";
+
+                                if (base64String.StartsWith("iVBORw0KGgo")) // PNG file signature
+                                {
+                                    fileType = "png";
+                                    mimeType = "image/png";
+                                }
+                                else if (base64String.StartsWith("/9j/")) // JPG/JPEG file signature
+                                {
+                                    fileType = "jpg";
+                                    mimeType = "image/jpeg";
+                                }
+                                else if (base64String.StartsWith("JVBER")) // PDF file signature
+                                {
+                                    fileType = "pdf";
+                                    mimeType = "application/pdf";
+                                }
+                                else if (base64String.StartsWith("UEsDB")) // XLSX or DOCX file signature (ZIP format)
+                                {
+                                    // Check if the Base64 contains "xl/" (XLSX format)
+                                    if (base64String.Contains("xl/"))
+                                    {
+                                        fileType = "xlsx";
+                                        mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                                    }
+                                    // Check if the Base64 contains "word/" (DOCX format)
+                                    else if (base64String.Contains("word/"))
+                                    {
+                                        fileType = "docx";
+                                        mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                                    }
+                                }
+                                else if (base64String.StartsWith("U1RB") || base64String.StartsWith("R2V0")) // TXT file signature
+                                {
+                                    fileType = "txt";
+                                    mimeType = "text/plain";
+                                }
+                                else if (base64String.StartsWith("Q0N2")) // CSV file signature
+                                {
+                                    fileType = "csv";
+                                    mimeType = "text/csv";
+                                }
+                                else
+                                {
+                                    fileType = "unknown";
+                                    mimeType = "application/octet-stream"; // Default for unknown file types
+                                }
+
+                                // If it's an image, show the preview
+                                if (mimeType.StartsWith("image/"))
+                                {
+                                    <div class="row">
+                                        <div class="col-7">
+                                            <img src="@($"data:{mimeType};base64,{ViewBag.IMAGEWHITEPAPER}")"
+                                                 alt="Ticket Image" class="img-fluid"
+                                                 data-toggle="modal" data-target="#imagePreviewModal" />
+                                        </div>
+                                    </div>
+                                    <!--<div class="row">
+                                    <div class="col-2">
+                                        <button style="margin:20px" type="button" class="btn btn-primary" data-toggle="modal" data-target="#imagePreviewModal">
+                                            Preview
+                                        </button>-->
+
+                                    <!-- Modal for Image Preview -->
+                                    <!--<div class="modal fade" id="imagePreviewModal" tabindex="-1" role="dialog" aria-labelledby="imagePreviewLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="custom modal-content">
+                                                        <div class="modal-body">
+                                                            <img src="@($"data:{mimeType};base64,{ViewBag.IMAGEWHITEPAPER}")" alt="Ticket Image" class="img-fluid logical" />
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                                Close
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>-->
+
+                                }
+                                else
+                                {
+                                    // If it's a document (PDF, XLSX, TXT), show the Download button
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <a href="@($"data:{mimeType};base64,{ViewBag.IMAGEWHITEPAPER}")"
+                                               download="Attachment.@(fileType)"
+                                               class="btn btn-success" style="margin:10px">
+                                                Download
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                            else
+                            {
+                                <p><b>No images are uploaded</b></p>
+                            }
+                        </div>
+                    </div>
+                    <div class="row mt-2 ms-2">
+                        <div class="col-md-12 mt-2">
+                            @Html.Label("myfile", "Attachments:")
+                            <input type="file" id="myfile" name="myfile" tabindex="6"
+                                   accept=".pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv" onchange="validateFile()" />
+                            <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .docx, .csv)</small>
+                        </div>
+
+                        <div class="col-md-12 mt-2 mb-3 d-flex justify-content-md-end justify-content-start">
+
+                            <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="7">Submit</button>
+                            <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Whitepaper","KnowledgeBased")'" tabindex="8">
+                                Cancel
+                            </button>
+
+
+                        </div>
+
+
+                    </div>
+
+                </form>
+
+
+            }
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+            <h4>Are you sure you want to log out?</h4>
+        </div>
+        <div class="offcanvas-footer d-flex justify-content-center">
+            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+        </div>
+    </div>
+
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+    <script src="~/Scripts/Formatcheck.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#searchPharse').on('keyup', function () {
+                $('#searchForm').submit(); // Submit the form when the user types
+            });
+        });
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.getElementById("logoutLink").addEventListener("click", function () {
+        Swal.fire({
+            title: "Are you sure you want to log out?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#dc3545",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '@Url.Action("Logout", "Login")';
+            }
+        });
+    });
+    </script>
+
+
+    @*Script for edited succesfully*@
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+    $(document).ready(function () {
+        $("#myForm").submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var formData = new FormData(this);
+            var submitBtn = $("#submitBtn");
+
+            // Change button text and disable it
+            submitBtn.text("Submitting...").prop("disabled", true);
+
+            $.ajax({
+                url: '@Url.Action("Edit", "KnowledgeBased")', // Update with your controller/action
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: "WhitePaper edited successfully.",
+                            icon: "success",
+                            confirmButtonText: "OK",
+                            allowOutsideClick: false, // Prevent clicking outside to close the alert
+                            allowEscapeKey: false // Prevent closing with Esc key
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '@Url.Action("Whitepaper", "KnowledgeBased")'; // Redirect on success
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: response.message || "Something went wrong.",
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then(() => {
+                            submitBtn.text("Submit").prop("disabled", false); // Re-enable button on error
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An error occurred while processing your request.",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(() => {
+                        submitBtn.text("Submit").prop("disabled", false); // Re-enable button on error
+                    });
+                }
+            });
+        });
+    });
+    </script>
+
+</body>
+</html>

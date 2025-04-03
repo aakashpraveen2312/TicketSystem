@@ -1,0 +1,583 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userName = Session["UserName"] as string;
+    var userRole = Session["UserRole"] as string; // Get the user role from the session
+    var storedEmail = Session["EmailId"] as string;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+
+
+    <!-- Favicons -->
+    <link href="~/assets/img/PSSlogo.png" rel="icon">
+    <link href="~/assets/img/PSSlogo.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/assets/vendor/aos/aos.css" rel="stylesheet" />
+    <link href="~/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+    <!-- Main CSS File -->
+    <link href="~/Content/main.css" rel="stylesheet" />
+    <link href="~/Content/EditiSub.css" rel="stylesheet" />
+    <!-- Bootstrap JS (and dependencies) -->
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <!-- =======================================================
+    * Template Name: Arsha
+    * Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
+    * Updated: Aug 07 2024 with Bootstrap v5.3.3
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body>
+
+    <!-- Hero Section -->
+
+    <div id="hero" class="container-fluid body-content hero section dark-background">
+
+        <div class="row gy-4">
+            <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="zoom-out">
+                @if (ViewBag.Menus != null)
+                {
+                    var menus = (List<string>)ViewBag.Menus;
+                    var homecontentmain = (List<string>)ViewBag.HOMECONTENTMAIN;
+                    var servicemenus = (List<string>)ViewBag.SubMenusService;
+                    var hrmsmenus = (List<string>)ViewBag.SubMenusHRMS;
+                    var client = (List<string>)ViewBag.MainContentImages;
+
+                    if (homecontentmain.Count > 0)
+                    {
+                        <h1>
+                            @homecontentmain[0]
+
+
+                        </h1>
+
+                    }
+
+
+                    if (homecontentmain.Count > 1)
+                    {
+                        <p>
+                            @homecontentmain[1]
+                        </p>
+
+                    }
+                }
+
+               
+                @if (ViewBag.Menus != null)
+                    {
+
+                        var video = (List<string>)ViewBag.HOMEVIDEO;
+
+                        <div class="d-flex">
+                        @*<a href="#about" class="btn-get-started">Get Started</a>*@
+                            <a href="@video[0]" class="glightbox btn-watch-video d-flex align-items-center">
+                                <i class="bi bi-play-circle"></i><span>Watch Video</span>
+                                @if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(userRole))
+                                {
+                                // Compare the role stored in the session
+                                if (userRole == "Admin" || userRole == "Superuser")
+                                {
+                                <a href="@Url.Action("HeroSectionVideo", "TemplateLayout", new { section = "Hero Section Video" })" class="edit-icon" title="Edit Content">
+                                    <i class="bx bxs-edit-alt" id="videoediticon"></i>
+                                </a>
+                                }
+                                }
+                            </a>
+                    </div>
+
+
+              
+                }
+            </div>
+
+
+            @{ var base64Image = ViewBag.HOMECONTENTMAINIMAGE as string;
+                var mimeType = ViewBag.MIMEType as string ?? "image/jpeg"; // Default to JPEG if MIME type is not provided
+            }
+            <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-out" data-aos-delay="200">
+                @if (!string.IsNullOrEmpty(base64Image))
+                {<!-- Display the fetched image -->
+                    <img src="data:@mimeType;base64,@base64Image" class="img-fluid animated" alt="Main Content Image" /> }
+                else
+                { <!-- Placeholder if no image exists -->
+                    <img src="~/assets/img/placeholder.png" class="img-fluid animated" alt="No Image Available" />}
+                @if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(userRole))
+                {
+                    // Compare the role stored in the session
+                    if (userRole == "Admin" || userRole == "Superuser")
+                    {
+                        <a href="@Url.Action("HomeHeroSection", "TemplateLayout", new {section = "HeroSection" })" class="edit-icon" title="Edit Content">
+                            <i class="bx bxs-edit-alt" id="editicon"></i>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Clients Section -->
+    <section id="clients" class="clients section light-background">
+
+        <div class="container" data-aos="zoom-in">
+
+            <div class="swiper init-swiper">
+                <script type="application/json" class="swiper-config">
+                    {
+                      "loop": true,
+                      "speed": 600,
+                      "autoplay": {
+                        "delay": 5000
+                      },
+                      "slidesPerView": "auto",
+                      "pagination": {
+                        "el": ".swiper-pagination",
+                        "type": "bullets",
+                        "clickable": true
+                      },
+                      "breakpoints": {
+                        "320": {
+                          "slidesPerView": 2,
+                          "spaceBetween": 40
+                        },
+                        "480": {
+                          "slidesPerView": 3,
+                          "spaceBetween": 60
+                        },
+                        "640": {
+                          "slidesPerView": 4,
+                          "spaceBetween": 80
+                        },
+                        "992": {
+                          "slidesPerView": 5,
+                          "spaceBetween": 120
+                        },
+                        "1200": {
+                          "slidesPerView": 6,
+                          "spaceBetween": 120
+                        }
+                      }
+                    }
+                </script>
+
+                <div class="swiper-wrapper align-items-center">
+                    @if (Session["MainContentImages"] != null)
+                    {
+                        var client = Session["MainContentImages"] as List<string>;
+
+                        // Loop through the images and display them
+                        foreach (var image in client) // Changed from base64Image to image
+                        {
+                            <div class="swiper-slide">
+                                <img src="data:image/jpeg;base64,@image" class="img-fluid" alt="Client Image" />
+                            </div> }
+                    }
+                    else
+                    { <!-- Fallback if no images are available -->
+                        <div class="swiper-slide">
+                            <img src="~/assets/img/clients/client-1.png" class="img-fluid" alt="">
+                            <img src="~/assets/img/clients/client-2.png" class="img-fluid" alt="">
+                            <img src="~/assets/img/clients/client-3.png" class="img-fluid" alt="">
+                            <img src="~/assets/img/clients/client-4.png" class="img-fluid" alt="">
+                            <img src="~/assets/img/clients/client-5.png" class="img-fluid" alt="">
+                            <img src="~/assets/img/clients/client-6.png" class="img-fluid" alt="">
+                            <img src="~/assets/img/clients/client-7.png" class="img-fluid" alt="">
+                            <img src="~/assets/img/clients/client-8.png" class="img-fluid" alt="">
+                        </div>}
+                </div>
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(userRole))
+        {
+            // Compare the role stored in the session
+            if (userRole == "Admin" || userRole == "Superuser")
+            {
+                <a href="@Url.Action("ClientImageGet", "ClientImage", new { section = "Client Section"})" class="edit-icon" title="Edit Content">
+                    <i class="bx bxs-edit-alt" id="editicon"></i>
+                </a>
+            }
+        }
+    </section>
+    <!-- /Clients Section -->
+    <!-- About Section -->
+    <section id="about" class="about section">
+        @if (ViewBag.Menus != null)
+        {
+            var Aboutus = (List<string>)ViewBag.HOMECONTENTMAINABOUTUS;
+
+
+            if (Aboutus.Count > 0)
+            {
+                <!-- Section Title -->
+                <div class="container section-title" data-aos="fade-up">
+
+                    <h2>@Aboutus[0]</h2>
+
+                </div><!-- End Section Title -->
+            }
+
+            <div class="container">
+
+                <div class="row gy-4">
+
+                    <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
+                        @if (Aboutus.Count > 1)
+                        {
+                            <p>
+                                @Aboutus[1]
+                            </p>
+                        }
+                        <ul>
+                            <li>
+                                <i class="bi bi-check2-circle"></i>
+                                <span class="span aboutus">
+                                    @if (Aboutus.Count > 2)
+                                    {<b>@Aboutus[2]</b>} @if (Aboutus.Count > 3)
+                                {@Aboutus[3]}
+                                </span>
+                            </li>
+                            <li>
+                                <i class="bi bi-check2-circle"></i> <span class="span aboutus">
+                                    @if (Aboutus.Count > 4)
+                                    {<b>@Aboutus[4]</b>} @if (Aboutus.Count > 5)
+                                {@Aboutus[5]}
+                                </span>
+                            </li>
+                            <li>
+                                <i class="bi bi-check2-circle"></i> <span class="span aboutus">
+                                    @if (Aboutus.Count > 6)
+                                    {<b>@Aboutus[6]</b>} @if (Aboutus.Count > 7)
+                                {@Aboutus[7]}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                        @if (Aboutus.Count > 8)
+                        {
+                            <p class="aboutpara">@Aboutus[8]</p>}
+                        <br />
+                        @*<a href="javascript:void(0)" class="read-more"><span>Read More</span><i class="bi bi-arrow-right"></i></a>*@
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(userRole))
+        {
+            // Compare the role stored in the session
+            if (userRole == "Admin" || userRole == "Superuser")
+            {
+                <a href="@Url.Action("HomePageAboutUs", "TemplateLayout", new { section = "About Us" })" class="edit-icon" title="Edit Content">
+                    <i class="bx bxs-edit-alt" id="editicon"></i>
+                </a>
+            }
+        }
+    </section>
+    <!-- /About Section -->
+    <!-- Why Us Section -->
+    <section id="why-us" class="section why-us light-background" data-builder="section">
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+
+            <div class="row">
+                <div class="col-lg-6 pt-4 pt-lg-0 content">
+                    @if (ViewBag.Menus != null)
+                    {
+                        var Coretext = (List<string>)ViewBag.HOMECORETEXT;
+
+                        if (Coretext.Count > 0)
+                        {
+                            <h3>@Coretext[0]</h3>
+                        }
+                        if (Coretext.Count > 1)
+                        {
+                            <p class="fst-italic">
+                                @Coretext[1]
+                            </p>
+                        }
+
+                        <div class="why-us-content skills-animation">
+
+                            <div class="card">
+                                @if (Coretext.Count > 2)
+                                {<p> @Coretext[2]</p>
+                            }
+
+                            </div><!-- End Skills Item -->
+
+                            <div class="card">
+                                @if (Coretext.Count > 3)
+                                {<p> @Coretext[3]</p>
+                            }
+
+                            </div><!-- End Skills Item -->
+                            <div class="card">
+
+                            </div>
+
+
+                        </div>
+                    }
+                </div>
+
+
+                @{ var CoreImage = ViewBag.HOMECONTENTCOREIMAGE as string;
+                    var CoremimeType = ViewBag.CoreMimeType as string ?? "image/jpeg"; // Default to JPEG if MIME type is not provided
+                }
+                <div class="col-lg-6 d-flex align-items-center">
+                    @if (!string.IsNullOrEmpty(CoreImage))
+                    {<!-- Display the fetched image -->
+                        <img src="data:@CoremimeType;base64,@CoreImage" class="img-fluid animated" alt="Core Activity Image" /> }
+                    else
+                    { <!-- Placeholder if no image exists -->
+                        <img src="~/assets/img/placeholder.png" class="img-fluid animated" alt="No Image Available" />}
+
+                </div>
+
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(userRole))
+        {
+            // Compare the role stored in the session
+            if (userRole == "Admin" || userRole == "Superuser")
+            {
+                <a href="@Url.Action("HomeCore", "TemplateLayout", new { section = "Core Section"})" class="edit-icon" title="Edit Content">
+                    <i class="bx bxs-edit-alt" id="editicon"></i>
+                </a>
+            }
+        }
+    </section>
+    <!-- /Why Us Section -->
+    <!-- Skills Section -->
+    <section id="skills" class="skills section">
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="row">
+                @{ var SkillImage = ViewBag.HOMESKILLIMAGE as string;
+                    var SkillmimeType = ViewBag.SkillMimeType as string ?? "image/jpeg"; // Default to JPEG if MIME type is not provided
+                }
+                <div class="col-lg-6 d-flex align-items-center">
+                    @if (!string.IsNullOrEmpty(SkillImage))
+                    {<!-- Display the fetched image -->
+                        <img src="data:@SkillmimeType;base64,@SkillImage" class="img-fluid animated" alt="Skill Image" /> }
+                    else
+                    { <!-- Placeholder if no image exists -->
+                        <img src="~/assets/img/placeholder.png" class="img-fluid animated" alt="No Image Available" />}
+
+                </div>
+
+
+                <div class="col-lg-6 pt-4 pt-lg-0 content">
+                    @if (ViewBag.Menus != null)
+                    {
+                        var Skilltext = (List<string>)ViewBag.HOMESKILLTEXT;
+
+                        if (Skilltext.Count > 0)
+                        {
+                            <h3>@Skilltext[0] </h3>
+                        }
+
+
+                        if (Skilltext.Count > 1)
+                        {
+                            <p class="fst-italic">
+                                @Skilltext[1]
+                            </p>
+                        }
+                        <div class="skills-content skills-animation">
+
+                            <div class="card">
+                                @if (Skilltext.Count > 2)
+                                {
+                                    <p>@Skilltext[2]</p>
+                                }
+                                <style>
+                                    .card {
+                                        border: 1px;
+                                    }
+                                </style>
+                            </div><!-- End Skills Item -->
+
+                            @if (Skilltext.Count > 3)
+                            {
+                                <p>@Skilltext[3]</p>
+                            }
+                            <style>
+                                .card {
+                                    border: 1px;
+                                }
+                            </style>
+                        </div><!-- End Skills Item -->
+
+                        <div class="card">
+
+                        </div><!-- End Skills Item -->
+
+                    }
+
+                </div>
+
+            </div>
+        </div>
+
+
+        @if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(userRole))
+        {
+            // Compare the role stored in the session
+            if (userRole == "Admin" || userRole == "Superuser")
+            {
+                <a href="@Url.Action("HomeSkill", "TemplateLayout", new { section ="Skill Section"})" class="edit-icon" title="Edit Content">
+                    <i class="bx bxs-edit-alt" id="editicon"></i>
+                </a>
+            }
+        }
+    </section>
+    <!-- /Skills Section -->
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+        @if (ViewBag.Menus != null)
+        {
+            var Contactus = (List<string>)ViewBag.HOMECONTACTUS;
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                @if (Contactus.Count > 0)
+                {
+                    <h2>@Contactus[0]</h2>
+
+                }
+                <!-- <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p> -->
+            </div><!-- End Section Title -->
+
+            <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+                <div class="row gy-4">
+
+                    <div class="col-lg-6">
+
+                        <div class="info-wrap">
+                            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="200">
+                                <i class="bi bi-geo-alt flex-shrink-0"></i>
+                                <div>
+                                    @if (Contactus.Count > 1)
+                                    {
+                                        <h3>@Contactus[1]</h3>
+                                    }
+
+                                    @if (Contactus.Count > 2)
+                                    {
+                                        <p>@Contactus[2]</p>
+                                    }
+                                </div>
+                            </div><!-- End Info Item -->
+
+                            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+                                <i class="bi bi-telephone flex-shrink-0"></i>
+                                <div>
+                                    @if (Contactus.Count > 3)
+                                    {
+                                        <h3>@Contactus[3]</h3>
+                                    }
+
+                                    @if (Contactus.Count > 4)
+                                    {
+                                        <p>@Contactus[4]</p>
+                                    }
+                                </div>
+                            </div><!-- End Info Item -->
+
+                            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+                                <i class="bi bi-envelope flex-shrink-0"></i>
+                                <div>
+                                    @if (Contactus.Count > 5)
+                                    {
+                                        <h3>@Contactus[5]</h3>
+                                    }
+
+                                    @if (Contactus.Count > 6)
+                                    {
+                                        <p>@Contactus[6]</p>
+                                    }
+                                </div>
+                            </div><!-- End Info Item -->
+
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d485.87799747823266!2d80.16313390414336!3d13.034144895281706!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1734100674355!5m2!1sen!2sin" frameborder="0" style="border:0; width: 100%; height: 380px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                    </div><!-- End Contact Form -->
+
+                </div>
+
+            </div>
+        }
+
+
+        @if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(userRole))
+        {
+            // Compare the role stored in the session
+            if (userRole == "Admin" || userRole == "Superuser")
+            {
+                <a href="@Url.Action("HomeContact", "TemplateLayout", new { section = "Contact Us"})" class="edit-icon" title="Edit Content">
+                    <i class="bx bxs-edit-alt" id="editicon"></i>
+                </a>
+            }
+        }
+    </section>
+    <!-- /Contact Section -->
+
+
+
+
+
+    <script>
+        // Initialize Swiper
+        document.addEventListener("DOMContentLoaded", function () {
+            const configElement = document.querySelector(".swiper-config");
+            const swiperConfig = configElement ? JSON.parse(configElement.textContent) : {};
+
+            new Swiper(".init-swiper", swiperConfig);
+        });
+    </script>
+
+
+</body>
+</html>

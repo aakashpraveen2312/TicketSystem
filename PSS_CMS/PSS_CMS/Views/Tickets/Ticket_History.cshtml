@@ -1,0 +1,152 @@
+﻿@model IEnumerable<PSS_CMS.Models.Tickethistory>
+@{
+    Layout = null;
+}
+@using GridMvc.Html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="~/Content/Style.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+    @*Bootstrap Icons and Boxicons link*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+
+    <div class="sidebar">
+        <a class="  text-decoration-none" href="@Url.Action("Ticket","Tickets")">New Tickets</a>
+        <a href="@Url.Action("Ticket_History","Tickets")" class="text-decoration-none">Ticket History</a>
+
+        <a href="@Url.Action("Logout", "Login")" class="text-decoration-none align-baseline" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+            <i class='bx bx-log-out' style="font-size:24px !important;color:red !important;"></i>
+            Logout
+        </a>
+
+    </div>
+    <nav class="nav">
+        <h3 class="" id="navheading">TICKET SYSTEM</h3>
+    </nav>
+    <div class="content">
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-9 col-sm-8">
+                <ul class="breadcrumb mt-3">
+                    <li style="color: #2888bb;">TICKET HISTORY</li>
+
+                </ul>
+            </div>
+
+
+        </div>
+
+
+        <div class="table mt-5">
+            @Html.Grid(Model).Columns(columns =>
+            {
+                columns.Add(c => c.TC_TICKETDATES).Titled("Date");
+                columns.Add(c => c.TC_PROJECTID).Titled("Project");
+                columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority");
+                columns.Add().Titled("Action")
+                    .Encoded(false)
+                    .Sanitized(false)
+                    .SetWidth(30)
+                   .RenderValueAs(o =>
+                   {
+                     var LineItemsurl = Url.Action("ReviewTickets", "Tickets", new { recid2 = o.TC_RECID });
+
+
+                     var LineItemiconHtml = "<button class='btn btn-success'>Review</button>";
+
+
+                    if (o.TC_STATUS?.Trim() == "S")
+                    {
+
+                         LineItemiconHtml = "<button class='btn btn-secondary' style='display:none !important;'>S</button>";
+                     }
+                 
+                 
+                     var LineItemlinkHtml = $"<a href='{LineItemsurl}' data-toggle='tooltip' data-placement='top' title='Line Item'>{LineItemiconHtml}</a>";
+                 
+                 
+                     Console.WriteLine($"Rendered HTML: {LineItemlinkHtml}");
+                 
+                 
+                     return MvcHtmlString.Create(LineItemlinkHtml);
+                 });
+
+                 }).WithPaging(10).Sortable(true)
+        </div>
+
+
+        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+                <h4>Are you sure you want to log out?</h4>
+            </div>
+            <div class="offcanvas-footer d-flex justify-content-center">
+                <input type="button" class="btn btn-success me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+                <input type="button" class="btn btn-danger" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebarLinks = document.querySelectorAll(".sidebar a");
+
+            let activeLinkFound = false;
+
+            // Highlight the active link based on the current URL path
+            sidebarLinks.forEach(link => {
+                if (link.pathname === window.location.pathname) {
+                    link.classList.add("active");
+                    activeLinkFound = true; // Mark as found
+                }
+            });
+
+            // Set "New Tickets" as default if no active link matches
+            if (!activeLinkFound) {
+                const defaultLink = document.querySelector('.sidebar a.default-active');
+                if (defaultLink) {
+                    defaultLink.classList.add("active");
+                }
+            }
+
+            // Add click event to update the active class
+            sidebarLinks.forEach(link => {
+                link.addEventListener("click", function () {
+                    // Remove active class from all links
+                    sidebarLinks.forEach(l => l.classList.remove("active"));
+
+                    // Add active class to the clicked link
+                    this.classList.add("active");
+                });
+            });
+        });
+    </script>
+  
+
+</body>
+</html>
+
+

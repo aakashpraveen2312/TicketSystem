@@ -1,0 +1,82 @@
+﻿
+@model  PSS_CMS.Models.Admintickets
+
+@using (Html.BeginForm("AdminResponseTicket", "RecentTickets", FormMethod.Post, new { id = "AdminResponseForm", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row" style="margin-left:5px">
+        <div class="col-md-12">
+            @Html.LabelFor(model => model.RESPONSE_COMMENTS, "Admin Comments", new { @class = "pb-2" })
+            @Html.TextAreaFor(model => model.RESPONSE_COMMENTS, new { @class = "form-control custom-textarea", placeholder = "Please enter your comments here....", rows = "10", cols = "70", required = "required" })
+        </div>
+        <div class="col-md-12 mt-2">
+            @Html.Label("myfile", "Attachments:")
+            <input type="file" id="myfile" name="myfile" accept=".pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv" onchange="validateFile()" />
+            <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .docx, .csv)</small>
+        </div>
+        <div class="col-md-12 mt-2 mb-3 d-flex justify-content-md-end justify-content-start">
+            <button type="submit" class="btncolorsubmit me-3" id="submitBtn">Submit</button>
+            <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("RecentTicket", "RecentTickets")'">Cancel</button>
+        </div>
+    </div>
+
+
+}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/Scripts/Formatcheck.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#AdminResponseForm").submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var formData = new FormData(this); // Create FormData object for file upload
+
+            $.ajax({
+                url: '@Url.Action("AdminResponseTicket", "RecentTickets")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    Swal.fire({
+                        title: 'Processing...',
+                        text: 'Please wait while we submit your response.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                },
+                success: function (response) {
+                    Swal.fire({
+                        icon: response.success ? 'success' : 'error',
+                        title: response.success ? 'Success!' : 'Error!',
+                        text: response.message || (response.success ? 'Response submitted successfully!' : 'Submission failed. Please try again.'),
+                        showConfirmButton: false,
+                        timer: 2000 // Auto close after 2 seconds
+                    });
+
+                    if (response.success) {
+                        setTimeout(() => {
+                            window.location.href = '@Url.Action("RecentTicket", "RecentTickets")'; // Redirect after success
+                        }, 2000); // Wait for alert to disappear before redirecting
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Something went wrong. Please try again.',
+                        showConfirmButton: false,
+                        timer: 3000 // Auto close after 3 seconds
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+

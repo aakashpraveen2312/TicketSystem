@@ -1,0 +1,136 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title FAQ</title>
+
+
+    <!-- Favicons -->
+    <link href="~/assets/img/PSSlogo.png" rel="icon">
+    <link href="~/assets/img/PSSlogo.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/assets/vendor/aos/aos.css" rel="stylesheet" />
+    <link href="~/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+    <!-- Main CSS File -->
+    <link href="~/Content/main.css" rel="stylesheet" />
+    <link href="~/Content/EditiSub.css" rel="stylesheet" />
+    <!-- Bootstrap JS (and dependencies) -->
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <!-- =======================================================
+    * Template Name: Arsha
+    * Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
+    * Updated: Aug 07 2024 with Bootstrap v5.3.3
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body>
+    <!-- Faq 2 Section -->
+    <section id="faq-2" class="faq-2 section light-background">
+
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+            <h2>Frequently Asked Questions</h2>
+            <p><b>FAQs are often used on websites, manuals, or help centers to quickly address recurring concerns without the need for direct assistance.</b></p>
+        </div><!-- End Section Title -->
+
+        <div class="container">
+
+            <div class="row justify-content-center">
+
+                <div class="col-lg-10">
+
+                    <div class="faq-container">
+
+                        <div class="faq-item faq-active" data-aos="fade-up" data-aos-delay="200">
+                            <i class="faq-icon bi bi-question-circle"></i>
+                            <h3>Q: What is the canteen management system?</h3>
+                            <div class="faq-content">
+                                <p>A: It is a digital platform to manage canteen operations like food ordering, billing, and inventory.</p>
+                            </div>
+                            <!-- <button type="button" class="btn btn-primary">MORE</button>
+                            <i class="faq-toggle bi bi-chevron-right"></i> -->
+                        </div><!-- End Faq item-->
+
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
+                            <i class="faq-icon bi bi-question-circle"></i>
+                            <h3>Q: Who uses the Visitor Management System?</h3>
+                            <div class="faq-content">
+                                <p>A: The system is used by reception staff, security teams, and visitors to streamline the check-in process.</p>
+                            </div>
+                            <!-- <button type="button" class="btn btn-primary">MORE</button>
+                            <i class="faq-toggle bi bi-chevron-right"></i> -->
+                        </div><!-- End Faq item-->
+
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="400">
+                            <i class="faq-icon bi bi-question-circle"></i>
+                            <h3>Q: How do guards log their patrols?</h3>
+                            <div class="faq-content">
+                                <p>A: Guards can log their patrols using a mobile app, RFID tags, QR codes, or GPS tracking devices.</p>
+                            </div>
+                            <!-- <button type="button" class="btn btn-primary">MORE</button>
+                            <i class="faq-toggle bi bi-chevron-right"></i> -->
+                        </div><!-- End Faq item-->
+
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="500">
+                            <i class="faq-icon bi bi-question-circle"></i>
+                            <h3>Q: Where can biometric systems be used?</h3>
+                            <div class="faq-content">
+                                <p>A: They are commonly used for access control, attendance tracking, time management, and secure login.</p>
+                            </div>
+                            <!-- <button type="button" class="btn btn-primary">MORE</button>
+                            <i class="faq-toggle bi bi-chevron-right"></i> -->
+                        </div><!-- End Faq item-->
+
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="600">
+                            <i class="faq-icon bi bi-question-circle"></i>
+                            <h3>Q: What types of biometrics does this system support?</h3>
+                            <div class="faq-content">
+                                <p>A: It supports fingerprints, facial recognition, iris scans, or a combination depending on the device and setup.</p>
+                            </div>
+                            <!-- <button type="button" class="btn btn-primary">MORE</button>
+                            <i class="faq-toggle bi bi-chevron-right"></i> -->
+                        </div><!-- End Faq item-->
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section><!-- /Faq 2 Section -->
+</body>
+</html>
+

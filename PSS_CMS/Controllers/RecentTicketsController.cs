@@ -1,0 +1,867 @@
+﻿using Newtonsoft.Json;
+using PSS_CMS.Models;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+
+namespace PSS_CMS.Controllers
+{
+    public class RecentTicketsController : Controller
+    {
+       
+        public async Task<ActionResult> RecentTicket(string userid, string userrole, string searchPharse, string status, string projectType, string ticketType, string StartDate, string EndDate)
+        {
+            Recenttickets objRecents = new Recenttickets();
+            string Weburl = ConfigurationManager.AppSettings["AdminTicketURL"];
+            List<Recenttickets> RecentTicketList = new List<Recenttickets>();
+
+            string strparams = "TC_USERID=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"];
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<APIResponseRecenttickets>(jsonString);
+                            RecentTicketList = rootObjects.Data;
+
+
+                            if (
+                                 string.IsNullOrWhiteSpace(ticketType) &&
+                                 string.IsNullOrWhiteSpace(status) &&
+                                 string.IsNullOrWhiteSpace(projectType) &&
+                                 string.IsNullOrWhiteSpace(StartDate) &&
+                                 string.IsNullOrWhiteSpace(EndDate) &&
+                                 string.IsNullOrWhiteSpace(searchPharse))
+                            {
+                                // Exclude Closed tickets on the first load if no filters are applied
+                                RecentTicketList = RecentTicketList.Where(t => t.TC_STATUS != "C").ToList();
+                            }
+
+                            // Apply Search Filter
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+
+                                RecentTicketList = RecentTicketList
+                                    .Where(r => r.TC_PROJECTID.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_COMMENTS.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_PRIORITYTYPE.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_TICKETTYPE.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_STATUS.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_TICKETDATES.ToLower().Contains(searchPharse.ToLower()))
+                                    .ToList();
+                            }
+
+                            // Apply Status Filter
+                            if (!string.IsNullOrEmpty(status))
+                            {
+                                RecentTicketList = RecentTicketList.Where(t => t.TC_STATUS == status).ToList();
+                            }
+                           
+                            // Apply Project Type Filter
+                            if (!string.IsNullOrEmpty(projectType))
+                            {
+                                RecentTicketList = RecentTicketList.Where(t => t.TC_PROJECTID == projectType).ToList();
+                            }
+
+                            // Apply Ticket Type Filter
+                            if (!string.IsNullOrEmpty(ticketType))
+                            {
+                                RecentTicketList = RecentTicketList.Where(t => t.TC_TICKETTYPE == ticketType).ToList();
+                            }
+                            //else
+                            //{
+                            //    // Exclude Closed tickets on first load
+                            //    RecentTicketList = RecentTicketList.Where(t => t.TC_STATUS != "C").ToList();
+                            //}
+                            if (!string.IsNullOrEmpty(StartDate) && !string.IsNullOrEmpty(EndDate))
+                            {
+                                //DateTime fromDate = DateTime.Parse(StartDate);//parse it is used to convert the string to datetime object
+                                //DateTime toDate = DateTime.Parse(EndDate);
+
+
+                                RecentTicketList = RecentTicketList
+          .Where(t => string.Compare(t.TC_TICKETDATE, StartDate) >= 0 &&
+                      string.Compare(t.TC_TICKETDATE, EndDate) <= 0)
+          .ToList();
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            await TicketType();
+            await ProjectType();
+            return View(RecentTicketList);
+        }
+
+
+        public ActionResult Clients()
+        {
+            List<Recenttickets> Lists = new List<Recenttickets>
+            {
+                new Recenttickets {Serialnumber = 1,  Name = "Prathesh" },
+                new Recenttickets { Serialnumber = 2,  Name = "Manoj" },
+                new Recenttickets { Serialnumber = 3,  Name = "Aaksh" },
+                new Recenttickets { Serialnumber = 4,  Name = "Ashwath"},
+                new Recenttickets { Serialnumber = 5,  Name = "Sanjay" }
+            };
+            return View(Lists);
+        }
+
+        public async Task<ActionResult> AdminTickets(string recid2, string userid, string status)
+        {
+            IEnumerable<Admintickets> ticketadminList = await GetAdminTickets(recid2, userid, status); // Your logic to get a list of tickets
+            return View(ticketadminList); // Pass the collection to the view
+        }
+
+        public async Task<IEnumerable<Admintickets>> GetAdminTickets(string recid2, string userid, string status)
+        {
+            Session["RECORDID"] = recid2;
+            Session["STATUS"] = status;
+            
+
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["AdminGetSingleURL"];
+           
+            List<Admintickets> ticketadminList = new List<Admintickets>();
+           
+            string strparams = "TC_USERID=" + userid + "&StrRecid=" + recid2;
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var content = JsonConvert.DeserializeObject<RootObjectsuser>(jsonString);
+                            ticketadminList = content.Data;
+                            Session["LastRecid"] = content.LastRecid;
+                            Session["LastStatus"] = content.LastStatus;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }
+            return ticketadminList;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AdminResponseTicket(Admintickets Admintickets, string RESPONSE_DATETIME, string RESPONSE_COMMENTS, HttpPostedFileBase myfile)
+        {
+            try
+            {
+                // Declare fileBytes and base64Image once, before the if block
+                byte[] fileBytes = null;
+                string base64Image = null;
+
+                // Check if files are uploaded
+                if (Request.Files.Count > 0)
+                {
+                    var file = Request.Files[0]; // Get the first file from the request
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        // If file exists, read and convert it to base64
+                        fileBytes = new byte[file.ContentLength];
+                        file.InputStream.Read(fileBytes, 0, file.ContentLength);
+                        base64Image = Convert.ToBase64String(fileBytes);
+
+                        // Assign the base64 image to the model property
+                        Admintickets.TC_REQUEST_ATTACHMENT_PREFIX = base64Image;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "No file uploaded.");
+                    }
+
+                }
+                // Define your API URL and keys
+                var AdminResponsePostURL = ConfigurationManager.AppSettings["AdminResponse"];
+              
+                var content = $@"{{           
+            ""tC_RECID"": ""{Session["LastRecid"]}"",           
+            ""tC_RESPONSE_ATTACHMENT_PREFIX"": ""{base64Image}"",
+            ""tC_RESPONSE_USERID"": ""{Session["UserID"]}"",
+            ""tC_RESPONSE_DATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
+            ""tC_RESPONSE_COMMENTS"": ""{ RESPONSE_COMMENTS}"",                              
+            ""tC_ADMINNAME"": ""{Session["UserName"]}"",                              
+            ""tC_STATUS"": ""{"R"}""           
+        }}";
+
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(AdminResponsePostURL),
+                    Method = HttpMethod.Put,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler);
+
+                // Send the request and await the response
+                var response = await client.SendAsync(request);
+                // Check if the response is successful
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponseTicketsResponse>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { success = true, message = "Response submitted successfully!" });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Submission failed. Please try again." });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
+                }
+            }
+    
+    catch (Exception ex)
+    {
+        return Json(new { success = false, message = "Exception occurred: " + ex.Message
+    });
+    }
+                                        }
+
+        public bool IsValidJsonArray(string strInput)
+        {
+            if (string.IsNullOrEmpty(strInput)) return false;
+
+            strInput = strInput.Trim();
+
+            // Check if the string starts and ends with square brackets (i.e., it's an array)
+            if (strInput.StartsWith("[") && strInput.EndsWith("]"))
+            {
+                try
+                {
+                    // Try to deserialize the string to a List
+                    JsonConvert.DeserializeObject<List<object>>(strInput);
+                    return true;
+                }
+                catch (JsonException)
+                {
+                    // If deserialization fails, it's not a valid JSON array
+                    return false;
+                }
+            }
+
+            return false;
+        }
+     
+        private string GetImageMimeType(string base64Image)
+        {
+            if (base64Image.Contains("data:image/jpeg;base64,"))
+                return "image/jpeg";
+            if (base64Image.Contains("data:image/png;base64,"))
+                return "image/png";
+            if (base64Image.Contains("data:image/gif;base64,"))
+                return "image/gif";
+            if (base64Image.Contains("data:image/bmp;base64,"))
+                return "image/bmp";
+            // Default to JPEG if not found
+            return "image/jpeg";
+        }
+
+        private string GetImageMimeType2(string base64Image2)
+        {
+            if (base64Image2.Contains("data:image/jpeg;base64,"))
+                return "image/jpeg";
+            if (base64Image2.Contains("data:image/png;base64,"))
+                return "image/png";
+            if (base64Image2.Contains("data:image/gif;base64,"))
+                return "image/gif";
+            if (base64Image2.Contains("data:image/bmp;base64,"))
+                return "image/bmp";
+            // Default to JPEG if not found
+            return "image/jpeg";
+        }
+
+        public async Task<ActionResult> TicketType()
+        {
+            List<SelectListItem> ticketTypes = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXTICKETTYPE"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(webUrlGet);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<TicketTypeModels>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                ticketTypes = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.TT_TICKETTYPE, // or the appropriate value field
+                                    Text = t.TT_TICKETTYPE // or the appropriate text field
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            // Assuming you are passing ticketTypes to the view
+            ViewBag.TicketTypes = ticketTypes;
+
+            return View();
+        }
+        public async Task<ActionResult> ProjectType()
+        
+        {
+            List<SelectListItem> projectTypes = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"];
+            string url = webUrlGet + "?" + strparams;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<TicketTypeModels>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                projectTypes = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.P_NAME, // or the appropriate value field
+                                    Text = t.P_NAME // or the appropriate text field
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            // Assuming you are passing ticketTypes to the view
+            ViewBag.ProjectTypes = projectTypes;
+
+            return View();
+        }
+
+        public async Task<ActionResult> FAQADMIN(int projectID = 0)
+        {
+            string Weburl = ConfigurationManager.AppSettings["FAQGET1"];
+
+            List<Faq> FAQList = new List<Faq>();
+
+            string strparams = "projectID=" + projectID;
+            string finalurl = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<RootObjectFAQ>(jsonString);
+                            FAQList = rootObjects.Data;
+                        }
+
+                        else
+                        {
+                            // Handle the error response here
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., logging)
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+            await ProjectTypeAdminFAQ();
+      
+            return View(FAQList);
+        }
+
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        public async Task <ActionResult> FAQADMINPOST()
+        {
+            await ProjectTypeAdminFAQ();
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> FAQADMINPOST(Faq faq, HttpPostedFileBase myfile)
+        {
+            try
+            {
+                await ProjectTypeAdminFAQ();
+                // Declare fileBytes and base64Image once, before the if block
+                byte[] fileBytes = null;
+                string base64Image = null;
+
+                // Check if files are uploaded
+                if (Request.Files.Count > 0)
+                {
+                    var file = Request.Files[0]; // Get the first file from the request
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        // If file exists, read and convert it to base64
+                        fileBytes = new byte[file.ContentLength];
+                        file.InputStream.Read(fileBytes, 0, file.ContentLength);
+                        base64Image = Convert.ToBase64String(fileBytes);
+
+                        // Assign the base64 image to the model property
+                        faq.F_ATTACHEMENT = base64Image;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "No file uploaded.");
+                    }
+
+                }
+                // Define your API URL and keys
+                var FaqPostURL = ConfigurationManager.AppSettings["FAQPOST"];
+                faq.F_QUESTION = faq.F_QUESTION?.Replace("\"", ""); // Removes double quotes
+                faq.F_ANSWER = faq.F_ANSWER?.Replace("\"", ""); // Removes double quotes
+
+                // Construct the JSON content for the API request
+                var content = $@"{{                     
+            ""f_QUESTION"": ""{faq.F_QUESTION}"",           
+            ""f_ANSWER"": ""{faq.F_ANSWER}"",
+            ""f_ATTACHEMENT"": ""{faq.F_ATTACHEMENT}"",
+            ""f_CREATEDDATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
+            ""f_SORTORDER"": ""{"1"}"",                              
+            ""F_PROJECTRECID"": ""{faq.SelectedProjectType1}"",                              
+            ""F_USERID"": ""{Session["UserID"]}"",                              
+            ""f_DISABLE"": ""{"N"}""               
+        }}";
+              
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(FaqPostURL),
+                    Method = HttpMethod.Post,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler);
+
+                // Send the request and await the response
+                var response = await client.SendAsync(request);
+                // Check if the response is successful
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<RootObjectFAQ>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { success = true, message = "FAQ created successfully!" });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Failed to create FAQ." });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Exception occurred: " + ex.Message });
+            }
+
+           
+        }
+
+        //Admintickets FAQ Ticket type combo
+        public async Task<ActionResult> ProjectTypeAdminFAQ()
+
+        {
+            List<SelectListItem> projectTypes = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"];
+            string url = webUrlGet + "?" + strparams;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<TicketTypeModels>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                projectTypes = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.P_PROJECTRECID, // or the appropriate value field
+                                    Text = t.P_NAME // or the appropriate text field
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            // Assuming you are passing ticketTypes to the view
+            ViewBag.ProjectTypes = projectTypes;
+
+            return View();
+        }
+
+        public async Task<ActionResult> Edit(int F_RECID)
+        {
+            
+            
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["FAQGETBYID"];
+          
+            Faq faq = null;
+
+            string strparams = "recID=" + F_RECID;
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                       
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var content = JsonConvert.DeserializeObject<RootObjectFAQGET>(jsonString);
+                            string base64Image = content.Data.F_ATTACHEMENT;
+                            Session["F_USERID"] =content.Data.F_USERID;
+                            Session["F_RECID"] =content.Data. F_RECID;
+                            Session["F_PROJECTRECID"] =content.Data.F_PROJECTRECID;
+                            if (!string.IsNullOrEmpty(base64Image))
+                            {
+
+                                string mimeType = GetImageMimeType(base64Image);
+
+                                ViewBag.IMAGE = base64Image;
+                                ViewBag.MIMEType = mimeType;
+                               
+                            }
+                            faq = content.Data;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }
+           
+            return View(faq);
+        }
+        [HttpPost]
+        public async Task<ActionResult> Edit(Faq faq, HttpPostedFileBase myfile)
+        {
+            try
+            {
+                // Declare fileBytes and base64Image once, before the if block
+                byte[] fileBytes = null;
+                string base64Image = null;
+
+                // Check if files are uploaded
+                if (Request.Files.Count > 0)
+                {
+                    var file = Request.Files[0]; // Get the first file from the request
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        // If file exists, read and convert it to base64
+                        fileBytes = new byte[file.ContentLength];
+                        file.InputStream.Read(fileBytes, 0, file.ContentLength);
+                        base64Image = Convert.ToBase64String(fileBytes);
+
+                        // Assign the base64 image to the model property
+                        faq.F_ATTACHEMENT = base64Image;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "No file uploaded.");
+                    }
+
+                }
+                // Define your API URL and keys
+                var FaqPostURL = ConfigurationManager.AppSettings["FAQUPDATE"];
+                faq.F_QUESTION = faq.F_QUESTION?.Replace("\"", ""); // Removes double quotes
+                faq.F_ANSWER = faq.F_ANSWER?.Replace("\"", ""); // Removes double quotes
+
+                // Construct the JSON content for the API request
+                var content = $@"{{           
+            ""f_RECID"": ""{ Session["F_RECID"]}"",           
+            ""f_QUESTION"": ""{faq.F_QUESTION}"",           
+            ""f_ANSWER"": ""{faq.F_ANSWER}"",
+            ""f_ATTACHEMENT"": ""{faq.F_ATTACHEMENT}"",
+            ""f_CREATEDDATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
+            ""f_SORTORDER"": ""{"1"}"",                              
+            ""f_PROJECTRECID"": ""{Session["F_PROJECTRECID"]}"",                              
+            ""f_USERID"": ""{Session["F_USERID"]}"",                              
+            ""f_DISABLE"": ""{"N"}""           
+        }}";
+
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(FaqPostURL),
+                    Method = HttpMethod.Put,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler);
+
+                // Send the request and await the response
+                var response = await client.SendAsync(request);
+                // Check if the response is successful
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<RootObjectFAQ>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { success = true, message = "FAQ edited successfully!" });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Failed to edit FAQ." });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Exception: " + ex.Message });
+            }
+        }
+
+        public async Task<ActionResult> Delete(int F_RECID)
+        {
+
+            string WEBURLDELETE = ConfigurationManager.AppSettings["FAQDELETE"];
+
+            string strparams = "RECID=" + F_RECID;
+            string finalurl = WEBURLDELETE + "?" + strparams;
+           
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                        var request = new HttpRequestMessage
+                        {
+                            Method = HttpMethod.Delete,
+                            RequestUri = new Uri(finalurl)
+                        };
+
+                        var response = await client.SendAsync(request);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            var apiResponse = JsonConvert.DeserializeObject<RootObjectFAQ>(responseBody);
+
+                            if (apiResponse.Status == "Y")
+                            {
+
+                                string redirectUrl = Url.Action("FAQADMIN", "RecentTickets", new {});
+                                return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
+                            }
+                            else if (apiResponse.Status == "U")
+                            {
+                                return Json(new { status = "error", message = apiResponse.Message });
+                            }
+                            else if (apiResponse.Status == "N")
+                            {
+                                return Json(new { status = "error", message = apiResponse.Message });
+                            }
+
+
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Failed to delete: {response.StatusCode} - {response.ReasonPhrase}");
+                        }
+                    }
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Console.WriteLine($"HTTP Request error occurred: {httpEx.Message}");
+            }
+            catch (TaskCanceledException tcEx)
+            {
+                Console.WriteLine($"Request timed out: {tcEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            return View();
+        }
+    }
+}

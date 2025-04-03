@@ -1,0 +1,101 @@
+﻿@model  PSS_CMS.Models.Ticket
+
+@using (Html.BeginForm("ClientResponseTicket", "Tickets", FormMethod.Post, new { id = "ticketForm", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-md-4 col-lg-4">
+            @Html.LabelFor(model => model.Combo, "Status", new { @class = "pb-2 " })
+            @Html.DropDownListFor(model => model.Combo,
+             new SelectList(new List<string> { "Re-open", "Close" }),
+             "Please select a status",
+             new { @class = "form-select select#statusDropdown", @id = "statusDropdown", onchange = "sendStatus()", required = "required" })
+        </div>
+
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-md-12">
+            @Html.LabelFor(model => model.TC_COMMENTS, "User Comments", new { @class = "pb-2" })
+            @Html.TextAreaFor(model => model.TC_COMMENTS, new { @class = "form-control custom-textarea", placeholder = "Please enter your comments here....", rows = "10", cols = "70", required = "required" })
+        </div>
+        <div class="col-md-12 mt-2">
+            @Html.Label("myfile", "Attachments:")
+            <input type="file" id="myfile" name="myfile" accept=".pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv" onchange="validateFile()" />
+            <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .docx, .csv)</small>
+        </div>
+        <div class="col-md-12 mt-2 mb-3 d-flex justify-content-md-end justify-content-start">
+            <button type="submit" id="submitBtn" class="btncolorsubmit me-3">Submit</button>
+            <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History", "Tickets")'">Cancel</button>
+        </div>
+    </div>
+
+
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/Scripts/Formatcheck.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#ticketForm").submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var formData = new FormData(this); // Get form data including files
+            var submitButton = $("#submitBtn"); // Target the submit button
+
+            // Change button text and disable it
+            submitButton.prop("disabled", true).text("Submitting...");
+
+            $.ajax({
+                url: '@Url.Action("ClientResponseTicket", "Tickets")', // Controller action
+                type: "POST",
+                data: formData,
+                processData: false, // Required for FormData
+                contentType: false, // Required for FormData
+                success: function (response) {
+                    let message = response.message; // Dynamic message
+
+                    if (response.status === "Y") {
+                        Swal.fire({
+                            title: "Success!",
+                            text: message,
+                            icon: "success",
+                            timer: 2000, // Auto close after 2 seconds
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = '@Url.Action("Ticket_History", "Tickets")'; // Redirect after alert
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: message,
+                            icon: "error",
+                            timer: 2000, // Auto close after 2 seconds
+                            showConfirmButton: false
+                        });
+
+                        // Re-enable button if there's an error
+                        submitButton.prop("disabled", false).text("Submit");
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Something went wrong. Please try again.",
+                        icon: "error",
+                        timer: 2000, // Auto close after 2 seconds
+                        showConfirmButton: false
+                    });
+
+                    // Re-enable button in case of error
+                    submitButton.prop("disabled", false).text("Submit");
+                }
+            });
+        });
+    });
+</script>
+
+
+

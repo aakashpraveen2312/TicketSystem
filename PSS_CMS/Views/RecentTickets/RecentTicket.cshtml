@@ -1,0 +1,441 @@
+﻿@model IEnumerable<PSS_CMS.Models.Recenttickets>
+@using GridMvc.Html
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    @*Bootstrap Icons and Boxicons link*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <script src="~/Scripts/Script.js"></script>
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+
+    <!-- DateRangePicker CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <style>
+        .position-relative {
+            position: relative;
+        }
+
+        .bi-chevron-down {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #555;
+        }
+
+        input#flexCheckDefault {
+            font-size: 20px !important;
+        }
+
+        .bi-caret-down-fill {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 14px;
+            color: #555;
+        }
+
+        #statusDropdown {
+            appearance: none;
+            padding-right: 30px;
+        }
+        .daterangepicker .btn-reset {
+            margin-left: 10px;
+            background-color: green;
+            color: white;
+        }
+
+        .daterangepicker .btn-danger {
+            color: white;
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <nav class="sidebar close">
+        <header>
+            <div class="text logo-text" style="display:inline-block"> <a href="@Url.Action("Dashboard", "DashBoard")"><img src="~/assets/img/Infinity logo bgremove.png" alt="PSS Logo" class="logo"></a></div>
+            <a href="@Url.Action("RecentTicket", "RecentTickets")" title="Tickets">
+                <i class="bi bi-card-list text logo-text" style="position: absolute; top: 50%; left: 52%; color: #695cfe;font-size:27px;"></i>
+            </a>
+            <i class="bx bx-chevron-right toggle" style="margin-right:28px;"></i>
+        </header>
+
+
+        <div class="menu-bar">
+            <div class="menu">
+                <ul class="menu-links" style="margin-left:20px">
+                    <!-- Configuration Section -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/closefolder.png" class="settingsIcon" style="width:25px;height:25px;" />
+                        <img src="~/assets/img/open.png" class="openIcon" style="display:none;width:25px;height:25px;" />
+                        <span class="text nav-text" style="margin-left:15px">KNOWLEDGE BASED </span>
+                    </li>
+                    <!-- User Group -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("FAQADMIN", "RecentTickets")">
+                            <i class='bx bxs-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">FAQ</span>
+                        </a>
+                    </li>
+                    <!-- App User -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
+                            <i class='bx bxs-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">White Paper</span>
+                        </a>
+                    </li>
+                    <!-- Settings Section -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/closefolder.png" class="settingsIcon" style="width:25px;height:25px;" />
+                        <img src="~/assets/img/open.png" class="openIcon" style="display:none;width:25px;height:25px;" />
+                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
+                    </li>
+                    <!-- Change Password -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("ChangePassword", "RecentTickets")">
+                            <i class='bx bx-user-voice' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                        </a>
+                    </li>
+                    <!-- Logout -->
+                    <li class="nav-link">
+                        <a href="javascript:void(0);" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
+                            <i class='bx bx-log-out' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content" style=" overflow-x: hidden!important;">
+
+        <nav class="nav d-flex">
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
+
+
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+
+            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+
+                </a>
+            </div>
+
+
+        </nav>
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-10 col-md-10 col-sm-10">
+
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+
+                    <li>Tickets</li>
+
+                </ul>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 mt-2 d-flex justify-content-end">
+                <button type="button" id="resetFilters" class="btn btn-primary">Reset Filters</button>
+                </div>
+
+            </div>
+
+
+
+            <!-- Row for Combo Boxes -->
+            <div class="row mt-4 ms-1">
+                <div class="col-lg-3 col-md-4 col-sm-4">
+                    <div class="position-relative flex-grow-1">
+
+                        @if (ViewBag.ProjectTypes != null)
+                        {
+                            @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType,
+                                                  (IEnumerable<SelectListItem>)ViewBag.ProjectTypes,
+                                                  "Select Project",
+                                                  new { @class = "", id = "projectTypeFilter1" })
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType,
+                                                  (IEnumerable<SelectListItem>)ViewBag.ProjectTypes,
+                                                    "No projects are available",
+                                                  new { @class = "", id = "projectTypeFilter1" })
+
+                        }
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-sm-4">
+                    <div class="position-relative ">
+
+                        @Html.DropDownListFor(model => model.FirstOrDefault().SelectedTicketType, (IEnumerable<SelectListItem>)ViewBag.TicketTypes, "Select Ticket Type", new { @class = "", id = "ticketTypeFilter1" })
+
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-sm-4">
+                    <div class="">
+
+                        <div class="position-relative">
+                            <select class="" id="statusDropdown1">
+                                <option value="">Select Status</option>
+                                <option value="S">Submitted</option>
+                                <option value="R">Resolved</option>
+                                <option value="C">Closed</option>
+                                <option value="O">Re-Opened</option>
+                            </select>
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-4">
+                    <div class="row ">
+
+                        <div class="col-md-10">
+                            @using (Html.BeginForm("RecentTicket", "RecentTickets", FormMethod.Get, new { id = "searchForm" }))
+                            {
+                                <div class="position-relative w-100">
+                                    <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" value="@Request["searchPharse"]" style="margin-top:9px; padding-right: 40px;" />
+                                    @*<i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-2 text-muted"></i>*@
+                                </div>
+                            }
+                        </div>
+
+                        <div class="col-md-2 mt-3">
+                            <i class="bi bi-calendar3"  id="daterange" style="cursor: pointer; color: #357ebd;font-size:20px"></i>
+                            <form id="dateForm" method="post" action="@Url.Action("RecentTicket", "RecentTickets")">
+                                @Html.Hidden("StartDate")
+                                @Html.Hidden("EndDate")
+                            </form>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+            <div class="table mt-3 ms-3" id="ticketTable1">
+                @if (Model != null)
+                {
+                    @Html.Grid(Model).Columns(columns =>
+               {
+                   columns.Add(c => c.TC_USERNAME).Titled("User Name").SetWidth("120px");
+                   columns.Add(c => c.TC_TICKETDATES).Titled("Date").SetWidth("150px");
+                   columns.Add(c => c.TC_PROJECTID).Titled("Project");
+                   columns.Add(c => c.TC_COMMENTS).Titled("Comments");
+                   columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority").SetWidth("100px");
+                   columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("100px");
+                   columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status").SetWidth("100px");
+                   columns.Add().Titled("Action")
+                  .Encoded(false)
+                   .Sanitized(false)
+                   .SetWidth(30)
+                .RenderValueAs(o =>
+                {
+
+
+                    var LineItemsurl = Url.Action("AdminTickets", "RecentTickets", new { recid2 = o.TC_RECID, userid = o.TC_USERID, status = o.TC_STATUS, adminresolvedname = o.TC_ADMINNAME });
+                    var LineItemiconHtml = "<i class='bx bx-envelope'></i>";
+                    var LineItemlinkHtml = $"<a href='{LineItemsurl}' data-toggle='tooltip' data-placement='top' title='Tickets'>{LineItemiconHtml}</a>";
+
+
+                    return MvcHtmlString.Create($"{LineItemlinkHtml}");
+                });
+
+               }).WithPaging(10).Sortable(true)
+                }
+                else
+                {
+                    <div class="alert alert-warning text-center">
+                        <b>No Ticket's are available</b>
+                    </div>}
+
+            </div>
+
+        </div>
+
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+            <h4>Are you sure you want to log out?</h4>
+        </div>
+        <div class="offcanvas-footer d-flex justify-content-center">
+            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+        </div>
+    </div>
+    <div id="preloader2"></div>
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.getElementById("logoutLink").addEventListener("click", function () {
+        Swal.fire({
+            title: "Are you sure you want to log out?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#dc3545",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '@Url.Action("Logout", "Login")';
+            }
+        });
+    });
+    </script>
+
+    @*script for filers*@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(function () {
+        var selectedStatus1 = localStorage.getItem('ticketStatus') || '';
+        var selectedProjectType = localStorage.getItem('projectType') || '';
+        var selectedTicketType = localStorage.getItem('ticketType') || '';
+        var selectedStartDate = localStorage.getItem('StartDate') || '';
+        var selectedEndDate = localStorage.getItem('EndDate') || '';
+
+        if (selectedStatus1) {
+            $("#statusDropdown1").val(selectedStatus1);
+        }
+        if (selectedProjectType) {
+            $("#projectTypeFilter1").val(selectedProjectType);
+        }
+        if (selectedTicketType) {
+            $("#ticketTypeFilter1").val(selectedTicketType);
+        }
+        if (selectedStartDate && selectedEndDate) {
+            $('#daterange').data('daterangepicker').setStartDate(selectedStartDate);
+            $('#daterange').data('daterangepicker').setEndDate(selectedEndDate);
+        }
+
+        function updateTickets() {
+            var selectedStatus1 = $("#statusDropdown1").val();
+            var selectedProjectType = $("#projectTypeFilter1").val();
+            var selectedTicketType = $("#ticketTypeFilter1").val();
+            var startDate = $('input[name="StartDate"]').val();
+            var endDate = $('input[name="EndDate"]').val();
+
+            localStorage.setItem('ticketStatus', selectedStatus1);
+            localStorage.setItem('projectType', selectedProjectType);
+            localStorage.setItem('ticketType', selectedTicketType);
+            localStorage.setItem('StartDate', startDate);
+            localStorage.setItem('EndDate', endDate);
+
+            var url = '@Url.Action("RecentTicket", "RecentTickets")' +
+                "?status=" + encodeURIComponent(selectedStatus1) +
+                "&projectType=" + encodeURIComponent(selectedProjectType) +
+                "&ticketType=" + encodeURIComponent(selectedTicketType) +
+                "&StartDate=" + encodeURIComponent(startDate) +
+                "&EndDate=" + encodeURIComponent(endDate);
+
+            console.log("AJAX URL: " + url);
+
+            $("#preloader2").css("display", "block");
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (response) {
+                    console.log("AJAX success");
+                    $("#preloader2").hide();
+                    var newTable1 = $(response).find("#ticketTable1").html();
+                    if (newTable1) {
+                        $("#ticketTable1").html(newTable1);
+                    } else {
+                        console.error("Error: Response does not contain #ticketTable1");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("AJAX Error: ", error);
+                    $("#preloader2").hide();
+                }
+            });
+        }
+
+        $("#statusDropdown1, #projectTypeFilter1, #ticketTypeFilter1").change(updateTickets);
+
+        $('#daterange').daterangepicker({
+            locale: {
+                format: 'DD-MM-YYYY',
+                cancelLabel: 'Cancel',
+                applyLabel: 'Apply'
+            },
+            opens: 'right',
+            autoApply: false,
+            showDropdowns: true
+        }, function (start, end) {
+            $('input[name="StartDate"]').val(start.format('YYYY-MM-DD'));
+            $('input[name="EndDate"]').val(end.format('YYYY-MM-DD'));
+            updateTickets();
+        });
+        // Change Cancel Button Color
+        $('.daterangepicker .btn.btn-default').addClass('btn-danger').removeClass('btn-default');
+
+        $('#resetFilters').click(function () {
+            localStorage.clear();
+            $("#statusDropdown1, #projectTypeFilter1, #ticketTypeFilter1,#searchPharse").val('');
+            $('input[name="StartDate"], input[name="EndDate"]').val('');
+            updateTickets();
+        });
+        $(document).ready(function () {
+            $("a, button,li").click(function () {
+                localStorage.clear();
+            });
+        });
+        $(window).on("beforeunload", function () {
+            localStorage.clear();
+        });
+
+
+    });
+    </script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
+
+</body>
+</html>

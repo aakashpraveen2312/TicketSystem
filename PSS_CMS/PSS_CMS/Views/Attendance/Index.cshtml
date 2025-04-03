@@ -1,0 +1,336 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userName = Session["UserName"] as string;
+    var userRole = Session["UserRole"] as string; // Get the user role from the session
+    var storedEmail = Session["EmailId"] as string;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title Attendance</title>
+
+
+    <!-- Favicons -->
+    <link href="~/assets/img/PSSlogo.png" rel="icon">
+    <link href="~/assets/img/PSSlogo.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/assets/vendor/aos/aos.css" rel="stylesheet" />
+    <link href="~/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+    <!-- Main CSS File -->
+    <link href="~/Content/main.css" rel="stylesheet" />
+    <link href="~/Content/EditiSub.css" rel="stylesheet" />
+    <!-- Bootstrap JS (and dependencies) -->
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <!-- =======================================================
+    * Template Name: Arsha
+    * Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
+    * Updated: Aug 07 2024 with Bootstrap v5.3.3
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <style>
+        #attendence {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section dark-background">
+
+        <div class="container">
+            <div class="row gy-4">
+                @if (ViewBag.Menus != null)
+                {
+                    var attendancemain = (List<string>)ViewBag.AttendanceMainText;
+                    <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="zoom-out">
+                        <h1>@attendancemain[0]</h1>
+                        <p>
+                            <b>"@attendancemain[1]"  </b>          
+                            <div class="d-flex">
+                            </div>
+                    </div>
+                }
+
+                @{ var base64Image = ViewBag.ATTENDANCEMAINIMAGE as string;
+                    var mimeType = ViewBag.ATTENDANCEMIMEType as string ?? "image/jpeg"; // Default to JPEG if MIME type is not provided
+                }
+
+            <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-out" data-aos-delay="200">
+                @if (!string.IsNullOrEmpty(base64Image))
+                {<!-- Display the fetched image -->
+                    <img src="data:@mimeType;base64,@base64Image" class="img-fluid animated" alt="Main Content Image" /> }
+                else
+                { <!-- Placeholder if no image exists -->
+                    <img src="~/assets/img/placeholder.png" class="img-fluid animated" alt="No Image Available" />}
+                @if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(userRole))
+                {
+                    // Compare the role stored in the session
+                    if (userRole == "Admin" || userRole == "Superuser")
+                    {
+                        <a href="@Url.Action("AttendanceMainSection", "TemplateAttendance", new { section = "Attendance Main Section" })" class="edit-icon" title="Edit Content">
+                            <i class="bx bxs-edit-alt" id="editicon"></i>
+                        </a>
+                    }
+                }
+            </div>
+
+            </div>
+        </div>
+
+    </section><!-- /Hero Section -->
+    <!-- Clients Section -->
+    <section id="clients" class="clients section light-background">
+
+        <div class="container" data-aos="zoom-in">
+
+            <div class="swiper init-swiper">
+                <script type="application/json" class="swiper-config">
+                    {
+                      "loop": true,
+                      "speed": 600,
+                      "autoplay": {
+                        "delay": 5000
+                      },
+                      "slidesPerView": "auto",
+                      "pagination": {
+                        "el": ".swiper-pagination",
+                        "type": "bullets",
+                        "clickable": true
+                      },
+                      "breakpoints": {
+                        "320": {
+                          "slidesPerView": 2,
+                          "spaceBetween": 40
+                        },
+                        "480": {
+                          "slidesPerView": 3,
+                          "spaceBetween": 60
+                        },
+                        "640": {
+                          "slidesPerView": 4,
+                          "spaceBetween": 80
+                        },
+                        "992": {
+                          "slidesPerView": 5,
+                          "spaceBetween": 120
+                        },
+                        "1200": {
+                          "slidesPerView": 6,
+                          "spaceBetween": 120
+                        }
+                      }
+                    }
+                </script>
+                <div class="swiper-wrapper align-items-center">
+                    <div class="swiper-slide"><img src="~/assets/img/clients/client-1.png" class="img-fluid" alt=""></div>
+                    <div class="swiper-slide"><img src="~/assets/img/clients/client-2.png" class="img-fluid" alt=""></div>
+                    <div class="swiper-slide"><img src="~/assets/img/clients/client-3.png" class="img-fluid" alt=""></div>
+                    <div class="swiper-slide"><img src="~/assets/img/clients/client-4.png" class="img-fluid" alt=""></div>
+                    <div class="swiper-slide"><img src="~/assets/img/clients/client-5.png" class="img-fluid" alt=""></div>
+                    <div class="swiper-slide"><img src="~/assets/img/clients/client-6.png" class="img-fluid" alt=""></div>
+                    <div class="swiper-slide"><img src="~/assets/img/clients/client-7.png" class="img-fluid" alt=""></div>
+                    <div class="swiper-slide"><img src="~/assets/img/clients/client-8.png" class="img-fluid" alt=""></div>
+                </div>
+            </div>
+
+        </div>
+
+    </section><!-- /Clients Section -->
+    <!-- About Section -->
+
+    <section id="about" class="about section">
+
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+            <h2>ATTENDANCE</h2>
+
+
+            <div class="container">
+
+                <div class="row gy-4">
+
+                    <div class="col-lg-12 content" data-aos="fade-up" data-aos-delay="100">
+                        <p>
+                            <b>   It is a critical aspect of time management and productivity tracking, ensuring that individuals are fulfilling their responsibilities</b>
+                        </p>
+
+                    </div>
+
+                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </section><!-- /About Section -->
+    <!-- Why Us Section -->
+    <section id="why-us" class="section why-us light-background" data-builder="section">
+
+        <div class="container-fluid">
+
+            <div class="row gy-4">
+
+                <div class="col-lg-7 d-flex flex-column justify-content-center order-2 order-lg-1">
+
+                    <div class="content px-xl-5" data-aos="fade-up" data-aos-delay="100">
+                        <h3>
+                            <strong> Attendance Tracking </strong>
+                            <span>
+                                Monitoring attendance is crucial for maintaining discipline, ensuring productivity, and complying with organizational or institutional policies.
+
+                            </span>
+                        </h3>
+                        <p>
+                            Business Growth, Drives productivity and innovation by bringing in qualified employees.
+                        </p>
+                    </div>
+
+                    <div class="faq-container px-xl-5" data-aos="fade-up" data-aos-delay="200">
+
+                        <div class="faq-item faq-active">
+
+                            <h3><span>01</span>Manual Attendence</h3>
+                            <div class="faq-content">
+                                <p>
+                                    Attendance sheets or registers.
+                                    Simple but time-consuming and prone to errors.
+                                </p>
+                            </div>
+                            <i class="faq-toggle bi bi-chevron-right"></i>
+                        </div><!-- End Faq item-->
+
+                        <div class="faq-item">
+                            <h3><span>02</span> Digital attendence</h3>
+                            <div class="faq-content">
+                                <p>
+                                    Biometric Systems: Fingerprint, facial recognition, or iris scanning.
+                                    Mobile Apps: GPS-based or QR code scanning via smartphones.
+                                </p>
+                            </div>
+                            <i class="faq-toggle bi bi-chevron-right"></i>
+                        </div><!-- End Faq item-->
+
+                        <div class="faq-item">
+                            <h3><span>03</span> Automated Attendance</h3>
+                            <div class="faq-content">
+                                <p>
+                                    Sensors or IoT devices to record entries/exits automatically.
+                                    Integrated with time-tracking software.
+                                </p>
+                            </div>
+                            <i class="faq-toggle bi bi-chevron-right"></i>
+                        </div><!-- End Faq item-->
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-5 order-1 order-lg-2 why-us-img">
+                    <img src="~/HRMS/Images/attendance/zoommeeting2.jpg" class="img-fluid" alt="" data-aos="zoom-in" data-aos-delay="100">
+                </div>
+            </div>
+
+        </div>
+
+    </section><!-- /Why Us Section -->
+    <!-- Skills Section -->
+    <section id="skills" class="skills section">
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="row">
+
+                <div class="col-lg-6 d-flex align-items-center">
+                    <img src="~/HRMS/Images/attendance/webbased.PNG" class="img-fluid" alt="">
+                </div>
+
+                <div class="col-lg-6 pt-4 pt-lg-0 content">
+
+                    <h3>Web-Based Attendance Systems</h3>
+                    <p class="fst-italic">
+                        "A technology-based solution that uses unique physical or behavioral characteristics (such as fingerprints, facial features, or iris patterns) to verify an individual's identity and record their attendance".
+                    </p>
+
+                    <div class="skills-content skills-animation">
+
+                        <div class="card">
+                            <h5>Data Capture: The system scans a biometric feature such as a fingerprint, face, or iris.</h5>
+                            <style>
+                                .card {
+                                    border: 1px;
+                                }
+                            </style>
+                        </div>
+                        <div class="card">
+                            <h5>Storage,The scanned data is converted into a digital template and securely stored in a database</h5>
+                            <style>
+                                .card {
+                                    border: 1px;
+                                }
+                            </style>
+                        </div>
+                    </div><!-- End Skills Item -->
+
+
+                </div><!-- End Skills Item -->
+
+
+
+            </div>
+
+        </div>
+
+
+    </section><!-- /Skills Section -->
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+
+    <!-- Preloader -->
+    <script>
+        // Initialize Swiper
+        document.addEventListener("DOMContentLoaded", function () {
+            const configElement = document.querySelector(".swiper-config");
+            const swiperConfig = configElement ? JSON.parse(configElement.textContent) : {};
+
+            new Swiper(".init-swiper", swiperConfig);
+        });
+    </script>
+
+
+</body>
+</html>

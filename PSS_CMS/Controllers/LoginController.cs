@@ -23,13 +23,13 @@ namespace PSS_CMS.Controllers
 
         [HttpPost]
        
-        public async Task<ActionResult> Index(string L_USERNAME, string L_PASSWORD, Login model)        
+        public async Task<ActionResult> Index(string L_USERNAME, string L_PASSWORD,string L_DOMAIN, Login model)        
         {
-
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];           
+            
             var Logurl = ConfigurationManager.AppSettings["Login"];
-          
-            object content = $"StrUserid={Uri.EscapeDataString(L_USERNAME)}&strPassword={Uri.EscapeDataString(L_PASSWORD)}";
 
+            object content = "StrUserid=" + L_USERNAME + "&strPassword=" + L_PASSWORD + "&domain="+ L_DOMAIN;
             string urll = Logurl +"?"+ content;
 
 
@@ -41,7 +41,7 @@ namespace PSS_CMS.Controllers
                     Method = HttpMethod.Get,
                     Headers = {
                         { "X-Version", "1" }, // HERE IS HOW TO ADD HEADERS,
-                        //{ HttpRequestHeader.Authorization.ToString(), AuthKey },
+                        { HttpRequestHeader.Authorization.ToString(), AuthKey },
                         { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" },
                         { HttpRequestHeader.ContentType.ToString(), "application/json" },  //use this content type if you want to send more than one content type
                     },
@@ -50,17 +50,21 @@ namespace PSS_CMS.Controllers
                 handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
                 HttpClient client = new HttpClient(handler);
 
-                var responseTask = client.SendAsync(request).GetAwaiter().GetResult();
-                if (responseTask.IsSuccessStatusCode)
+                client.DefaultRequestHeaders.Add("Authorization", "Custom " + AuthKey);
+                // client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                  var responseTask = client.SendAsync(request).GetAwaiter().GetResult();
+                 if (responseTask.IsSuccessStatusCode)
                 {
                     var responseContent = responseTask.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                    
+
+
                     var Response = JsonConvert.DeserializeObject<APIResponseLogin>(responseContent);
 
                     string errormessage = Response.Message;
                     string Status = Response.Status;
-
-                    string Role = Response.Data[0].L_ROLE;
+                    Session["APIKEY"] = Response.APIkey;
+                     string Role = Response.Data[0].L_ROLE;
                   
                     if (Status == "Y"&& Role=="User")
                      {
@@ -158,7 +162,7 @@ namespace PSS_CMS.Controllers
         public async Task<ActionResult> AutoCloseTicket()
         {
             string WEBURLGET = ConfigurationManager.AppSettings["TICKETAUTOCLOSE"];
-            string strparams = "userid=" + Session["UserID"];
+            string strparams = "userid=" + Session["UserID"]+"&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
           
 

@@ -18,7 +18,9 @@ namespace PSS_CMS.Controllers
         public async Task<ActionResult> Dashboard()
         {
             string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDGET"];
-            string strparams = "Userid=" + Session["UserID"]+ "&type="+ Session["UserRole"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "Userid=" + Session["UserID"]+ "&type="+ Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
             Dashborardchart dashboardData = null;
 
@@ -30,6 +32,8 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await client.GetAsync(finalurl);
@@ -122,8 +126,12 @@ namespace PSS_CMS.Controllers
         {
             int recid = recid3 ?? 0;
             string webUrlGet = ConfigurationManager.AppSettings["TIMELINECHART"];
-            string authKey = ConfigurationManager.AppSettings["Authkey"];
-            string finalUrl = $"{webUrlGet}?recid={recid}";
+            
+            string APIKey = Session["APIKEY"].ToString();
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string strparams = "recid=" + recid3 + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = webUrlGet + "?" + strparams;
+           
 
             try
             {
@@ -133,10 +141,11 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authKey);
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                        HttpResponseMessage response = await client.GetAsync(finalUrl);
+                        HttpResponseMessage response = await client.GetAsync(finalurl);
 
                         if (!response.IsSuccessStatusCode)
                         {

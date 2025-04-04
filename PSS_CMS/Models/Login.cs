@@ -22,9 +22,9 @@ namespace PSS_CMS.Models
         public string L_SORTORDER { get; set; }
         public string L_DISABLE { get; set; }
         public string L_EMAILID { get; set; }
-        //[DisplayName("Domain")]
-        //[Required]
-        //public string L_DOMAIN { get; set; }
+        [DisplayName("Domain")]
+        [Required]
+        public string L_DOMAIN { get; set; }
 
         public string Message { get; set; }
 
@@ -49,6 +49,7 @@ namespace PSS_CMS.Models
         public string L_USERID { get; set; }
         public string L_COMPANYID { get; set; }
         public string L_PROJECTID { get; set; }
+        public string APIkey { get; set; }
      
 
     }

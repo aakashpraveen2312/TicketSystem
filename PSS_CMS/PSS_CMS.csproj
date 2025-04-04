@@ -281,6 +281,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\RecentTicketsController.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
+    <Compile Include="Controllers\UserGroupController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -295,6 +296,7 @@
     <Compile Include="Models\Tickethistory.cs" />
     <Compile Include="Models\Tickets.cs" />
     <Compile Include="Models\Timeline.cs" />
+    <Compile Include="Models\Usergroup.cs" />
     <Compile Include="Models\WhitePaper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -442,40 +444,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="HRMS\Images\Appraisal\feedback.jpg" />
-    <Content Include="HRMS\Images\Appraisal\mainimage.png" />
-    <Content Include="HRMS\Images\Appraisal\MainImage_Appraisal.png" />
-    <Content Include="HRMS\Images\Appraisal\realImage.jpg" />
-    <Content Include="HRMS\Images\Appraisal\second_apparaisal image.jpg" />
-    <Content Include="HRMS\Images\Appraisal\second_imageAppraisal.png" />
-    <Content Include="HRMS\Images\Appraisal\thirdimage_appraisal.jpg" />
-    <Content Include="HRMS\Images\attendance\download.jpg" />
-    <Content Include="HRMS\Images\attendance\MainImage.png" />
-    <Content Include="HRMS\Images\attendance\mainimage2.png" />
-    <Content Include="HRMS\Images\attendance\secondImages.jpg" />
-    <Content Include="HRMS\Images\attendance\webbased.PNG" />
-    <Content Include="HRMS\Images\attendance\zoommeeting.jpg" />
-    <Content Include="HRMS\Images\attendance\zoommeeting2.jpg" />
-    <Content Include="HRMS\Images\ExitProcess\LeavingMainImage %281%29.png" />
-    <Content Include="HRMS\Images\LearningDevelopment\file.png" />
-    <Content Include="HRMS\Images\LearningDevelopment\MainImage.png" />
-    <Content Include="HRMS\Images\LearningDevelopment\second.jpg" />
-    <Content Include="HRMS\Images\Payroll\Image1Money.jpg" />
-    <Content Include="HRMS\Images\Payroll\Image2.jpg" />
-    <Content Include="HRMS\Images\Payroll\MainImage.png" />
-    <Content Include="HRMS\Images\Payroll\systemisedpayroll.jpg" />
-    <Content Include="HRMS\Images\Payroll\Untitled-design-2-scaled.jpg" />
-    <Content Include="HRMS\Images\pdficon.png" />
-    <Content Include="HRMS\Images\PDF\high-pr-pdf-submission-sites-list.jpg" />
-    <Content Include="HRMS\Images\pexels-kateryna-babaieva-1423213-2965260.jpg" />
-    <Content Include="HRMS\Images\Recruiment\external recuriment.jpg" />
-    <Content Include="HRMS\Images\Recruiment\MainImages_Recuriment.jpg" />
-    <Content Include="HRMS\Images\Recruiment\recuriment1.jpg" />
-    <Content Include="HRMS\Images\TDS\income-tax-savings-tips-in-india.png" />
-    <Content Include="HRMS\Images\TDS\MainImage1.png" />
-    <Content Include="HRMS\Images\TDS\MainImage1_prev_ui.png" />
-    <Content Include="HRMS\Images\TDS\TAX_PAYERa.jpg" />
-    <Content Include="HRMS\Images\TDS\woman-working-calculator-with-tax-coins.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="assets\img\conceptual-image-dollar-banknote-with-text-tax-plan_446269-1031.avif" />
@@ -530,6 +498,7 @@
     <Content Include="assets\vendor\glightbox\css\conceptual-image-dollar-banknote-with-text-tax-plan_446269-1031.avif" />
     <Content Include="assets\vendor\swiper\swiper-bundle.min.js.map" />
     <Content Include="Grid.mvc.readme" />
+    <Content Include="Json\Main.json" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\ComboFilter.js" />
     <Content Include="Scripts\Fordelete.js" />
@@ -582,6 +551,9 @@
     <Content Include="Views\KnowledgeBased\Edit.cshtml" />
     <Content Include="Views\DashBoard\Dashboard.cshtml" />
     <Content Include="Views\DashBoard\TimelineChart.cshtml" />
+    <Content Include="Views\UserGroup\List.cshtml" />
+    <Content Include="Views\UserGroup\Create.cshtml" />
+    <Content Include="Views\UserGroup\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

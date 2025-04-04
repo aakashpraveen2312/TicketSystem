@@ -145,7 +145,7 @@
                         @using (Html.BeginForm("Ticket_History", "Tickets", FormMethod.Get, new { id = "searchForm" }))
                         {
 
-                            <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%" />
+                            <input type="text" id="searchPharse" name="searchPharse" autocomplete="off" class="inputcustom" placeholder="Search" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%" />
 
                         }
                     </div>
@@ -172,7 +172,7 @@
 
         </div>
 
-        <div class="table table-responsive mt-1" id="ticketTable">
+        <div class="table table-responsive ms-1 mt-1" id="ticketTable">
             @if (Model != null)
             {
                 @Html.Grid(Model).Columns(columns =>

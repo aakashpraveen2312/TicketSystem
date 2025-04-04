@@ -8,13 +8,21 @@ namespace PSS_CMS.Models
 {
     public class Tickets : TicketComboTypes
     {
-        public int TC_RECID { get; set; }
-        //public int P_PROJECTRECID { get; set; }
-        //public string P_NAME { get; set; }
+        public int TC_RECID { get; set; }       
         public string TC_USERID { get; set; }
         public string TC_COMPANYID { get; set; }
         public string TC_PROJECTID { get; set; }
         public string TC_Date { get; set; }
+        public string TC_Dates {
+            get
+            {
+                if (DateTime.TryParse(TC_Date, out DateTime parsedDate))
+                {
+                    return parsedDate.ToString("dd-MM-yyyy HH:mm:ss");
+                }
+                return string.Empty; // Return an empty string or handle as needed if parsing fails
+            }
+        }
         public string TC_TICKETDATE { get; set; }
         public int TC_REFERENCEID { get; set; }
         public string TC_SUBJECT { get; set; }

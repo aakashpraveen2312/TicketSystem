@@ -328,7 +328,20 @@ button.btn.btn-success.login {
     }
 /* end */
 
-
+input.submitbuttons {
+    width: min-content;
+    background-color: #6ed3d0;
+    border: #6ed3d0;
+    color:white;
+    padding:1%;
+}
+.cancelbuttons {
+    width: min-content;
+    background-color: #f0a72d;
+    border: #f0a72d;
+    color: white;
+    padding:1%;
+}
 
 
 

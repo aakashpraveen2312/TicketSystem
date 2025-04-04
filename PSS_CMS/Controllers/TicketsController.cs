@@ -122,7 +122,7 @@ namespace PSS_CMS.Controllers
                 var NewTicketPostURL = ConfigurationManager.AppSettings["NewTicketurl"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
-
+             
                 var content = $@"{{           
             ""tC_USERID"": ""{Session["UserID"]}"",           
             ""tC_CRECID"": ""{ Session["CompanyID"]}"",          
@@ -319,6 +319,8 @@ namespace PSS_CMS.Controllers
                 if (combox == "O")
                 {
                     var apiUrl = ConfigurationManager.AppSettings["ClientResponse"];
+                    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                    string APIKey = Session["APIKEY"].ToString();
 
                     var content = JsonConvert.SerializeObject(new
                     {
@@ -337,8 +339,18 @@ namespace PSS_CMS.Controllers
                         tC_USERNAME = Session["REOPENUSERNAME"],
                         tC_REFERENCEID = Session["ReferenceRecID"]
                     });
+                    // Set up HTTP client with custom validation (for SSL certificates)
+                    var handler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                    };
 
-                    var apiResponse = await SendApiRequest(apiUrl, content, HttpMethod.Post);
+                    var client = new HttpClient(handler);
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    var apiResponse = await SendApiRequest(apiUrl, content, HttpMethod.Post, APIKey, AuthKey);
+
+
 
                     if (apiResponse.Status == "Y")
                     {
@@ -354,6 +366,9 @@ namespace PSS_CMS.Controllers
                 else
                 {
                     var apiUrl = ConfigurationManager.AppSettings["UpdateComboresponse"];
+                    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                    string APIKey = Session["APIKEY"].ToString();
+
 
                     var content = JsonConvert.SerializeObject(new
                     {
@@ -362,8 +377,17 @@ namespace PSS_CMS.Controllers
                         tC_USERNAME = Session["REOPENUSERNAME"],
                         tC_STATUS = combox
                     });
+                    // Set up HTTP client with custom validation (for SSL certificates)
+                    var handler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                    };
 
-                    var apiResponse = await SendApiRequest(apiUrl, content, HttpMethod.Put);
+                    var client = new HttpClient(handler);
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    var apiResponse = await SendApiRequest(apiUrl, content, HttpMethod.Put, APIKey, AuthKey);
+
 
                     if (apiResponse.Status == "Y")
                     {
@@ -402,15 +426,21 @@ namespace PSS_CMS.Controllers
         }
 
         // Helper method to send API requests
-        private async Task<ApiResponseTicketsResponse> SendApiRequest(string url, string content, HttpMethod method)
+        private async Task<ApiResponseTicketsResponse> SendApiRequest(string url, string content, HttpMethod method, string apiKey, string authKey)
         {
-            using (var client = new HttpClient(new HttpClientHandler { ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true }))
+            using (var client = new HttpClient(new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            }))
             {
                 var request = new HttpRequestMessage(method, new Uri(url))
                 {
                     Content = new StringContent(content, Encoding.UTF8, "application/json")
                 };
 
+                // ✅ Add headers
+                request.Headers.Add("ApiKey", apiKey);
+                request.Headers.Add("Authorization", authKey);
                 request.Headers.Add("X-Version", "1");
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -420,6 +450,7 @@ namespace PSS_CMS.Controllers
                 return JsonConvert.DeserializeObject<ApiResponseTicketsResponse>(responseBody);
             }
         }
+
 
         public async Task<ActionResult> ReviewTickets(string recid2,string status,string REOPENUSERNAME)
         {

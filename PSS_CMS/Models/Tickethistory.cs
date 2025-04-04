@@ -29,7 +29,7 @@ namespace PSS_CMS.Models
             {
                 if (DateTime.TryParse(TC_TICKETDATE, out DateTime parsedDate))
                 {
-                    return parsedDate.ToString("dd-MM-yyyy");
+                    return parsedDate.ToString("dd-MM-yyyy HH:mm:ss");
                 }
                 return string.Empty; // Return an empty string or handle as needed if parsing fails
             }

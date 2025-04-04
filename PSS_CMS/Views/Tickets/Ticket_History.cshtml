@@ -178,7 +178,7 @@
                 @Html.Grid(Model).Columns(columns =>
            {
                columns.Add(c => c.AdminNameDisplay).Titled("Admin Name").SetWidth("100px");
-               columns.Add(c => c.TC_TICKETDATES).Titled("Date").SetWidth("150px");
+               columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time").SetWidth("150px");
                columns.Add(c => c.TC_PROJECTID).Titled("Project").SetWidth("150px;");
                columns.Add(c => c.TC_SUBJECT).Titled("Subject");
                columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("120px");

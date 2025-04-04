@@ -18,7 +18,7 @@ namespace PSS_CMS.Models
             {
                 if (DateTime.TryParse(TC_Date, out DateTime parsedDate))
                 {
-                    return parsedDate.ToString("dd-MM-yyyy HH:mm:ss");
+                    return parsedDate.AddHours(12).AddMinutes(30).ToString("yyyy-MM-dd'T'HH:mm:ss.fff");
                 }
                 return string.Empty; // Return an empty string or handle as needed if parsing fails
             }

@@ -24,9 +24,11 @@ namespace PSS_CMS.Controllers
         {
             Recenttickets objRecents = new Recenttickets();
             string Weburl = ConfigurationManager.AppSettings["AdminTicketURL"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
             List<Recenttickets> RecentTicketList = new List<Recenttickets>();
 
-            string strparams = "TC_USERID=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"];
+            string strparams = "TC_USERID=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -37,6 +39,8 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         var response = await client.GetAsync(url);
 
@@ -125,19 +129,6 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public ActionResult Clients()
-        {
-            List<Recenttickets> Lists = new List<Recenttickets>
-            {
-                new Recenttickets {Serialnumber = 1,  Name = "Prathesh" },
-                new Recenttickets { Serialnumber = 2,  Name = "Manoj" },
-                new Recenttickets { Serialnumber = 3,  Name = "Aaksh" },
-                new Recenttickets { Serialnumber = 4,  Name = "Ashwath"},
-                new Recenttickets { Serialnumber = 5,  Name = "Sanjay" }
-            };
-            return View(Lists);
-        }
-
         public async Task<ActionResult> AdminTickets(string recid2, string userid, string status)
         {
             IEnumerable<Admintickets> ticketadminList = await GetAdminTickets(recid2, userid, status); // Your logic to get a list of tickets
@@ -151,10 +142,12 @@ namespace PSS_CMS.Controllers
             
 
             string WEBURLGETBYID = ConfigurationManager.AppSettings["AdminGetSingleURL"];
-           
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
             List<Admintickets> ticketadminList = new List<Admintickets>();
            
-            string strparams = "TC_USERID=" + userid + "&StrRecid=" + recid2;
+            string strparams = "TC_USERID=" + userid + "&StrRecid=" + recid2 + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -165,7 +158,8 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
-
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await client.GetAsync(finalurl);
@@ -226,9 +220,11 @@ namespace PSS_CMS.Controllers
                 }
                 // Define your API URL and keys
                 var AdminResponsePostURL = ConfigurationManager.AppSettings["AdminResponse"];
-              
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
                 var content = $@"{{           
             ""tC_RECID"": ""{Session["LastRecid"]}"",           
+            ""tC_CRECID"": ""{Session["CompanyID"]}"",           
             ""tC_RESPONSE_ATTACHMENT_PREFIX"": ""{base64Image}"",
             ""tC_RESPONSE_USERID"": ""{Session["UserID"]}"",
             ""tC_RESPONSE_DATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
@@ -256,7 +252,8 @@ namespace PSS_CMS.Controllers
                     ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
                 };
                 var client = new HttpClient(handler);
-
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                 // Send the request and await the response
                 var response = await client.SendAsync(request);
                 // Check if the response is successful
@@ -326,26 +323,15 @@ namespace PSS_CMS.Controllers
             return "image/jpeg";
         }
 
-        private string GetImageMimeType2(string base64Image2)
-        {
-            if (base64Image2.Contains("data:image/jpeg;base64,"))
-                return "image/jpeg";
-            if (base64Image2.Contains("data:image/png;base64,"))
-                return "image/png";
-            if (base64Image2.Contains("data:image/gif;base64,"))
-                return "image/gif";
-            if (base64Image2.Contains("data:image/bmp;base64,"))
-                return "image/bmp";
-            // Default to JPEG if not found
-            return "image/jpeg";
-        }
-
         public async Task<ActionResult> TicketType()
         {
             List<SelectListItem> ticketTypes = new List<SelectListItem>();
 
             string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXTICKETTYPE"];
-            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string finalurl = webUrlGet + "?" + strparams;
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
 
             try
             {
@@ -355,10 +341,11 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
                         client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                        var response = await client.GetAsync(webUrlGet);
+                        var response = await client.GetAsync(finalurl);
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
@@ -392,8 +379,9 @@ namespace PSS_CMS.Controllers
             List<SelectListItem> projectTypes = new List<SelectListItem>();
 
             string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
-            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
-            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -403,6 +391,7 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
                         client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -438,10 +427,12 @@ namespace PSS_CMS.Controllers
         public async Task<ActionResult> FAQADMIN(int projectID = 0)
         {
             string Weburl = ConfigurationManager.AppSettings["FAQGET1"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
 
             List<Faq> FAQList = new List<Faq>();
 
-            string strparams = "projectID=" + projectID;
+            string strparams = "projectID=" + projectID + "&cmprecid=" + Session["CompanyID"];
             string finalurl = Weburl + "?" + strparams;
 
             try
@@ -453,6 +444,8 @@ namespace PSS_CMS.Controllers
                     using (HttpClient client = new HttpClient(handler))
                     {
 
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await client.GetAsync(finalurl);
@@ -525,6 +518,8 @@ namespace PSS_CMS.Controllers
                 }
                 // Define your API URL and keys
                 var FaqPostURL = ConfigurationManager.AppSettings["FAQPOST"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
                 faq.F_QUESTION = faq.F_QUESTION?.Replace("\"", ""); // Removes double quotes
                 faq.F_ANSWER = faq.F_ANSWER?.Replace("\"", ""); // Removes double quotes
 
@@ -537,6 +532,7 @@ namespace PSS_CMS.Controllers
             ""f_SORTORDER"": ""{"1"}"",                              
             ""F_PROJECTRECID"": ""{faq.SelectedProjectType1}"",                              
             ""F_USERID"": ""{Session["UserID"]}"",                              
+            ""f_CRECID"": ""{Session["CompanyID"]}"",                              
             ""f_DISABLE"": ""{"N"}""               
         }}";
               
@@ -560,6 +556,8 @@ namespace PSS_CMS.Controllers
                 };
                 var client = new HttpClient(handler);
 
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                 // Send the request and await the response
                 var response = await client.SendAsync(request);
                 // Check if the response is successful
@@ -597,8 +595,9 @@ namespace PSS_CMS.Controllers
             List<SelectListItem> projectTypes = new List<SelectListItem>();
 
             string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
-            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
-            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -608,6 +607,7 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
                         client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -645,10 +645,12 @@ namespace PSS_CMS.Controllers
             
             
             string WEBURLGETBYID = ConfigurationManager.AppSettings["FAQGETBYID"];
-          
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
             Faq faq = null;
 
-            string strparams = "recID=" + F_RECID;
+            string strparams = "recID=" + F_RECID + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -659,7 +661,8 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
-                       
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         var response = await client.GetAsync(finalurl);
                         if (response.IsSuccessStatusCode)
@@ -729,6 +732,8 @@ namespace PSS_CMS.Controllers
                 }
                 // Define your API URL and keys
                 var FaqPostURL = ConfigurationManager.AppSettings["FAQUPDATE"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
                 faq.F_QUESTION = faq.F_QUESTION?.Replace("\"", ""); // Removes double quotes
                 faq.F_ANSWER = faq.F_ANSWER?.Replace("\"", ""); // Removes double quotes
 
@@ -742,6 +747,7 @@ namespace PSS_CMS.Controllers
             ""f_SORTORDER"": ""{"1"}"",                              
             ""f_PROJECTRECID"": ""{Session["F_PROJECTRECID"]}"",                              
             ""f_USERID"": ""{Session["F_USERID"]}"",                              
+            ""f_CRECID"": ""{Session["CompanyID"]}"",                              
             ""f_DISABLE"": ""{"N"}""           
         }}";
 
@@ -764,7 +770,8 @@ namespace PSS_CMS.Controllers
                     ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
                 };
                 var client = new HttpClient(handler);
-
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                 // Send the request and await the response
                 var response = await client.SendAsync(request);
                 // Check if the response is successful
@@ -797,8 +804,10 @@ namespace PSS_CMS.Controllers
         {
 
             string WEBURLDELETE = ConfigurationManager.AppSettings["FAQDELETE"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
 
-            string strparams = "RECID=" + F_RECID;
+            string strparams = "RECID=" + F_RECID + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLDELETE + "?" + strparams;
            
             try
@@ -810,7 +819,8 @@ namespace PSS_CMS.Controllers
                     using (HttpClient client = new HttpClient(handler))
                     {
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
 
                         var request = new HttpRequestMessage
                         {

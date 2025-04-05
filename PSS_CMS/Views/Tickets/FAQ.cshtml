@@ -238,21 +238,7 @@
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    @*<script>
-        $(document).ready(function () {
-            $("#projectTypeFilter").change(function () {
-                var selectedProjectId = $(this).val(); // Get selected project ID
-
-                // If "General" is selected, send projectID = 0
-                if (selectedProjectId === "0") {
-                    selectedProjectId = 0;
-                }
-
-                // Redirect with selected projectID
-                window.location.href = '@Url.Action("FAQ", "Tickets")' + "?projectID=" + selectedProjectId;
-            });
-        });
-        </script>*@
+  
     <script>
 $(document).ready(function () {
     // Set the selected value from local storage if available

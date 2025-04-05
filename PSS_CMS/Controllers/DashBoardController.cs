@@ -84,8 +84,9 @@ namespace PSS_CMS.Controllers
         public async Task<Dashborardchart> WTDANDMTDCHART()
         {
             string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDMTDandWTD"];
-            string Authkey = ConfigurationManager.AppSettings["Authkey"];
-            string strparams = "Userid=" + Session["UserID"] + "&type=" + Session["UserRole"]; ;
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "Userid=" + Session["UserID"] + "&type=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
             Dashborardchart wtdMtdData = null;
 
@@ -97,7 +98,8 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
-                        client.DefaultRequestHeaders.Add("Authorization", Authkey);
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await client.GetAsync(finalurl);

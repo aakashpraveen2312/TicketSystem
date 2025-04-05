@@ -45,7 +45,7 @@
 </head>
 
 <body>
-  
+
     <div class="content">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
@@ -76,46 +76,77 @@
         </div>
 
 
-    <div class="row  ms-3 mt-3 mb-3">
+        <div class="row  ms-3 mt-3 mb-3">
 
-        <div class="col-md-4 mt-3">
-            @if (ViewBag.ProjectTypes != null)
-            {
-                var projectTypeList = ViewBag.ProjectTypes as IEnumerable<SelectListItem>;
+            <div class="col-md-4 mt-3">
 
-                if (projectTypeList != null && projectTypeList.Any())
-                {
-                    var modifiedProjectTypeList = new List<SelectListItem>
-            {
-                new SelectListItem { Text = "General", Value = "0" }
-            };
-                    modifiedProjectTypeList.AddRange(projectTypeList);
+                @*@if (ViewBag.ProjectTypes != null)
+                    {
+                        var projectTypeList = ViewBag.ProjectTypes as IEnumerable<SelectListItem>;
 
-                    @Html.DropDownList("SelectedProjectType1",
-                                       modifiedProjectTypeList,
-                                       new { @class = "", id = "projectTypeFilter1" })
+                        if (projectTypeList != null && projectTypeList.Any())
+                        {
+                            var modifiedProjectTypeList = new List<SelectListItem>
+                    {
+                        new SelectListItem { Text = "General", Value = "0" }
+                    };
+                            modifiedProjectTypeList.AddRange(projectTypeList);
+
+                            @Html.DropDownList("SelectedProjectType1",
+                                               modifiedProjectTypeList,
+                                               new { @class = "", id = "projectTypeFilter1" })
+                        }
+                        else
+                        {
+                            <p>No projects are available</p>
+                        }
+                    }
+                    else
+                    {
+                        <p>No projects are available</p>
+                    }*@
+
+                @{
+                    var projectTypeList = ViewBag.ProjectTypes as List<SelectListItem>;
+
+                    if (projectTypeList == null || !projectTypeList.Any())
+                    {
+                        <div class="position-relative flex-grow-1">
+                            @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType1,
+                                                 projectTypeList,
+                                                 "No project's are available",
+                                                 new { @class = "", id = "projectTypeFilter", tabindex = "1" })
+                        </div>
+                    }
+                    else
+                    {
+                        // Ensure the "General" option is included
+                        projectTypeList.Insert(0, new SelectListItem { Text = "General", Value = "0" });
+                    }
                 }
-                else
+
+                @if (projectTypeList != null && projectTypeList.Any())
                 {
-                    <p>No projects are available</p>
+                    <div class="position-relative flex-grow-1">
+                        @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType1,
+                                             projectTypeList,
+
+                                             new { @class = "", id = "projectTypeFilter1", tabindex = "1" })
+                    </div>
                 }
-            }
-            else
-            {
-                <p>No projects are available</p>
-            }
+
+            </div>
+
+
+            <div class="col-md-8 d-flex justify-content-md-end justify-content-start mt-sm-3">
+                <button class="btncolorsubmit res "
+                        style="width: max-content;"
+                        onclick="window.location.href='@Url.Action("FAQADMINPOST","RecentTickets")'">
+                    New FAQ <i class="bi bi-plus-circle ms-1"></i>
+                </button>
+            </div>
+
         </div>
-
-
-        <div class="col-md-8 d-flex justify-content-md-end justify-content-start mt-sm-3">
-            <button class="btncolorsubmit res "
-                    style="width: max-content;"
-                    onclick="window.location.href='@Url.Action("FAQADMINPOST","RecentTickets")'">
-                New FAQ <i class="bi bi-plus-circle ms-1"></i>
-            </button>
-        </div>
-
-    </div>
         <div class="card p-5 ms-4">
             <div class="  mt-1">
                 <div class="accordion" id="faqAccordion">
@@ -126,15 +157,15 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="heading_@faq.F_RECID">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@faq.F_RECID" aria-expanded="false" aria-controls="collapse_@faq.F_RECID">
-                                       @faq.F_QUESTION 
+                                        @faq.F_QUESTION
                                     </button>
                                 </h2>
                                 <div id="collapse_@faq.F_RECID" class="accordion-collapse collapse" aria-labelledby="heading_@faq.F_RECID" data-bs-parent="#faqAccordion">
                                     <div class="accordion-body">
-                                        <p style="text-align:justify;">@faq.F_ANSWER</p> 
+                                        <p style="text-align:justify;">@faq.F_ANSWER</p>
 
-                                     
-                                        
+
+
                                         @if (!string.IsNullOrEmpty(faq.F_ATTACHEMENT))
                                         {
                                             string base64String = faq.F_ATTACHEMENT;
@@ -186,61 +217,61 @@
                                                 fileType = "unknown";
                                                 mimeType = "application/octet-stream"; // Default for unknown file types
                                             }
-                                    <div class="row ms-1">
-                                        <div class="col">
-                                            <a href="data:@mimeType;base64,@faq.F_ATTACHEMENT"
-                                               download="@faq.F_QUESTION.@fileType"
-                                               class="download-btn text-decoration-none text-white">
-                                                Download
-                                            </a>
-                                        </div>
-                                        <div class="col d-flex justify-content-end align-items-center" >
+                                            <div class="row ms-1">
+                                                <div class="col">
+                                                    <a href="data:@mimeType;base64,@faq.F_ATTACHEMENT"
+                                                       download="@faq.F_QUESTION.@fileType"
+                                                       class="download-btn text-decoration-none text-white">
+                                                        Download
+                                                    </a>
+                                                </div>
+                                                <div class="col d-flex justify-content-end align-items-center">
 
-                                            <a href="@Url.Action("Edit", "RecentTickets", new { F_RECID = faq.F_RECID, F_PROJECTRECID = faq.F_PROJECTRECID, F_USERID = faq.F_USERID})"
-                                               class="text-decoration-none"
-                                               data-toggle="tooltip"
-                                               title="Edit">
-                                                <i class="bx bxs-pencil"></i>
-                                            </a>
+                                                    <a href="@Url.Action("Edit", "RecentTickets", new { F_RECID = faq.F_RECID, F_PROJECTRECID = faq.F_PROJECTRECID, F_USERID = faq.F_USERID})"
+                                                       class="text-decoration-none"
+                                                       data-toggle="tooltip"
+                                                       title="Edit">
+                                                        <i class="bx bxs-pencil"></i>
+                                                    </a>
 
-                                            <a href="@Url.Action("Delete", "RecentTickets", new { F_RECID = faq.F_RECID })"
-                                               class="text-decoration-none ms-2"
-                                               onclick='return confirmDelete(this);'
-                                               data-toggle="tooltip"
-                                               title="Delete">
-                                                <i class="bx bxs-trash red"></i>
-                                            </a>
+                                                    <a href="@Url.Action("Delete", "RecentTickets", new { F_RECID = faq.F_RECID })"
+                                                       class="text-decoration-none ms-2"
+                                                       onclick='return confirmDelete(this);'
+                                                       data-toggle="tooltip"
+                                                       title="Delete">
+                                                        <i class="bx bxs-trash red"></i>
+                                                    </a>
 
-                                        </div>
-                                    </div>
-                                           
+                                                </div>
+                                            </div>
+
                                         }
                                         else
                                         {
-                                    <div class="row ms-1">
-                                        <div class="col">
-                                            <span class="resspan"><b>No files uploaded</b></span>
-                                        </div>
-                                        <div class="col d-flex justify-content-end">
+                                            <div class="row ms-1">
+                                                <div class="col">
+                                                    <span class="resspan"><b>No files uploaded</b></span>
+                                                </div>
+                                                <div class="col d-flex justify-content-end">
 
-                                            <a href="@Url.Action("Edit", "RecentTickets", new { F_RECID = faq.F_RECID, F_PROJECTRECID = faq.F_PROJECTRECID, F_USERID = faq.F_USERID})"
-                                               class="text-decoration-none"
-                                               data-toggle="tooltip"
-                                               title="Edit">
-                                                <i class="bx bxs-pencil"></i>
-                                            </a>
+                                                    <a href="@Url.Action("Edit", "RecentTickets", new { F_RECID = faq.F_RECID, F_PROJECTRECID = faq.F_PROJECTRECID, F_USERID = faq.F_USERID})"
+                                                       class="text-decoration-none"
+                                                       data-toggle="tooltip"
+                                                       title="Edit">
+                                                        <i class="bx bxs-pencil"></i>
+                                                    </a>
 
-                                            <a href="@Url.Action("Delete", "RecentTickets", new { F_RECID = faq.F_RECID })"
-                                               class="text-decoration-none ms-2"
-                                               onclick='return confirmDelete(this);'
-                                               data-toggle="tooltip"
-                                               title="Delete">
-                                                <i class="bx bxs-trash red"></i>
-                                            </a>
+                                                    <a href="@Url.Action("Delete", "RecentTickets", new { F_RECID = faq.F_RECID })"
+                                                       class="text-decoration-none ms-2"
+                                                       onclick='return confirmDelete(this);'
+                                                       data-toggle="tooltip"
+                                                       title="Delete">
+                                                        <i class="bx bxs-trash red"></i>
+                                                    </a>
 
-                                        </div>
-                                    </div>
-                                           
+                                                </div>
+                                            </div>
+
                                         }
                                     </div>
                                 </div>
@@ -306,12 +337,38 @@ $(document).ready(function () {
     $("a, button,li").click(function () {
         localStorage.removeItem("selectedProjectId");
     });
-    $(window).on("beforeunload", function () {
-        localStorage.clear();
-    });
-
 });
     </script>
+    @*<script>
+        $(document).ready(function () {
+            // Get the saved value
+            var savedProjectId = localStorage.getItem("selectedProjectId");
+
+            if (savedProjectId !== null) {
+                $("#projectTypeFilter1").val(savedProjectId);
+            }
+
+            $("#projectTypeFilter1").change(function () {
+                var selectedProjectId = $(this).val();
+
+                // Save selection
+                localStorage.setItem("selectedProjectId", selectedProjectId);
+
+                var url = '@Url.Action("FAQADMIN", "RecentTickets")';
+                window.location.href = url + "?projectID=" + encodeURIComponent(selectedProjectId);
+            });
+
+            // Clear localStorage on clicks or unload
+            $("a, button, li").click(function () {
+                localStorage.removeItem("selectedProjectId");
+            });
+
+            $(window).on("beforeunload", function () {
+                localStorage.clear();
+            });
+        });
+
+            </script>*@
     <script src="~/Scripts/Fordelete.js"></script>
 </body>
 </html>

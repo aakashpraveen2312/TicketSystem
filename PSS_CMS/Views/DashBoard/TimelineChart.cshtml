@@ -1,7 +1,9 @@
 ﻿@model PSS_CMS.Models.TimelineResponse
 @using System.Text.Json
 @using Newtonsoft.Json
-
+@{ 
+    Layout = null;
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,7 +29,33 @@
 </head>
 
 <body id="ticetscreen">
+    <nav class="nav d-flex">
+        <div class="p-2 flex-grow-1">
+            <h3 style="margin-top:10px" class="heading ms-3">TICKET SYSTEM</h3>
+        </div>
 
+        <div class="p-2" style="margin-right:10px">
+            <h4 class="heading">@Session["UserName"]</h4>
+        </div>
+
+        <div class="p-2 me-3 dropdown">
+            <a href="#" class="text-decoration-none" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class='bx bx-user-circle' style="font-size:24px !important; color:purple !important;"></i>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="@Url.Action("FAQ", "Tickets")">FAQ</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                        Logout    <i class='bx bx-log-out' style="font-size:24px !important;color:red !important;"></i>
+
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
     <div class="content">
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12 col-sm-12">
@@ -48,8 +76,8 @@
 
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-       
-    <script>
+
+        <script>
             var ctx = document.getElementById('statusChart').getContext('2d');
 
 var statusMapping = { "Created": 1, "Resolved": 2, "ReOpen": 3, "Closed": 4 };
@@ -124,7 +152,7 @@ new Chart(ctx, {
                         weight: 'bold'
                     },
                     color: 'black'
-                   
+
                 },
                 type: 'category',
                 border: {
@@ -158,7 +186,7 @@ new Chart(ctx, {
 });
 
 
-    </script>
+        </script>
 
         <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
             <div class="offcanvas-header">

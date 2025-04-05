@@ -9,27 +9,29 @@ namespace PSS_CMS.Models
 {
     public class Usergroup
     {
-        public int UG_RECID { get; set; }
+        public int TUG_RECID { get; set; }
+        public int TUG_CRECID { get; set; }
+
         [DisplayName("Code")]
-        public string UG_CODE { get; set; }
+        public string TUG_CODE { get; set; }
+
         [DisplayName("Name")]
-        public string UG_NAME { get; set; }
+        public string TUG_NAME { get; set; }
+
         [DisplayName("Desigination")]
-        public string UG_DESIGINATION { get; set; }
+        public string TUG_ROLEDESIGINATION { get; set; }
+
         [DisplayName("Sort")]
-        public int UG_SORTORDER { get; set; }
+        public int TUG_SORTORDER { get; set; }
+
         [DisplayName("Disable")]
         public bool IsDisabled
         {
-            get => _ug_disable == "Y";
-            set => _ug_disable = value ? "Y" : "N";
+            get => TUG_DISABLE == "Y";
+            set => TUG_DISABLE = value ? "Y" : "N";
         }
+        [JsonProperty("QLI_DISABLE")]
 
-
-        public string Disable { get; set; }
-
-        // This field directly maps to the JSON property
-        [JsonProperty("UG_DISABLE")]
-        private string _ug_disable { get; set; }
+        private string TUG_DISABLE { get; set; }
     }
 }

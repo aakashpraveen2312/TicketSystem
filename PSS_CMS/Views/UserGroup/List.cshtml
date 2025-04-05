@@ -67,10 +67,10 @@
                 {
                     @Html.Grid(Model).Columns(columns =>
                {
-                   columns.Add(c => c.UG_CODE).Titled("Code");
-                   columns.Add(c => c.UG_NAME).Titled("Name");
-                   columns.Add(c => c.UG_DESIGINATION).Titled("Desigination");
-                   columns.Add(c => c.UG_SORTORDER).Titled("Sort");
+                   columns.Add(c => c.TUG_CODE).Titled("Code");
+                   columns.Add(c => c.TUG_NAME).Titled("Name");
+                   columns.Add(c => c.TUG_ROLEDESIGINATION).Titled("Desigination");
+                   columns.Add(c => c.TUG_SORTORDER).Titled("Sort");
                    columns.Add().Titled("Action")
                   .Encoded(false)
                    .Sanitized(false)                  

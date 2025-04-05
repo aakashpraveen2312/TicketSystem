@@ -34,8 +34,10 @@ namespace PSS_CMS.Controllers
             
             WhitePaper objRecents = new WhitePaper();
             string Weburl = ConfigurationManager.AppSettings["GETWHITEPAPER"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
             List<WhitePaper> RecentTicketList = new List<WhitePaper>();
-            string strparams = "projectID=" + projectID;
+            string strparams = "projectID=" + projectID + "&cmprecid=" + Session["CompanyID"];
             string finalurl = Weburl + "?" + strparams;
 
             try
@@ -46,6 +48,8 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await client.GetAsync(finalurl);
@@ -109,6 +113,8 @@ namespace PSS_CMS.Controllers
                 }
                 // Define your API URL and keys
                 var WhitepaperPostURL = ConfigurationManager.AppSettings["WHITEPAPERPOST"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
                 whitepaper.WP_TITLE = whitepaper.WP_TITLE?.Replace("\"", ""); // Removes double quotes
                 whitepaper.WP_Description = whitepaper.WP_Description?.Replace("\"", ""); // Removes double quotes
                 // Construct the JSON content for the API request
@@ -120,6 +126,7 @@ namespace PSS_CMS.Controllers
             ""wP_SORTORDER"": ""{"1"}"",                              
             ""wP_PROJECTID"": ""{whitepaper.SelectedProjectType2}"",                              
             ""wP_USERID"": ""{ Session["UserID"]}"",                              
+            ""wP_CRECID"": ""{ Session["CompanyID"]}"",                              
             ""wP_DISABLE"": ""{"N"}""           
         }}";
 
@@ -142,7 +149,8 @@ namespace PSS_CMS.Controllers
                     ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
                 };
                 var client = new HttpClient(handler);
-
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                 // Send the request and await the response
                 var response = await client.SendAsync(request);
                 // Check if the response is successful
@@ -178,8 +186,9 @@ namespace PSS_CMS.Controllers
             List<SelectListItem> projectTypes = new List<SelectListItem>();
 
             string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
-            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
-            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -189,6 +198,7 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
                         client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -227,10 +237,11 @@ namespace PSS_CMS.Controllers
             Session["WP_RECID"] = WP_RECID;
 
             string WEBURLGETBYID = ConfigurationManager.AppSettings["WHITEPAPERGETBYID"];
-
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
             WhitePaper whitePaper = null;
 
-            string strparams = "recID=" + WP_RECID;
+            string strparams = "recID=" + WP_RECID + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -241,7 +252,8 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
-
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         var response = await client.GetAsync(finalurl);
                         if (response.IsSuccessStatusCode)
@@ -309,6 +321,8 @@ namespace PSS_CMS.Controllers
                 }
                 // Define your API URL and keys
                 var WhitepaperUpdateURL = ConfigurationManager.AppSettings["WHITEPAPERUPDATE"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
                 whitePaper.WP_TITLE = whitePaper.WP_TITLE?.Replace("\"", ""); // Removes double quotes
                 whitePaper.WP_Description = whitePaper.WP_Description?.Replace("\"", ""); // Removes double quotes
                 // Construct the JSON content for the API request
@@ -321,6 +335,7 @@ namespace PSS_CMS.Controllers
             ""wP_SORTORDER"": ""{"1"}"",                              
             ""wP_PROJECTID"": ""{ Session["WP_PROJECTID"]}"",                              
             ""wP_USERID"": ""{ Session["UserID"]}"",                              
+            ""wP_CRECID"": ""{ Session["CompanyID"]}"",                              
             ""wP_DISABLE"": ""{"N"}""           
         }}";
 
@@ -343,7 +358,8 @@ namespace PSS_CMS.Controllers
                     ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
                 };
                 var client = new HttpClient(handler);
-
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                 // Send the request and await the response
                 var response = await client.SendAsync(request);
                 // Check if the response is successful
@@ -375,8 +391,10 @@ namespace PSS_CMS.Controllers
         public async Task<ActionResult> Delete(int WP_RECID)
         {
             string WEBURLDELETE = ConfigurationManager.AppSettings["WHITEPAPERDELETE"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
 
-            string strparams = "RECID=" + WP_RECID;
+            string strparams = "RECID=" + WP_RECID + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLDELETE + "?" + strparams;
 
             try
@@ -387,6 +405,8 @@ namespace PSS_CMS.Controllers
 
                     using (HttpClient client = new HttpClient(handler))
                     {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
 

@@ -1,8 +1,12 @@
 ﻿@model PSS_CMS.Models.Tickets
 @using CaptchaMvc.HtmlHelpers
-@{ 
+@{
     Layout = null;
 }
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -83,9 +87,9 @@
             @Html.AntiForgeryToken()
             <form>
                 <div class="row">
-                    <div class="col-md-6 col-sm-12">                           
-                            <input type="checkbox" id="enableEdit" autocomplete="off" class="mb-4"><span class="ms-2"><b>Old Tikcets</b></span>
-                            @Html.TextBoxFor(model => model.TC_Date, new { @class = "form-control",required = "required", @readonly = "true", id = "dateTextbox", tabindex = "1" })         
+                    <div class="col-md-6 col-sm-12">
+                        <input type="checkbox" id="enableEdit" autocomplete="off" class="mb-4"><span class="ms-2"><b>Old Tikcets</b></span>
+                        @Html.TextBoxFor(model => model.TC_Date, new { @class = "form-control", required = "required", @readonly = "true", id = "dateTextbox", tabindex = "1" })
                     </div>
 
 
@@ -121,7 +125,7 @@
                 <div class="row mt-3">
                     <div class="col-md-6 col-sm-12">
                         @Html.LabelFor(model => model.TC_SUBJECT, "Subject", new { @class = "pb-2" })
-                        @Html.TextBoxFor(model => model.TC_SUBJECT, new { @class = "form-control", id = "sub", required = "required", tabindex = "3",autocomplete="off" })
+                        @Html.TextBoxFor(model => model.TC_SUBJECT, new { @class = "form-control", id = "sub", required = "required", tabindex = "3", autocomplete = "off" })
                     </div>
                     <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
                         <!-- Scond Dropdown for Ticket Types -->
@@ -150,16 +154,21 @@
                     <div class="col-md-12 col-sm-12">
                         @Html.LabelFor(model => model.TC_COMMENTS, "User Comments", new { @class = "pb-2" })
                         @Html.TextAreaFor(model => model.TC_COMMENTS, new
-                        {
-                            @class = "form-control custom-textarea",
-                            placeholder = "Please enter your comments here....",
-                            rows = "10",
-                            cols = "70",
-                            required = "required",
-                            tabindex = "5",
-                            @onkeydown = "return restrictKeys(event)"
-                        })
+ {
+     @class = "form-control custom-textarea",
+     placeholder = "Please enter your comments here....",
+     rows = "10",
+     cols = "70",
+     required = "required",
+     tabindex = "5",
+ })
+
+
                     </div>
+
+
+
+
                     <div class="col-md-12 col-sm-12 mt-2">
                         @Html.Label("myfile", "Attachments:")
                         <input type="file" id="myfile" name="myfile" tabindex="6"
@@ -213,7 +222,7 @@
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
     <script src="~/Scripts/Formatcheck.js"></script>
-    <script>
+    @*<script>
         function restrictKeys(event) {
             // Prevent Enter key press (key code 13)
             if (event.keyCode === 13) {
@@ -230,7 +239,7 @@
             return true;
         }
 
-    </script>
+    </script>*@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const sidebarLinks = document.querySelectorAll(".sidebar a");
@@ -377,12 +386,12 @@
                     Swal.fire({
                         title: "",
                         html: `
-                                        <p style="font-size: 15px;"><b>Ticket Raised Successfuly <br/> Admin Will Reach You Soon</b></p>
-                                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
-                                            <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
-                                            <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
-                                        </div>
-                                    `,
+                                                <p style="font-size: 15px;"><b>Ticket Raised Successfuly <br/> Admin Will Reach You Soon</b></p>
+                                                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+                                                    <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
+                                                    <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
+                                                </div>
+                                            `,
                         showConfirmButton: false,
                         showCancelButton: false,
                         allowOutsideClick: false,

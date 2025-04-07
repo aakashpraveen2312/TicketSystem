@@ -43,6 +43,7 @@ namespace PSS_CMS.Models
     public class RootObjectsuser
     {
         public string Status { get; set; }
+        public string Message { get; set; }
 
         public List<Admintickets> Data { get; set; }
 

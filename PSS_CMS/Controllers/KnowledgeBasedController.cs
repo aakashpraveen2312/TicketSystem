@@ -119,8 +119,8 @@ namespace PSS_CMS.Controllers
                 whitepaper.WP_Description = whitepaper.WP_Description?.Replace("\"", ""); // Removes double quotes
                 // Construct the JSON content for the API request
                 var content = $@"{{           
-            ""WP_TITLE"": ""{whitepaper.WP_TITLE}"",           
-            ""WP_Description"": ""{whitepaper.WP_Description}"",
+            ""WP_TITLE"": ""{HttpUtility.JavaScriptStringEncode(whitepaper.WP_TITLE)}"",           
+            ""WP_Description"": ""{HttpUtility.JavaScriptStringEncode(whitepaper.WP_Description)}"",
             ""WP_ATTACHEMENT"": ""{whitepaper.WP_ATTACHEMENT}"",
             ""WP_CREATEDDATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
             ""wP_SORTORDER"": ""{"1"}"",                              
@@ -328,8 +328,8 @@ namespace PSS_CMS.Controllers
                 // Construct the JSON content for the API request
                 var content = $@"{{           
             ""wP_RECID"": ""{Session["WP_RECID"]}"",           
-            ""WP_TITLE"": ""{whitePaper.WP_TITLE}"",           
-            ""WP_Description"": ""{whitePaper.WP_Description}"",
+            ""WP_TITLE"": ""{HttpUtility.JavaScriptStringEncode(whitePaper.WP_TITLE)}"",           
+            ""WP_Description"": ""{HttpUtility.JavaScriptStringEncode(whitePaper.WP_Description)}"",
             ""WP_ATTACHEMENT"": ""{whitePaper.WP_ATTACHEMENT}"",
             ""WP_CREATEDDATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
             ""wP_SORTORDER"": ""{"1"}"",                              

@@ -1,0 +1,49 @@
+﻿* {
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 0px
+}
+
+:root {
+    --text-color: #22b5b5;
+    --span-color: #F0A72D;
+    --bg-color: #F3F3F2;
+}
+
+#navimg {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.card {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+#navbar {
+    color: var(--text-color);
+    font-size: 25px;
+    font-weight: 600;
+    background-color: var(--bg-color);
+}
+
+#title {
+    margin-bottom: 0px;
+}
+
+.spanheadingGST {
+    color: var(--text-color);
+}
+
+#mainspan {
+    color: var(--span-color);
+}
+
+#submitbtn {
+    background-color: var(--text-color);
+    color: white;
+}
+
+#cancelbtn {
+    background-color: var(--span-color);
+}

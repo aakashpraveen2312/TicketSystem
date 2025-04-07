@@ -1,5 +1,25 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Faq>
 
+@{
+    // Decode JavaScript string
+    Func<string, string> DecodeJavaScriptString = (input) =>
+    {
+        if (input == null) return string.Empty;  // Return empty string if input is null
+
+return input.Replace("\\\"", "\"")        // Double quotes
+                    .Replace("\\'", "'")         // Single quotes
+                    .Replace("\\(", "(")         // Parenthesis
+                    .Replace("\\)", ")")
+                    .Replace("\\[", "[")         // Square brackets
+                    .Replace("\\]", "]")
+                    .Replace("\\,", ",")         // Comma
+                    .Replace("\\.", ".")         // Period
+                    .Replace("\\\\", "\\")       // Backslash
+                    .Replace("\\n", "\n")        // Newline
+                    .Replace("\\r", "\r");       // Carriage return
+};
+}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -157,12 +177,13 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="heading_@faq.F_RECID">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@faq.F_RECID" aria-expanded="false" aria-controls="collapse_@faq.F_RECID">
-                                        @faq.F_QUESTION
+                                        @Html.Raw(DecodeJavaScriptString(faq.F_QUESTION ?? string.Empty))
                                     </button>
+
                                 </h2>
                                 <div id="collapse_@faq.F_RECID" class="accordion-collapse collapse" aria-labelledby="heading_@faq.F_RECID" data-bs-parent="#faqAccordion">
                                     <div class="accordion-body">
-                                        <p style="text-align:justify;">@faq.F_ANSWER</p>
+                                        <p style="text-align:justify;">@Html.Raw(DecodeJavaScriptString(@faq.F_ANSWER))</p>
 
 
 

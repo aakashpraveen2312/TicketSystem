@@ -1,6 +1,24 @@
 ﻿@model PSS_CMS.Models.WhitePaper
 @using GridMvc.Html
+@{
+    // Decode JavaScript string
+    Func<string, string> DecodeJavaScriptString = (input) =>
+    {
+        if (input == null) return string.Empty;  // Return empty string if input is null
 
+return input.Replace("\\\"", "\"")        // Double quotes
+                    .Replace("\\'", "'")         // Single quotes
+                    .Replace("\\(", "(")         // Parenthesis
+                    .Replace("\\)", ")")
+                    .Replace("\\[", "[")         // Square brackets
+                    .Replace("\\]", "]")
+                    .Replace("\\,", ",")         // Comma
+                    .Replace("\\.", ".")         // Period
+                    .Replace("\\\\", "\\")       // Backslash
+                    .Replace("\\n", "\n")        // Newline
+                    .Replace("\\r", "\r");       // Carriage return
+};
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -63,8 +81,9 @@
             text-decoration: none;
             border-radius: 5px;
         }
-        select#projectTypeFilter2{
-            font-size:15px;
+
+        select#projectTypeFilter2 {
+            font-size: 15px;
         }
         /* Custom styling for SweetAlert buttons */
         .swal-btn-continue {
@@ -90,7 +109,7 @@
 <body>
 
 
-  
+
 
     <div class="content">
         <nav class="nav d-flex">
@@ -176,14 +195,30 @@
                     <div class="row ms-2">
                         <div class="col-md-5">
                             @Html.LabelFor(model => model.WP_TITLE, "Title:", new { @class = "pb-2" })
-                            @Html.TextBoxFor(model => model.WP_TITLE, new { @class = "form-control", id = "", tabindex = "1", required = "required" })
+                            @Html.TextBoxFor(model => model.WP_TITLE, new
+                            {
+                                @class = "form-control",
+                                id = "",
+                                tabindex = "1",
+                                required = "required",
+                           value = DecodeJavaScriptString(Model.WP_Description ?? string.Empty) // Directly passing the decoded value
+                       })
                         </div>
 
                     </div>
                     <div class="row mt-2 ms-2">
                         <div class="col-md-12">
                             @Html.LabelFor(model => model.WP_Description, "Description", new { @class = "pb-2" })
-                            @Html.TextAreaFor(model => model.WP_Description, new { @class = "form-control custom-textarea", placeholder = "Please enter your description here....", rows = "10", cols = "70", required = "required", tabindex = "5" })
+                            @Html.TextAreaFor(model => model.WP_Description, new
+                            {
+                                @class = "form-control custom-textarea",
+                                placeholder = "Please enter your description here....",
+                                rows = "10",
+                                cols = "70",
+                                required = "required",
+                                tabindex = "5",
+                           value = DecodeJavaScriptString(Model.WP_Description ?? string.Empty) // Directly passing the decoded value
+                       })
                         </div>
                     </div>
                     <div class="row mt-2 ms-2">

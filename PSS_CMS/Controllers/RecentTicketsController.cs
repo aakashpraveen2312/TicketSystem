@@ -228,7 +228,7 @@ namespace PSS_CMS.Controllers
             ""tC_RESPONSE_ATTACHMENT_PREFIX"": ""{base64Image}"",
             ""tC_RESPONSE_USERID"": ""{Session["UserID"]}"",
             ""tC_RESPONSE_DATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
-            ""tC_RESPONSE_COMMENTS"": ""{ RESPONSE_COMMENTS}"",                              
+            ""tC_RESPONSE_COMMENTS"": ""{HttpUtility.JavaScriptStringEncode(RESPONSE_COMMENTS)}"",                              
             ""tC_ADMINNAME"": ""{Session["UserName"]}"",                              
             ""tC_STATUS"": ""{"R"}""           
         }}";
@@ -475,11 +475,7 @@ namespace PSS_CMS.Controllers
             return View(FAQList);
         }
 
-        public ActionResult ChangePassword()
-        {
-            return View();
-        }
-
+      
         public async Task <ActionResult> FAQADMINPOST()
         {
             await ProjectTypeAdminFAQ();
@@ -520,13 +516,13 @@ namespace PSS_CMS.Controllers
                 var FaqPostURL = ConfigurationManager.AppSettings["FAQPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
-                faq.F_QUESTION = faq.F_QUESTION?.Replace("\"", ""); // Removes double quotes
-                faq.F_ANSWER = faq.F_ANSWER?.Replace("\"", ""); // Removes double quotes
+                //faq.F_QUESTION = faq.F_QUESTION?.Replace("\"", ""); // Removes double quotes
+                //faq.F_ANSWER = faq.F_ANSWER?.Replace("\"", ""); // Removes double quotes
 
                 // Construct the JSON content for the API request
                 var content = $@"{{                     
-            ""f_QUESTION"": ""{faq.F_QUESTION}"",           
-            ""f_ANSWER"": ""{faq.F_ANSWER}"",
+            ""f_QUESTION"": ""{HttpUtility.JavaScriptStringEncode(faq.F_QUESTION)}"",           
+            ""f_ANSWER"": ""{HttpUtility.JavaScriptStringEncode(faq.F_ANSWER)}"",
             ""f_ATTACHEMENT"": ""{faq.F_ATTACHEMENT}"",
             ""f_CREATEDDATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
             ""f_SORTORDER"": ""{"1"}"",                              
@@ -734,14 +730,14 @@ namespace PSS_CMS.Controllers
                 var FaqPostURL = ConfigurationManager.AppSettings["FAQUPDATE"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
-                faq.F_QUESTION = faq.F_QUESTION?.Replace("\"", ""); // Removes double quotes
-                faq.F_ANSWER = faq.F_ANSWER?.Replace("\"", ""); // Removes double quotes
+                //faq.F_QUESTION = faq.F_QUESTION?.Replace("\"", ""); // Removes double quotes
+                //faq.F_ANSWER = faq.F_ANSWER?.Replace("\"", ""); // Removes double quotes
 
                 // Construct the JSON content for the API request
                 var content = $@"{{           
             ""f_RECID"": ""{ Session["F_RECID"]}"",           
-            ""f_QUESTION"": ""{faq.F_QUESTION}"",           
-            ""f_ANSWER"": ""{faq.F_ANSWER}"",
+            ""f_QUESTION"": ""{HttpUtility.JavaScriptStringEncode(faq.F_QUESTION)}"",           
+            ""f_ANSWER"": ""{HttpUtility.JavaScriptStringEncode(faq.F_ANSWER)}"",
             ""f_ATTACHEMENT"": ""{faq.F_ATTACHEMENT}"",
             ""f_CREATEDDATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
             ""f_SORTORDER"": ""{"1"}"",                              

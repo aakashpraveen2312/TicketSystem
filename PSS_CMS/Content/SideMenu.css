@@ -503,17 +503,7 @@ body.dark .home .text {
 }
 /*main apges css starts here*/
 /*Footer*/
-.footer {
-    text-align: center;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-    padding: 10px 0;
-    font-family: sans-serif;
-    background-color: var(--footer);
-    font-size: 15px;
-    margin-top: 0px;
-}
+
 
 .flex-container {
     display: flex;

@@ -1,4 +1,4 @@
-﻿@model PSS_CMS.Models.Usergroup
+﻿@model PSS_CMS.Models.Projectmaster
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -29,35 +29,6 @@
             padding: 8px 20px;
             font-weight: bold;
         }
-
-        .swal-btn-back {
-            background-color: #f0a72d !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
-        }
-
-        select#TUG_NAME {
-            display: block;
-            width: 100%;
-            height: 34px;
-            padding: 6px 12px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #555;
-            background-image: none;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-        }
     </style>
 </head>
 
@@ -77,56 +48,30 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>UserGroup</li>
+                    <li>Project Master</li>
                     <li>List</li>
-                    <li>Create</li>
+                    <li>Edit</li>
                 </ul>
             </div>
         </div>
-        @using (Html.BeginForm("Create", "UserGroup", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Edit", "ProjectMaster", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
         {
-           
-
             <div class="create ms-4 me-2 mt-3">
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_CODE, new { @class = "labels" })
+                        @Html.LabelFor(model => model.P_NAME, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TUG_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })                       
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_NAME, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.DropDownListFor(model => model.TUG_NAME,
-                            new SelectList(new[] {
-                                new { Value = "Super Admin", Text = "Super Admin" },
-                                new { Value = "Admin", Text = "Admin" },
-                                new { Value = "User", Text = "User" }
-                            }, "Value", "Text"),
-                            "Select User Type",
-                            new { @class = "select textboxcolors" })
+                        @Html.EditorFor(model => model.P_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_ROLEDESCRIPTION, new { @class = "labels" })
+                        @Html.LabelFor(model => model.P_SORTORDER, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TUG_ROLEDESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_SORTORDER, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TUG_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.P_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
                     </div>
                 </div>
@@ -135,7 +80,7 @@
                         @Html.LabelFor(model => model.IsDisabled, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input" })
+                        @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input checkinputsize" })
                     </div>
                 </div>
                 <div class="row ">
@@ -144,13 +89,11 @@
                     </div>
                     <div class="col-lg-3 d-flex justify-content-end">
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserGroup", new { })'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { })'" />
                     </div>
                 </div>
             </div>
         }
-
-
     </div>
 
 
@@ -174,7 +117,6 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @*Logout Pronptbox script*@
     <script>
     document.getElementById("logoutLink").addEventListener("click", function () {
         Swal.fire({
@@ -193,14 +135,13 @@
         });
     });
     </script>
-
     @*Toastr for created succesfully*@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     $(document).ready(function () {
-        $("#createform").submit(function (event) {
+        $("#editform").submit(function (event) {
             event.preventDefault();
 
             var submitBtn = $("#savebutton");
@@ -212,7 +153,7 @@
             $("body").css("pointer-events", "none");
 
             $.ajax({
-                url: '@Url.Action("Create", "UserGroup")',
+                url: '@Url.Action("Edit", "ProjectMaster")',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -223,24 +164,20 @@
                             title: "Success!",
                             text: response.message,
                             icon: "success",
-                            showCancelButton: true,
-                            confirmButtonText: "Continue",
-                            cancelButtonText: "Back to List",
-                            allowOutsideClick: false, // Prevent closing by clicking outside
-                            allowEscapeKey: false, // Prevent closing using Esc key
+                            confirmButtonText: "Ok",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
                             customClass: {
                                 confirmButton: "swal-btn-continue",
-                                cancelButton: "swal-btn-back"
                             },
                             didOpen: () => {
-                                // Allow interaction inside the alert only
                                 $(".swal2-container").css("pointer-events", "auto");
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                location.reload();
+                                window.location.href = '@Url.Action("List", "ProjectMaster")';
                             } else {
-                                window.location.href = '@Url.Action("List", "UserGroup")';
+                                 window.location.href = '@Url.Action("Create", "ProjectMaster")';
                             }
                         });
                     } else {
@@ -269,10 +206,11 @@
 
         function resetButton() {
             $("#savebutton").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto"); // Re-enable page interaction
+            $("body").css("pointer-events", "auto");
         }
     });
     </script>
+
 
 </body>
 </html>

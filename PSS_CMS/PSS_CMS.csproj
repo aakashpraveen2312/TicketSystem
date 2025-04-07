@@ -276,9 +276,11 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\ChangePasswordController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\KnowledgeBasedController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\ProjectMasterController.cs" />
     <Compile Include="Controllers\RecentTicketsController.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
     <Compile Include="Controllers\UserGroupController.cs" />
@@ -290,6 +292,7 @@
     <Compile Include="Models\Dashborardchart.cs" />
     <Compile Include="Models\Faq.cs" />
     <Compile Include="Models\Login.cs" />
+    <Compile Include="Models\Projectmaster.cs" />
     <Compile Include="Models\Recenttickets.cs" />
     <Compile Include="Models\Reviewtickets.cs" />
     <Compile Include="Models\Ticket.cs" />
@@ -355,6 +358,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\ClientSide.css" />
+    <Content Include="Content\Colors.css" />
     <Content Include="Content\EditiSub.css" />
     <Content Include="Content\Gallery.css" />
     <Content Include="Content\Gridmvc.css" />
@@ -447,7 +451,6 @@
     <Content Include="Views\Shared\_AdminResponse.cshtml" />
     <Content Include="Views\Tickets\FAQ.cshtml" />
     <Content Include="Views\RecentTickets\FAQADMIN.cshtml" />
-    <Content Include="Views\RecentTickets\ChangePassword.cshtml" />
     <Content Include="Views\KnowledgeBased\Whitepaper.cshtml" />
     <Content Include="Views\KnowledgeBased\WhitepaperPost.cshtml" />
     <Content Include="Views\RecentTickets\FAQADMINPOST.cshtml" />
@@ -458,6 +461,10 @@
     <Content Include="Views\UserGroup\List.cshtml" />
     <Content Include="Views\UserGroup\Create.cshtml" />
     <Content Include="Views\UserGroup\Edit.cshtml" />
+    <Content Include="Views\ProjectMaster\List.cshtml" />
+    <Content Include="Views\ProjectMaster\Create.cshtml" />
+    <Content Include="Views\ProjectMaster\Edit.cshtml" />
+    <Content Include="Views\ChangePassword\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

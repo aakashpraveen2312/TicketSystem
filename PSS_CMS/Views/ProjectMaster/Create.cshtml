@@ -1,4 +1,4 @@
-﻿@model PSS_CMS.Models.Usergroup
+﻿@model PSS_CMS.Models.Projectmaster
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -77,56 +77,32 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>UserGroup</li>
+                    <li>Project Master</li>
                     <li>List</li>
                     <li>Create</li>
                 </ul>
             </div>
         </div>
-        @using (Html.BeginForm("Create", "UserGroup", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Create", "ProjectMaster", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
         {
-           
+
 
             <div class="create ms-4 me-2 mt-3">
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_CODE, new { @class = "labels" })
+                        @Html.LabelFor(model => model.P_NAME, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TUG_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })                       
+                        @Html.EditorFor(model => model.P_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_NAME, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.DropDownListFor(model => model.TUG_NAME,
-                            new SelectList(new[] {
-                                new { Value = "Super Admin", Text = "Super Admin" },
-                                new { Value = "Admin", Text = "Admin" },
-                                new { Value = "User", Text = "User" }
-                            }, "Value", "Text"),
-                            "Select User Type",
-                            new { @class = "select textboxcolors" })
 
-                    </div>
-                </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_ROLEDESCRIPTION, new { @class = "labels" })
+                        @Html.LabelFor(model => model.P_SORTORDER, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TUG_ROLEDESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_SORTORDER, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TUG_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.P_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
                     </div>
                 </div>
@@ -144,7 +120,7 @@
                     </div>
                     <div class="col-lg-3 d-flex justify-content-end">
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserGroup", new { })'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { })'" />
                     </div>
                 </div>
             </div>
@@ -212,7 +188,7 @@
             $("body").css("pointer-events", "none");
 
             $.ajax({
-                url: '@Url.Action("Create", "UserGroup")',
+                url: '@Url.Action("Create", "ProjectMaster")',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -240,7 +216,7 @@
                             if (result.isConfirmed) {
                                 location.reload();
                             } else {
-                                window.location.href = '@Url.Action("List", "UserGroup")';
+                                window.location.href = '@Url.Action("List", "ProjectMaster")';
                             }
                         });
                     } else {

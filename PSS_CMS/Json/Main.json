@@ -1,23 +1,23 @@
 ﻿[
   {
-    "UG_RECID": 1,
-    "UG_CODE": "1001",
-    "UG_NAME": "Admin",
-    "UG_DESIGINATION": "Manager",
-    "UG_SORTORDER": 1
+    "TUG_RECID": 1,
+    "TUG_CODE": "1001",
+    "TUG_NAME": "Admin",
+    "TUG_ROLEDESIGINATION": "Manager",
+    "TUG_SORTORDER": 1
   },
   {
-    "UG_RECID": 2,
-    "UG_CODE": "1002",
-    "UG_NAME": "User",
-    "UG_DESIGINATION": "Staff",
-    "UG_SORTORDER": 2
+    "TUG_RECID": 2,
+    "TUG_CODE": "1002",
+    "TUG_NAME": "User",
+    "TUG_ROLEDESIGINATION": "Staff",
+    "TUG_SORTORDER": 2
   },
   {
-    "UG_RECID": 3,
-    "UG_CODE": "1003",
-    "UG_NAME": "Guest",
-    "UG_DESIGINATION": "Visitor",
-    "UG_SORTORDER": 3
+    "TUG_RECID": 3,
+    "TUG_CODE": "1003",
+    "TUG_NAME": "Guest",
+    "TUG_ROLEDESIGINATION": "Visitor",
+    "TUG_SORTORDER": 3
   }
 ]

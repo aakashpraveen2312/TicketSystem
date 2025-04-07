@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PSS_CMS.Models.Usergroup>
+﻿@model IEnumerable<PSS_CMS.Models.Projectmaster>
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -20,7 +20,7 @@
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
     <script src="~/Scripts/Script.js"></script>
@@ -45,17 +45,17 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>UserGroup</li>
+                    <li>Project Master</li>
                     <li>List</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "UserGroup", FormMethod.Get, new { id = "searchForm" }))
+                @using (Html.BeginForm("List", "ProjectMaster", FormMethod.Get, new { id = "searchForm" }))
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
                 <!-- Add button with icon -->
-                <a href="@Url.Action("Create", "UserGroup")" class=" ms-3" style="margin-left: 30px;">
+                <a href="@Url.Action("Create", "ProjectMaster")" class=" ms-3" style="margin-left: 30px;">
                     <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add UserGroup" />
                 </a>
             </div>
@@ -67,21 +67,20 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.TUG_CODE).Titled("Code");
-               columns.Add(c => c.TUG_NAME).Titled("Name");
-               columns.Add(c => c.TUG_ROLEDESCRIPTION).Titled("Desigination");
-               columns.Add(c => c.TUG_SORTORDER).Titled("Sort");
+               columns.Add(c => c.P_NAME).Titled("Name");
+               columns.Add(c => c.P_SORTORDER).Titled("Sort");
+
                columns.Add().Titled("Action")
               .Encoded(false)
                .Sanitized(false)
             .RenderValueAs(o =>
             {
 
-                var Editurl = Url.Action("Edit", "UserGroup", new { Recid = o.TUG_RECID }, null);
+                var Editurl = Url.Action("Edit", "ProjectMaster", new { Recid=o.P_PROJECTRECID}, null);
                 var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
-                var Deleteurl = Url.Action("Delete", "UserGroup", new { Recid = o.TUG_RECID }, null);
+                var Deleteurl = Url.Action("Delete", "ProjectMaster", new { Recid=o.P_PROJECTRECID}, null);
                 var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
                 var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
@@ -94,19 +93,19 @@
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No Usergroup's' are available</b>
+                    <b>No Project's' are available</b>
                 </div>}
 
         </div>
 
 
         @*<footer class="footer">
-          <ul>
-              <li class="lists"><i class='bx bx-plus-circle'></i> - Create</li>
-              <li class="lists"><i class='bx bxs-pencil bx-sm'></i> - Edit</li>
-              <li class="lists"><i class='bx bxs-trash bx-sm red'></i> - Delete</li>
-          </ul>
-        </footer>*@
+              <ul>
+                  <li class="lists"><i class='bx bx-plus-circle'></i> - Create</li>
+                  <li class="lists"><i class='bx bxs-pencil bx-sm'></i> - Edit</li>
+                  <li class="lists"><i class='bx bxs-trash bx-sm red'></i> - Delete</li>
+              </ul>
+            </footer>*@
     </div>
 
 

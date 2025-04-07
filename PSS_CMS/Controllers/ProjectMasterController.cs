@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,21 +13,21 @@ using PSS_CMS.Models;
 
 namespace PSS_CMS.Controllers
 {
-    public class UserGroupController : Controller
+    public class ProjectMasterController : Controller
     {
-        // GET: UserGroup
+        // GET: ProjectMaster
         public async Task<ActionResult> List(string searchPharse)
         {
-           Usergroup objusergroup = new Usergroup();
+            Projectmaster objprojectmaster = new Projectmaster();
 
-            string Weburl = ConfigurationManager.AppSettings["USERGROUPGET"];
+            string Weburl = ConfigurationManager.AppSettings["PROJECTGET"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
-            List<Usergroup> usergrouplist = new List<Usergroup>();
-            
-            string strparams ="cmprecid=" + Session["CompanyID"];
+            List<Projectmaster> projectmasterlist = new List<Projectmaster>();
+
+            string strparams = "companyId=" + Session["CompanyID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -47,16 +46,14 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<UserGroupRootObject>(jsonString);
-                            usergrouplist = rootObjects.Data;
+                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
+                            projectmasterlist = rootObjects.Data;
 
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
-                                usergrouplist = usergrouplist
-                                    .Where(r => r.TUG_CODE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TUG_NAME.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TUG_ROLEDESCRIPTION.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TUG_SORTORDER.ToString().Contains(searchPharse.ToLower()))
+                                projectmasterlist = projectmasterlist
+                                    .Where(r => r.P_NAME.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.P_SORTORDER.ToString().Contains(searchPharse.ToLower()))
                                     .ToList();
                             }
 
@@ -72,98 +69,95 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            return View(usergrouplist);
+            return View(projectmasterlist);
         }
         public ActionResult Create()
         {
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> Create(Usergroup usergroup)
+        public async Task<ActionResult> Create(Projectmaster projectmaster)
         {
-           
-                try
-                {
-                    var UsergroupPostURL = ConfigurationManager.AppSettings["USERGROUPGETPOST"];
-                    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-                    string APIKey = Session["APIKEY"].ToString();
+            try
+            {
+                var ProjectmasterPostURL = ConfigurationManager.AppSettings["PROJECTPOST"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
 
-                    var content = $@"{{           
-            ""tuG_CODE"": ""{usergroup.TUG_CODE}"",           
-            ""tuG_NAME"": ""{ usergroup.TUG_NAME}"",          
-            ""tuG_ROLEDESCRIPTION"": ""{usergroup.TUG_ROLEDESCRIPTION}"",        
-            ""tuG_SORTORDER"": ""{usergroup.TUG_SORTORDER}"",        
-            ""tuG_DISABLE"": ""{(usergroup.IsDisabled ? "Y" : "N")}"",        
-            ""tuG_CRECID"": ""{Session["CompanyID"]}""           
+                var content = $@"{{           
+            ""p_NAME"": ""{projectmaster.P_NAME}"",           
+            ""p_SORTORDER"": ""{ projectmaster.P_SORTORDER}"",                    
+            ""p_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",        
+            ""p_CRECID"": ""{Session["CompanyID"]}""           
         }}";
 
-                    // Create the HTTP request
-                    var request = new HttpRequestMessage
-                    {
-                        RequestUri = new Uri(UsergroupPostURL),
-                        Method = HttpMethod.Post,
-                        Headers =
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(ProjectmasterPostURL),
+                    Method = HttpMethod.Post,
+                    Headers =
             {
                 { "X-Version", "1" },
                 { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
             },
-                        Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
-                    };
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
 
-                    // Set up HTTP client with custom validation (for SSL certificates)
-                    var handler = new HttpClientHandler
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
+
+                    if (apiResponse.Status == "Y")
                     {
-                        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-                    };
-
-                    var client = new HttpClient(handler);
-                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-
-
-                    var response = await client.SendAsync(request);
-
-                    if (response.IsSuccessStatusCode)
+                        return Json(new { success = true, message = apiResponse.Message });
+                    }
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
                     {
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        var apiResponse = JsonConvert.DeserializeObject<UserGroupRootObject>(responseBody);
-
-                        if (apiResponse.Status == "Y")
-                        {
-                            return Json(new { success = true, message = apiResponse.Message });
-                        }
-                        else if (apiResponse.Status == "U" || apiResponse.Status == "N")
-                        {
-                            return Json(new { success = false, message = apiResponse.Message });
-                        }
-                        else
-                        {
-                            return Json(new { success = false, message = "An unexpected status was returned." });
-                        }
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
                     else
                     {
-                        return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
+                        return Json(new { success = false, message = "An unexpected status was returned." });
                     }
-
-
                 }
-                catch (Exception ex)
+                else
                 {
-                    ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
                 }
-        
-            return View(usergroup);
+
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return View(projectmaster);
         }
-        public async Task<ActionResult> Edit(int ? Recid)
-        {           
-            Session["UsergroupRecid"] = Recid;
-            string WEBURLGETBYID = ConfigurationManager.AppSettings["USERGROUPGETBYID"];
+        public async Task<ActionResult> Edit(int? Recid)
+        {
+            Session["Projectrecid"] = Recid;
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["PROJECTGETBYID"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            Usergroup usergroup = null;
+            Projectmaster projectmaster = null;
 
-            string strparams = "recID=" + Recid + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "Recid=" + Recid + "&companyId=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -181,8 +175,8 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var content = JsonConvert.DeserializeObject<UserGroupObjects>(jsonString);                        
-                                usergroup = content.Data;
+                            var content = JsonConvert.DeserializeObject<ProjectMasterObjects>(jsonString);
+                            projectmaster = content.Data;
                         }
                         else
                         {
@@ -199,31 +193,29 @@ namespace PSS_CMS.Controllers
                 ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
             }
 
-            return View(usergroup);
+            return View(projectmaster);
         }
         [HttpPost]
-        public async Task<ActionResult> Edit(Usergroup usergroup)
+        public async Task<ActionResult> Edit(Projectmaster projectmaster)
         {
             try
             {
-                var UsergroupUpdateURL = ConfigurationManager.AppSettings["USERGROUPGETPUT"];
+                var ProjectmasterUpdateURL = ConfigurationManager.AppSettings["PROJECTPUT"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""tuG_RECID"": ""{Session["UsergroupRecid"]}"",           
-            ""tuG_CODE"": ""{usergroup.TUG_CODE}"",           
-            ""tuG_NAME"": ""{usergroup.TUG_NAME}"",
-            ""tuG_ROLEDESCRIPTION"": ""{usergroup.TUG_ROLEDESCRIPTION}"",
-            ""tuG_SORTORDER"": ""{usergroup.TUG_SORTORDER}"",
-            ""tuG_DISABLE"": ""{(usergroup.IsDisabled ? "Y" : "N")}"",                              
-            ""tuG_CRECID"": ""{ Session["CompanyID"]}""                              
+            ""p_PROJECTRECID"": ""{Session["Projectrecid"]}"",           
+            ""p_NAME"": ""{projectmaster.P_NAME}"",           
+            ""p_SORTORDER"": ""{projectmaster.P_SORTORDER}"",
+            ""p_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",                              
+            ""p_CRECID"": ""{ Session["CompanyID"]}""                              
         }}";
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(UsergroupUpdateURL),
+                    RequestUri = new Uri(ProjectmasterUpdateURL),
                     Method = HttpMethod.Put,
                     Headers =
             {
@@ -247,7 +239,7 @@ namespace PSS_CMS.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<UserGroupObjects>(responseBody);
+                    var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
 
                     if (apiResponse.Status == "Y")
                     {
@@ -270,12 +262,12 @@ namespace PSS_CMS.Controllers
         }
         public async Task<ActionResult> Delete(int? Recid)
         {
-            string UsergroupDeleteUrl = ConfigurationManager.AppSettings["USERGROUPGETDELETE"];
+            string ProjectmasterDeleteUrl = ConfigurationManager.AppSettings["PROJECTDELETE"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
-            string strparams = "RECID=" + Recid + "&cmprecid=" + Session["CompanyID"];
-            string finalurl = UsergroupDeleteUrl + "?" + strparams;
+            string strparams = "RecordId=" + Recid + "&companyId=" + Session["CompanyID"];
+            string finalurl = ProjectmasterDeleteUrl + "?" + strparams;
 
             try
             {
@@ -301,12 +293,12 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             string responseBody = await response.Content.ReadAsStringAsync();
-                            var apiResponse = JsonConvert.DeserializeObject<UserGroupObjects>(responseBody);
+                            var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
 
                             if (apiResponse.Status == "Y")
                             {
 
-                                string redirectUrl = Url.Action("List", "UserGroup", new { });
+                                string redirectUrl = Url.Action("List", "ProjectMaster", new { });
                                 return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
                             }
                             else if (apiResponse.Status == "U")
@@ -339,5 +331,5 @@ namespace PSS_CMS.Controllers
             }
             return View();
         }
-    } 
+    }
 }

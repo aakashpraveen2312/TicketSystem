@@ -1,0 +1,11 @@
+﻿:root {
+    --textbox: #dceef5;
+    --intbox: #fcfccc;
+}
+.textboxcolors {
+    background-color: var(--textbox);
+}
+
+.integerboxcolors {
+    background-color: var(--intbox);
+}

@@ -328,19 +328,26 @@ button.btn.btn-success.login {
     }
 /* end */
 
-input.submitbuttons {
-    width: min-content;
+
+input.submitbuttons, button#savebutton {
     background-color: #6ed3d0;
+    width: 75px;
+    padding: 5px;
+    color: #fff;
     border: #6ed3d0;
-    color:white;
-    padding:1%;
+    border-radius: 5px;
 }
 .cancelbuttons {
-    width: min-content;
     background-color: #f0a72d;
+    width: 75px;
+    padding: 5px;
+    color: #fff;
     border: #f0a72d;
-    color: white;
-    padding:1%;
+    border-radius: 5px;
+}
+input#IsDisabled {
+    width: 23px;
+    height: 21px;
 }
 
 

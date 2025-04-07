@@ -455,7 +455,6 @@
     <Content Include="Views\Shared\_AdminResponse.cshtml" />
     <Content Include="Views\Tickets\FAQ.cshtml" />
     <Content Include="Views\RecentTickets\FAQADMIN.cshtml" />
-    <Content Include="Views\RecentTickets\ChangePassword.cshtml" />
     <Content Include="Views\KnowledgeBased\Whitepaper.cshtml" />
     <Content Include="Views\KnowledgeBased\WhitepaperPost.cshtml" />
     <Content Include="Views\RecentTickets\FAQADMINPOST.cshtml" />
@@ -467,6 +466,8 @@
     <Content Include="Views\UserGroup\Create.cshtml" />
     <Content Include="Views\UserGroup\Edit.cshtml" />
     <Content Include="Views\CompanyRegistration\Index.cshtml" />
+    <Content Include="Views\UserLogin\List.cshtml" />
+    <Content Include="Views\UserLogin\Edit.cshtml" />
     <Content Include="Views\UserLogin\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>

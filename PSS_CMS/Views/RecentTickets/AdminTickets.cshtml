@@ -1,5 +1,25 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Admintickets>
 @using GridMvc.Html
+@{
+    // Decode JavaScript string
+    Func<string, string> DecodeJavaScriptString = (input) =>
+    {
+        if (input == null) return string.Empty;  // Return empty string if input is null
+
+return input.Replace("\\\"", "\"")        // Double quotes
+                    .Replace("\\'", "'")         // Single quotes
+                    .Replace("\\(", "(")         // Parenthesis
+                    .Replace("\\)", ")")
+                    .Replace("\\[", "[")         // Square brackets
+                    .Replace("\\]", "]")
+                    .Replace("\\,", ",")         // Comma
+                    .Replace("\\.", ".")         // Period
+                    .Replace("\\\\", "\\")       // Backslash
+                    .Replace("\\n", "\n")        // Newline
+                    .Replace("\\r", "\r");       // Carriage return
+};
+}
+
 
 <!DOCTYPE html>
 <html>
@@ -30,7 +50,7 @@
 <body id="ticetscreen">
 
     <div class="">
-      
+
         <div class="content">
             <nav class="nav d-flex">
                 <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
@@ -64,7 +84,7 @@
                     {
                         <form>
                             <div class="container rescontaineradmin">
-                                <div  class="row ms-2">
+                                <div class="row ms-2">
                                     <div class="col-10">
                                         <div class="row">
                                             <div class="col-md-4">
@@ -81,7 +101,9 @@
                                         <div class="row">
                                             <div class="col-md-8">
                                                 @Html.Label("User Comments", new { @class = "pb-2" })
-                                                <p class="" readonly>@item.TC_COMMENTS</p>
+                                                @*<p class="" readonly>@item.TC_COMMENTS</p>*@
+                                                <p class="readonly">@Html.Raw(DecodeJavaScriptString(@item.TC_COMMENTS))</p>
+
                                             </div>
 
 
@@ -335,25 +357,25 @@
 
                     }
                 </div>
-                    @{
-                        var lastStatus = Session["STATUS"]?.ToString();
-                    }
+                @{
+                    var lastStatus = Session["STATUS"]?.ToString();
+                }
 
-                    @if (lastStatus != "C" && lastStatus != "R")
-                    {
+                @if (lastStatus != "C" && lastStatus != "R")
+                {
 
-                        <div class="col-md-12 mt-2">
-                            @{
-                                Html.RenderPartial("_AdminResponse", new PSS_CMS.Models.Admintickets());  // Pass the single ticket to the partial view
+                    <div class="col-md-12 mt-2">
+                        @{
+                            Html.RenderPartial("_AdminResponse", new PSS_CMS.Models.Admintickets());  // Pass the single ticket to the partial view
 
-                            }
-                        </div>
-                    }
-                    else
-                    {
+                        }
+                    </div>
+                }
+                else
+                {
 
-                    }
-               
+                }
+
             </div>
         </div>
 

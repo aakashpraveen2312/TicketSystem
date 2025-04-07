@@ -1,6 +1,24 @@
 ﻿@model IEnumerable<PSS_CMS.Models.WhitePaper>
 @using GridMvc.Html
+@{
+    // Decode JavaScript string
+    Func<string, string> DecodeJavaScriptString = (input) =>
+    {
+        if (input == null) return string.Empty;  // Return empty string if input is null
 
+return input.Replace("\\\"", "\"")        // Double quotes
+                    .Replace("\\'", "'")         // Single quotes
+                    .Replace("\\(", "(")         // Parenthesis
+                    .Replace("\\)", ")")
+                    .Replace("\\[", "[")         // Square brackets
+                    .Replace("\\]", "]")
+                    .Replace("\\,", ",")         // Comma
+                    .Replace("\\.", ".")         // Period
+                    .Replace("\\\\", "\\")       // Backslash
+                    .Replace("\\n", "\n")        // Newline
+                    .Replace("\\r", "\r");       // Carriage return
+};
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,7 +43,7 @@
     <script src="~/Scripts/Script.js"></script>
     <style>
 
-       
+
 
         .whitepapers {
             display: flex;
@@ -41,7 +59,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-            .whitepaper .heading  {
+            .whitepaper .heading {
                 margin: 0 0 10px;
                 color: #754599
             }
@@ -55,11 +73,12 @@
             display: inline-block;
             padding: 10px 20px;
             background-color: #2888bb;
-           /* background-color: #f0a72d;*/
+            /* background-color: #f0a72d;*/
             color: white;
             text-decoration: none;
             border-radius: 5px;
         }
+
         .btncolorsubmit {
             padding: 5px 10px;
             font-size: 14px;
@@ -67,6 +86,7 @@
             width: auto;
             line-height: normal;
         }
+
         select#projectTypeFilter2 {
             font-size: 15px;
             background-color: #e4e9f7;
@@ -76,7 +96,6 @@
             outline: none;
             padding-bottom: 10px;
         }
-    
     </style>
 
 
@@ -151,10 +170,10 @@
                         {
                             <div class="col-md-6 whitepaper ms-4 mt-3">
 
-                                <p class="heading"><b>@whitepaper.WP_TITLE</b></p>
+                                <p class="heading"><b>@Html.Raw(DecodeJavaScriptString(@whitepaper.WP_TITLE))</b></p>
 
 
-                                <p>@whitepaper.WP_Description</p>
+                                <p>@Html.Raw(DecodeJavaScriptString(@whitepaper.WP_Description))</p>
 
                                 @if (!string.IsNullOrEmpty(whitepaper.WP_ATTACHEMENT))
                                 {
@@ -296,10 +315,10 @@
             <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
         </div>
     </div>
-   
+
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
-  
+
     <script>
         $(document).ready(function () {
             $('#searchPharse').on('keyup', function () {

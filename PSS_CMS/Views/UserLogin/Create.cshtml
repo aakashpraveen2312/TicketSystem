@@ -50,92 +50,103 @@
                 </ul>
             </div>
         </div>
-
-        <div class="create ms-4 me-2 mt-3">
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.L_USERID, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.L_USERID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
-                </div>
+        @using (Html.BeginForm("Create", "UserLogin", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
+        {
+    <div class="create ms-4 me-2 mt-3">
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.L_USERID, new { @class = "labels" })
             </div>
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.L_USERNAME, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.L_USERNAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
-
-                </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.L_USERID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
             </div>
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.L_EMAILID, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.L_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
-
-                </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.L_USERNAME, new { @class = "labels" })
             </div>
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.L_Contact, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.L_Contact, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.L_USERNAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
 
-                </div>
             </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.L_PASSWORD, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.L_PASSWORD, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
-
-                </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.L_EMAILID, new { @class = "labels" })
             </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.L_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
 
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.L_PROJECTID, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.L_PROJECTID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
-
-                </div>
             </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.L_UGRECID, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.DropDownListFor(model => model.L_UGRECID, new SelectList(Model.Outlets, "Value", "Text"), "-- Select User Group --", new { @class = "form-control", autocomplete = "off" })
-                </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.L_Contact, new { @class = "labels" })
             </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.L_Contact, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
 
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.L_UserDisable, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.CheckBoxFor(model => model.L_UserDisable, new { @class = "form-check-input" })
-                </div>
-            </div>
-            <div class="row ">
-                <div class="col-lg-2">
-
-                </div>
-                <div class="col-lg-3 d-flex justify-content-end">
-                    <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="" />
-                    <input type="submit" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserGroup", new { })'" />
-                </div>
             </div>
         </div>
 
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.L_PASSWORD, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.L_PASSWORD, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", type = "password" } })
+
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.L_PROJECTID, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @*@Html.EditorFor(model => model.L_PROJECTID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })*@
+                @Html.DropDownListFor(model => model.L_PROJECTID, new SelectList(Model.Projects, "Value", "Text"), "-- Select Project --", new { @class = "form-control", autocomplete = "off" })
+
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.L_ROLE, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.DropDownListFor(model => model.L_ROLE, new SelectList(Model.Outlets, "Value", "Text"), "-- Select User Group --", new { @class = "form-control", autocomplete = "off" })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.L_SORTORDER, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.L_SORTORDER, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.L_UserDisable, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.CheckBoxFor(model => model.L_UserDisable, new { @class = "form-check-input" })
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-lg-2">
+
+            </div>
+            <div class="col-lg-3 d-flex justify-content-end">
+                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="" />
+                <input type="submit" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserGroup", new { })'" />
+            </div>
+        </div>
+    </div>
+        }
     </div>
 
 
@@ -175,6 +186,85 @@
                 window.location.href = '@Url.Action("Logout", "Login")';
             }
         });
+    });
+    </script>
+    @*Toastr for created succesfully*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $("#createform").submit(function (event) {
+            event.preventDefault();
+
+            var submitBtn = $("#savebutton");
+            submitBtn.prop("disabled", true).text("Submitting...");
+
+            var formData = new FormData(this);
+
+            // Disable page interaction
+            $("body").css("pointer-events", "none");
+
+            $.ajax({
+                url: '@Url.Action("Create", "UserLogin")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            showCancelButton: true,
+                            confirmButtonText: "Continue",
+                            cancelButtonText: "Back to List",
+                            allowOutsideClick: false, // Prevent closing by clicking outside
+                            allowEscapeKey: false, // Prevent closing using Esc key
+                            customClass: {
+                                confirmButton: "swal-btn-continue",
+                                cancelButton: "swal-btn-back"
+                            },
+                            didOpen: () => {
+                                // Allow interaction inside the alert only
+                                $(".swal2-container").css("pointer-events", "auto");
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            } else {
+                                window.location.href = '@Url.Action("List", "UserLogin",new { id=Session["CompanyId"]})';
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: response.message,
+                            icon: "error",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    resetButton();
+                }
+            });
+        });
+
+        function resetButton() {
+            $("#savebutton").prop("disabled", false).text("Submit");
+            $("body").css("pointer-events", "auto"); // Re-enable page interaction
+        }
     });
     </script>
 

@@ -61,10 +61,10 @@
 
                         <!-- Forgot Password -->
                         <div class="forgot-password">
-                            @*<a href="#" class="text-decoration-none">Forgot Password?</a>*@
+                            <a href="@Url.Action("Forgotpassword", "Forgotpassword")" class="text-decoration-none">Forgot Password?</a>
                         </div>
                         <!-- Login Button -->
-                        <div class="d-flex justify-content-center mt-4 gap-3">
+                        <div class="d-flex justify-content-center mt-2 gap-3">
                             <button type="submit" class="btn-login btn-sm" tabindex="4">Login</button>
 
                         </div>
@@ -73,9 +73,6 @@
                         <div>
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                         </div>
-
-
-
 
 
                     }
@@ -118,31 +115,7 @@
         </script>
     }
 
-    @*@if (!string.IsNullOrEmpty(Convert.ToString(successMessage)))
-        {
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Welcome !',
-            text: '@successMessage',
-            showConfirmButton: true,
-            customClass: {
-                popup: 'swal2-popup', // Apply custom class to the popup
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Show the preloader when the user confirms
-                showLoadingScreen();
-
-                // Redirect after showing the message
-                window.location.href = '@Url.Action("Index", "Home")';
-            }
-        });
-            </script>
-
-        }*@
-
+  
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             showLoadingScreen();

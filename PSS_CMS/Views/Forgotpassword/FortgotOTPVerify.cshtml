@@ -1,0 +1,179 @@
+﻿@model PSS_CMS.Models.Forgotpassword
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PSS</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
+
+    <link href="~/Content/Forgot.css" rel="stylesheet" />
+
+</head>
+<body onload="hideLoadingScreen()">
+    <!-- Centered Sign-in Form -->
+    <div class="container vh-100 d-flex justify-content-center align-items-center">
+        <div class="row">
+            <div class="col">
+                <div class="card login-container position-relative d-flex justify-content-center align-items-center">
+                    <!-- Logo -->
+                    <img src="~/assets/img/Infinity logo bgremove.png" alt="PSS Logo" class="logo">
+
+                    <!-- Header -->
+                    <h5 class="text-center mb-3">FORGOT PASSWORD</h5>
+                    <!-- Form -->
+                    @using (Html.BeginForm("FortgotOTPVerify", "Forgotpassword", FormMethod.Post, new { id = "createform" }))
+                    {
+                <div class="create">
+                    <div class="row mb-3">
+                        <div class="col-md-12 col-sm-12">
+                            @Html.LabelFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
+
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", autocomplete = "off",  id = "", required = "required" } })
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12 col-sm-12">
+                            @Html.LabelFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control" } })
+
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            @Html.EditorFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", required = "required" } })
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12 col-sm-12">
+                            @Html.LabelFor(model => model.otp, new { htmlAttributes = new { @class = "form-control" } })
+
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            @Html.EditorFor(model => model.otp, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", required = "required" } })
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <div class="col-md-12">
+
+                        </div>
+                        <div class="col-md-12 d-flex justify-content-end">
+                            <input type="submit" value="Submit" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                            <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "Login", new { })'" />
+                        </div>
+                    </div>
+                </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="preloader"></div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Link to SweetAlert2 library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            showLoadingScreen();
+        });
+
+        window.addEventListener('load', hideLoadingScreen);
+
+        function showLoadingScreen() {
+            document.getElementById('preloader').style.display = 'flex';
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('preloader').style.display = 'none';
+        }
+    </script>
+
+
+    @*Toastr for created succesfully*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $("#createform").submit(function (event) {
+            event.preventDefault();
+
+            var submitBtn = $("#savebutton");
+            submitBtn.prop("disabled", true).text("Submitting...");
+
+            var formData = new FormData(this);
+
+            // Disable page interaction
+            $("body").css("pointer-events", "none");
+
+            $.ajax({
+                url: '@Url.Action("FortgotOTPVerify", "Forgotpassword")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            confirmButtonText: "Ok",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            customClass: {
+                                confirmButton: "swal-btn-continue",
+                            },
+                            didOpen: () => {
+                                $(".swal2-container").css("pointer-events", "auto");
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '@Url.Action("Index", "Login")';
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: response.message,
+                            icon: "error",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    resetButton();
+                }
+            });
+        });
+
+        function resetButton() {
+            $("#savebutton").prop("disabled", false).text("Submit");
+            $("body").css("pointer-events", "auto");
+        }
+    });
+    </script>
+
+
+</body>
+</html>

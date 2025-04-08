@@ -282,11 +282,13 @@
     <Compile Include="Controllers\CompanyRegistrationController.cs" />
     <Compile Include="Controllers\ChangePasswordController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
+    <Compile Include="Controllers\ForgotpasswordController.cs" />
     <Compile Include="Controllers\KnowledgeBasedController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ProjectMasterController.cs" />
     <Compile Include="Controllers\RecentTicketsController.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
+    <Compile Include="Controllers\UseradminmappingController.cs" />
     <Compile Include="Controllers\UserGroupController.cs" />
     <Compile Include="Controllers\UserLoginController.cs" />
     <Compile Include="Global.asax.cs">
@@ -297,6 +299,7 @@
     <Compile Include="Models\Companies.cs" />
     <Compile Include="Models\Dashborardchart.cs" />
     <Compile Include="Models\Faq.cs" />
+    <Compile Include="Models\Forgotpassword.cs" />
     <Compile Include="Models\Login.cs" />
     <Compile Include="Models\Projectmaster.cs" />
     <Compile Include="Models\Recenttickets.cs" />
@@ -306,6 +309,7 @@
     <Compile Include="Models\Tickets.cs" />
     <Compile Include="Models\Timeline.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\Useradminmap.cs" />
     <Compile Include="Models\Usergroup.cs" />
     <Compile Include="Models\WhitePaper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -368,6 +372,7 @@
     <Content Include="Content\Companies.css" />
     <Content Include="Content\Colors.css" />
     <Content Include="Content\EditiSub.css" />
+    <Content Include="Content\Forgot.css" />
     <Content Include="Content\Gallery.css" />
     <Content Include="Content\Gridmvc.css" />
     <Content Include="Content\Login.css" />
@@ -477,6 +482,9 @@
     <Content Include="Views\ProjectMaster\Create.cshtml" />
     <Content Include="Views\ProjectMaster\Edit.cshtml" />
     <Content Include="Views\ChangePassword\ChangePassword.cshtml" />
+    <Content Include="Views\Forgotpassword\Forgotpassword.cshtml" />
+    <Content Include="Views\Forgotpassword\FortgotOTPVerify.cshtml" />
+    <Content Include="Views\Useradminmapping\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

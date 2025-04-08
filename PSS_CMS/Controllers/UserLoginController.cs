@@ -19,9 +19,11 @@ namespace PSS_CMS.Controllers
         public async Task<ActionResult> Create()
         {
             var outlets = await GetUserGroupComboAsync();
+            var project = await GetProjectComboAsync();
             var model = new User
             {
-                Outlets = outlets
+                Outlets = outlets,
+                Projects = project
             };
 
             return View(model);
@@ -34,7 +36,7 @@ namespace PSS_CMS.Controllers
 
             try
             {
-                var Regurl = ConfigurationManager.AppSettings["POSTITEM"];
+                var Regurl = ConfigurationManager.AppSettings["PostPSSLOGIN"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
@@ -45,7 +47,7 @@ namespace PSS_CMS.Controllers
                     L_PASSWORD = objUser.L_PASSWORD,
                     L_ROLE = objUser.L_ROLE,
                     L_EMAILID = objUser.L_EMAILID,
-                    L_COMPANYID = objUser.L_COMPANYID,
+                    L_COMPANYID = Session["CompanyId"],
                     L_PROJECTID = objUser.L_PROJECTID,
                     L_UGRECID = objUser.L_UGRECID,
                     L_Contact = objUser.L_Contact,
@@ -84,7 +86,7 @@ namespace PSS_CMS.Controllers
                       
                         if (apiResponse.Status == "Y")
                         {
-                            return Json(new { status = "success", message = "Item Details Created Successfully", }, JsonRequestBehavior.AllowGet);
+                            return Json(new { status = "success", message = "User Details Created Successfully", }, JsonRequestBehavior.AllowGet);
                         }
                         else if (apiResponse.Status == "U")
                         {
@@ -105,7 +107,7 @@ namespace PSS_CMS.Controllers
             {
                 return Json(new { status = "error", message = "Exception: " + ex.Message });
             }
-            return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+            return RedirectToAction("List", "UserLogin", new {Id = Session["CompanyId"] });
         }
         public async Task<List<SelectListItem>> GetUserGroupComboAsync()
         {
@@ -143,7 +145,7 @@ namespace PSS_CMS.Controllers
                                 {
                                     outletCombo.Add(new SelectListItem
                                     {
-                                        Value = item.TUG_CODE.ToString(),
+                                        Value = item.TUG_NAME,
                                         Text = item.TUG_NAME
                                     });
                                 }
@@ -169,7 +171,7 @@ namespace PSS_CMS.Controllers
         }
         public async Task<List<SelectListItem>> GetProjectComboAsync()
         {
-            var outletCombo = new List<SelectListItem>();
+            var projectCombo = new List<SelectListItem>();
             string apiurl = ConfigurationManager.AppSettings["PROJECTGET"];
             string authkey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
@@ -195,13 +197,13 @@ namespace PSS_CMS.Controllers
 
                         try
                         {
-                            var apiResponse = JsonConvert.DeserializeObject<UserGroupRootObject>(content);
+                            var apiResponse = JsonConvert.DeserializeObject<ProjectMasterRootObject>(content);
 
                             if (apiResponse.Status == "Y")
                             {
                                 foreach (var item in apiResponse.Data)
                                 {
-                                    outletCombo.Add(new SelectListItem
+                                    projectCombo.Add(new SelectListItem
                                     {
                                         Value = item.P_CODE.ToString(),
                                         Text = item.P_NAME
@@ -225,7 +227,7 @@ namespace PSS_CMS.Controllers
                 }
             }
 
-            return outletCombo ?? new List<SelectListItem>();
+            return projectCombo ?? new List<SelectListItem>();
         }
 
         public async Task<ActionResult> List(string id, string searchPhrase)
@@ -299,23 +301,23 @@ namespace PSS_CMS.Controllers
             return View(userList);
         }
 
+
         public async Task<ActionResult> Edit(int id, string AppUserName)
         {
-            //GlobalVariables.APPUSERNAME = AppUserName;
-            Session["APPUSERNAME"] = AppUserName.ToUpper();
-            //TempData["AppUserRecID"] = id;
-            string WEBURLGETBYID = ConfigurationManager.AppSettings["AppusersGetbyidURL"];
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["PSSLOGINgetbyID"];
             string Authkey = ConfigurationManager.AppSettings["Authkey"];
 
-            //List<Bins> BinsList = new List<Bins>();
             User user = null;
+
+            // Fetch the user group and project data asynchronously
+            var roles = await GetUserGroupComboAsync();
+            var projects = await GetProjectComboAsync();
 
             string APIKey = Session["APIKEY"].ToString();
             string companyId = Session["CompanyId"].ToString();
-            //GlobalVariables.AU_RECID = id;
             Session["RECID"] = id;
 
-            string strparams = "RecID=" + id + "&" + "CRecID=" + companyId;
+            string strparams = "Recid=" + id + "&" + "companyId=" + companyId;
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -324,46 +326,41 @@ namespace PSS_CMS.Controllers
                 {
                     handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-                    using (HttpClient client = new HttpClient(handler))
+                    using (var client = new HttpClient(handler))
                     {
                         client.DefaultRequestHeaders.Add("ApiKey", APIKey);
                         client.DefaultRequestHeaders.Add("Authorization", Authkey);
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-
                         var response = await client.GetAsync(finalurl);
-
-
 
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var content = JsonConvert.DeserializeObject<ApiResponseUserS>(jsonString);
-
-                            //string password = content.Data.AU_PASSWORD;
-                            //Session["AU_PASSWORD"] = password;
-                            //Session["APEDITCODE"] = content.Data.AU_Code;
-
-
                             user = content.Data;
+
+                            // Set the selected values based on the user data
+                            ViewBag.L_PROJECTID = new SelectList(projects, "Value", "Text", user?.L_PROJECTID);
+                            ViewBag.L_ROLE = new SelectList(roles, "Value", "Text", user?.L_ROLE);
                         }
                         else
                         {
                             ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
-
                         }
-
                     }
                 }
-
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            return View(user);
 
+            return View(user);
         }
+
+
+        
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -376,16 +373,17 @@ namespace PSS_CMS.Controllers
             try
             {
 
-                var WEBURLPUT = ConfigurationManager.AppSettings["AppusersPutURL"];
+                var WEBURLPUT = ConfigurationManager.AppSettings["PutPSSLOGIN"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
                 //int AU_RECID = GlobalVariables.AU_RECID;
-                int AU_RECID = (int)Session["AU_RECID"];
+                //int AU_RECID = (int)Session["AU_RECID"];
                 var content = $@"{{
                    
                     ""L_RECID"": ""{(int)Session["RECID"]}"",
                     ""L_USERNAME"": ""{UserEdit.L_USERNAME}"",
                     ""L_PASSWORD"": ""{UserEdit.L_PASSWORD}"",                  
+                    ""L_ROLE"": ""{UserEdit.L_ROLE}"",                  
                     ""L_EMAILID"": ""{UserEdit.L_EMAILID}"",                  
                     ""L_UGRECID"": ""{UserEdit.L_UGRECID}"",
                     ""L_PROJECTID"": ""{UserEdit.L_PROJECTID}"",
@@ -444,7 +442,7 @@ namespace PSS_CMS.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("List", "AppUser", new { id = companyId });
+                        return RedirectToAction("List", "UserLogin", new { id = companyId });
 
                     }
                 }
@@ -460,7 +458,7 @@ namespace PSS_CMS.Controllers
 
             }
 
-            return RedirectToAction("List", "User", new { id = companyId });
+            return RedirectToAction("List", "UserLogin", new { id = companyId });
 
         }
 

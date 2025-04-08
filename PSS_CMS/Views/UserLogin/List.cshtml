@@ -77,11 +77,11 @@
             .RenderValueAs(o =>
             {
 
-                var Editurl = Url.Action("Edit", "User", new { }, null);
+                var Editurl = Url.Action("Edit", "UserLogin", new { id= o.L_RECID }, null);
                 var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
-                var Deleteurl = Url.Action("Delete", "User", new { }, null);
+                var Deleteurl = Url.Action("Delete", "UserLogin", new { id = o.L_RECID }, null);
                 var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
                 var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 

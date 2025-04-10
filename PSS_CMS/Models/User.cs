@@ -32,7 +32,7 @@ namespace PSS_CMS.Models
 
         [Required(ErrorMessage = "Email ID is required")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
-        [DisplayName("EmailID")]
+        [DisplayName("Email ID")]
         public string L_EMAILID { get; set; }
 
         public int? L_COMPANYID { get; set; }
@@ -59,7 +59,7 @@ namespace PSS_CMS.Models
         public string L_DOMAIN { get; set; }
 
         [StringLength(10, ErrorMessage = "SortOrder can't be longer than 10 characters")]
-        [DisplayName("SortOrder")]
+        [DisplayName("Sort")]
         public string L_SORTORDER { get; set; }
 
         [DisplayName("Disable")]

@@ -8,6 +8,7 @@ namespace PSS_CMS.Models
     public class Useradminmap
     {
         public bool USERSELECTED { get; set; }
+        public bool Selected { get; set; }
         public string L_USERNAME { get; set; }
         public string L_ROLE { get; set; }
         public string L_USERID { get; set; }

@@ -231,7 +231,7 @@ namespace PSS_CMS.Controllers
             return projectCombo ?? new List<SelectListItem>();
         }
 
-        public async Task<ActionResult> List(string searchPhrase)
+        public async Task<ActionResult> List(string searchPharse)
         {
             User objuser = new User();
 
@@ -274,11 +274,13 @@ namespace PSS_CMS.Controllers
                             userList = content.Data;
 
                            
-                            if (!string.IsNullOrEmpty(searchPhrase))
+                            if (!string.IsNullOrEmpty(searchPharse))
                             {
                                 userList = userList
-                                    .Where(r => r.L_USERNAME.ToLower().Contains(searchPhrase.ToLower()) ||
-                                   r.L_EMAILID.ToString().ToLower().Contains(searchPhrase.ToLower()))
+                                    .Where(r => r.L_USERNAME.ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.L_USERID.ToString().ToLower().Contains(searchPharse.ToLower())||
+                                   r.L_ROLE.ToString().ToLower().Contains(searchPharse.ToLower())||
+                                   r.L_EMAILID.ToString().ToLower().Contains(searchPharse.ToLower()))
                                     .ToList();
                              
                             }

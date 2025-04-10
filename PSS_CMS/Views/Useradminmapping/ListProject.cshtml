@@ -66,14 +66,14 @@
                     @Html.Grid(Model).Columns(columns =>
                {
 
-                   columns.Add(c => c.USERSELECTED)
+                   columns.Add(c => c.Selected)
         .Titled("Select All &nbsp;&nbsp;  <input type='checkbox' id='selectAll' />") // "Select All" checkbox in the header
         .Encoded(false)
         .Sanitized(false)
         .RenderValueAs(o =>
         {
             var index = Model.ToList().IndexOf(o);
-            var isChecked = o.USERSELECTED ? "checked" : "";
+            var isChecked = o.Selected ? "checked" : "";
             var checkboxHtml = $"<input type='checkbox' name='selectedItems[{index}].USERSELECTED' value='true' class='select-item' {isChecked} />";
             var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].P_PROJECTRECID' value='{o.P_PROJECTRECID}' />"; // Bind GL_RECID properly
             return MvcHtmlString.Create(checkboxHtml + hiddenRecId); // Return the HTML

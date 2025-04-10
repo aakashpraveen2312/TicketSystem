@@ -7,6 +7,7 @@
     <title>PSS - PACE SOFTWARE SOLUTIONS</title>
     <script src="~/Scripts/Inactivitylogout.js"></script>
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
+
 </head>
 <body onload="hideLoadingScreen()">
     <div id="loadingScreen">
@@ -50,38 +51,41 @@
                         <span class="text nav-text" style="margin-left:15px">SECURITY</span>
                     </li>
                     <!-- Change Password -->
-                    <li class="nav-link">
-                        <a href="@Url.Action("List", "UserGroup")">
-                            <i class='bx bx-user-circle' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">User Group</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("List", "UserLogin")">
-                            <i class='bx bx-user' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Users</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("List", "ProjectMaster")">
-                            <i class='bx bx-spreadsheet' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Project Master</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("ChangePassword", "ChangePassword")">
-                            <i class='bx bxs-key' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
-                        </a>
-                    </li>
-                    <!-- Logout -->
-                    <li class="nav-link">
-                        <a href="javascript:void(0);" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
-                            <i class='bx bx-log-out' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Logout</span>
-                        </a>
-                    </li>
-                </ul>
+                    @if (Session["UserRole"] == null || Session["UserRole"].ToString().ToLower() != "admin")
+                    {
+                        <li class="nav-link">
+                            <a href="@Url.Action("List", "UserGroup")">
+                                <i class='bx bx-user-circle' style="font-size:24px"></i>
+                                <span class="text nav-text" style="margin-left:15px">User Group</span>
+                            </a>
+                        </li>
+                    }
+                        <li class="nav-link">
+                            <a href="@Url.Action("List", "UserLogin")">
+                                <i class='bx bx-user' style="font-size:24px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Users</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("List", "ProjectMaster")">
+                                <i class='bx bx-spreadsheet' style="font-size:24px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Project</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("ChangePassword", "ChangePassword")">
+                                <i class='bx bxs-key' style="font-size:24px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                            </a>
+                        </li>
+                        <!-- Logout -->
+                        <li class="nav-link">
+                            <a href="javascript:void(0);" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
+                                <i class='bx bx-log-out' style="font-size:24px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Logout</span>
+                            </a>
+                        </li>
+                    </ul>
             </div>
         </div>
     </nav>

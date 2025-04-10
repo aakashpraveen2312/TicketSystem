@@ -62,13 +62,14 @@ namespace PSS_CMS.Controllers
                             var rootObjects = JsonConvert.DeserializeObject<UserAdminRootObject>(jsonString);
                             useradminlist = rootObjects.Data;
 
-                            //if (!string.IsNullOrEmpty(searchPharse))
-                            //{
-                            //    projectmasterlist = projectmasterlist
-                            //        .Where(r => r.P_NAME.ToLower().Contains(searchPharse.ToLower()) ||
-                            //                    r.P_SORTORDER.ToString().Contains(searchPharse.ToLower()))
-                            //        .ToList();
-                            //}
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                useradminlist = useradminlist
+                                    .Where(r => r.L_USERID.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.L_USERNAME.ToString().Contains(searchPharse.ToLower())||
+                                                r.L_ROLE.ToString().Contains(searchPharse.ToLower()))
+                                    .ToList();
+                            }
 
                         }
                         else
@@ -208,7 +209,7 @@ namespace PSS_CMS.Controllers
 
             List<Useradminmap> useradminprojectlist = new List<Useradminmap>();
 
-            string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + USERID;
             string url = Weburl + "?" + strparams;
 
             try
@@ -284,7 +285,7 @@ namespace PSS_CMS.Controllers
                     ""cP_CUSTOMERRECID"": ""{ Session["USERID"]}"",                  
                     ""cP_PROJECTRECID"":""{Session["SELECTEDPROJECTID"]}"",              
                     ""cP_SORTORDER"":""{1}"",                
-                    ""cP_DISABLE"":""{"N"}""                
+                    ""cP_DISABLE"":""{"Y"}""                
                    
                         }}";
 

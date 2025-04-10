@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -91,32 +92,45 @@ namespace PSS_CMS.Controllers
                         if (Status == "Y")
                         {
                             var url = ConfigurationManager.AppSettings["EmailURL"];
-                            var client = new RestClient(url);
-                            var request = new RestRequest(url, Method.Post);
+             
 
-                            // header
-                            request.AddHeader("Content-Type", "application/json");
-
-                            // Add request body using string interpolation
-
-                            var body = $@"{{
-                    ""EmailID"": ""{cmp.C_EMAILID}"",
-                    ""Name"": ""{cmp.C_APPUSERNAME}"",
-                    ""password"": ""{password}"",
-                    ""Domain"": ""{cmp.C_Domain}"",
-                    ""Source"":""UserCredentialTicket""
-                }}";
-                            request.AddParameter("application/json", body, ParameterType.RequestBody);
-                            try
+                            // Create the payload
+                            var payload = new
                             {
-                                RestResponse response = await client.ExecuteAsync(request);
-                                ViewBag.ToastrSuccessMessage = "Request has been successfully sent";
+                                emailID = cmp.C_EMAILID,
+                                name = cmp.C_APPUSERNAME,
+                                password = password,
+                                domain = cmp.C_Domain
+                            };
 
-                            }
-                            catch (Exception ex)
+                            // Serialize payload to JSON
+                            var jsonPayload = JsonConvert.SerializeObject(payload);
+                            var contents = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+                            using (var httpClient = new HttpClient())
                             {
-                                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
+                                httpClient.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+
+                                try
+                                {
+                                    var response = await httpClient.PostAsync(url, contents);
+
+                                    if (response.IsSuccessStatusCode)
+                                    {
+                                        ViewBag.ToastrSuccessMessage = "Request has been successfully sent";
+                                    }
+                                    else
+                                    {
+                                        return new HttpStatusCodeResult((int)response.StatusCode, "Failed to send request.");
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
+                                }
                             }
+
                             return RedirectToAction("Index", "Login");
                         }
 

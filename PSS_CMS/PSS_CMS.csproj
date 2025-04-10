@@ -283,6 +283,7 @@
     <Compile Include="Controllers\ChangePasswordController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\ForgotpasswordController.cs" />
+    <Compile Include="Controllers\InActivityController.cs" />
     <Compile Include="Controllers\KnowledgeBasedController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ProjectMasterController.cs" />
@@ -291,6 +292,7 @@
     <Compile Include="Controllers\UseradminmappingController.cs" />
     <Compile Include="Controllers\UserGroupController.cs" />
     <Compile Include="Controllers\UserLoginController.cs" />
+    <Compile Include="Fillter\ApiKeyAuthorizeAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -428,6 +430,7 @@
     <Content Include="Scripts\gridmvc.lang.ru.js" />
     <Content Include="Scripts\gridmvc.min.js" />
     <Content Include="Scripts\ImageSubmission.js" />
+    <Content Include="Scripts\Inactivitylogout.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
@@ -485,9 +488,11 @@
     <Content Include="Views\Forgotpassword\Forgotpassword.cshtml" />
     <Content Include="Views\Forgotpassword\FortgotOTPVerify.cshtml" />
     <Content Include="Views\Useradminmapping\List.cshtml" />
+    <Content Include="Views\Useradminmapping\ListProject.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\InActivity\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

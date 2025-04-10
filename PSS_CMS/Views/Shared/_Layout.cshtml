@@ -5,8 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PSS - PACE SOFTWARE SOLUTIONS</title>
+    <script src="~/Scripts/Inactivitylogout.js"></script>
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
 </head>
-<body>
+<body onload="hideLoadingScreen()">
+    <div id="loadingScreen">
+        <div class="loader"></div>
+    </div>
     <nav class="sidebar close">
         <header>
             <div class="text logo-text" style="display:inline-block"> <a href="@Url.Action("Dashboard", "DashBoard")"><img src="~/assets/img/Infinity logo bgremove.png" alt="PSS Logo" class="logo"></a></div>
@@ -80,11 +85,46 @@
             </div>
         </div>
     </nav>
-  
+
     <div>
         @RenderBody()
 
     </div>
+    @*Toastr CSS*@
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    @*jQuery (required by Toastr)*@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    @*Toastr JS*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    @*Preloader script*@
+    <script type="text/javascript">
+        function preventBack() {
+            window.history.forward();
+        }
+        setTimeout("preventBack()", 0);
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            showLoadingScreen();
+
+        });
+
+        window.addEventListener('load', function () {
+            // Delay hiding the preloader to ensure it's displayed even on fast loads
+            setTimeout(hideLoadingScreen, 500); // 500ms delay before hiding
+        });
+
+        function showLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'flex';
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'none';
+        }
+    </script>
+    @*Preloader script*@
+
 </body>
 </html>
 

@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class DashBoardController : Controller
     {
        

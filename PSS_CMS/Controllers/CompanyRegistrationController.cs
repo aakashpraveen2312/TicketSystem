@@ -117,7 +117,7 @@ namespace PSS_CMS.Controllers
                             {
                                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
                             }
-                            return RedirectToAction("Login", "Home");
+                            return RedirectToAction("Index", "Login");
                         }
 
                         else if (Status == "U")

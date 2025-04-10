@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Web.Mvc;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class KnowledgeBasedController : Controller
     {
         private string GetImageMimeType(string base64Image)
@@ -188,7 +190,8 @@ namespace PSS_CMS.Controllers
             string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            //string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "companyId=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {

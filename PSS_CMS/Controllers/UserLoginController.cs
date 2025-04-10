@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Web.Mvc;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class UserLoginController : Controller
     {
         // GET: UserLogin
@@ -49,8 +51,8 @@ namespace PSS_CMS.Controllers
                     L_EMAILID = objUser.L_EMAILID,
                     L_COMPANYID = Session["CompanyId"],
                     L_PROJECTID = objUser.L_PROJECTID,
-                    L_UGRECID = objUser.L_UGRECID,
-                    L_Contact = objUser.L_Contact,
+                    l_DOMAIN= Session["DOMAIN"],
+                    l_MOBILENO = objUser.l_MOBILENO,
                     L_SORTORDER = objUser.L_SORTORDER,
                     L_DISABLE = objUser.L_UserDisable ? "Y" : "N"
                 };
@@ -76,38 +78,38 @@ namespace PSS_CMS.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        // Return success status to enable tabs
-                        //return Json(new { status = "success" ,message = "Item  inserted successfully" });
+
                         var responseBody = await response.Content.ReadAsStringAsync();
 
 
                         var apiResponse = JsonConvert.DeserializeObject<ApiResponseUser>(responseBody);
                         string message = apiResponse.Message;
-                      
+
                         if (apiResponse.Status == "Y")
                         {
-                            return Json(new { status = "success", message = "User Details Created Successfully", }, JsonRequestBehavior.AllowGet);
+                            return Json(new { success = true, message = apiResponse.Message });
                         }
-                        else if (apiResponse.Status == "U")
+                        else if (apiResponse.Status == "U" || apiResponse.Status == "N")
                         {
-                            return Json(new { status = "error", message = apiResponse.Message });
+                            return Json(new { success = false, message = apiResponse.Message });
                         }
-                        else if (apiResponse.Status == "N")
+                        else
                         {
-                            return Json(new { status = "error", message = apiResponse.Message });
+                            return Json(new { success = false, message = "An unexpected status was returned." });
                         }
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
                     }
+
                 }
-            }
-            catch (Exception ex)
+                }
+                catch (Exception ex)
             {
-                return Json(new { status = "error", message = "Exception: " + ex.Message });
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            return RedirectToAction("List", "UserLogin", new {Id = Session["CompanyId"] });
+            return View(objUser);
         }
         public async Task<List<SelectListItem>> GetUserGroupComboAsync()
         {
@@ -205,7 +207,7 @@ namespace PSS_CMS.Controllers
                                 {
                                     projectCombo.Add(new SelectListItem
                                     {
-                                        Value = item.P_CODE.ToString(),
+                                        Value = item.P_NAME,
                                         Text = item.P_NAME
                                     });
                                 }
@@ -230,11 +232,9 @@ namespace PSS_CMS.Controllers
             return projectCombo ?? new List<SelectListItem>();
         }
 
-        public async Task<ActionResult> List(string id, string searchPhrase)
+        public async Task<ActionResult> List(string searchPhrase)
         {
             User objuser = new User();
-
-            id = Session["CompanyId"].ToString();
 
             string WEBURLGET = ConfigurationManager.AppSettings["GETPSSLOGIN"];
             string Authkey = ConfigurationManager.AppSettings["Authkey"];
@@ -245,7 +245,7 @@ namespace PSS_CMS.Controllers
             string APIKey = Session["APIKEY"].ToString();
 
 
-            string strparams = "companyId=" + id;
+            string strparams = "companyId=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
             try
             {
@@ -302,8 +302,9 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> Edit(int id, string AppUserName)
+        public async Task<ActionResult> Edit(int id, string AppUserName,string userid)
         {
+            Session["userid"] = userid;
             string WEBURLGETBYID = ConfigurationManager.AppSettings["PSSLOGINgetbyID"];
             string Authkey = ConfigurationManager.AppSettings["Authkey"];
 
@@ -314,10 +315,10 @@ namespace PSS_CMS.Controllers
             var projects = await GetProjectComboAsync();
 
             string APIKey = Session["APIKEY"].ToString();
-            string companyId = Session["CompanyId"].ToString();
+           
             Session["RECID"] = id;
 
-            string strparams = "Recid=" + id + "&" + "companyId=" + companyId;
+            string strparams = "Recid=" + id + "&" + "companyId=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -340,9 +341,9 @@ namespace PSS_CMS.Controllers
                             var content = JsonConvert.DeserializeObject<ApiResponseUserS>(jsonString);
                             user = content.Data;
 
-                            // Set the selected values based on the user data
-                            ViewBag.L_PROJECTID = new SelectList(projects, "Value", "Text", user?.L_PROJECTID);
-                            ViewBag.L_ROLE = new SelectList(roles, "Value", "Text", user?.L_ROLE);
+                            ViewBag.L_PROJECTID = new SelectList(projects, "Value", "Text", user?.L_PROJECTID ?? "");
+                            ViewBag.L_ROLE = new SelectList(roles, "Value", "Text", user?.L_ROLE ?? "");
+
                         }
                         else
                         {
@@ -360,37 +361,31 @@ namespace PSS_CMS.Controllers
         }
 
 
-        
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(User UserEdit)
         {
-            string companyId = "";
-            companyId = Session["CompanyId"].ToString();
-
-
+           
             try
             {
 
                 var WEBURLPUT = ConfigurationManager.AppSettings["PutPSSLOGIN"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
-                //int AU_RECID = GlobalVariables.AU_RECID;
-                //int AU_RECID = (int)Session["AU_RECID"];
+             
                 var content = $@"{{
                    
                     ""L_RECID"": ""{(int)Session["RECID"]}"",
-                    ""L_USERNAME"": ""{UserEdit.L_USERNAME}"",
-                    ""L_PASSWORD"": ""{UserEdit.L_PASSWORD}"",                  
+                    ""L_USERNAME"": ""{UserEdit.L_USERNAME}"",                
                     ""L_ROLE"": ""{UserEdit.L_ROLE}"",                  
                     ""L_EMAILID"": ""{UserEdit.L_EMAILID}"",                  
-                    ""L_UGRECID"": ""{UserEdit.L_UGRECID}"",
                     ""L_PROJECTID"": ""{UserEdit.L_PROJECTID}"",
                     ""L_DISABLE"":""{(UserEdit.L_UserDisable ? "Y" : "N")}"",
                     ""L_SORTORDER"":""{UserEdit.L_SORTORDER}"",
-                    ""L_Contact"":""{UserEdit.L_Contact}"",
-                    ""L_COMPANYID"":""{companyId}""
+                    ""l_MOBILENO"":""{UserEdit.l_MOBILENO}"",
+                    ""l_DOMAIN"":""{ Session["DOMAIN"]}"",
+                    ""l_USERID"":""{ UserEdit.L_USERID}"",
+                    ""L_COMPANYID"":""{Session["CompanyID"]}""
                      }}";
                 //""BIN_SPRECID"": ""{ objbins.BIN_SPRECID}"",
                 var request = new HttpRequestMessage
@@ -427,38 +422,32 @@ namespace PSS_CMS.Controllers
                     var apiResponse = JsonConvert.DeserializeObject<ApiResponseUserS>(responseBody);
 
                     string status = apiResponse.Status;
-
                     if (apiResponse.Status == "Y")
                     {
-                        return Json(new { status = "success", message = "User details edited successfully" });
+                        return Json(new { success = true, message = apiResponse.Message });
                     }
-                    else if (apiResponse.Status == "U")
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
                     {
-                        return Json(new { status = "error", message = apiResponse.Message });
-                    }
-                    else if (apiResponse.Status == "N")
-                    {
-                        return Json(new { status = "error", message = apiResponse.Message });
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
                     else
                     {
-                        return RedirectToAction("List", "UserLogin", new { id = companyId });
-
+                        return Json(new { success = false, message = "An unexpected status was returned." });
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
-
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
                 }
+
+
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
-
             }
 
-            return RedirectToAction("List", "UserLogin", new { id = companyId });
+            return View();
 
         }
 
@@ -467,11 +456,10 @@ namespace PSS_CMS.Controllers
         {
 
             Session["PSSLOGINRECID"] = id;
-            string companyId = "";
-            companyId = Session["CompanyId"].ToString();
+          
             string WEBURLDELETE = ConfigurationManager.AppSettings["DELETEPSSLOGIN"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
-            string strparams = "companyId=" + companyId + "&RecordId=" + id;
+            string strparams = "companyId=" + Session["CompanyID"] + "&RecordId=" + id;
             string finalurl = WEBURLDELETE + "?" + strparams;
             string APIKey = Session["APIKEY"].ToString();
            
@@ -504,19 +492,18 @@ namespace PSS_CMS.Controllers
 
                             if (apiResponse.Status == "Y")
                             {
-                                string redirectUrl = Url.Action("List", "UserLogin", new { id = companyId });
+
+                                string redirectUrl = Url.Action("List", "UserLogin", new { });
                                 return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
                             }
                             else if (apiResponse.Status == "U")
                             {
-                                return Json(new { status = "error", message = "You can't delete this record because other records depend on it" });
+                                return Json(new { status = "error", message = apiResponse.Message });
                             }
-                            else
+                            else if (apiResponse.Status == "N")
                             {
                                 return Json(new { status = "error", message = apiResponse.Message });
                             }
-
-                            // return RedirectToAction("List", "AppUser", new { id = companyId });
                         }
                         else
                         {
@@ -537,9 +524,8 @@ namespace PSS_CMS.Controllers
             {
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
-
             return View();
-           
+
         }
 
     }

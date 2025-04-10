@@ -29,7 +29,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
+    <!-- jQuery (required by Toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
         .btncolorcancel {
             padding: 7px;
@@ -56,7 +63,10 @@
 
 </head>
 
-<body>
+<body onload="hideLoadingScreen()">
+    <div id="loadingScreen">
+        <div class="loader"></div>
+    </div>
     <nav class="nav d-flex">
         <div class="p-2 flex-grow-1">
             <h3 style="margin-top:10px" class="heading ms-3">TICKET SYSTEM</h3>
@@ -245,9 +255,6 @@
 
     </div>
 
-    <div id="preloader"></div>
-
-
     @*Side bar script*@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -325,17 +332,17 @@
                       "&startDate=" + startDate +
                       "&endDate=" + endDate;
 
-            $("#preloader").show();
+            $("#loadingScreen").show();
             $.ajax({
                 url: url,
                 type: 'GET',
                 success: function (response) {
-                    $("#preloader").hide();
+                    $("#loadingScreen").hide();
                     $("#ticketTable").html($(response).find("#ticketTable").html());
                 },
                 error: function (xhr, status, error) {
                     console.log("AJAX Error: ", error);
-                    $("#preloader").hide();
+                    $("#loadingScreen").hide();
                 }
             });
         }
@@ -447,9 +454,36 @@
     </script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
 
-
-
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
+    @*Preloader script*@
+    <script type="text/javascript">
+        function preventBack() {
+            window.history.forward();
+        }
+        setTimeout("preventBack()", 0);
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            showLoadingScreen();
+
+        });
+
+        window.addEventListener('load', function () {
+            // Delay hiding the preloader to ensure it's displayed even on fast loads
+            setTimeout(hideLoadingScreen, 500); // 500ms delay before hiding
+        });
+
+        function showLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'flex';
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'none';
+        }
+    </script>
+    @*Preloader script*@
+    <script src="~/Scripts/Inactivitylogout.js"></script>
 </body>
 </html>

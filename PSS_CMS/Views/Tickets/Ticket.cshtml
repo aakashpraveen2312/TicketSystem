@@ -4,9 +4,6 @@
     Layout = null;
 }
 
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,6 +23,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <!-- jQuery (required by Toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
         input#dateTextbox, select#SelectedProjectType, input#sub, select#SelectedTicketType, select#TC_PRIORITYTYPE {
             max-width: 450px;
@@ -34,7 +39,10 @@
     </style>
 </head>
 
-<body id="ticetscreen">
+<body id="ticetscreen" onload="hideLoadingScreen()">
+    <div id="loadingScreen">
+        <div class="loader"></div>
+    </div>
 
 
 
@@ -88,7 +96,7 @@
             <form>
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
-                        <input type="checkbox" id="enableEdit" autocomplete="off" class="mb-4"><span class="ms-2"><b>Old Tikcets</b></span>
+                        <input type="checkbox" id="enableEdit" autocomplete="off" class="mb-4"><span class="ms-2"><b>Old Tickets</b></span>
                         @Html.TextBoxFor(model => model.TC_Date, new { @class = "form-control", required = "required", @readonly = "true", id = "dateTextbox", tabindex = "1" })
                     </div>
 
@@ -125,7 +133,7 @@
                 <div class="row mt-3">
                     <div class="col-md-6 col-sm-12">
                         @Html.LabelFor(model => model.TC_SUBJECT, "Subject", new { @class = "pb-2" })
-                        @Html.TextBoxFor(model => model.TC_SUBJECT, new { @class = "form-control", id = "sub", required = "required", tabindex = "3", autocomplete = "off" })
+                        @Html.TextBoxFor(model => model.TC_SUBJECT, new { @class = "form-control", id = "sub", required = "required", tabindex = "3" })
                     </div>
                     <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
                         <!-- Scond Dropdown for Ticket Types -->
@@ -222,24 +230,7 @@
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
     <script src="~/Scripts/Formatcheck.js"></script>
-    @*<script>
-        function restrictKeys(event) {
-            // Prevent Enter key press (key code 13)
-            if (event.keyCode === 13) {
-                event.preventDefault();
-                return false;
-            }
 
-            // Restrict single quotes (key code 222) and double quotes (key code 34)
-            if (event.key === "'" || event.key === "\"") {
-                event.preventDefault();
-                return false;
-            }
-
-            return true;
-        }
-
-    </script>*@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const sidebarLinks = document.querySelectorAll(".sidebar a");
@@ -386,12 +377,12 @@
                     Swal.fire({
                         title: "",
                         html: `
-                                                <p style="font-size: 15px;"><b>Ticket Raised Successfuly <br/> Admin Will Reach You Soon</b></p>
-                                                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
-                                                    <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
-                                                    <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
-                                                </div>
-                                            `,
+                                                            <p style="font-size: 15px;"><b>Ticket Raised Successfuly <br/> Admin Will Reach You Soon</b></p>
+                                                            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+                                                                <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
+                                                                <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
+                                                            </div>
+                                                        `,
                         showConfirmButton: false,
                         showCancelButton: false,
                         allowOutsideClick: false,
@@ -434,7 +425,35 @@
             });
         });
     </script>
+    @*Preloader script*@
+    <script type="text/javascript">
+        function preventBack() {
+            window.history.forward();
+        }
+        setTimeout("preventBack()", 0);
 
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            showLoadingScreen();
+
+        });
+
+        window.addEventListener('load', function () {
+            // Delay hiding the preloader to ensure it's displayed even on fast loads
+            setTimeout(hideLoadingScreen, 500); // 500ms delay before hiding
+        });
+
+        function showLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'flex';
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'none';
+        }
+    </script>
+    @*Preloader script*@
+    <script src="~/Scripts/Inactivitylogout.js"></script>
 </body>
 </html>
 

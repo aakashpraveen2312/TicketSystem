@@ -16,6 +16,9 @@
 
 </head>
 <body onload="hideLoadingScreen()">
+    <div id="loadingScreen">
+        <div class="loader"></div>
+    </div>
     <!-- Centered Sign-in Form -->
     <div class="container vh-100 d-flex justify-content-center align-items-center">
         <div class="row">
@@ -29,45 +32,45 @@
                     <!-- Form -->
                     @using (Html.BeginForm("FortgotOTPVerify", "Forgotpassword", FormMethod.Post, new { id = "createform" }))
                     {
-                <div class="create">
-                    <div class="row mb-3">
-                        <div class="col-md-12 col-sm-12">
-                            @Html.LabelFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
+                        <div class="create">
+                            <div class="row mb-3">
+                                <div class="col-md-12 col-sm-12">
+                                    @Html.LabelFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
 
-                        </div>
-                        <div class="col-md-12 col-sm-12">
-                            @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", autocomplete = "off",  id = "", required = "required" } })
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12 col-sm-12">
-                            @Html.LabelFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-12 col-sm-12">
+                                    @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", required = "required" } })
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12 col-sm-12">
+                                    @Html.LabelFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control" } })
 
-                        </div>
-                        <div class="col-md-12 col-sm-12">
-                            @Html.EditorFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", required = "required" } })
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12 col-sm-12">
-                            @Html.LabelFor(model => model.otp, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-12 col-sm-12">
+                                    @Html.EditorFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", required = "required" } })
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12 col-sm-12">
+                                    @Html.LabelFor(model => model.otp, new { htmlAttributes = new { @class = "form-control" } })
 
-                        </div>
-                        <div class="col-md-12 col-sm-12">
-                            @Html.EditorFor(model => model.otp, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", required = "required" } })
-                        </div>
-                    </div>
+                                </div>
+                                <div class="col-md-12 col-sm-12">
+                                    @Html.EditorFor(model => model.otp, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", required = "required" } })
+                                </div>
+                            </div>
 
-                    <div class="row ">
-                        <div class="col-md-12">
+                            <div class="row ">
+                                <div class="col-md-12">
 
+                                </div>
+                                <div class="col-md-12 d-flex justify-content-end">
+                                    <input type="submit" value="Submit" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                                    <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "Login", new { })'" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-12 d-flex justify-content-end">
-                            <input type="submit" value="Submit" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                            <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "Login", new { })'" />
-                        </div>
-                    </div>
-                </div>
                     }
 
                 </div>
@@ -75,7 +78,7 @@
         </div>
     </div>
 
-    <div id="preloader"></div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Include jQuery -->
@@ -83,21 +86,34 @@
 
     <!-- Link to SweetAlert2 library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @*Preloader script*@
+    <script type="text/javascript">
+        function preventBack() {
+            window.history.forward();
+        }
+        setTimeout("preventBack()", 0);
+
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             showLoadingScreen();
+
         });
 
-        window.addEventListener('load', hideLoadingScreen);
+        window.addEventListener('load', function () {
+            // Delay hiding the preloader to ensure it's displayed even on fast loads
+            setTimeout(hideLoadingScreen, 500); // 500ms delay before hiding
+        });
 
         function showLoadingScreen() {
-            document.getElementById('preloader').style.display = 'flex';
+            document.getElementById('loadingScreen').style.display = 'flex';
         }
 
         function hideLoadingScreen() {
-            document.getElementById('preloader').style.display = 'none';
+            document.getElementById('loadingScreen').style.display = 'none';
         }
     </script>
+    @*Preloader script*@
 
 
     @*Toastr for created succesfully*@

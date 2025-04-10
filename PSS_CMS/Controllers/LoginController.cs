@@ -64,72 +64,34 @@ namespace PSS_CMS.Controllers
                     string errormessage = Response.Message;
                     string Status = Response.Status;
                     Session["APIKEY"] = Response.APIkey;
-                     string Role = Response.Data[0].L_ROLE;
-                  
-                    if (Status == "Y"&& Role=="User")
-                     {
-                        string Username = Response.Data[0].L_USERNAME;
-                        string UserRole = Response.Data[0].L_ROLE;
-                        string EmailID = Response.Data[0].L_EMAILID;
-
-                          string UserID = Response.Data[0].L_USERID;
-                    string CompanyID = Response.Data[0].L_COMPANYID;
-                    string ProjectID = Response.Data[0].L_PROJECTID;
-
-                        Session["UserName"] = Username;
-                        Session["UserRole"] = UserRole;
-                        Session["EmailId"] = EmailID;
-                        Session["UserID"] = UserID;
-                        Session["CompanyID"] = CompanyID;
-                        Session["ProjectID"] = ProjectID;
-                        await AutoCloseTicket();
-                        return RedirectToAction("Ticket_History", "Tickets");
-
-                       
-                    }
-                    else if (Status == "Y" && Role == "Admin")
+                    if (Status == "Y")
                     {
-                        string Username = Response.Data[0].L_USERNAME;
-                        string UserRole = Response.Data[0].L_ROLE;
-                        string EmailID = Response.Data[0].L_EMAILID;
+                        var data = Response.Data[0];
+                        string role = data.L_ROLE;
 
-                        string UserID = Response.Data[0].L_USERID;
-                        string CompanyID = Response.Data[0].L_COMPANYID;
-                        string ProjectID = Response.Data[0].L_PROJECTID;
+                        // Common session assignments
+                        Session["DOMAIN"] = data.L_DOMAIN;
+                        Session["UserName"] = data.L_USERNAME;
+                        Session["UserRole"] = data.L_ROLE;
+                        Session["EmailId"] = data.L_EMAILID;
+                        Session["UserID"] = data.L_USERID;
+                        Session["CompanyID"] = data.L_COMPANYID;
+                        Session["ProjectID"] = data.L_PROJECTID;
 
-                        Session["UserName"] = Username;
-                        Session["UserRole"] = UserRole;
-                        Session["EmailId"] = EmailID;
-                        Session["UserID"] = UserID;
-                        Session["CompanyID"] = CompanyID;
-                        Session["ProjectID"] = ProjectID;
-
-                        return RedirectToAction("Dashboard", "DashBoard");
-
+                        if (role == "User")
+                        {
+                            await AutoCloseTicket();
+                            return RedirectToAction("Ticket_History", "Tickets");
+                        }
+                        else if (role == "Admin" || role == "SuperAdmin")
+                        {
+                            return RedirectToAction("Dashboard", "DashBoard");
+                        }
                     }
-                    else if (Status == "Y" && Role == "SuperAdmin")
-                    {
-                        string Username = Response.Data[0].L_USERNAME;
-                        string UserRole = Response.Data[0].L_ROLE;
-                        string EmailID = Response.Data[0].L_EMAILID;
 
-                        string UserID = Response.Data[0].L_USERID;
-                        string CompanyID = Response.Data[0].L_COMPANYID;
-                        string ProjectID = Response.Data[0].L_PROJECTID;
-
-                        Session["UserName"] = Username;
-                        Session["UserRole"] = UserRole;
-                        Session["EmailId"] = EmailID;
-                        Session["UserID"] = UserID;
-                        Session["CompanyID"] = CompanyID;
-                        Session["ProjectID"] = ProjectID;
-
-                        return RedirectToAction("Dashboard", "DashBoard");
-
-                    }
                     else if (Status == "N")
                     {                      
-                        TempData["ErrorMessage"] = errormessage;
+                        TempData["ErrorMessage"] = " Invalid User name or Password";
                     }
 
                 }

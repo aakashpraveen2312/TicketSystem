@@ -21,10 +21,48 @@
     @*Bootstrap Icons and Boxicons*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
     <script src="~/Scripts/Script.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/Colors.css" rel="stylesheet" />
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <style>
+        .swal-btn-continue {
+            background-color: #6ed3d0 !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
 
+        .swal-btn-back {
+            background-color: #f0a72d !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        select#L_PROJECTID, select#L_ROLE {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        }
+    </style>
 </head>
 <body>
 
@@ -44,7 +82,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>UserGroup</li>
+                    <li>User</li>
                     <li>List</li>
                     <li>Create</li>
                 </ul>
@@ -58,7 +96,7 @@
                 @Html.LabelFor(model => model.L_USERID, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_USERID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                @Html.EditorFor(model => model.L_USERID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
             </div>
         </div>
         <div class="row mb-3">
@@ -66,7 +104,7 @@
                 @Html.LabelFor(model => model.L_USERNAME, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_USERNAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                @Html.EditorFor(model => model.L_USERNAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
             </div>
         </div>
@@ -75,16 +113,16 @@
                 @Html.LabelFor(model => model.L_EMAILID, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                @Html.EditorFor(model => model.L_EMAILID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.L_Contact, new { @class = "labels" })
+                @Html.LabelFor(model => model.l_MOBILENO, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_Contact, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                @Html.EditorFor(model => model.l_MOBILENO, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
             </div>
         </div>
@@ -94,7 +132,7 @@
                 @Html.LabelFor(model => model.L_PASSWORD, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_PASSWORD, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", type = "password" } })
+                @Html.EditorFor(model => model.L_PASSWORD, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "password" } })
 
             </div>
         </div>
@@ -105,7 +143,7 @@
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
                 @*@Html.EditorFor(model => model.L_PROJECTID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })*@
-                @Html.DropDownListFor(model => model.L_PROJECTID, new SelectList(Model.Projects, "Value", "Text"), "-- Select Project --", new { @class = "form-control", autocomplete = "off" })
+                @Html.DropDownListFor(model => model.L_PROJECTID, new SelectList(Model.Projects, "Value", "Text"), "-- Select Project --", new { @class = "select textboxcolors", autocomplete = "off" })
 
             </div>
         </div>
@@ -115,7 +153,7 @@
                 @Html.LabelFor(model => model.L_ROLE, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.DropDownListFor(model => model.L_ROLE, new SelectList(Model.Outlets, "Value", "Text"), "-- Select User Group --", new { @class = "form-control", autocomplete = "off" })
+                @Html.DropDownListFor(model => model.L_ROLE, new SelectList(Model.Outlets, "Value", "Text"), "-- Select User Group --", new { @class = "select textboxcolors", autocomplete = "off" })
             </div>
         </div>
         <div class="row mb-3">
@@ -123,7 +161,7 @@
                 @Html.LabelFor(model => model.L_SORTORDER, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_SORTORDER, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                @Html.EditorFor(model => model.L_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
             </div>
         </div>
@@ -142,7 +180,7 @@
             </div>
             <div class="col-lg-3 d-flex justify-content-end">
                 <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="" />
-                <input type="submit" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserGroup", new { })'" />
+                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'" />
             </div>
         </div>
     </div>
@@ -234,7 +272,7 @@
                             if (result.isConfirmed) {
                                 location.reload();
                             } else {
-                                window.location.href = '@Url.Action("List", "UserLogin",new { id=Session["CompanyId"]})';
+                                window.location.href = '@Url.Action("List", "UserLogin",new {})';
                             }
                         });
                     } else {

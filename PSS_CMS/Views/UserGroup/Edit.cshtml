@@ -17,10 +17,10 @@
     @*Bootstrap Icons and Boxicons*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
     <script src="~/Scripts/Script.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
     <link href="~/Content/Colors.css" rel="stylesheet" />
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
     <style>
         .swal-btn-continue {
             background-color: #6ed3d0 !important;
@@ -28,6 +28,27 @@
             border-radius: 5px;
             padding: 8px 20px;
             font-weight: bold;
+        }
+
+        select#TUG_NAME {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
         }
     </style>
 </head>
@@ -70,7 +91,13 @@
                         @Html.LabelFor(model => model.TUG_NAME, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TUG_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.DropDownListFor(model => model.TUG_NAME,
+                                                   new SelectList(new[] {
+                                                       new { Value = "Super Admin", Text = "Super Admin" },
+                                                       new { Value = "Admin", Text = "Admin" },
+                                                       new { Value = "User", Text = "User" }
+                                                   }, "Value", "Text"),                                                  
+                                                   new { @class = "select textboxcolors" })
 
                     </div>
                 </div>

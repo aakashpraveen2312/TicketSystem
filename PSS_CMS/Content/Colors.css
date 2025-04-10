@@ -8,4 +8,5 @@
 
 .integerboxcolors {
     background-color: var(--intbox);
+    text-align:right;
 }

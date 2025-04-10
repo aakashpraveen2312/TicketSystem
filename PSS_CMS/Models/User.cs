@@ -14,6 +14,7 @@ namespace PSS_CMS.Models
     public class User
     {
         public int? L_RECID { get; set; }
+        public string selectedvalue { get; set; }
 
         [Required(ErrorMessage = "Username is required")]
         [StringLength(50, ErrorMessage = "Username can't be longer than 50 characters")]
@@ -47,6 +48,7 @@ namespace PSS_CMS.Models
 
         [Phone(ErrorMessage = "Invalid phone number")]
         [DisplayName("Mobile Number")]
+        public string l_MOBILENO { get; set; }
         public string L_Contact { get; set; }
 
         [DisplayName("User Group")]

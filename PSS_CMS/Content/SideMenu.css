@@ -436,12 +436,6 @@ body.dark .home .text {
         font-size: 30px;
     }
 
-/*
-    .col-lg-6, .col-md-6, .col-sm-12 {
-        flex: 0 0 auto;
-        width: auto;
-    }*/
-
     .navbar-collapse {
         flex-direction: row;
         align-items: center;
@@ -568,3 +562,4 @@ ul.breadcrumb li {
         transform: rotate(1turn)
     }
 }
+

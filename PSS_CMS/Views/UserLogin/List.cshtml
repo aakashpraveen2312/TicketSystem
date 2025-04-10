@@ -93,7 +93,7 @@
                     var InfoiconHtml = "<i class='bx bx-info-circle bx-sm'></i>";
                     InfolinkHtml = $"<a href='{Infourl}' data-toggle='tooltip' data-placement='top' title='User Admin Mapping'>{InfoiconHtml}</a>";
 
-                    var Infourl1 = Url.Action("ListProject", "Useradminmapping", new {}, null);
+                    var Infourl1 = Url.Action("ListProject", "Useradminmapping", new { USERID = o.L_USERID, Name = o.L_USERNAME }, null);
                     var InfoiconHtml1 = "<i class='bx bx-info-circle bx-sm'></i>";
                     InfolinkHtml1 = $"<a href='{Infourl1}' data-toggle='tooltip' data-placement='top' title='Project Mapping'>{InfoiconHtml1}</a>";
                 }

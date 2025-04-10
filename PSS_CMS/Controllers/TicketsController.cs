@@ -640,8 +640,8 @@ namespace PSS_CMS.Controllers
             string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            //string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid="+ Session["CompanyID"];
-            string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid="+ Session["CompanyID"];
+            //string strparams = "companyId=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -690,8 +690,8 @@ namespace PSS_CMS.Controllers
             string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            //string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
-            string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            //string strparams = "companyId=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
 
             try
@@ -787,8 +787,8 @@ namespace PSS_CMS.Controllers
             string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            //string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
-            string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            //string strparams = "companyId=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {

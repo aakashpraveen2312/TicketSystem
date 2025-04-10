@@ -50,7 +50,7 @@
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "Useradminmapping", FormMethod.Get, new { id = "searchForm" }))
+                @using (Html.BeginForm("ListProject", "Useradminmapping", FormMethod.Get, new { id = "searchForm" }))
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
@@ -60,7 +60,7 @@
         </div>
 
         <div class="table mt-3 ms-1 me-5" id="ticketTable1">
-            <form method="get" action="/Useradminmapping/CheckedValue">
+            <form method="get" action="/Useradminmapping/CheckedValueProject">
                 @if (Model != null)
                 {
                     @Html.Grid(Model).Columns(columns =>
@@ -75,19 +75,19 @@
             var index = Model.ToList().IndexOf(o);
             var isChecked = o.USERSELECTED ? "checked" : "";
             var checkboxHtml = $"<input type='checkbox' name='selectedItems[{index}].USERSELECTED' value='true' class='select-item' {isChecked} />";
-            var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].L_USERID' value='{o.L_USERID}' />"; // Bind GL_RECID properly
+            var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].P_PROJECTRECID' value='{o.P_PROJECTRECID}' />"; // Bind GL_RECID properly
             return MvcHtmlString.Create(checkboxHtml + hiddenRecId); // Return the HTML
         })
         .SetWidth("50px");
-                   columns.Add(c => c.L_USERID).Titled("ID");
-                   columns.Add(c => c.L_USERNAME).Titled("Name");
-                   columns.Add(c => c.L_ROLE).Titled("Role");
+                   columns.Add(c => c.P_NAME).Titled("Project Name");
+                   columns.Add(c => c.P_SORTORDER).Titled("Sort");
+                  
                }).WithPaging(10)
                 }
                 else
                 {
                     <div class="alert alert-warning text-center">
-                        <b>No Admin's' are available</b>
+                        <b>No Projects's' are available</b>
                     </div>}
 
 
@@ -212,7 +212,7 @@
                 let index = $(this).attr('name').match(/\d+/)[0]; // Get index from name attribute
 
                 // Get the corresponding hidden input value using the same index
-                let userId = $('input[name="selectedItems[' + index + '].L_USERID"]').val();
+                let userId = $('input[name="selectedItems[' + index + '].P_PROJECTRECID"]').val();
 
                 if (userId) {
                     selectedIds.push(userId); // Push to array
@@ -224,7 +224,7 @@
             // Send to controller via AJAX
             $.ajax({
                 type: 'POST',
-                url: '@Url.Action("CheckedValue", "Useradminmapping")',
+                url: '@Url.Action("CheckedValueProject", "Useradminmapping")',
                 data: JSON.stringify({ selectedItems: selectedIds }),
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',

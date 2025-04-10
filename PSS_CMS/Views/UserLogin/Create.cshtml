@@ -137,16 +137,7 @@
             </div>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.L_PROJECTID, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @*@Html.EditorFor(model => model.L_PROJECTID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })*@
-                @Html.DropDownListFor(model => model.L_PROJECTID, new SelectList(Model.Projects, "Value", "Text"), "-- Select Project --", new { @class = "select textboxcolors", autocomplete = "off" })
-
-            </div>
-        </div>
+      
 
         <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">

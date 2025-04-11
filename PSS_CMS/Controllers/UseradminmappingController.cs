@@ -40,7 +40,7 @@ namespace PSS_CMS.Controllers
 
             List<Useradminmap> useradminlist = new List<Useradminmap>();
 
-            string strparams = "companyId=" + Session["CompanyID"] + "&role=" + Role;
+            string strparams = "companyId=" + Session["CompanyID"] + "&role=" + Role+ "&userid=" + USERID;
             string url = Weburl + "?" + strparams;
 
             try
@@ -92,7 +92,7 @@ namespace PSS_CMS.Controllers
                 try
                 {
 
-                    var UserAdminPostURL = ConfigurationManager.AppSettings["USERADMINPOST"];
+                    var UserAdminPostURL = ConfigurationManager.AppSettings["ADMINUSERPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
@@ -113,9 +113,9 @@ namespace PSS_CMS.Controllers
 
 
                     var content = $@"{{
-                    ""uA_CRECID"": ""{Session["CompanyID"]}"",
-                    ""uA_USERID"": ""{ Session["USERID"]}"",                  
-                    ""uA_ADMINID"":""{Session["SELECTEDID"]}""                
+                    ""aU_CRECID"": ""{Session["CompanyID"]}"",
+                    ""aU_ADMINID"": ""{ Session["USERID"]}"",                  
+                    ""aU_USERID"":""{Session["SELECTEDID"]}""                
                    
                         }}";
 
@@ -194,7 +194,7 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
-
+        //user project mappping
         public async Task<ActionResult> ListProject(string USERID, string Name,string searchPharse)
         {
 

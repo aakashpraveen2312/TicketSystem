@@ -28,7 +28,7 @@ namespace PSS_CMS.Models
         [DisplayName("Sort")]
         public int TUG_SORTORDER { get; set; }
 
-        [DisplayName("Disabled")]
+        [DisplayName("Disable")]
         public bool IsDisabled
         {
             get => TUG_DISABLE == "Y";

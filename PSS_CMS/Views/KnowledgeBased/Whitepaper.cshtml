@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<PSS_CMS.Models.WhitePaper>
 @using GridMvc.Html
-@{
+@*@{
     // Decode JavaScript string
     Func<string, string> DecodeJavaScriptString = (input) =>
     {
@@ -18,7 +18,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                     .Replace("\\n", "\n")        // Newline
                     .Replace("\\r", "\r");       // Carriage return
 };
-}
+}*@
 <!DOCTYPE html>
 <html>
 <head>
@@ -123,9 +123,8 @@ return input.Replace("\\\"", "\"")        // Double quotes
             <div class="col-lg-12 col-sm-12">
 
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="reswhietlist" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">TICKETS</a></li>
                     <li class="reswhietlist" style="color: #2888bb;">KNOWLEDGE BASED</li>
-                    <li class="reswhietlist">WHITE PAPERS</li>
+                    <li class="reswhietlist">WHITE PAPER</li>
 
                 </ul>
             </div>
@@ -169,10 +168,12 @@ return input.Replace("\\\"", "\"")        // Double quotes
                         {
                             <div class="col-md-6 whitepaper ms-4 mt-3">
 
-                                <p class="heading"><b>@Html.Raw(DecodeJavaScriptString(@whitepaper.WP_TITLE))</b></p>
+                                @*<p class="heading"><b>@Html.Raw(DecodeJavaScriptString(@whitepaper.WP_TITLE))</b></p>*@
+                                <p class="heading"><b>@whitepaper.WP_TITLE</b></p>
 
 
-                                <p>@Html.Raw(DecodeJavaScriptString(@whitepaper.WP_Description))</p>
+                                @*<p>@Html.Raw(DecodeJavaScriptString(@whitepaper.WP_Description))</p>*@
+                                <p>@whitepaper.WP_Description</p>
 
                                 @if (!string.IsNullOrEmpty(whitepaper.WP_ATTACHEMENT))
                                 {

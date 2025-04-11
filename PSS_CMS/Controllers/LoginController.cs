@@ -76,7 +76,6 @@ namespace PSS_CMS.Controllers
                         Session["EmailId"] = data.L_EMAILID;
                         Session["UserID"] = data.L_USERID;
                         Session["CompanyID"] = data.L_COMPANYID;
-                        Session["ProjectID"] = data.L_PROJECTID;
 
                         if (role == "User")
                         {

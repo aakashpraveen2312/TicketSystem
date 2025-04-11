@@ -640,7 +640,7 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
-        public async Task<ActionResult> Edit(int F_RECID)
+        public async Task<ActionResult> Edit(int F_RECID,int F_PROJECTRECID)
         {
             
             
@@ -650,7 +650,7 @@ namespace PSS_CMS.Controllers
 
             Faq faq = null;
 
-            string strparams = "recID=" + F_RECID + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "recID=" + F_RECID + "&cmprecid=" + Session["CompanyID"] + "&projectID="+ F_PROJECTRECID;
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try

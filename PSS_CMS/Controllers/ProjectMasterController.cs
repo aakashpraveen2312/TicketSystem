@@ -29,7 +29,7 @@ namespace PSS_CMS.Controllers
 
             List<Projectmaster> projectmasterlist = new List<Projectmaster>();
 
-            string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "companyId=" + Session["CompanyID"]+ "&UserID="+ Session["UserID"];
             string url = Weburl + "?" + strparams;
 
             try

@@ -1,6 +1,6 @@
 ﻿@model PSS_CMS.Models.WhitePaper
 @using GridMvc.Html
-@{
+@*@{
     // Decode JavaScript string
     Func<string, string> DecodeJavaScriptString = (input) =>
     {
@@ -18,7 +18,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                     .Replace("\\n", "\n")        // Newline
                     .Replace("\\r", "\r");       // Carriage return
 };
-}
+}*@
 <!DOCTYPE html>
 <html>
 <head>
@@ -111,8 +111,8 @@ return input.Replace("\\\"", "\"")        // Double quotes
             <div class="col-lg-12">
 
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    <li class="resadminwhitepaper" style="color: #2888bb;">KNOWLEDGE BASED</li>
                     <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Whitepaper", "KnowledgeBased")">WHITE PAPERS</a></li>
-
                     <li class="resadminwhitepaper">EDIT</li>
                 </ul>
             </div>
@@ -131,14 +131,8 @@ return input.Replace("\\\"", "\"")        // Double quotes
                             @Html.LabelFor(model => model.WP_TITLE, "Title:", new { @class = "pb-2" })
                             @*@Html.TextBoxFor(model => model.WP_TITLE, new { @class = "form-control", id = "", tabindex = "1", required = "required", value = Html.Raw(DecodeJavaScriptString(Model.TC_COMMENTS)) })*@
 
-                            @Html.TextBoxFor(model => model.WP_TITLE, new
-    {
-        @class = "form-control",
-        id = "",
-        tabindex = "1",
-        required = "required",
-        value = DecodeJavaScriptString(Model.WP_TITLE) // Directly pass the decoded value
-    })
+                            @*@Html.TextBoxFor(model => model.WP_TITLE, new{@class = "form-control",id = "",tabindex = "1",required = "required",value = DecodeJavaScriptString(Model.WP_TITLE) // Directly pass the decoded value*@
+                            @Html.TextBoxFor(model => model.WP_TITLE, new{@class = "form-control",id = "",tabindex = "1",required = "required"})
 
                         </div>
 
@@ -148,16 +142,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                             @Html.LabelFor(model => model.WP_Description, "Description", new { @class = "pb-2" })
                             @*@Html.TextAreaFor(model => model.WP_Description, new { @class = "form-control custom-textarea", placeholder = "Please enter your description here....", rows = "10", cols = "70", required = "required", tabindex = "5" })*@
 
-                            @Html.TextAreaFor(model => model.WP_Description, new
-{
-    @class = "form-control custom-textarea",
-    placeholder = "Please enter your description here....",
-    rows = "10",
-    cols = "70",
-    required = "required",
-    tabindex = "5",
-    value = DecodeJavaScriptString(Model.WP_Description ?? string.Empty) // Directly passing the decoded value
-})
+                            @Html.TextAreaFor(model => model.WP_Description, new{@class = "form-control custom-textarea",placeholder = "Please enter your description here....",rows = "10",cols = "70",required = "required",tabindex = "5"})
 
 
                         </div>

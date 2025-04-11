@@ -317,6 +317,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\img\bexlogo_wob.png" />
     <Content Include="assets\img\closefolder.png" />
     <Content Include="assets\img\helpdesk-ticketing-system-02.jpg" />
     <Content Include="assets\img\icons8-add-32.png" />

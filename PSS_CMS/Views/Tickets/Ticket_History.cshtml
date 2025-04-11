@@ -199,7 +199,7 @@
                    .SetWidth(30)
 .RenderValueAs(o =>
 {
-    var reviewUrl = Url.Action("ReviewTickets", "Tickets", new { recid2 = o.TC_RECID, status = o.TC_STATUS, REOPENUSERNAME = o.TC_USERNAME });
+    var reviewUrl = Url.Action("ReviewTickets", "Tickets", new { recid2 = o.TC_RECID, status = o.TC_STATUS, REOPENUSERNAME = o.TC_USERNAME,projectid=o.TC_PROJECTID });
     var deleteUrl = Url.Action("DeleteUpdateTicket", "Tickets");
     var timelineurl = Url.Action("TimelineChart", "DashBoard", new { recid3 = o.TC_RECID });
 

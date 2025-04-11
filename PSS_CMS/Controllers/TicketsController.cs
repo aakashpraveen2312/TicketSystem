@@ -454,14 +454,15 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> ReviewTickets(string recid2,string status,string REOPENUSERNAME)
+        public async Task<ActionResult> ReviewTickets(string recid2,string status,string REOPENUSERNAME,string projectid)
         {
-            IEnumerable<Ticket> ticketList = await GetTickets(recid2, status, REOPENUSERNAME); // Your logic to get a list of tickets
+            IEnumerable<Ticket> ticketList = await GetTickets(recid2, status, REOPENUSERNAME, projectid); // Your logic to get a list of tickets
             return View(ticketList); // Pass the collection to the view
         }
 
-        public async Task<IEnumerable<Ticket>> GetTickets(string recid2, string status,String REOPENUSERNAME)
+        public async Task<IEnumerable<Ticket>> GetTickets(string recid2, string status,String REOPENUSERNAME,string projectid)
         {
+            Session["ProjectID"] = projectid;
             Session["RECORDID"] = recid2;
             Session["Status"] = status;
             Session["REOPENUSERNAME"] = REOPENUSERNAME;

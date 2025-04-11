@@ -45,8 +45,8 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>Project Master</li>
-                    <li>List</li>
+                    <li>PROJECT MASTER</li>
+                    <li>LIST</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
@@ -56,7 +56,7 @@
                 }
                 <!-- Add button with icon -->
                 <a href="@Url.Action("Create", "ProjectMaster")" class=" ms-3" style="margin-left: 30px;">
-                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add UserGroup" />
+                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add Project" />
                 </a>
             </div>
 
@@ -67,8 +67,8 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.P_NAME).Titled("Name");
-               columns.Add(c => c.P_SORTORDER).Titled("Sort");
+               columns.Add(c => c.P_NAME).Titled("Name").SetWidth("150px");
+               columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("100px");
 
                columns.Add().Titled("Action")
               .Encoded(false)

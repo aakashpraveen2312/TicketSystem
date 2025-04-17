@@ -63,14 +63,11 @@
             padding-right: 30px;
         }
 
-        .daterangepicker .btn-reset {
-            margin-left: 10px;
-            background-color: green;
-            color: white;
-        }
-
-        .daterangepicker .btn-danger {
-            color: white;
+        .daterangepicker .drp-buttons .btn {
+            margin-left: 4px!important;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 8px;
         }
     </style>
 
@@ -177,7 +174,7 @@
                         }
                     </div>
 
-                    <div class="col-md-2 mt-3">
+                    <div class="col-md-2 mt-3 d-flex justify-content-end">
                         <i class="bi bi-calendar3" id="daterange" style="cursor: pointer; color: #357ebd;font-size:20px"></i>
                         <form id="dateForm" method="post" action="@Url.Action("RecentTicket", "RecentTickets")">
                             @Html.Hidden("StartDate")

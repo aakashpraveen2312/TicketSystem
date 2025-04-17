@@ -11,6 +11,9 @@ namespace PSS_CMS.Models
         public int OpenTickets { get; set; }
         public int ResolvedTickets { get; set; }
         public int CloseTickets { get; set; }
+        public int OpenDate { get; set; }
+        public int OpenLastweek { get; set; }
+        public int OpenLastMonth { get; set; }
 
         public string Status { get; set; }
         public MonthWiseData MonthWise { get; set; }

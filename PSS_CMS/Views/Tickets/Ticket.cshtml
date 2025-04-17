@@ -269,9 +269,8 @@
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const dateTextbox = document.getElementById("dateTextbox");
+            const dateTextbox = document.getElementById("date");
 
-            // Format date to match 'datetime-local' input requirements: YYYY-MM-DDTHH:MM
             function formatForDateTimeLocal(date) {
                 const year = date.getFullYear();
                 const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -282,7 +281,6 @@
                 return `${year}-${month}-${day}T${hours}:${minutes}`;
             }
 
-            // Set current date/time once on page load
             const now = new Date();
             dateTextbox.value = formatForDateTimeLocal(now);
         });

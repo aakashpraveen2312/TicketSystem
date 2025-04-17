@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PSS_CMS.Models.User>
+﻿@model IEnumerable<PSS_CMS.Models.DashBoardList>
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -24,8 +24,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="~/Scripts/Script.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Colors.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
+
 </head>
 
 <body>
@@ -45,19 +45,17 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Dashboard", "Dashboard")">@Session["Name"].ToString().ToUpper()</a></li>
                     <li>LIST</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "UserLogin", FormMethod.Get, new { id = "searchForm" }))
+                @using (Html.BeginForm("DashboardListTotalTicket", "Dashboard", FormMethod.Get, new { id = "searchForm"}))
                 {
+                    <input type="hidden" name="status" value="@Session["Name"]" />
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
-                <!-- Add button with icon -->
-                <a href="@Url.Action("Create", "UserLogin")" class=" ms-3" style="margin-left: 30px;">
-                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add User" />
-                </a>
+
             </div>
 
         </div>
@@ -67,52 +65,31 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.L_USERID).Titled("Code").SetWidth("80px");
-               columns.Add(c => c.L_USERNAME).Titled("Name").SetWidth("120px");
-               columns.Add(c => c.L_EMAILID).Titled("Email ID").SetWidth("350px");
-               columns.Add(c => c.L_ROLE).Titled("Role").SetWidth("100px");
-               columns.Add().Titled("Action")
-              .Encoded(false)
-               .Sanitized(false)
-            .RenderValueAs(o =>
-            {
-
-                var Editurl = Url.Action("Edit", "UserLogin", new { id = o.L_RECID, userid = o.L_USERID }, null);
-                var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
-                var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
-
-                var Deleteurl = Url.Action("Delete", "UserLogin", new { id = o.L_RECID }, null);
-                var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
-                var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
-               
-                var Infourl1 = Url.Action("ListProject", "Useradminmapping", new { USERID = o.L_USERID, Name = o.L_USERNAME }, null);
-                var InfoiconHtml1 = "<i class='bx bxl-product-hunt  bx-sm'></i>";
-                var InfolinkHtml1 = $"<a href='{Infourl1}' data-toggle='tooltip' data-placement='top' title='Project Mapping'>{InfoiconHtml1}</a>";
-               
-                string InfolinkHtml = string.Empty;
-              
-                if (o.L_ROLE?.Trim().ToLower() == "admin")
-                {
-                    var Infourl = Url.Action("List", "Useradminmapping", new { Role = o.L_ROLE, USERID = o.L_USERID, Name = o.L_USERNAME }, null);
-                    var InfoiconHtml = "<i class='bx bx-info-circle bx-sm'></i>";
-                    InfolinkHtml = $"<a href='{Infourl}' data-toggle='tooltip' data-placement='top' title='Admin User Mapping'>{InfoiconHtml}</a>";
-
-
-                }
-                var extraSpaces2 = "&nbsp;&nbsp;&nbsp;";
-                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}{extraSpaces2}{InfolinkHtml1}{extraSpaces2}{InfolinkHtml}");
-            });
-
+               columns.Add(c => c.TC_USERNAME).Titled("User Name").SetWidth("120px");
+               columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time").SetWidth("150px");
+               columns.Add(c => c.TC_PROJECTID).Titled("Project");
+               columns.Add(c => c.TC_COMMENTS).Titled("Comments");
+               columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority").SetWidth("100px");
+               columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("100px");
+               columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status").SetWidth("100px");
            }).WithPaging(10).Sortable(true)
             }
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No User's' are available</b>
+                    <b>No Ticket's are available</b>
                 </div>}
 
         </div>
 
+
+        @*<footer class="footer">
+              <ul>
+                  <li class="lists"><i class='bx bx-plus-circle'></i> - Create</li>
+                  <li class="lists"><i class='bx bxs-pencil bx-sm'></i> - Edit</li>
+                  <li class="lists"><i class='bx bxs-trash bx-sm red'></i> - Delete</li>
+              </ul>
+            </footer>*@
     </div>
 
 
@@ -154,8 +131,8 @@
         });
     });
     </script>
-    <script src="~/Scripts/Fordelete.js"></script>
 
+    <script src="~/Scripts/Fordelete.js"></script>
 </body>
 </html>
 

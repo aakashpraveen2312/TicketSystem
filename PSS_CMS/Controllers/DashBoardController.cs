@@ -171,6 +171,90 @@ namespace PSS_CMS.Controllers
             }
         }
 
+        public async Task<ActionResult> DashboardListTotalTicket(string searchPharse,string status)
+        {
+            DashBoardList objtotallist = new DashBoardList();
 
+            string Weburl = ConfigurationManager.AppSettings["DASHBOARDLISTTOTALTICKETS"];
+
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            List<DashBoardList> totalticketlist = new List<DashBoardList>();
+
+            string strparams = "Userid=" + Session["UserID"] + "&type=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ObjectsDashBoardList>(jsonString);
+
+                            if(status== "TotalTickets")
+                            {
+                                Session["Name"] = "TotalTickets";
+                                totalticketlist = rootObjects.TotalTickets;
+                            }
+                            if (status == "OpenTickets")
+                            {
+                                Session["Name"] = "OpenTickets";
+                                totalticketlist = rootObjects.OpenTickets;
+                            }
+                            if (status == "ResolvedTickets")
+                            {
+                                Session["Name"] = "ResolvedTickets";
+                                totalticketlist = rootObjects.ResolvedTickets;
+                            }
+                            if (status == "CloseTickets")
+                            {
+                                Session["Name"] = "CloseTickets";
+                                totalticketlist = rootObjects.CloseTickets;
+                            }
+                            if (status != null)
+                            {
+                                Session["status"] = status;
+                            }
+                            // Apply Search Filter
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+
+                                totalticketlist = totalticketlist
+                                    .Where(r => r.TC_PROJECTID.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_COMMENTS.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_PRIORITYTYPE.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_TICKETTYPE.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_STATUS.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_TICKETDATES.ToLower().Contains(searchPharse.ToLower()))
+                                    .ToList();
+                            }
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+            return View(totalticketlist);
+        }
     }
 }

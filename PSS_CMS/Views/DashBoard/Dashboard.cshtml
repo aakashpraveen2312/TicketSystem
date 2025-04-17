@@ -82,23 +82,97 @@
 
             <!-- Count Cards -->
             @{
-                var ticketStats = new[]
-                {
-        new { Title = "Total Tickets", Count = (Model != null && Model.TotalTickets != null) ? (int)Model.TotalTickets : 0, Color = "primary" },
-        new { Title = "Open Tickets", Count = (Model != null && Model.OpenTickets != null) ? (int)Model.OpenTickets : 0, Color = "warning" },
-        new { Title = "Resolved Tickets", Count = (Model != null && Model.ResolvedTickets != null) ? (int)Model.ResolvedTickets : 0, Color = "success" },
-        new { Title = "Closed Tickets", Count = (Model != null && Model.CloseTickets != null) ? (int)Model.CloseTickets : 0, Color = "secondary" }
+                // Total Tickets
+                var TotalticketStats = new[]
+                    {
+        new { Title = "Total Tickets", Count = (Model != null && Model.TotalTickets != null) ? (int)Model.TotalTickets : 0, Color = "primary" }
     };
+
+
+                // Open Tickets
+                var openTicketStats = new[]
+                {
+  new { Title = "Open Tickets", Count = (Model != null && Model.OpenTickets != null) ? (int)Model.OpenTickets : 0,
+      OpenDate = (Model != null && Model.OpenDate != null) ? (int)Model.OpenDate : 0,
+      OpenLastMonth = (Model != null && Model.OpenLastMonth != null) ? (int)Model.OpenLastMonth : 0,
+      OpenLastweek = (Model != null && Model.OpenLastweek != null) ? (int)Model.OpenLastweek : 0,
+      Color = "warning" }
+                };
+
+                // Ressolved Tickets
+                var ressolvedTicketStats = new[]
+                {
+ new { Title = "Resolved Tickets", Count = (Model != null && Model.ResolvedTickets != null) ? (int)Model.ResolvedTickets : 0, Color = "success" }                };
+
+
+                // Closed Tickets
+                var closedTicketStats = new[]
+                {
+ new { Title = "Closed Tickets", Count = (Model != null && Model.CloseTickets != null) ? (int)Model.CloseTickets : 0, Color = "secondary" }                };
+
+
+
             }
 
             <div class="row mt-3">
-                @foreach (var stat in ticketStats)
+                @foreach (var stat in TotalticketStats)
                 {
                     <div class="col-md-3">
                         <div class="card text-white bg-@stat.Color mb-3">
                             <div class="card-body">
-                                <h5 class="card-title">@stat.Title</h5>
-                                <h3 class="card-text">@stat.Count</h3>
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="TotalTickets"})'">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="TotalTickets"})'">@stat.Count</h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @foreach (var stat in openTicketStats)
+                {
+                    <div class="col-md-3">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body">
+                                
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenTickets"})'">@stat.Title - (@stat.Count)</h5>
+
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <small>Current</small>
+                                        <div><strong>(@stat.OpenDate)</strong></div>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-primary">1 Week</small>
+                                        <div><strong class="text-primary">(@stat.OpenLastweek)</strong></div>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-danger">>1 Month</small>
+                                        <div><strong class="text-danger">(@stat.OpenLastMonth)</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+                @foreach (var stat in ressolvedTicketStats)
+                {
+                    <div class="col-md-3">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="ResolvedTickets"})'">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="ResolvedTickets"})'">@stat.Count</h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @foreach (var stat in closedTicketStats)
+                {
+                    <div class="col-md-3">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body"> 
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="CloseTickets"})'">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="CloseTickets"})'">@stat.Count</h3>
                             </div>
                         </div>
                     </div>

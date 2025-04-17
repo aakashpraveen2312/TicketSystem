@@ -299,6 +299,7 @@
     <Compile Include="Models\Admintickets.cs" />
     <Compile Include="Models\Changepassword.cs" />
     <Compile Include="Models\Companies.cs" />
+    <Compile Include="Models\DashBoardList.cs" />
     <Compile Include="Models\Dashborardchart.cs" />
     <Compile Include="Models\Faq.cs" />
     <Compile Include="Models\Forgotpassword.cs" />
@@ -490,6 +491,7 @@
     <Content Include="Views\Forgotpassword\FortgotOTPVerify.cshtml" />
     <Content Include="Views\Useradminmapping\List.cshtml" />
     <Content Include="Views\Useradminmapping\ListProject.cshtml" />
+    <Content Include="Views\DashBoard\DashboardListTotalTicket.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

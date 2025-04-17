@@ -11,7 +11,7 @@ namespace PSS_CMS.Models
     {
         public string L_RECID { get; set; }
 
-        [DisplayName("User Name")]
+        [DisplayName("Email ID")]
         [Required]
         public string L_USERNAME { get; set; }
 
@@ -32,6 +32,7 @@ namespace PSS_CMS.Models
         public string L_USERID { get; set; }
         public string L_COMPANYID { get; set; }
         public string L_PROJECTID { get; set; }
+        public string C_LOGO { get; set; }
 
     }
 

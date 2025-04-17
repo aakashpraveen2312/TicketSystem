@@ -1,39 +1,37 @@
-﻿
-@media (max-width:355px) and (min-width:320px){
+﻿@media (max-width:355px) and (min-width:320px) {
     .heading {
         font-size: 18px;
     }
-    li.resticketraisebreadcrumb, li.resticketlistbreadcrumb, li.resticketclresbreadcrumb, li.resadminwhitepaper {
-        font-size: 15px !important;
-    }
-  
+    /* li.resticketraisebreadcrumb, li.resticketlistbreadcrumb, li.resticketclresbreadcrumb, li.resadminwhitepaper {
+font-size: 15px !important;
+}*/
 }
-@media (max-width:382px) and (min-width:356px) {
-    li.resticketclresbreadcrumb {
-        font-size: 16px !important;
-    }
+/*@media (max-width:382px) and (min-width:356px) {
+li.resticketclresbreadcrumb {
+font-size: 16px !important;
+}
 }
 @media (max-width:330px) and (min-width:320px) {
-    li.resticketclresbreadcrumb {
-        font-size: 14px!important;
-    }
+li.resticketclresbreadcrumb {
+font-size: 14px!important;
 }
-@media (max-width:380px) and (min-width:320px){
-    li.resticTimelinegraph {
-        font-size: 14px !important;
-    }
+}*/
+/*@media (max-width:380px) and (min-width:320px){
+li.resticTimelinegraph {
+font-size: 14px !important;
 }
-@media(max-width:991px) and (min-width:483px){
+}*/
+@media(max-width:991px) and (min-width:483px) {
     .col-md-6.col-sm-12.ptypeticketres {
         align-content: flex-start !important;
-        margin-top:5px;
+        margin-top: 5px;
     }
+
     .col-md-6.col-sm-12.tictypeticketres {
         align-content: flex-start !important;
         margin-top: 5px;
     }
 }
-
 
 @media(max-width:400px) and (min-width:320px) {
     h3.text-center.restimelinegrpahheding {
@@ -41,50 +39,46 @@
     }
 }
 
-
-
 /*ADMIN SCREEN*/
-@media(max-width:450px) and (min-width:320px){
+@media(max-width:450px) and (min-width:320px) {
     h3.heading.ms-3.adminheadinres, h4.heading.adminlogoutres {
         font-size: 13px !important;
     }
 }
+
 @media(max-width:350px) and (min-width:320px) {
-    i#logoutresiconadmin{
-        font-size:14px!important;
-    }
-}
-@media(max-width:370px) and (min-width:320px) {
-    li.resadmintic {
+    i#logoutresiconadmin {
         font-size: 14px !important;
     }
 }
+/*@media(max-width:370px) and (min-width:320px) {
+li.resadmintic {
+font-size: 14px !important;
+}
+}*/
 @media(max-width:767px) and (min-width:648px) {
-    .container.rescontaineradmin, .container.rescontaineradmin.mt-2{
-        margin:0px;
+    .container.rescontaineradmin, .container.rescontaineradmin.mt-2 {
+        margin: 0px;
     }
 }
-@media(max-width:463px) and (min-width:411px) {
-    li.resadminFAQ {
-        font-size: 15px !important;
-    }
+/*@media(max-width:463px) and (min-width:411px) {
+li.resadminFAQ {
+font-size: 15px !important;
+}
 }
 @media(max-width:411px) and (min-width:320px) {
-    li.resadminFAQ {
-        font-size: 9px !important;
-    }
+li.resadminFAQ {
+font-size: 9px !important;
 }
-
+}*/
 @media(max-width:575px) and (min-width:320px) {
     button.btncolorsubmit.res {
         margin-top: 8px;
     }
 }
-@media(max-width:561px) and (min-width:320px){
-    li.reswhietlist {
-        font-size: 15px !important;
-    }
+/*@media(max-width:561px) and (min-width:320px){
+li.reswhietlist {
+font-size: 15px !important;
 }
-@media(max-width:600px) and (min-width:320px){
-
 }
+*/

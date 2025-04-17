@@ -1,0 +1,244 @@
+﻿
+body {
+    margin: 0;
+    font-family: "Lato", sans-serif;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+:root {
+    --sidebar-color: #f1f1f1;
+    --sidebar-active-color: rgba(0, 123, 255, 0.1);
+    --sidebar-font-color: #007bff;
+    --sidebar-border-color: #007bff;
+    --navbar-color: white;
+    --font-family: "Poppins", sans-serif;
+    --hover-color: #ACC8E5;
+    --navbar-font-color: #000000;
+    --heading-color: #37517e;
+    --preloader-background: #ffffff;
+    --preloader-color: #47b2e4;
+    --breadcrumbtext-color: #2888bb;
+    --breadcrumb-color: #000000;
+}
+
+.heading {
+    color: #754599;
+}
+/*BREADCRUMBS*/
+body .breadcrumb > li + li:before {
+    padding: 0 5px;
+    color: var(--breadcrumb-color);
+    content: ">";
+}
+
+body .breadcrumb > li {
+    color: var(--breadcrumbtext-color);
+    font-size: 18px;
+    text-decoration: none;
+}
+
+    body .breadcrumb > li a {
+        text-decoration: none;
+    }
+/*BREADCRUMBS*/
+
+
+.sidebar a.active {
+    font-weight: bold;
+    padding-left: 10px;
+    border-radius: 10px;
+}
+
+.sidebar {
+    margin: 0;
+    padding: 0;
+    width: 300px;
+    height: 100%;
+    background-color: var(--sidebar-color);
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+    .sidebar a {
+        display: block;
+        color: black;
+        padding: 10px;
+        font-size: 15px;
+        text-decoration: none;
+    }
+
+    .sidebar #logoutlink {
+        margin-top: auto; /* Push the logout link to the bottom */
+    }
+
+    .sidebar a:hover:not(.active) {
+        color: var(--navbar-font-color);
+        border-radius: 10px;
+    }
+
+div.content {
+    padding: 0 9px 0 13px;
+    overflow: auto;
+    min-height: 250px;
+    margin-left: 65px;
+    background-color: #e4e9f7;
+    overflow-x: hidden;
+}
+
+#navheading {
+    margin-top: 10px;
+}
+
+#uploadbutton, #fileInput {
+    font-size: 13px;
+}
+
+.navtab {
+    width: 100%;
+    height: 52px;
+}
+
+/* Initially hide the submenu */
+.submenu {
+    display: none;
+    position: absolute;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    width: 100%;
+}
+
+/* Show the submenu when hovering over .servicemenu */
+.servicemenu:hover .submenu {
+    display: block;
+}
+
+/* Optional: Style submenu links */
+.submenu a {
+    display: block;
+    padding: 8px;
+    text-decoration: none;
+    color: #000;
+}
+
+    .submenu a:hover {
+        background-color: #ddd;
+    }
+
+
+
+@media screen and (max-width: 700px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+        .sidebar a {
+            text-align: start;
+            float: none;
+        }
+
+    #ticketTable1 {
+        overflow-x: auto;
+    }
+
+    #navheading {
+        margin-left: 10px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .sidebar a {
+        text-align: start;
+        float: none;
+    }
+}
+
+.container {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.card {
+    box-sizing: border-box;
+}
+
+.btn-login {
+    width: 40%;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+
+a#logoutlink {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+div#offcanvasBottom {
+    background: var(--navbar-color) !important;
+    color: var(--navbar-font-color);
+    font-weight: 400;
+}
+
+    div#offcanvasBottom h4 {
+        font-weight: 600;
+    }
+
+
+/*    FOR PROVIDING the REQUIRED WIDTH sub menu for SERVICE*/
+#cardforservice2 {
+    width: 350px;
+}
+
+#cardforservice1 {
+    width: 350px;
+}
+
+.horline {
+    background-color: black;
+    height: 2px;
+    width: 80%;
+    display: block;
+    margin: auto;
+}
+
+input.form-control.about-us {
+    text-align: center;
+    width: 360px;
+}
+
+button.btn.btn-success.login {
+    width: 80px !important;
+}
+
+input.submitbuttons, button#savebutton {
+    background-color: #6ed3d0;
+    width: 75px;
+    padding: 5px;
+    color: #fff;
+    border: #6ed3d0;
+    border-radius: 5px;
+}
+
+.cancelbuttons {
+    background-color: #f0a72d;
+    width: 75px;
+    padding: 5px;
+    color: #fff;
+    border: #f0a72d;
+    border-radius: 5px;
+}
+
+input#IsDisabled, input#L_UserDisable {
+    width: 23px;
+    height: 21px;
+}

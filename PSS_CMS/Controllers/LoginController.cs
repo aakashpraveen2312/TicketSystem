@@ -16,8 +16,9 @@ namespace PSS_CMS.Controllers
     public class LoginController : Controller
     {
         // GET: Login
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            
             return View();
         }
 
@@ -25,6 +26,7 @@ namespace PSS_CMS.Controllers
        
         public async Task<ActionResult> Index(string L_USERNAME, string L_PASSWORD,string L_DOMAIN, Login model)        
         {
+            string CompanyID = "";
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];           
             
             var Logurl = ConfigurationManager.AppSettings["Login"];
@@ -76,14 +78,20 @@ namespace PSS_CMS.Controllers
                         Session["EmailId"] = data.L_EMAILID;
                         Session["UserID"] = data.L_USERID;
                         Session["CompanyID"] = data.L_COMPANYID;
+                        CompanyID = data.L_COMPANYID;
+                        //ViewBag.Logo = data.C_LOGO;
+                       
+
 
                         if (role == "User")
                         {
+                            
                             await AutoCloseTicket();
                             return RedirectToAction("Ticket_History", "Tickets");
                         }
                         else if (role == "Admin" || role == "SuperAdmin")
                         {
+                            await Info(CompanyID);
                             return RedirectToAction("Dashboard", "DashBoard");
                         }
                     }
@@ -104,6 +112,53 @@ namespace PSS_CMS.Controllers
             return View();
 
         }
+
+
+
+
+        public async Task<ActionResult> Info(string companyid)
+        {
+            CompanyInfo companyinfo = null;
+
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            //string APIKey = Session["APIKEY"].ToString();
+            string Weburl = ConfigurationManager.AppSettings["COMPANYINFOGET"];
+            string Url = Weburl + "?CmpRECID=" + companyid;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        //client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(Url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseInfo>(jsonString);
+                            ViewBag.Logo = rootObjects.Data[0].C_LOGO;
+                            TempData["Logo"] = rootObjects.Data[0].C_LOGO;
+                            
+                            return View();
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+            return View();
+        }
+
 
         public ActionResult Logout()
         {

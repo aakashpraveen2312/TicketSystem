@@ -279,6 +279,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\CompanyInfoController.cs" />
     <Compile Include="Controllers\CompanyRegistrationController.cs" />
     <Compile Include="Controllers\ChangePasswordController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
@@ -299,6 +300,7 @@
     <Compile Include="Models\Admintickets.cs" />
     <Compile Include="Models\Changepassword.cs" />
     <Compile Include="Models\Companies.cs" />
+    <Compile Include="Models\CompanyInfo.cs" />
     <Compile Include="Models\Dashborardchart.cs" />
     <Compile Include="Models\Faq.cs" />
     <Compile Include="Models\Forgotpassword.cs" />
@@ -317,6 +319,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\img\bexlogo_wob%28bgremoved.png" />
     <Content Include="assets\img\bexlogo_wob.png" />
     <Content Include="assets\img\closefolder.png" />
     <Content Include="assets\img\helpdesk-ticketing-system-02.jpg" />
@@ -374,6 +377,7 @@
     <Content Include="Content\ClientSide.css" />
     <Content Include="Content\Companies.css" />
     <Content Include="Content\Colors.css" />
+    <Content Include="Content\Companyinfo.css" />
     <Content Include="Content\EditiSub.css" />
     <Content Include="Content\Forgot.css" />
     <Content Include="Content\Gallery.css" />
@@ -490,6 +494,7 @@
     <Content Include="Views\Forgotpassword\FortgotOTPVerify.cshtml" />
     <Content Include="Views\Useradminmapping\List.cshtml" />
     <Content Include="Views\Useradminmapping\ListProject.cshtml" />
+    <Content Include="Views\CompanyInfo\Info.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

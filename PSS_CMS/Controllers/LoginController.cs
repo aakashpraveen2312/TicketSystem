@@ -142,7 +142,8 @@ namespace PSS_CMS.Controllers
                             var rootObjects = JsonConvert.DeserializeObject<ApiResponseInfo>(jsonString);
                             ViewBag.Logo = rootObjects.Data[0].C_LOGO;
                             TempData["Logo"] = rootObjects.Data[0].C_LOGO;
-                            
+                            Session["Logo"] = rootObjects.Data[0].C_LOGO;
+
                             return View();
                         }
                         else

@@ -35,7 +35,8 @@ namespace PSS_CMS.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(User objUser)
         {
-
+            
+           
             try
             {
                 var Regurl = ConfigurationManager.AppSettings["PostPSSLOGIN"];
@@ -50,7 +51,7 @@ namespace PSS_CMS.Controllers
                     L_ROLE = objUser.L_ROLE,
                     L_EMAILID = objUser.L_EMAILID,
                     L_COMPANYID = Session["CompanyId"],
-                    l_DOMAIN= Session["DOMAIN"],
+                    l_DOMAIN = Session["DOMAIN"],
                     l_MOBILENO = objUser.l_MOBILENO,
                     L_SORTORDER = objUser.L_SORTORDER,
                     L_DISABLE = objUser.L_UserDisable ? "Y" : "N"
@@ -103,12 +104,15 @@ namespace PSS_CMS.Controllers
                     }
 
                 }
-                }
-                catch (Exception ex)
+            }
+
+            catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
+        
             return View(objUser);
+        
         }
         public async Task<List<SelectListItem>> GetUserGroupComboAsync()
         {
@@ -340,10 +344,24 @@ namespace PSS_CMS.Controllers
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var content = JsonConvert.DeserializeObject<ApiResponseUserS>(jsonString);
+                            
                             user = content.Data;
 
                             ViewBag.L_PROJECTID = new SelectList(projects, "Value", "Text", user?.L_PROJECTID ?? "");
-                            ViewBag.L_ROLE = new SelectList(roles, "Value", "Text", user?.L_ROLE ?? "");
+                            string selectedRole = user?.L_ROLE?.Trim();
+
+                            if (!string.IsNullOrEmpty(selectedRole))
+                            {
+                                // Move the selected role to the top
+                                roles = roles
+                                    .OrderByDescending(r => r.Value == selectedRole)
+                                    .ThenBy(r => r.Text)
+                                    .ToList();
+                            }
+
+                            ViewBag.L_ROLE = new SelectList(roles, "Value", "Text", selectedRole);
+
+
 
                         }
                         else

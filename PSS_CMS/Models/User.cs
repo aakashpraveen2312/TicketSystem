@@ -30,6 +30,8 @@ namespace PSS_CMS.Models
         [DisplayName("Role")]
         public string L_ROLE { get; set; }
 
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com)$", ErrorMessage = "Email must be a valid .com address")]
+
         [Required(ErrorMessage = "Email ID is required")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         [DisplayName("Email ID")]

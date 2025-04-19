@@ -92,7 +92,7 @@ namespace PSS_CMS.Controllers
                 try
                 {
 
-                    var UserAdminPostURL = ConfigurationManager.AppSettings["ADMINUSERPOST"];
+                    var UserAdminPostURL = ConfigurationManager.AppSettings["USERADMINPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
@@ -113,9 +113,9 @@ namespace PSS_CMS.Controllers
 
 
                     var content = $@"{{
-                    ""aU_CRECID"": ""{Session["CompanyID"]}"",
-                    ""aU_ADMINID"": ""{ Session["USERID"]}"",                  
-                    ""aU_USERID"":""{Session["SELECTEDID"]}""                
+                    ""uA_CRECID"": ""{Session["CompanyID"]}"",
+                    ""uA_USERID"": ""{ Session["USERID"]}"",                  
+                    ""uA_ADMINID"":""{Session["SELECTEDID"]}""                
                    
                         }}";
 

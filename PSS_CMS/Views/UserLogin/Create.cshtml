@@ -90,91 +90,92 @@
         </div>
         @using (Html.BeginForm("Create", "UserLogin", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
         {
-    <div class="create ms-4 me-2 mt-3">
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.L_USERID, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_USERID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.L_USERNAME, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_USERNAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+            <div class="create ms-4 me-2 mt-3">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.L_USERID, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.L_USERID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.L_USERNAME, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.L_USERNAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.L_EMAILID, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_EMAILID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.L_EMAILID, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.L_EMAILID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.L_EMAILID, "", new { @class = "text-danger" })
+                        <span id="email-error" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.l_MOBILENO, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.l_MOBILENO, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.l_MOBILENO, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.l_MOBILENO, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                    </div>
+                </div>
 
-            </div>
-        </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.L_PASSWORD, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.L_PASSWORD, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "password" } })
 
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.L_PASSWORD, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_PASSWORD, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "password" } })
+                    </div>
+                </div>
 
-            </div>
-        </div>
 
-      
 
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.L_ROLE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.DropDownListFor(model => model.L_ROLE, new SelectList(Model.Outlets, "Value", "Text"), "-- Select User Group --", new { @class = "select textboxcolors", autocomplete = "off" })
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.L_SORTORDER, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.L_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.L_ROLE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.DropDownListFor(model => model.L_ROLE, new SelectList(Model.Outlets, "Value", "Text"), "-- Select User Group --", new { @class = "select textboxcolors", autocomplete = "off" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.L_SORTORDER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.L_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
-            </div>
-        </div>
+                    </div>
+                </div>
 
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.L_UserDisable, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.CheckBoxFor(model => model.L_UserDisable, new { @class = "form-check-input" })
-            </div>
-        </div>
-        <div class="row ">
-            <div class="col-lg-2">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.L_UserDisable, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.CheckBoxFor(model => model.L_UserDisable, new { @class = "form-check-input" })
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-2">
 
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'" />
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-3 d-flex justify-content-end">
-                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="" />
-                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'" />
-            </div>
-        </div>
-    </div>
         }
     </div>
 
@@ -296,6 +297,34 @@
         }
     });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const emailInput = document.getElementById("L_EMAILID");
+            const errorSpan = document.getElementById("email-error");
+            const submitButton = document.getElementById("bt"); // Replace with your submit button's ID
+
+            // Disable the submit button initially
+            submitButton.disabled = true;
+
+            emailInput.addEventListener("blur", function () {
+                const email = emailInput.value.trim();
+                const emailPattern = /^[^\s]+[^\s]+\.(com)$/; // checks for and .com
+
+                if (email === "") {
+                    errorSpan.textContent = "Email is required.";
+                    submitButton.disabled = true; // Disable submit button
+                } else if (!emailPattern.test(email)) {
+                    errorSpan.textContent = "Please enter a valid .com email address.";
+                    submitButton.disabled = true; // Disable submit button
+                } else {
+                    errorSpan.textContent = ""; // Clear error message
+                    submitButton.disabled = false; // Enable submit button
+                }
+            });
+        });
+    </script>
+
+
 
 
 </body>

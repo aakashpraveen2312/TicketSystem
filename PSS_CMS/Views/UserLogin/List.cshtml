@@ -91,11 +91,11 @@
                
                 string InfolinkHtml = string.Empty;
               
-                if (o.L_ROLE?.Trim().ToLower() == "admin")
+                if (o.L_ROLE?.Trim().ToLower() == "user")
                 {
                     var Infourl = Url.Action("List", "Useradminmapping", new { Role = o.L_ROLE, USERID = o.L_USERID, Name = o.L_USERNAME }, null);
                     var InfoiconHtml = "<i class='bx bx-info-circle bx-sm'></i>";
-                    InfolinkHtml = $"<a href='{Infourl}' data-toggle='tooltip' data-placement='top' title='Admin User Mapping'>{InfoiconHtml}</a>";
+                    InfolinkHtml = $"<a href='{Infourl}' data-toggle='tooltip' data-placement='top' title='User Admin Mapping'>{InfoiconHtml}</a>";
 
 
                 }

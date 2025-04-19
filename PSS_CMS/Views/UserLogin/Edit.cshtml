@@ -108,7 +108,8 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.L_EMAILID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
+                        @Html.ValidationMessageFor(model => model.L_EMAILID, "", new { @class = "text-danger" })
+                        <span id="email-error" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -121,9 +122,9 @@
                     </div>
                 </div>
 
-             
 
-              
+
+
 
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
@@ -131,11 +132,10 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.DropDownListFor(
-     model => model.L_ROLE,
-     (SelectList)ViewBag.L_ROLE,
-
-     new { @class = "select textboxcolors", autocomplete = "off" }
- )
+      model => model.L_ROLE,
+      (SelectList)ViewBag.L_ROLE,
+      new { @class = "select textboxcolors" }
+  )
                     </div>
                 </div>
 
@@ -286,6 +286,32 @@
             $("body").css("pointer-events", "auto");
         }
     });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const emailInput = document.getElementById("L_EMAILID");
+            const errorSpan = document.getElementById("email-error");
+            const submitButton = document.getElementById("savebutton"); // Replace with your submit button's ID
+
+            // Disable the submit button initially
+            submitButton.disabled = true;
+
+            emailInput.addEventListener("blur", function () {
+                const email = emailInput.value.trim();
+                const emailPattern = /^[^\s]+[^\s]+\.(com)$/; // checks for and .com
+
+                if (email === "") {
+                    errorSpan.textContent = "Email is required.";
+                    submitButton.disabled = true; // Disable submit button
+                } else if (!emailPattern.test(email)) {
+                    errorSpan.textContent = "Please enter a valid .com email address.";
+                    submitButton.disabled = true; // Disable submit button
+                } else {
+                    errorSpan.textContent = ""; // Clear error message
+                    submitButton.disabled = false; // Enable submit button
+                }
+            });
+        });
     </script>
 
 </body>

@@ -45,6 +45,7 @@ namespace PSS_CMS.Controllers
                             var rootObjects = JsonConvert.DeserializeObject<ApiResponseInfo>(jsonString);
                             companyinfo = rootObjects.Data.FirstOrDefault();
                             ViewBag.Logo = rootObjects.Data[0].C_LOGO;
+                            Session["Logo"] = rootObjects.Data[0].C_LOGO;
                             //if (logoBytes != null)
                             //{
                             //    string base64Logo = Convert.ToBase64String(logoBytes);

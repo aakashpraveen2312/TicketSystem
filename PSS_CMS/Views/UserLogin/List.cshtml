@@ -69,9 +69,9 @@
            {
                columns.Add(c => c.L_USERID).Titled("Code").SetWidth("80px");
                columns.Add(c => c.L_USERNAME).Titled("Name").SetWidth("120px");
-               columns.Add(c => c.L_EMAILID).Titled("Email ID").SetWidth("350px");
+               columns.Add(c => c.L_EMAILID).Titled("Email ID").SetWidth("220px");
                columns.Add(c => c.L_ROLE).Titled("Role").SetWidth("100px");
-               columns.Add().Titled("Action")
+               columns.Add().Titled("Action").SetWidth("100px")
               .Encoded(false)
                .Sanitized(false)
             .RenderValueAs(o =>

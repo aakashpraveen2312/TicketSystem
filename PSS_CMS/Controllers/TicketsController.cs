@@ -1,4 +1,5 @@
 ﻿using CaptchaMvc.HtmlHelpers;
+using ClosedXML.Excel;
 using Newtonsoft.Json;
 using PSS_CMS.Fillter;
 using PSS_CMS.Models;
@@ -831,6 +832,51 @@ namespace PSS_CMS.Controllers
 
             return View();
         }
+
+        public async Task<ActionResult> ExcelUserDownload()
+        {
+            string Weburl = ConfigurationManager.AppSettings["ExcelClientTicketURL"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+
+            string strparams = "TC_USERID=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+
+                            return File(fileBytes,
+                                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                        "UserTickets.xlsx");
+                        }
+                        else
+                        {
+                            return Content("API Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception occurred: " + ex.Message);
+            }
+        }
+
+
 
     }
 }

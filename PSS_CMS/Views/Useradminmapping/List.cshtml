@@ -69,7 +69,7 @@
                {
 
                    columns.Add(c => c.Selected)
-        .Titled("<input type='checkbox' id='selectAll' /> &nbsp;&nbsp; Select All ") // "Select All" checkbox in the header
+        .Titled("<input type='checkbox' id='selectAll' /> &nbsp;&nbsp;") // "Select All" checkbox in the header
         .Encoded(false)
         .Sanitized(false)
         .RenderValueAs(o =>
@@ -81,9 +81,9 @@
             return MvcHtmlString.Create(checkboxHtml + hiddenRecId); // Return the HTML
         })
         .SetWidth("50px");
-                   columns.Add(c => c.L_USERID).Titled("ID").SetWidth("70PX");
-                   columns.Add(c => c.L_USERNAME).Titled("Name").SetWidth("70PX");
-                   columns.Add(c => c.L_ROLE).Titled("Role");
+                   columns.Add(c => c.L_USERID).Titled("ID").SetWidth("100PX");
+                   columns.Add(c => c.L_USERNAME).Titled("Name").SetWidth("50PX");
+                   columns.Add(c => c.L_ROLE).Titled("Role").SetWidth("50PX");
                }).WithPaging(10)
                 }
                 else

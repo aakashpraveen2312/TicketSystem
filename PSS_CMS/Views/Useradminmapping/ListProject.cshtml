@@ -69,7 +69,7 @@
                {
 
                    columns.Add(c => c.Selected)
-        .Titled(" <input type='checkbox' id='selectAll' />  &nbsp;&nbsp; Select All ") // "Select All" checkbox in the header
+        .Titled(" <input type='checkbox' id='selectAll' />  &nbsp;&nbsp;") // "Select All" checkbox in the header
         .Encoded(false)
         .Sanitized(false)
         .RenderValueAs(o =>
@@ -82,8 +82,8 @@
         })
         .SetWidth("50px");
                    columns.Add(c => c.P_NAME).Titled("Project Name").SetWidth("100PX");
-                   columns.Add(c => c.P_SORTORDER).Titled("Sort");
-                  
+                   columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("50PX");
+
                }).WithPaging(10)
                 }
                 else

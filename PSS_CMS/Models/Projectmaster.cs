@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace PSS_CMS.Models
 {
@@ -12,9 +13,10 @@ namespace PSS_CMS.Models
     {
         public int P_PROJECTRECID { get; set; }
         public int P_CRECID { get; set; }
+        public string P_Product{ get; set; }
         public string P_CODE { get; set; }
 
-        [DisplayName("Project Name")]
+        [DisplayName("Customer Name")]
         public string P_NAME { get; set; }
 
         [DisplayName("Sort")]
@@ -29,10 +31,23 @@ namespace PSS_CMS.Models
         [JsonProperty("P_DISABLE")]
 
         private string TUG_DISABLE { get; set; }
+        [DisplayName("Product Name")]
 
+        public string SelectedOption { get; set; }
+        public List<SelectListItem> Options { get; set; }
     }
+
+    public class ComboBoxProduct
+    {
+        public string TPM_CODE { get; set; }
+        public string TPM_PRODUCTNAME { get; set; }
+    }
+
+
     public class ProjectMasterRootObject
     {
+        public List<ComboBoxProduct> Product { get; set; }
+
         public string Message { get; set; }
         public string Status { get; set; }
         public List<Projectmaster> Data { get; set; }
@@ -43,4 +58,7 @@ namespace PSS_CMS.Models
         public string Status { get; set; }
         public Projectmaster Data { get; set; }
     }
+
+  
 }
+

@@ -88,6 +88,24 @@
 
 
             <div class="create ms-4 me-2 mt-3">
+              
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SelectedOption, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @*@Html.DropDownListFor(
+            m => m.SelectedOption,
+            Model.Options,
+            "Please select",
+            new { @class = "form-control" }
+        )*@
+                        @Html.DropDownListFor(model => model.P_Product, new SelectList(Model.Options, "Value", "Text"), "-- Select Product --", new { @class = "form-control textboxcolors", autocomplete = "off" })
+
+                    </div>
+                </div>  
+                
+                
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.P_NAME, new { @class = "labels" })

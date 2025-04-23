@@ -15,6 +15,8 @@ namespace PSS_CMS.Models
         public int UA_RECID { get; set; }
 
         public int P_PROJECTRECID { get; set; }
+        public string TPM_PRODUCTNAME { get; set; }
+
         public string P_CODE { get; set; }
         public string P_NAME { get; set; }
         public int P_SORTORDER { get; set; }

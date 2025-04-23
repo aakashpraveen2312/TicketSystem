@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using PSS_CMS.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -8,28 +10,24 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Newtonsoft.Json;
-using PSS_CMS.Fillter;
-using PSS_CMS.Models;
 
 namespace PSS_CMS.Controllers
 {
-    [ApiKeyAuthorize]
-    public class ProjectMasterController : Controller
+    public class ProductMasterController : Controller
     {
-        // GET: ProjectMaster
+
         public async Task<ActionResult> List(string searchPharse)
         {
-            Projectmaster objprojectmaster = new Projectmaster();
+            //ProductMaster objproductmaster = new ProductMaster();
 
-            string Weburl = ConfigurationManager.AppSettings["PROJECTGET"];
+            string Weburl = ConfigurationManager.AppSettings["PRODUCTGET"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
-            List<Projectmaster> projectmasterlist = new List<Projectmaster>();
+            List<ProductMaster> productmasterlist = new List<ProductMaster>();
 
-            string strparams = "companyId=" + Session["CompanyID"]+ "&UserID="+ Session["UserID"];
+            string strparams = "cmprecid=" + Session["CompanyID"] ;
             string url = Weburl + "?" + strparams;
 
             try
@@ -48,16 +46,16 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
-                            projectmasterlist = rootObjects.Data;
+                            var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
+                            productmasterlist = rootObjects.Data;
 
-                            if (!string.IsNullOrEmpty(searchPharse))
-                            {
-                                projectmasterlist = projectmasterlist
-                                    .Where(r => r.P_NAME.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.P_SORTORDER.ToString().Contains(searchPharse.ToLower()))
-                                    .ToList();
-                            }
+                            //if (!string.IsNullOrEmpty(searchPharse))
+                            //{
+                            //    projectmasterlist = projectmasterlist
+                            //        .Where(r => r.P_NAME.ToLower().Contains(searchPharse.ToLower()) ||
+                            //                    r.P_SORTORDER.ToString().Contains(searchPharse.ToLower()))
+                            //        .ToList();
+                            //}
 
                         }
                         else
@@ -71,41 +69,33 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            return View(projectmasterlist);
+            return View(productmasterlist);
         }
-        public async Task<ActionResult> Create()
+
+        public ActionResult Create()
         {
-            var project = await GetProjectComboAsync();
-            var model = new Projectmaster
-            {
-                Options = project
-            };
-
-            return View(model);
-
-
-
+            return View();
         }
+
         [HttpPost]
-        public async Task<ActionResult> Create(Projectmaster projectmaster)
+        public async Task<ActionResult> Create(ProductMaster productmaster)
         {
             try
             {
-                var ProjectmasterPostURL = ConfigurationManager.AppSettings["PROJECTPOST"];
+                var ProductmasterPostURL = ConfigurationManager.AppSettings["PRODUCTPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""p_NAME"": ""{projectmaster.P_NAME}"",           
-            ""p_SORTORDER"": ""{ projectmaster.P_SORTORDER}"",                    
-            ""p_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",        
-            ""p_CRECID"": ""{Session["CompanyID"]}""           
+            ""tpm_PRODUCTNAME"": ""{productmaster.TPM_PRODUCTNAME}"",           
+            ""tpm_SORTORDER"": ""{ productmaster.TPM_SORTORDER}"",                    
+            ""tpm_CRECID"": ""{Session["CompanyID"]}""           
         }}";
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(ProjectmasterPostURL),
+                    RequestUri = new Uri(ProductmasterPostURL),
                     Method = HttpMethod.Post,
                     Headers =
             {
@@ -131,7 +121,7 @@ namespace PSS_CMS.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
+                    var apiResponse = JsonConvert.DeserializeObject<ProductMasterRootObject>(responseBody);
 
                     if (apiResponse.Status == "Y")
                     {
@@ -158,17 +148,19 @@ namespace PSS_CMS.Controllers
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
 
-            return View(projectmaster);
+            return View(productmaster);
         }
-        public async Task<ActionResult> Edit(int? Recid)
+
+        public async Task<ActionResult> Edit(int? Recid,string name)
         {
-            Session["Projectrecid"] = Recid;
-            string WEBURLGETBYID = ConfigurationManager.AppSettings["PROJECTGETBYID"];
+            Session["ProductName"] = name;
+            Session["Productrecid"] = Recid;
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["PRODUCTGETBYID"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            Projectmaster projectmaster = null;
+            ProductMaster productmaster = null;
 
-            string strparams = "Recid=" + Recid + "&companyId=" + Session["CompanyID"];
+            string strparams = "recID=" + Recid + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -186,8 +178,8 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var content = JsonConvert.DeserializeObject<ProjectMasterObjects>(jsonString);
-                            projectmaster = content.Data;
+                            var content = JsonConvert.DeserializeObject<ProductMasterRootObjects>(jsonString);
+                            productmaster = content.Data;
                         }
                         else
                         {
@@ -204,29 +196,29 @@ namespace PSS_CMS.Controllers
                 ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
             }
 
-            return View(projectmaster);
+            return View(productmaster);
         }
+
         [HttpPost]
-        public async Task<ActionResult> Edit(Projectmaster projectmaster)
+        public async Task<ActionResult> Edit(ProductMaster productmaster)
         {
             try
             {
-                var ProjectmasterUpdateURL = ConfigurationManager.AppSettings["PROJECTPUT"];
+                var ProducttmasterUpdateURL = ConfigurationManager.AppSettings["PRODUCTPUT"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""p_PROJECTRECID"": ""{Session["Projectrecid"]}"",           
-            ""p_NAME"": ""{projectmaster.P_NAME}"",           
-            ""p_SORTORDER"": ""{projectmaster.P_SORTORDER}"",
-            ""p_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",                              
-            ""p_CRECID"": ""{ Session["CompanyID"]}""                              
+            ""tpm_RECID"": ""{Session["Productrecid"]}"",           
+            ""tpm_PRODUCTNAME"": ""{productmaster.TPM_PRODUCTNAME}"",           
+            ""tpm_SORTORDER"": ""{productmaster.TPM_SORTORDER}"",
+            ""tpm_CRECID"": ""{ Session["CompanyID"]}""                              
         }}";
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(ProjectmasterUpdateURL),
+                    RequestUri = new Uri(ProducttmasterUpdateURL),
                     Method = HttpMethod.Put,
                     Headers =
             {
@@ -271,14 +263,15 @@ namespace PSS_CMS.Controllers
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
         }
+
         public async Task<ActionResult> Delete(int? Recid)
         {
-            string ProjectmasterDeleteUrl = ConfigurationManager.AppSettings["PROJECTDELETE"];
+            string ProductmasterDeleteUrl = ConfigurationManager.AppSettings["PRODUCTDELETE"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
-            string strparams = "RecordId=" + Recid + "&companyId=" + Session["CompanyID"];
-            string finalurl = ProjectmasterDeleteUrl + "?" + strparams;
+            string strparams = "RECID=" + Recid + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = ProductmasterDeleteUrl + "?" + strparams;
 
             try
             {
@@ -304,12 +297,12 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             string responseBody = await response.Content.ReadAsStringAsync();
-                            var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
+                            var apiResponse = JsonConvert.DeserializeObject<ProductMasterRootObject>(responseBody);
 
                             if (apiResponse.Status == "Y")
                             {
 
-                                string redirectUrl = Url.Action("List", "ProjectMaster", new { });
+                                string redirectUrl = Url.Action("List", "ProductMaster", new { CompanyRecID = Session["CompanyID"] });
                                 return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
                             }
                             else if (apiResponse.Status == "U")
@@ -342,69 +335,6 @@ namespace PSS_CMS.Controllers
             }
             return View();
         }
-
-
-        public async Task<List<SelectListItem>> GetProjectComboAsync()
-        {
-            var projectCombo = new List<SelectListItem>();
-            string apiurl = ConfigurationManager.AppSettings["PRODUCTGET"];
-            string authkey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-
-            string strparams = "cmprecid=" + Session["CompanyId"];
-            string url = apiurl + "?" + strparams;
-
-            using (HttpClientHandler handler = new HttpClientHandler())
-            {
-                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
-
-                using (var httpClient = new HttpClient(handler))
-                {
-                    httpClient.DefaultRequestHeaders.Add("Authorization", authkey);
-                    httpClient.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    HttpResponseMessage response = await httpClient.GetAsync(url);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string content = await response.Content.ReadAsStringAsync();
-
-                        try
-                        {
-                            var apiResponse = JsonConvert.DeserializeObject<ProductMasterRootObject>(content);
-
-                            if (apiResponse.Status == "Y")
-                            {
-                                foreach (var item in apiResponse.Data)
-                                {
-                                    projectCombo.Add(new SelectListItem
-                                    {
-                                        Value = item.TPM_RECID,
-                                        Text = item.TPM_PRODUCTNAME
-                                    });
-                                }
-                            }
-                            else
-                            {
-                                ModelState.AddModelError(string.Empty, "Error: " + apiResponse.Message);
-                            }
-                        }
-                        catch (JsonException ex)
-                        {
-                            ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
-                        }
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "API call failed: " + response.ReasonPhrase);
-                    }
-                }
-            }
-
-            return projectCombo ?? new List<SelectListItem>();
-        }
-
 
     }
 }

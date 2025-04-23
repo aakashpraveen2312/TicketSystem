@@ -731,7 +731,7 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> FAQ(int projectID = 0)
+        public async Task<ActionResult> FAQ(string searchPharse,int projectID = 0)
         {                    
             string Weburl = ConfigurationManager.AppSettings["FAQGET1"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -760,6 +760,19 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var rootObjects = JsonConvert.DeserializeObject<RootObjectFAQ>(jsonString);
                             FAQList = rootObjects.Data;
+
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+
+                                FAQList = FAQList
+                                    .Where(r => r.F_QUESTION.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.F_ANSWER.ToLower().Contains(searchPharse.ToLower()))
+                                    .ToList();
+                            }
+
+
+
+
                         }
 
                         else

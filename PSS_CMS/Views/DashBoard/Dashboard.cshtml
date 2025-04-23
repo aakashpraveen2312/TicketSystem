@@ -44,6 +44,11 @@
             color: black !important;
             font-size: 19px;
         }
+        h5.d-flex.justify-content-center.headingscolor {
+            background-color: #f5f5f5;
+            padding: 15px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -137,16 +142,16 @@
 
                                 <div class="row text-center">
                                     <div class="col-4">
-                                        <small>Current</small>
-                                        <div><strong>(@stat.OpenDate)</strong></div>
+                                        <small style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenDate"})'">Current</small>
+                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenDate"})'"><strong>(@stat.OpenDate)</strong></div>
                                     </div>
                                     <div class="col-4">
-                                        <small class="text-primary">>1 Week</small>
-                                        <div><strong class="text-primary">(@stat.OpenLastweek)</strong></div>
+                                        <small class="text-primary" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenLastweek"})'">>1 Week</small>
+                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenLastweek"})'"><strong class="text-primary">(@stat.OpenLastweek)</strong></div>
                                     </div>
                                     <div class="col-4">
-                                        <small class="text-danger">>1 Month</small>
-                                        <div><strong class="text-danger">(@stat.OpenLastMonth)</strong></div>
+                                        <small class="text-danger" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenLastMonth"})'">>1 Month</small>
+                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenLastMonth"})'"><strong class="text-danger">(@stat.OpenLastMonth)</strong></div>
                                     </div>
                                 </div>
                             </div>
@@ -183,19 +188,19 @@
 
 
             @*Month to Date Chart*@
-            <div class="row">
-                <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-4">
 
-                    <h5 class="d-flex flex-column align-items-center headingscolor">
-                        Month to Date
-                        <span class="small">(Last 27 days including today)</span>
-                    </h5>
+                <h5 class="d-flex flex-column align-items-center headingscolor">
+                    Month to Date
+                    <span class="small">(Last 27 days including today)</span>
+                </h5>
 
 
-                    <canvas id="ticketBarChartMTD"></canvas>
-                </div>
-                @*Month to Date Chart*@
-                <script>
+                <canvas id="ticketBarChartMTD"></canvas>
+            </div>
+            @*Month to Date Chart*@
+            <script>
     // Month to Date Chart
     var ctxBarMTD = document.getElementById('ticketBarChartMTD').getContext('2d');
     new Chart(ctxBarMTD, {
@@ -215,20 +220,20 @@
             }
         }
     });
-                </script>
+            </script>
 
 
 
-                @*Week to Date Chart*@
-                <div class="col-md-6">
-                    <h5 class="d-flex flex-column align-items-center headingscolor">
-                        Week to Date
-                        <span class="small">(Last 7 days including today)</span>
-                    </h5>
-                    <canvas id="ticketBarChartWTD"></canvas>
-                </div>
-                @*Week to Date Chart*@
-                <script>
+            @*Week to Date Chart*@
+            <div class="col-md-4">
+                <h5 class="d-flex flex-column align-items-center headingscolor">
+                    Week to Date
+                    <span class="small">(Last 7 days including today)</span>
+                </h5>
+                <canvas id="ticketBarChartWTD"></canvas>
+            </div>
+            @*Week to Date Chart*@
+            <script>
     var ctxBarWTD = document.getElementById('ticketBarChartWTD').getContext('2d');
     new Chart(ctxBarWTD, {
         type: 'bar',
@@ -255,21 +260,14 @@
             }
         }
     });
-                </script>
+            </script>
 
-
+            <div class="col-md-4">
+                <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Over all tickets</h5>
+                <canvas id="ticketBarChart"></canvas>
             </div>
-
-
-
-            <div class="row">
-
-                <div class="col-md-6">
-                    <h5 class="d-flex justify-content-center headingscolor">Over all tickets</h5>
-                    <canvas id="ticketBarChart" style="max-width: 600px; max-height: 300px; height: 300px; width: 600px; "></canvas>
-                </div>
-                @*Over all ticket bar chart script*@
-                <script>
+            @*Over all ticket bar chart script*@
+            <script>
     document.addEventListener("DOMContentLoaded", function () {
         var ctxBar = document.getElementById('ticketBarChart').getContext('2d');
 
@@ -291,8 +289,7 @@
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                
                 plugins: {
                     legend: {
                         display: false // Hide the legend
@@ -303,28 +300,98 @@
                         ticks: {
                             display: true // Show x-axis labels
                         }
-                    },
-                    y: {
-                        beginAtZero: true
                     }
+                   
                 }
             }
         });
     });
-                </script>
+            </script>
+        </div>
 
 
 
-                @* Speedometer Container *@
-                <div class="col-md-6 ">
+        <div class="row">
 
-                    <h5 class="d-flex justify-content-center headingscolor">Percentage of Closed tickets</h5>
-                    <div class="d-flex justify-content-center">
-                        <div class="" id="speedometer" style="max-width: 600px; max-height: 300px; height: 300px; width: 470px "></div>
-                    </div>
+            <div class="col-md-6">
+                <h5 class="d-flex justify-content-center headingscolor">Priority vise Stacked Tickets</h5>
+                <canvas id="ticketChart" ></canvas>
+            </div>
+            @*Prioritytype bar chart script*@
+            <script>
+    const labels = @Html.Raw(ViewBag.Labels1); // ["Total Tickets", "Open Tickets", "Resolved Tickets"]
+
+    const data = {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Critical',
+                data: @Html.Raw(ViewBag.CriticalData),
+                backgroundColor: 'rgba(255, 99, 132, 0.7)'
+            },
+            {
+                label: 'Emergency',
+                data: @Html.Raw(ViewBag.EmergencyData),
+                backgroundColor: 'rgba(255, 159, 64, 0.7)'
+            },
+            {
+                label: 'Urgent',
+                data: @Html.Raw(ViewBag.UrgentData),
+                backgroundColor: 'rgba(255, 206, 86, 0.7)'
+            },
+            {
+                label: 'Normal',
+                data: @Html.Raw(ViewBag.NormalData),
+                backgroundColor: 'rgba(54, 162, 235, 0.7)'
+            }
+        ]
+    };
+
+    const config = {
+        type: 'bar',
+        data: data,
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                   
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                x: {
+                    stacked: true
+                },
+                y: {
+                    stacked: true,
+                }
+               
+            }
+        }
+    };
+
+    new Chart(document.getElementById('ticketChart'), config);
+            </script>
+
+
+
+            @* Speedometer Container *@
+            <div class="col-md-6 ">
+
+                <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Percentage of Closed tickets</h5>
+                <div class="d-flex justify-content-center">
+                    <div class="" id="speedometer" style="max-width: 600px; max-height: 300px; height: 300px; width: 470px "></div>
                 </div>
-                @*Script for Speedometer graph values*@
-                <script>
+            </div>
+            @*Script for Speedometer graph values*@
+            <script>
     const closedPercentage = Math.round(@((ViewBag.ClosedPercentage ?? 0))); // Default to 0 if null
     const totalTickets = @((ViewBag.TotalTickets ?? 0)); // Default to 0 if null
     const closedTickets = @((ViewBag.ClosedTickets ?? 0)); // Default to 0 if null
@@ -342,7 +409,7 @@
             min: 0,
             max: 100,
             title: "Ticket Progress",
-            label: `${percentage}% Closed`, // Dynamic label
+            label: `${percentage}% Closed\n(${closedTickets}/${totalTickets})`,
             gaugeWidthScale: 0.1,
             pointer: true,
             pointerOptions: {
@@ -406,10 +473,10 @@
                         console.log("closedPercentage",closedPercentage);
         updateSpeedometer(closedPercentage);
     }
-                </script>
+            </script>
 
 
-            </div>
+        </div>
 
 
         </div>

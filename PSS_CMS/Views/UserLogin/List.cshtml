@@ -67,41 +67,59 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.L_USERID).Titled("Code").SetWidth("80px");
+               columns.Add(c => c.L_USERID).Titled("Code").SetWidth("50px");
                columns.Add(c => c.L_USERNAME).Titled("Name").SetWidth("120px");
-               columns.Add(c => c.L_EMAILID).Titled("Email ID").SetWidth("220px");
-               columns.Add(c => c.L_ROLE).Titled("Role").SetWidth("100px");
-               columns.Add().Titled("Action").SetWidth("100px")
-              .Encoded(false)
-               .Sanitized(false)
-            .RenderValueAs(o =>
-            {
+               columns.Add(c => c.L_EMAILID).Titled("Email ID");
+               columns.Add(c => c.L_ROLE).Titled("Role").SetWidth("50px");
 
-                var Editurl = Url.Action("Edit", "UserLogin", new { id = o.L_RECID, userid = o.L_USERID }, null);
-                var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
-                var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
-
-                var Deleteurl = Url.Action("Delete", "UserLogin", new { id = o.L_RECID }, null);
-                var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
-                var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
-               
-                var Infourl1 = Url.Action("ListProject", "Useradminmapping", new { USERID = o.L_USERID, Name = o.L_USERNAME }, null);
-                var InfoiconHtml1 = "<i class='bx bxl-product-hunt  bx-sm'></i>";
-                var InfolinkHtml1 = $"<a href='{Infourl1}' data-toggle='tooltip' data-placement='top' title='Project Mapping'>{InfoiconHtml1}</a>";
-               
-                string InfolinkHtml = string.Empty;
-              
-                if (o.L_ROLE?.Trim().ToLower() == "user")
-                {
-                    var Infourl = Url.Action("List", "Useradminmapping", new { Role = o.L_ROLE, USERID = o.L_USERID, Name = o.L_USERNAME }, null);
-                    var InfoiconHtml = "<i class='bx bx-info-circle bx-sm'></i>";
-                    InfolinkHtml = $"<a href='{Infourl}' data-toggle='tooltip' data-placement='top' title='User Admin Mapping'>{InfoiconHtml}</a>";
+               // Checkbox column shown only for "admin" users
+               columns.Add().Titled("").SetWidth("50px")
+                   .Encoded(false)
+                   .Sanitized(false)
+                   .RenderValueAs(o =>
+                   {
+                       if (!string.Equals(o.L_ROLE?.Trim(), "Admin", StringComparison.OrdinalIgnoreCase) &&
+    !string.Equals(o.L_ROLE?.Trim(), "SuperAdmin", StringComparison.OrdinalIgnoreCase))
+                       {
+                           return MvcHtmlString.Create(""); // Don't show checkbox for other roles
+                        }
 
 
-                }
-                var extraSpaces2 = "&nbsp;&nbsp;&nbsp;";
-                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}{extraSpaces2}{InfolinkHtml1}{extraSpaces2}{InfolinkHtml}");
-            });
+                       var index = Model.ToList().IndexOf(o);
+                       var isChecked = o.L_AdminDeligate ? "checked" : "";
+                       var checkboxHtml = $"<input type='checkbox' name='selectedItems[{index}].L_AdminDeligate' value='true' class='select-item' {isChecked} />";
+                       var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].L_RECID' value='{o.L_RECID}' />";
+                       return MvcHtmlString.Create($"{checkboxHtml}{hiddenRecId}");
+                   });
+
+               columns.Add().Titled("Action").SetWidth("200px")
+                   .Encoded(false)
+                   .Sanitized(false)
+                   .RenderValueAs(o =>
+                   {
+                       var Editurl = Url.Action("Edit", "UserLogin", new { id = o.L_RECID, userid = o.L_USERID });
+                       var Deleteurl = Url.Action("Delete", "UserLogin", new { id = o.L_RECID });
+                       var Infourl1 = Url.Action("ListProject", "Useradminmapping", new { USERID = o.L_USERID, Name = o.L_USERNAME });
+
+                       var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
+                       var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
+                       var InfoiconHtml1 = "<i class='bx bxl-product-hunt bx-sm'></i>";
+
+                       var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
+                       var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
+                       var InfolinkHtml1 = $"<a href='{Infourl1}' data-toggle='tooltip' data-placement='top' title='Project Mapping'>{InfoiconHtml1}</a>";
+
+                       string InfolinkHtml = string.Empty;
+                       if (!string.IsNullOrEmpty(o.L_ROLE) && o.L_ROLE.Trim().ToLower() == "user")
+                       {
+                           var Infourl = Url.Action("List", "Useradminmapping", new { Role = o.L_ROLE, USERID = o.L_USERID, Name = o.L_USERNAME });
+                           var InfoiconHtml = "<i class='bx bx-info-circle bx-sm'></i>";
+                           InfolinkHtml = $"<a href='{Infourl}' data-toggle='tooltip' data-placement='top' title='User Admin Mapping'>{InfoiconHtml}</a>";
+                       }
+
+                       var extraSpaces = "&nbsp;&nbsp;&nbsp;";
+                       return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{InfolinkHtml1}{extraSpaces}{InfolinkHtml}");
+                   });
 
            }).WithPaging(10).Sortable(true)
             }
@@ -152,6 +170,72 @@
                 window.location.href = '@Url.Action("Logout", "Login")';
             }
         });
+    });
+    </script>
+    <script>
+    $(document).ready(function () {
+     
+        // Handle checkbox behavior
+        $(document).on('change', '.select-item', function () {
+            if ($(this).is(':checked')) {
+                $('.select-item').not(this).prop('disabled', true);
+            } else {
+                $('.select-item').prop('disabled', false);
+            }
+        });
+        // Handle submit button click
+        $('#submitButton').click(function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            updateSecondGrid(); // Call the function to gather selected IDs and send them to the server
+        });
+
+        function updateSecondGrid() {
+            let selectedIds = [];
+
+            // Loop through all checked checkboxes
+            $('input[name^="selectedItems"][type="checkbox"]:checked').each(function () {
+                let index = $(this).attr('name').match(/\d+/)[0]; // Get index from name attribute
+
+                // Get the corresponding hidden input value using the same index
+                let userId = $('input[name="selectedItems[' + index + '].L_USERID"]').val();
+
+                if (userId) {
+                    selectedIds.push(userId); // Push to array
+                }
+            });
+
+            console.log("selectedIds", selectedIds);
+
+            // Send to controller via AJAX
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("CheckedValue", "Useradminmapping")',
+                data: JSON.stringify({ selectedItems: selectedIds }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    Swal.fire({
+                        title: response.success ? 'Success!' : 'Error!',
+                        text: response.message,
+                        icon: response.success ? 'success' : 'error',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        if (response.success) {
+                            window.location.href = '@Url.Action("List", "UserLogin", new { id = Session["CompanyID"] })';
+                        }
+                    });
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong while processing your request.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
     });
     </script>
     <script src="~/Scripts/Fordelete.js"></script>

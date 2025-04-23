@@ -80,10 +80,10 @@
             var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].L_USERID' value='{o.L_USERID}' />"; // Bind GL_RECID properly
             return MvcHtmlString.Create(checkboxHtml + hiddenRecId); // Return the HTML
         })
-        .SetWidth("50px");
-                   columns.Add(c => c.L_USERID).Titled("ID").SetWidth("100PX");
-                   columns.Add(c => c.L_USERNAME).Titled("Name").SetWidth("50PX");
-                   columns.Add(c => c.L_ROLE).Titled("Role").SetWidth("50PX");
+        .SetWidth("30px");
+                   columns.Add(c => c.L_USERID).Titled("ID").SetWidth("100px");
+                   columns.Add(c => c.L_USERNAME).Titled("Name");
+                   columns.Add(c => c.L_ROLE).Titled("Role").SetWidth("100PX");
                }).WithPaging(10)
                 }
                 else

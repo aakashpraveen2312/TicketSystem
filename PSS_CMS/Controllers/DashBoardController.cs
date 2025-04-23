@@ -15,8 +15,6 @@ namespace PSS_CMS.Controllers
     [ApiKeyAuthorize]
     public class DashBoardController : Controller
     {
-       
-
         public async Task<ActionResult> Dashboard()
         {
             string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDGET"];
@@ -122,7 +120,7 @@ namespace PSS_CMS.Controllers
             {
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
-
+            await StackedBarChart();
             return wtdMtdData;
         }
 
@@ -224,6 +222,22 @@ namespace PSS_CMS.Controllers
                                 Session["Name"] = "CloseTickets";
                                 totalticketlist = rootObjects.CloseTickets;
                             }
+
+                            if (status == "OpenDate")
+                            {
+                                Session["Name"] = "OpenDate";
+                                totalticketlist = rootObjects.OpenDate;
+                            }
+                            if (status == "OpenLastweek")
+                            {
+                                Session["Name"] = "OpenLastweek";
+                                totalticketlist = rootObjects.OpenLastweek;
+                            }
+                            if (status == "OpenLastMonth")
+                            {
+                                Session["Name"] = "OpenLastMonth";
+                                totalticketlist = rootObjects.OpenLastMonth;
+                            }
                             if (status != null)
                             {
                                 Session["status"] = status;
@@ -231,14 +245,17 @@ namespace PSS_CMS.Controllers
                             // Apply Search Filter
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
-
+                                var lowerSearch = searchPharse.ToLower();
                                 totalticketlist = totalticketlist
-                                    .Where(r => r.TC_PROJECTID.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TC_COMMENTS.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TC_PRIORITYTYPE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TC_TICKETTYPE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TC_STATUS.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TC_TICKETDATES.ToLower().Contains(searchPharse.ToLower()))
+                                    .Where(r =>
+                                        (r.TC_PROJECTID?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_USERNAME?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_COMMENTS?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_PRIORITYTYPE?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_TICKETTYPE?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_STATUS?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_TICKETDATES?.ToLower().Contains(lowerSearch) ?? false)
+                                    )
                                     .ToList();
                             }
 
@@ -255,6 +272,89 @@ namespace PSS_CMS.Controllers
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
             return View(totalticketlist);
+        }
+
+        public async Task<ActionResult> StackedBarChart()
+        {
+            string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDSTACKEDBARCHART"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "Userid=" + Session["UserID"] + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            List<DashboardPriority> dashboardDataPriority = new List<DashboardPriority>();
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<DashboardPriorityList>(jsonString);
+                            dashboardDataPriority = rootObjects.Data;
+
+                            ViewBag.Labels1 = JsonConvert.SerializeObject(new[] { "Total Tickets", "Open Tickets", "Resolved Tickets" });
+
+                            var prioritiesToShow = new[] { "Critical", "Emergency", "Urgent", "Normal" };
+                            var filteredData = dashboardDataPriority
+                                .Where(d => prioritiesToShow.Contains(d.PriorityType))
+                                .OrderBy(d => Array.IndexOf(prioritiesToShow, d.PriorityType))
+                                .ToList();
+
+                            var critical = filteredData.FirstOrDefault(d => d.PriorityType == "Critical");
+                            ViewBag.CriticalData = JsonConvert.SerializeObject(new[] {
+    critical?.TicketCount ?? 0,
+    critical?.OpenTickets ?? 0,
+    critical?.ResolvedTickets ?? 0
+});
+
+                            var emergency = filteredData.FirstOrDefault(d => d.PriorityType == "Emergency");
+                            ViewBag.EmergencyData = JsonConvert.SerializeObject(new[] {
+    emergency?.TicketCount ?? 0,
+    emergency?.OpenTickets ?? 0,
+    emergency?.ResolvedTickets ?? 0
+});
+
+                            var urgent = filteredData.FirstOrDefault(d => d.PriorityType == "Urgent");
+                            ViewBag.UrgentData = JsonConvert.SerializeObject(new[] {
+    urgent?.TicketCount ?? 0,
+    urgent?.OpenTickets ?? 0,
+    urgent?.ResolvedTickets ?? 0
+});
+
+                            var normal = filteredData.FirstOrDefault(d => d.PriorityType == "Normal");
+                            ViewBag.NormalData = JsonConvert.SerializeObject(new[] {
+    normal?.TicketCount ?? 0,
+    normal?.OpenTickets ?? 0,
+    normal?.ResolvedTickets ?? 0
+});
+
+
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+
+            return View(dashboardDataPriority);
         }
     }
 }

@@ -68,16 +68,21 @@ namespace PSS_CMS.Controllers
                             // Apply Search Filter
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
+                                var lowerSearch = searchPharse.ToLower();
 
                                 RecentTicketList = RecentTicketList
-                                    .Where(r => r.TC_PROJECTID.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TC_COMMENTS.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TC_PRIORITYTYPE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TC_TICKETTYPE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TC_STATUS.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TC_TICKETDATES.ToLower().Contains(searchPharse.ToLower()))
+                                    .Where(r =>
+                                        (r.TC_PROJECTID?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_USERNAME?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_COMMENTS?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_PRIORITYTYPE?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_TICKETTYPE?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_STATUS?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.TC_TICKETDATES?.ToLower().Contains(lowerSearch) ?? false)
+                                    )
                                     .ToList();
                             }
+
 
                             // Apply Status Filter
                             if (!string.IsNullOrEmpty(status))
@@ -139,6 +144,13 @@ namespace PSS_CMS.Controllers
 
         public async Task<IEnumerable<Admintickets>> GetAdminTickets(string recid2, string userid, string status)
         {
+            var model = new Admintickets 
+            { Options = new List<SelectListItem> 
+            { new SelectListItem { Value = "1", Text = "Option 1" }, 
+                new SelectListItem { Value = "2", Text = "Option 2" }, 
+                new SelectListItem { Value = "3", Text = "Option 3" } } };
+
+
             Session["RECORDID"] = recid2;
             Session["STATUS"] = status;
             
@@ -427,7 +439,7 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
-        public async Task<ActionResult> FAQADMIN(int projectID = 0)
+        public async Task<ActionResult> FAQADMIN(string searchPharse,int projectID = 0)
         {
             string Weburl = ConfigurationManager.AppSettings["FAQGET1"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -457,6 +469,10 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var rootObjects = JsonConvert.DeserializeObject<RootObjectFAQ>(jsonString);
                             FAQList = rootObjects.Data;
+                            if (!string.IsNullOrEmpty(searchPharse)) 
+                            { FAQList = FAQList.Where(r => r.F_QUESTION.ToLower().Contains(searchPharse.ToLower()) ||
+                            r.F_ANSWER.ToLower().Contains(searchPharse.ToLower())).ToList(); 
+                            }
                         }
 
                         else
@@ -916,5 +932,7 @@ namespace PSS_CMS.Controllers
                 return Content("Exception occurred: " + ex.Message);
             }
         }
+
+
     }
 }

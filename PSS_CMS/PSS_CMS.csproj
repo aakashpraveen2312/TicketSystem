@@ -332,6 +332,7 @@
     <Compile Include="Models\Companies.cs" />
     <Compile Include="Models\DashBoardList.cs" />
     <Compile Include="Models\CompanyInfo.cs" />
+    <Compile Include="Models\DashboardPriority.cs" />
     <Compile Include="Models\Dashborardchart.cs" />
     <Compile Include="Models\Faq.cs" />
     <Compile Include="Models\Forgotpassword.cs" />
@@ -528,6 +529,7 @@
     <Content Include="Views\Useradminmapping\ListProject.cshtml" />
     <Content Include="Views\DashBoard\DashboardListTotalTicket.cshtml" />
     <Content Include="Views\CompanyInfo\Info.cshtml" />
+    <Content Include="Views\Tickets\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -13,6 +13,7 @@ namespace PSS_CMS.Models
 
     public class User
     {
+        public bool L_AdminDeligate { get; set; }
         public int? L_RECID { get; set; }
         public string selectedvalue { get; set; }
 

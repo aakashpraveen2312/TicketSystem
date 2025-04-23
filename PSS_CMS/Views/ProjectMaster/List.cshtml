@@ -67,9 +67,9 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.P_NAME).Titled("Name").SetWidth("450px");
-               columns.Add(c => c.P_SORTORDER).Titled("Sort");
-               columns.Add().Titled("Action").SetWidth("420px")
+               columns.Add(c => c.P_NAME).Titled("Name");
+               columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("50px");
+               columns.Add().Titled("Action").SetWidth("100px")
               .Encoded(false)
                .Sanitized(false)
             .RenderValueAs(o =>

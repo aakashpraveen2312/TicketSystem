@@ -95,6 +95,9 @@ return input.Replace("\\\"", "\"")        // Double quotes
             outline: none;
             padding-bottom: 10px;
         }
+        select#projectTypeFilter2 {
+            margin-top: 7px;
+        }
     </style>
 
 
@@ -132,7 +135,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
         </div>
         <div class="row">
-            <div class="col mt-3 mb-3 ms-5">
+            <div class="col mb-3 ms-5">
                 @{ var projectTypeList = ViewBag.ProjectTypes as IEnumerable<SelectListItem>;
                     var defaultSelectedValue = projectTypeList?.FirstOrDefault()?.Value ?? ""; // Get first project ID }
                 }
@@ -149,8 +152,15 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                       new { @class = "", id = "projectTypeFilter2", data_default = defaultSelectedValue })}
 
             </div>
+         
             <div class="col d-flex justify-content-end mb-3 me-4">
-                <button class="btncolorsubmit d-flex align-items-center justify-content-center px-3 py-2"
+                @using (Html.BeginForm("Whitepaper", "KnowledgeBased", FormMethod.Get, new { id = "searchForm" }))
+                {
+
+                    <input type="text" id="searchPharse" name="searchPharse" autocomplete="off" class="inputcustom mt-4" placeholder="Search" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%" />
+
+                }
+                <button class="btncolorsubmit d-flex align-items-center justify-content-center px-3 py-2 ms-5"
                         style="width: 150px; margin-top: 10px;"
                         onclick="window.location.href='@Url.Action("WhitepaperPost","KnowledgeBased")'">
                     New Whitepapers <i class="bi bi-plus-circle ms-1"></i>

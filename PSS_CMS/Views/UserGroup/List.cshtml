@@ -67,9 +67,9 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.TUG_CODE).Titled("Code").SetWidth("70PX");
-               columns.Add(c => c.TUG_NAME).Titled("Name").SetWidth("100PX");
-               columns.Add(c => c.TUG_ROLEDESCRIPTION).Titled("Desigination").SetWidth("200PX");
+               columns.Add(c => c.TUG_CODE).Titled("Code").SetWidth("130PX");
+               columns.Add(c => c.TUG_NAME).Titled("Name").SetWidth("400PX");
+               columns.Add(c => c.TUG_ROLEDESCRIPTION).Titled("Desigination");
                columns.Add(c => c.TUG_SORTORDER).Titled("Sort").SetWidth("50PX");
                columns.Add().Titled("Action").SetWidth("50PX")
               .Encoded(false)

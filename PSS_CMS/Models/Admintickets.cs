@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace PSS_CMS.Models
 {
@@ -37,7 +38,8 @@ namespace PSS_CMS.Models
 
         public List<Admintickets> Data { get; set; }
 
-
+        public string SelectedOption { get; set; }
+        public List<SelectListItem> Options { get; set; }
     }
 
     public class RootObjectsuser

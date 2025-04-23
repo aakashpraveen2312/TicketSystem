@@ -357,6 +357,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
                     }
                 </div>
+                @*@Html.DropDownListFor(m => m.SelectedOption,Model.Options,"Please select",new { @class = "form-control" })*@
                 @{
                     var lastStatus = Session["STATUS"]?.ToString();
                 }

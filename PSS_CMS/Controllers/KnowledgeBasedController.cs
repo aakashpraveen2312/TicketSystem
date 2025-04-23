@@ -31,9 +31,27 @@ namespace PSS_CMS.Controllers
             return "image/jpeg";
         }
         // GET: KnowledgeBased
-        public async Task<ActionResult> Whitepaper(int? projectID)
+        public async Task<ActionResult> Whitepaper(int? projectID,string searchPharse)
         {
-            
+            if (searchPharse == "")
+            {
+                // Clear the session if the input is an empty string
+                Session["searchPharse"] = null;
+                searchPharse = null;
+            }
+            else if (!string.IsNullOrWhiteSpace(searchPharse))
+            {
+                // Store valid search input
+                Session["searchPharse"] = searchPharse;
+            }
+            else if (Session["searchPharse"] != null)
+            {
+                // Reuse previous value from session
+                searchPharse = Session["searchPharse"].ToString();
+            }
+
+
+
             WhitePaper objRecents = new WhitePaper();
             string Weburl = ConfigurationManager.AppSettings["GETWHITEPAPER"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -61,6 +79,16 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var rootObjects = JsonConvert.DeserializeObject<APIResponsewhitepaper>(jsonString);
                             RecentTicketList = rootObjects.Data;
+
+
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                RecentTicketList = RecentTicketList
+                                    .Where(r => r.WP_TITLE.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.WP_Description.ToLower().Contains(searchPharse.ToLower()))
+                                    .ToList();
+                            }
+
                         }
                         else
                         {

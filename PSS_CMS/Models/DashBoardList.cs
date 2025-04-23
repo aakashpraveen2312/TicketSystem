@@ -15,7 +15,7 @@ namespace PSS_CMS.Models
             {
                 if (DateTime.TryParse(TC_TICKETDATE, out DateTime parsedDate))
                 {
-                    return parsedDate.ToString("dd-MM-yyyy HH:mm:ss");
+                    return parsedDate.ToString("dd-MM-yyyy HH:mm");
                 }
                 return string.Empty; // Return an empty string or handle as needed if parsing fails
             }
@@ -51,6 +51,9 @@ namespace PSS_CMS.Models
         public List<DashBoardList> OpenTickets { get; set; }
         public List<DashBoardList> CloseTickets { get; set; }
         public List<DashBoardList> ResolvedTickets { get; set; }
+        public List<DashBoardList> OpenDate { get; set; }
+        public List<DashBoardList> OpenLastweek { get; set; }
+        public List<DashBoardList> OpenLastMonth { get; set; }
         public string Message { get; set; }
         public string Status { get; set; }
     }

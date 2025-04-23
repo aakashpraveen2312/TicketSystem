@@ -24,7 +24,7 @@ namespace PSS_CMS.Controllers
         // GET: Tickets changes by aakash
         [HttpGet]
         public async Task<ActionResult> Ticket()
-        {
+         {
             var viewModel = new Tickets();
             string Weburl = ConfigurationManager.AppSettings["COMBOBOXTICKETTYPE"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -282,6 +282,7 @@ namespace PSS_CMS.Controllers
                                 RecentTicketListall = RecentTicketListall
                                     .Where(r => r.TC_PROJECTID.ToLower().Contains(searchPharse.ToLower()) ||
                                                 r.TC_SUBJECT.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.AdminNameDisplay.ToLower().Contains(searchPharse.ToLower()) ||
                                                 r.TC_PRIORITYTYPE.ToLower().Contains(searchPharse.ToLower()) ||
                                                 r.TC_STATUS.ToLower().Contains(searchPharse.ToLower()) ||
                                                 r.TC_TICKETTYPE.ToLower().Contains(searchPharse.ToLower()) ||
@@ -731,7 +732,7 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> FAQ(int projectID = 0)
+        public async Task<ActionResult> FAQ(string searchPharse,int projectID = 0)
         {                    
             string Weburl = ConfigurationManager.AppSettings["FAQGET1"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -760,6 +761,10 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var rootObjects = JsonConvert.DeserializeObject<RootObjectFAQ>(jsonString);
                             FAQList = rootObjects.Data;
+                            if (!string.IsNullOrEmpty(searchPharse)) {
+                                FAQList = FAQList.Where(r => r.F_QUESTION.ToLower().Contains(searchPharse.ToLower()) ||
+                                r.F_ANSWER.ToLower().Contains(searchPharse.ToLower())).ToList();
+                            }
                         }
 
                         else
@@ -876,7 +881,57 @@ namespace PSS_CMS.Controllers
             }
         }
 
+        //public async Task<ActionResult> Edit(int? recid)
+        //{
+        //    Session["EDITRECID"] = recid;
+        //    var viewModel = new Tickets();
+        //    Tickets RecentTicketListall = null;
+        //    string Weburl = ConfigurationManager.AppSettings["GetByID"];
+        //    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+        //    string APIKey = Session["APIKEY"].ToString();
+        //    string strparams = "cmprecid=" + Session["CompanyID"] + "&RECID=" + recid;
+        //    string finalurl = Weburl + "?" + strparams;
 
+        //    try
+        //    {
+        //        using (HttpClientHandler handler = new HttpClientHandler())
+        //        {
+        //            handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+        //            using (HttpClient client = new HttpClient(handler))
+        //            {
+        //                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+        //                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //                var response = await client.GetAsync(finalurl);
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    var jsonString = await response.Content.ReadAsStringAsync();                         
+        //                    var rootObjects = JsonConvert.DeserializeObject<ApiResponseTicketsResponse>(jsonString);
+        //                    RecentTicketListall = rootObjects.Data;
+        //                }
+        //                else
+        //                {
+        //                    ModelState.AddModelError(string.Empty, $"Error: {response.ReasonPhrase}");
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ModelState.AddModelError(string.Empty, $"Exception occurred: {ex.Message}");
+        //    }
+
+        //    await Ticket();
+
+        //    return View(RecentTicketListall);
+        //}
+        //[HttpPost]
+        //public async Task<ActionResult> Edit(Tickets tickets)
+        //{
+        //    return View();
+        //}
 
     }
 }

@@ -69,6 +69,9 @@
             font-weight: bold;
             padding: 4px 8px;
         }
+        i.bx.bx-message-rounded-dots {
+            font-size: 25px;
+        }
     </style>
 
 </head>
@@ -180,7 +183,7 @@
                             @Html.Hidden("StartDate")
                             @Html.Hidden("EndDate")
                         </form>
-                        <a href="@Url.Action("ExcelAdminDownload", "RecentTickets")" class="me-2" title="Export as Excel" style="text-decoration:none;">
+                        <a href="@Url.Action("ExcelAdminDownload", "RecentTickets")" class="" title="Export as Excel" style="text-decoration:none;">
                             <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
                         </a>
                     </div>
@@ -214,7 +217,7 @@
 
 
                 var LineItemsurl = Url.Action("AdminTickets", "RecentTickets", new { recid2 = o.TC_RECID, userid = o.TC_USERID, status = o.TC_STATUS, adminresolvedname = o.TC_ADMINNAME });
-                var LineItemiconHtml = "<i class='bx bx-envelope'></i>";
+                var LineItemiconHtml = "<i class='bx bx-message-rounded-dots' style></i>";
                 var LineItemlinkHtml = $"<a href='{LineItemsurl}' data-toggle='tooltip' data-placement='top' title='Tickets'>{LineItemiconHtml}</a>";
 
 

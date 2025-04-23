@@ -148,7 +148,7 @@
             <div class="col-lg-3 col-md-6">
                 <div class="row ">
 
-                    <div class="col-md-10">
+                    <div class="col-md-9">
                         @using (Html.BeginForm("Ticket_History", "Tickets", FormMethod.Get, new { id = "searchForm" }))
                         {
 
@@ -157,8 +157,8 @@
                         }
                     </div>
 
-                    <div class="col-md-2 d-flex justify-content-md-end justify-content-end">
-                        <div style="display: flex; justify-content: center; align-items: center;margin-top:9px;">
+                    <div class="col-md-3 d-flex justify-content-md-end justify-content-end">
+                        <div style="display: flex; justify-content: center; align-items: center;margin-top:6px;">
                             <a href="@Url.Action("Ticket", "Tickets")" class="me-2" title="Create Ticket" style="text-decoration:none;">
                                 <span class="addbtn"></span> <img src="~/assets/img/icons8-add-32.png" alt="Add" class="" width="20" height="20" />
                             </a>

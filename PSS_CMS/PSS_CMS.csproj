@@ -317,6 +317,7 @@
     <Compile Include="Controllers\InActivityController.cs" />
     <Compile Include="Controllers\KnowledgeBasedController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\ProductMasterController.cs" />
     <Compile Include="Controllers\ProjectMasterController.cs" />
     <Compile Include="Controllers\RecentTicketsController.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
@@ -337,6 +338,7 @@
     <Compile Include="Models\Faq.cs" />
     <Compile Include="Models\Forgotpassword.cs" />
     <Compile Include="Models\Login.cs" />
+    <Compile Include="Models\ProductMaster.cs" />
     <Compile Include="Models\Projectmaster.cs" />
     <Compile Include="Models\Recenttickets.cs" />
     <Compile Include="Models\Reviewtickets.cs" />
@@ -529,6 +531,9 @@
     <Content Include="Views\Useradminmapping\ListProject.cshtml" />
     <Content Include="Views\DashBoard\DashboardListTotalTicket.cshtml" />
     <Content Include="Views\CompanyInfo\Info.cshtml" />
+    <Content Include="Views\ProductMaster\Create.cshtml" />
+    <Content Include="Views\ProductMaster\Edit.cshtml" />
+    <Content Include="Views\ProductMaster\List.cshtml" />
     <Content Include="Views\Tickets\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>

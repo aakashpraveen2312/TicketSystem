@@ -1,5 +1,4 @@
-﻿@model PSS_CMS.Models.Projectmaster
-@using GridMvc.Html
+﻿@model PSS_CMS.Models.ProductMaster
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,6 +28,35 @@
             padding: 8px 20px;
             font-weight: bold;
         }
+
+        .swal-btn-back {
+            background-color: #f0a72d !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        select#TUG_NAME {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        }
     </style>
 </head>
 
@@ -48,52 +76,47 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>PROJECT MASTER</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProjectMaster")">LIST</a></li>
-                    <li>Edit-@Session["ProductName"]</li>
+                    <li>PRODUCT MASTER</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProductMaster")">LIST</a></li>
+                    <li>CREATE</li>
                 </ul>
             </div>
         </div>
-        @using (Html.BeginForm("Edit", "ProjectMaster", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Create", "ProductMaster", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
         {
-            <div class="create ms-4 me-2 mt-3">
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.P_NAME, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.P_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.P_SORTORDER, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.P_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.IsDisabled, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input checkinputsize" })
-                    </div>
-                </div>
-                <div class="row ">
-                    <div class="col-lg-2">
+<div class="create ms-4 me-2 mt-3">
+    <div class="row mb-3">
+        <div class="col-lg-2 col-md-2 col-sm-12">
+            @Html.LabelFor(model => model.TPM_PRODUCTNAME, new { @class = "labels" })
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            @Html.EditorFor(model => model.TPM_PRODUCTNAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+        </div>
+    </div>
 
-                    </div>
-                    <div class="col-lg-3 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { })'" />
-                    </div>
-                </div>
-            </div>
-        }
+    <div class="row mb-3">
+        <div class="col-lg-2 col-md-2 col-sm-12">
+            @Html.LabelFor(model => model.TPM_SORTORDER, new { @class = "labels" })
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            @Html.EditorFor(model => model.TPM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-lg-2">
+
+        </div>
+        <div class="col-lg-3 d-flex justify-content-end">
+            <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+            <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProductMaster", new {CompanyRecID = Session["CompanyID"] })'" />
+        </div>
+    </div>
+</div>}
+
+
     </div>
 
 
@@ -117,6 +140,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @*Logout Pronptbox script*@
     <script>
     document.getElementById("logoutLink").addEventListener("click", function () {
         Swal.fire({
@@ -135,13 +159,14 @@
         });
     });
     </script>
+
     @*Toastr for created succesfully*@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     $(document).ready(function () {
-        $("#editform").submit(function (event) {
+        $("#createform").submit(function (event) {
             event.preventDefault();
 
             var submitBtn = $("#savebutton");
@@ -153,7 +178,7 @@
             $("body").css("pointer-events", "none");
 
             $.ajax({
-                url: '@Url.Action("Edit", "ProjectMaster")',
+                url: '@Url.Action("Create", "ProductMaster")',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -164,20 +189,24 @@
                             title: "Success!",
                             text: response.message,
                             icon: "success",
-                            confirmButtonText: "Ok",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
+                            showCancelButton: true,
+                            confirmButtonText: "Continue",
+                            cancelButtonText: "Back to List",
+                            allowOutsideClick: false, // Prevent closing by clicking outside
+                            allowEscapeKey: false, // Prevent closing using Esc key
                             customClass: {
                                 confirmButton: "swal-btn-continue",
+                                cancelButton: "swal-btn-back"
                             },
                             didOpen: () => {
+                                // Allow interaction inside the alert only
                                 $(".swal2-container").css("pointer-events", "auto");
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = '@Url.Action("List", "ProjectMaster")';
+                                location.reload();
                             } else {
-                                 window.location.href = '@Url.Action("Create", "ProjectMaster")';
+                                window.location.href = '@Url.Action("List", "ProductMaster",new { CompanyRecID = Session["CompanyID"] })';
                             }
                         });
                     } else {
@@ -206,11 +235,10 @@
 
         function resetButton() {
             $("#savebutton").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto");
+            $("body").css("pointer-events", "auto"); // Re-enable page interaction
         }
     });
     </script>
-
 
 </body>
 </html>

@@ -189,40 +189,6 @@
 
             @*Month to Date Chart*@
         <div class="row">
-            <div class="col-md-4">
-
-                <h5 class="d-flex flex-column align-items-center headingscolor">
-                    Month to Date
-                    <span class="small">(Last 27 days including today)</span>
-                </h5>
-
-
-                <canvas id="ticketBarChartMTD"></canvas>
-            </div>
-            @*Month to Date Chart*@
-            <script>
-    // Month to Date Chart
-    var ctxBarMTD = document.getElementById('ticketBarChartMTD').getContext('2d');
-    new Chart(ctxBarMTD, {
-        type: 'bar',
-        data: {
-            labels: ['Total Tickets', 'Open', 'Resolved', 'Closed'],
-            datasets: [{
-                data: [@ViewBag.MonthTotalTickets, @ViewBag.MonthOpenTickets, @ViewBag.MonthResolvedTickets, @ViewBag.MonthCloseTickets],
-                backgroundColor: ['#0070FC', '#ffc107', '#198754', '#6c757d']
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    display: false  // Hides the label
-                }
-            }
-        }
-    });
-            </script>
-
-
 
             @*Week to Date Chart*@
             <div class="col-md-4">
@@ -262,6 +228,40 @@
     });
             </script>
 
+
+            <div class="col-md-4">
+
+                <h5 class="d-flex flex-column align-items-center headingscolor">
+                    Month to Date
+                    <span class="small">(Last 27 days including today)</span>
+                </h5>
+
+
+                <canvas id="ticketBarChartMTD"></canvas>
+            </div>
+            @*Month to Date Chart*@
+            <script>
+    // Month to Date Chart
+    var ctxBarMTD = document.getElementById('ticketBarChartMTD').getContext('2d');
+    new Chart(ctxBarMTD, {
+        type: 'bar',
+        data: {
+            labels: ['Total Tickets', 'Open', 'Resolved', 'Closed'],
+            datasets: [{
+                data: [@ViewBag.MonthTotalTickets, @ViewBag.MonthOpenTickets, @ViewBag.MonthResolvedTickets, @ViewBag.MonthCloseTickets],
+                backgroundColor: ['#0070FC', '#ffc107', '#198754', '#6c757d']
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false  // Hides the label
+                }
+            }
+        }
+    });
+            </script>
+
             <div class="col-md-4">
                 <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Over all tickets</h5>
                 <canvas id="ticketBarChart"></canvas>
@@ -289,7 +289,7 @@
                 }]
             },
             options: {
-                
+
                 plugins: {
                     legend: {
                         display: false // Hide the legend
@@ -301,7 +301,7 @@
                             display: true // Show x-axis labels
                         }
                     }
-                   
+
                 }
             }
         });
@@ -315,34 +315,30 @@
 
             <div class="col-md-6">
                 <h5 class="d-flex justify-content-center headingscolor">Priority vise Stacked Tickets</h5>
-                <canvas id="ticketChart" ></canvas>
+                <canvas id="ticketChart"></canvas>
             </div>
             @*Prioritytype bar chart script*@
-            <script>
-    const labels = @Html.Raw(ViewBag.Labels1); // ["Total Tickets", "Open Tickets", "Resolved Tickets"]
+        <script>
+    const labels = @Html.Raw(ViewBag.Labels1); // ["Critical", "Emergency", "High", "Medium", "Low"]
 
     const data = {
         labels: labels,
         datasets: [
+
             {
-                label: 'Critical',
-                data: @Html.Raw(ViewBag.CriticalData),
-                backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                label: 'Open',
+                data: @Html.Raw(ViewBag.OpenTickets1 ?? "[]"), // [2, 6, 3, 9, 1]
+                backgroundColor: '#FFBE00'
             },
             {
-                label: 'Emergency',
-                data: @Html.Raw(ViewBag.EmergencyData),
-                backgroundColor: 'rgba(255, 159, 64, 0.7)'
+                label: 'Resolved',
+                data: @Html.Raw(ViewBag.ResolvedTickets1 ?? "[]"), // [6, 4, 8, 1, 3]
+                backgroundColor: '#008959'
             },
             {
-                label: 'Urgent',
-                data: @Html.Raw(ViewBag.UrgentData),
-                backgroundColor: 'rgba(255, 206, 86, 0.7)'
-            },
-            {
-                label: 'Normal',
-                data: @Html.Raw(ViewBag.NormalData),
-                backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                label: 'Closed',
+                data: @Html.Raw(ViewBag.ClosedTickets1 ?? "[]"), // [5, 10, 7, 3, 2]
+                backgroundColor: '#69757D'
             }
         ]
     };
@@ -351,34 +347,25 @@
         type: 'bar',
         data: data,
         options: {
-            plugins: {
-                title: {
-                    display: true,
-                   
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
-            },
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
             scales: {
                 x: {
-                    stacked: true
+                    stacked: true,
+                    ticks: {
+                        font: {
+                            size: 14
+                        }
+                    }
                 },
                 y: {
                     stacked: true,
                 }
-               
             }
         }
     };
 
     new Chart(document.getElementById('ticketChart'), config);
-            </script>
+        </script>
+
 
 
 

@@ -55,7 +55,7 @@
     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />}
                 <!-- Add button with icon -->
                 <a href="@Url.Action("Create", "ProductMaster")" class=" ms-3" style="margin-left: 30px;">
-                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add Project" />
+                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add Product" />
                 </a>
             </div>
 
@@ -66,9 +66,9 @@
             {
 @Html.Grid(Model).Columns(columns =>
 {
-    columns.Add(c => c.TPM_PRODUCTNAME).Titled("Product Name").SetWidth("450px");
-    columns.Add(c => c.TPM_SORTORDER).Titled("Sort");
-    columns.Add().Titled("Action").SetWidth("420px")
+    columns.Add(c => c.TPM_PRODUCTNAME).Titled("Product Name");
+    columns.Add(c => c.TPM_SORTORDER).Titled("Sort").SetWidth("100px");
+    columns.Add().Titled("Action").SetWidth("100px")
    .Encoded(false)
     .Sanitized(false)
  .RenderValueAs(o =>

@@ -138,6 +138,7 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> AdminTickets(string recid2, string userid, string status)
         {
+            await ProjectTypeAdminFAQ();
             IEnumerable<Admintickets> ticketadminList = await GetAdminTickets(recid2, userid, status); // Your logic to get a list of tickets
             return View(ticketadminList); // Pass the collection to the view
         }
@@ -439,15 +440,31 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
-        public async Task<ActionResult> FAQADMIN(string searchPharse,int projectID = 0)
+        public async Task<ActionResult> FAQADMIN(string searchPharse,int ?projectID)
         {
+            if (searchPharse == "")
+            {
+                // Clear the session if the input is an empty string
+                Session["searchPharse"] = null;
+                searchPharse = null;
+            }
+            else if (!string.IsNullOrWhiteSpace(searchPharse))
+            {
+                // Store valid search input
+                Session["searchPharse"] = searchPharse;
+            }
+            else if (Session["searchPharse"] != null)
+            {
+                // Reuse previous value from session
+                searchPharse = Session["searchPharse"].ToString();
+            }
             string Weburl = ConfigurationManager.AppSettings["FAQGET1"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
             List<Faq> FAQList = new List<Faq>();
 
-            string strparams = "projectID=" + projectID + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "productid=" + projectID + "&cmprecid=" + Session["CompanyID"];
             string finalurl = Weburl + "?" + strparams;
 
             try

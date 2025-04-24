@@ -97,36 +97,25 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
 
         <div class="row ms-3 mt-3 mb-3">
-
             <div class="col-md-4 mt-3">
-                @{
-                    var projectTypeList = ViewBag.ProjectTypes as List<SelectListItem>;
-
-                    if (projectTypeList == null || !projectTypeList.Any())
-                    {
-                        <div class="position-relative flex-grow-1">
-                            @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType1,
-                                                 projectTypeList,
-                                                 "No project's are available",
-                                                 new { @class = "form-select", id = "projectTypeFilter", tabindex = "1" })
-                        </div>
-                    }
-                    else
-                    {
-                        // Ensure the "General" option is included
-                        projectTypeList.Insert(0, new SelectListItem { Text = "General", Value = "0" });
-                    }
+                @{ var projectTypeList = ViewBag.ProjectTypes as IEnumerable<SelectListItem>;
+                    var defaultSelectedValue = projectTypeList?.FirstOrDefault()?.Value ?? ""; // Get first project ID }
                 }
-
                 @if (projectTypeList != null && projectTypeList.Any())
                 {
-                    <div class="position-relative flex-grow-1">
-                        @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType1,
-                                             projectTypeList,
-                                             new { @class = "form-select", id = "projectTypeFilter1", tabindex = "1" })
-                    </div>
-                }
+                    @Html.DropDownList("SelectedProjectType1",
+                                       projectTypeList,
+                                       new { @class = "", id = "projectTypeFilter1", data_default = defaultSelectedValue }) }
+                else
+                {
+                    @Html.DropDownList("SelectedProjectType1",
+                                      projectTypeList,
+                                      "No project's are avialble",
+                                      new { @class = "", id = "projectTypeFilter1", data_default = defaultSelectedValue })}
+
             </div>
+
+
 
             <div class="col-md-8 d-flex justify-content-md-end justify-content-end mt-sm-3">
                 @using (Html.BeginForm("FAQADMIN", "RecentTickets", FormMethod.Get, new { id = "searchForm", @class = "d-flex align-items-center w-40 " }))
@@ -319,65 +308,46 @@ return input.Replace("\\\"", "\"")        // Double quotes
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-$(document).ready(function () {
-    // Set the selected value from local storage if available
-    var savedProjectId = localStorage.getItem("selectedProjectId");
-    if (savedProjectId !== null) {
-        $("#projectTypeFilter1").val(savedProjectId);
-    }
+    $(document).ready(function () {
+        var firstProjectId = $("#projectTypeFilter1").val(); // Get initially selected project ID
+        var urlParams = new URLSearchParams(window.location.search);
+        var currentProjectId = urlParams.get("projectID");
 
-    $("#projectTypeFilter1").change(function () {
-        var selectedProjectId = $(this).val(); // Get selected project ID
+        // Check if there's a stored project ID in sessionStorage
+        var storedProjectId = sessionStorage.getItem("selectedProjectID");
 
-        // Save to local storage
-        localStorage.setItem("selectedProjectId", selectedProjectId);
-
-        if (selectedProjectId === "0") {
-            selectedProjectId = 0; // Ensure General sends 0
+        if (storedProjectId) {
+            $("#projectTypeFilter1").val(storedProjectId);
         }
 
-        var url = '@Url.Action("FAQADMIN", "RecentTickets")'; // Get the base URL
-
-        // Redirect with selected projectID
-        window.location.href = url + "?projectID=" + encodeURIComponent(selectedProjectId);
-    });
-
-    // Clear local storage when navigating through breadcrumbs, links, or buttons
-    $("a, button,li").click(function () {
-        localStorage.removeItem("selectedProjectId");
-    });
-});
-    </script>
-    @*<script>
-        $(document).ready(function () {
-            // Get the saved value
-            var savedProjectId = localStorage.getItem("selectedProjectId");
-
-            if (savedProjectId !== null) {
-                $("#projectTypeFilter1").val(savedProjectId);
+        // Redirect only if no projectID exists in the URL to avoid infinite loop
+        if (!currentProjectId) {
+            if (storedProjectId) {
+                redirectToPage(storedProjectId);
+            } else if (firstProjectId) {
+                redirectToPage(firstProjectId);
             }
+        }
 
-            $("#projectTypeFilter1").change(function () {
-                var selectedProjectId = $(this).val();
-
-                // Save selection
-                localStorage.setItem("selectedProjectId", selectedProjectId);
-
-                var url = '@Url.Action("FAQADMIN", "RecentTickets")';
-                window.location.href = url + "?projectID=" + encodeURIComponent(selectedProjectId);
-            });
-
-            // Clear localStorage on clicks or unload
-            $("a, button, li").click(function () {
-                localStorage.removeItem("selectedProjectId");
-            });
-
-            $(window).on("beforeunload", function () {
-                localStorage.clear();
-            });
+        $("#projectTypeFilter1").change(function () {
+            var selectedProjectId = $(this).val();
+            if (selectedProjectId) {
+                sessionStorage.setItem("selectedProjectID", selectedProjectId); // Store selected value
+                redirectToPage(selectedProjectId);
+            }
         });
 
-            </script>*@
+        function redirectToPage(projectId) {
+            var url = '@Url.Action("FAQADMIN", "RecentTickets")' + "?projectID=" + encodeURIComponent(projectId);
+            window.location.href = url;
+        }
+      // Clear local storage when navigating through breadcrumbs, links, or buttons
+        $("a, button, li").click(function () {
+            localStorage.removeItem("selectedProjectId");
+        });
+    });
+    </script>
+
     <script src="~/Scripts/Fordelete.js"></script>
 </body>
 </html>

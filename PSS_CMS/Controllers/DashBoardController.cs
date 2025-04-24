@@ -304,41 +304,9 @@ namespace PSS_CMS.Controllers
                             dashboardDataPriority = rootObjects.Data;
 
                             ViewBag.Labels1 = JsonConvert.SerializeObject(new[] { "Critical", "Emergency", "Urgent", "Normal" });
-
-                            var prioritiesToShow = new[] { "Critical", "Emergency", "Urgent", "Normal" };
-                            var filteredData = dashboardDataPriority
-                                .Where(d => prioritiesToShow.Contains(d.PriorityType))
-                                .OrderBy(d => Array.IndexOf(prioritiesToShow, d.PriorityType))
-                                .ToList();
-
-                            var critical = filteredData.FirstOrDefault(d => d.PriorityType == "Critical");
-                            ViewBag.CriticalData = JsonConvert.SerializeObject(new[] {
-    critical?.TicketCount ?? 0,
-    critical?.OpenTickets ?? 0,
-    critical?.ResolvedTickets ?? 0
-});
-
-                            var emergency = filteredData.FirstOrDefault(d => d.PriorityType == "Emergency");
-                            ViewBag.EmergencyData = JsonConvert.SerializeObject(new[] {
-    emergency?.TicketCount ?? 0,
-    emergency?.OpenTickets ?? 0,
-    emergency?.ResolvedTickets ?? 0
-});
-
-                            var urgent = filteredData.FirstOrDefault(d => d.PriorityType == "Urgent");
-                            ViewBag.UrgentData = JsonConvert.SerializeObject(new[] {
-    urgent?.TicketCount ?? 0,
-    urgent?.OpenTickets ?? 0,
-    urgent?.ResolvedTickets ?? 0
-});
-
-                            var normal = filteredData.FirstOrDefault(d => d.PriorityType == "Normal");
-                            ViewBag.NormalData = JsonConvert.SerializeObject(new[] {
-    normal?.TicketCount ?? 0,
-    normal?.OpenTickets ?? 0,
-    normal?.ResolvedTickets ?? 0
-});
-
+                            ViewBag.ClosedTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.ClosedTickets));
+                            ViewBag.ResolvedTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.ResolvedTickets));
+                            ViewBag.OpenTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.OpenTickets));
 
 
                         }

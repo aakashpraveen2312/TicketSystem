@@ -88,7 +88,7 @@
                        var index = Model.ToList().IndexOf(o);
                        var isChecked = o.L_AdminDeligate ? "checked" : "";
                        var checkboxHtml = $"<input type='checkbox' name='selectedItems[{index}].L_AdminDeligate' value='true' class='select-item' {isChecked} />";
-                       var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].L_RECID' value='{o.L_RECID}' />";
+                       var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].L_USERID' value='{o.L_USERID}' />";
                        return MvcHtmlString.Create($"{checkboxHtml}{hiddenRecId}");
                    });
 
@@ -175,19 +175,12 @@
     <script>
     $(document).ready(function () {
      
-        // Handle checkbox behavior
-        $(document).on('change', '.select-item', function () {
+       
+        // When a checkbox is checked or unchecked
+        $(document).on('change', 'input[type="checkbox"].select-item', function () {
             if ($(this).is(':checked')) {
-                $('.select-item').not(this).prop('disabled', true);
-            } else {
-                $('.select-item').prop('disabled', false);
+                updateSecondGrid();
             }
-        });
-        // Handle submit button click
-        $('#submitButton').click(function (event) {
-            event.preventDefault(); // Prevent the default form submission
-
-            updateSecondGrid(); // Call the function to gather selected IDs and send them to the server
         });
 
         function updateSecondGrid() {
@@ -210,7 +203,7 @@
             // Send to controller via AJAX
             $.ajax({
                 type: 'POST',
-                url: '@Url.Action("CheckedValue", "Useradminmapping")',
+                url: '@Url.Action("CheckedValue", "UserLogin")',
                 data: JSON.stringify({ selectedItems: selectedIds }),
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',

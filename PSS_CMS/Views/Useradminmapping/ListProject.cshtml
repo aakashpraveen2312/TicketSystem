@@ -81,8 +81,8 @@
             return MvcHtmlString.Create(checkboxHtml + hiddenRecId); // Return the HTML
         })
         .SetWidth("50px");
-                   columns.Add(c => c.TPM_PRODUCTNAME).Titled("Product Name").SetWidth("100PX");
-                   columns.Add(c => c.P_NAME).Titled("Customer Name").SetWidth("100PX");
+                   columns.Add(c => c.TPM_PRODUCTNAME).Titled("Product Name");
+                   columns.Add(c => c.P_NAME).Titled("Customer Name");
                    columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("50PX");
 
                }).WithPaging(10)

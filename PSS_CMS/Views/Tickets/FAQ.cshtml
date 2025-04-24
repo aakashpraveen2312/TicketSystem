@@ -101,34 +101,20 @@
         <div class="row mt-3 mb-3 d-flex justify-content-end">
 
             <div class="col-lg-4 col-md-3 col-sm-12 mt-sm-4">
-                @{
-                    var projectTypeList = ViewBag.ProjectTypes as List<SelectListItem>;
-
-                    if (projectTypeList == null || !projectTypeList.Any())
-                    {
-                        <div class="position-relative flex-grow-1">
-                            @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType1,
-                                                 projectTypeList,
-                                                 "No project's are available",
-                                                 new { @class = "", id = "projectTypeFilter", tabindex = "1" })
-                        </div>
-                    }
-                    else
-                    {
-                        // Ensure the "General" option is included
-                        projectTypeList.Insert(0, new SelectListItem { Text = "General", Value = "0" });
-                    }
+                @{ var projectTypeList = ViewBag.ProjectTypes as IEnumerable<SelectListItem>;
+                    var defaultSelectedValue = projectTypeList?.FirstOrDefault()?.Value ?? ""; // Get first project ID }
                 }
-
                 @if (projectTypeList != null && projectTypeList.Any())
                 {
-                    <div class="position-relative flex-grow-1">
-                        @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType1,
-                                             projectTypeList,
-
-                                             new { @class = "", id = "projectTypeFilter", tabindex = "1" })
-                    </div>
-                }
+                    @Html.DropDownList("SelectedProjectType1",
+                                       projectTypeList,
+                                       new { @class = "", id = "projectTypeFilter1", data_default = defaultSelectedValue }) }
+                else
+                {
+                    @Html.DropDownList("SelectedProjectType1",
+                                      projectTypeList,
+                                      "No project's are avialble",
+                                      new { @class = "", id = "projectTypeFilter1", data_default = defaultSelectedValue })}
 
             </div>
 
@@ -268,34 +254,44 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-$(document).ready(function () {
-    // Set the selected value from local storage if available
-    var savedProjectId = localStorage.getItem("selectedProjectId");
-    if (savedProjectId !== null) {
-        $("#projectTypeFilter").val(savedProjectId);
-    }
+    $(document).ready(function () {
+        var firstProjectId = $("#projectTypeFilter1").val(); // Get initially selected project ID
+        var urlParams = new URLSearchParams(window.location.search);
+        var currentProjectId = urlParams.get("projectID");
 
-    $("#projectTypeFilter").change(function () {
-        var selectedProjectId = $(this).val(); // Get selected project ID
+        // Check if there's a stored project ID in sessionStorage
+        var storedProjectId = sessionStorage.getItem("selectedProjectID");
 
-        // Save to local storage
-        localStorage.setItem("selectedProjectId", selectedProjectId);
-
-        if (selectedProjectId === "0") {
-            selectedProjectId = 0; // Ensure General sends 0
+        if (storedProjectId) {
+            $("#projectTypeFilter1").val(storedProjectId);
         }
 
-        var url = '@Url.Action("FAQ", "Tickets")'; // Get the base URL
+        // Redirect only if no projectID exists in the URL to avoid infinite loop
+        if (!currentProjectId) {
+            if (storedProjectId) {
+                redirectToPage(storedProjectId);
+            } else if (firstProjectId) {
+                redirectToPage(firstProjectId);
+            }
+        }
 
-        // Redirect with selected projectID
-        window.location.href = url + "?projectID=" + encodeURIComponent(selectedProjectId);
-    });
+        $("#projectTypeFilter1").change(function () {
+            var selectedProjectId = $(this).val();
+            if (selectedProjectId) {
+                sessionStorage.setItem("selectedProjectID", selectedProjectId); // Store selected value
+                redirectToPage(selectedProjectId);
+            }
+        });
 
-    // Clear local storage when navigating through breadcrumbs, links, or buttons
-    $("a, button,li").click(function () {
-        localStorage.removeItem("selectedProjectId");
+        function redirectToPage(projectId) {
+            var url = '@Url.Action("FAQ", "Tickets")' + "?projectID=" + encodeURIComponent(projectId);
+            window.location.href = url;
+        }
+      // Clear local storage when navigating through breadcrumbs, links, or buttons
+        $("a, button, li").click(function () {
+            localStorage.removeItem("selectedProjectId");
+        });
     });
-});
     </script>
 
     @*Preloader script*@

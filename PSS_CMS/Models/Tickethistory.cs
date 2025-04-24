@@ -85,6 +85,8 @@ namespace PSS_CMS.Models
         public string P_NAME { get; set; }
         public string P_SORTORDER { get; set; }
         public string P_DISABLE { get; set; }
+        public string TPM_PRODUCTNAME { get; set; }
+        public int TPM_RECID { get; set; }
 
         [DisplayName("Ticket Type")]
         public string SelectedTicketType { get; set; }

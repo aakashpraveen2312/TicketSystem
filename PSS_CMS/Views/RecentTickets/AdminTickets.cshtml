@@ -247,6 +247,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
                                             </div>
 
+
                                             @if (!string.IsNullOrEmpty(item.TC_RESPONSE_ATTACHMENT_PREFIX))
                                             {
                                                 string base64String = item.TC_RESPONSE_ATTACHMENT_PREFIX;
@@ -357,7 +358,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
                     }
                 </div>
-                @*@Html.DropDownListFor(m => m.SelectedOption,Model.Options,"Please select",new { @class = "form-control" })*@
+
                 @{
                     var lastStatus = Session["STATUS"]?.ToString();
                 }

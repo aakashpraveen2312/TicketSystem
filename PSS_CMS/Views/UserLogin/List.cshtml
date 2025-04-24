@@ -73,7 +73,7 @@
                columns.Add(c => c.L_ROLE).Titled("Role").SetWidth("50px");
 
                // Checkbox column shown only for "admin" users
-               columns.Add().Titled("").SetWidth("50px")
+               columns.Add().Titled("Assign").SetWidth("50px")
                    .Encoded(false)
                    .Sanitized(false)
                    .RenderValueAs(o =>

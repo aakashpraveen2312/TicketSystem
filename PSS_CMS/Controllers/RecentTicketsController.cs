@@ -144,11 +144,11 @@ namespace PSS_CMS.Controllers
 
         public async Task<IEnumerable<Admintickets>> GetAdminTickets(string recid2, string userid, string status)
         {
-            var model = new Admintickets 
-            { Options = new List<SelectListItem> 
-            { new SelectListItem { Value = "1", Text = "Option 1" }, 
-                new SelectListItem { Value = "2", Text = "Option 2" }, 
-                new SelectListItem { Value = "3", Text = "Option 3" } } };
+            ViewBag.NameOptions = new List<SelectListItem>
+{
+    new SelectListItem { Value = "Neelakrishnan", Text = "Neelakrishnan" },
+    new SelectListItem { Value = "Yogesh", Text = "Yogesh" }
+};
 
 
             Session["RECORDID"] = recid2;
@@ -489,6 +489,7 @@ namespace PSS_CMS.Controllers
                 // Handle exceptions (e.g., logging)
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
+           
             await ProjectTypeAdminFAQ();
       
             return View(FAQList);
@@ -609,7 +610,7 @@ namespace PSS_CMS.Controllers
         {
             List<SelectListItem> projectTypes = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOPRODUCTSHOW"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
@@ -637,8 +638,8 @@ namespace PSS_CMS.Controllers
                             {
                                 projectTypes = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.P_PROJECTRECID, // or the appropriate value field
-                                    Text = t.P_NAME // or the appropriate text field
+                                    Value = t.TPM_RECID.ToString(), // or the appropriate value field
+                                    Text = t.TPM_PRODUCTNAME // or the appropriate text field
                                 }).ToList();
                             }
                         }
@@ -655,6 +656,9 @@ namespace PSS_CMS.Controllers
 
             return View();
         }
+
+
+       
 
         public async Task<ActionResult> Edit(int F_RECID,int F_PROJECTRECID)
         {

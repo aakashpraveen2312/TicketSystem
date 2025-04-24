@@ -215,7 +215,7 @@ namespace PSS_CMS.Controllers
         {
             List<SelectListItem> projectTypes = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOPRODUCTSHOW"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
@@ -243,8 +243,8 @@ namespace PSS_CMS.Controllers
                             {
                                 projectTypes = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.P_PROJECTRECID, // or the appropriate value field
-                                    Text = t.P_NAME // or the appropriate text field
+                                    Value = t.TPM_RECID.ToString(), // or the appropriate value field
+                                    Text = t.TPM_PRODUCTNAME // or the appropriate text field
                                 }).ToList();
                             }
                         }
@@ -261,6 +261,8 @@ namespace PSS_CMS.Controllers
 
             return View();
         }
+
+      
         public async Task<ActionResult> Edit(int WP_RECID,int WP_PROJECTID,string WP_USERID)
         {
             Session["WP_PROJECTID"] = WP_PROJECTID;

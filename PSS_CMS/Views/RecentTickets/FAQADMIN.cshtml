@@ -96,61 +96,6 @@ return input.Replace("\\\"", "\"")        // Double quotes
         </div>
 
 
-        @*<div class="row  ms-3 mt-3 mb-3">
-
-            <div class="col-md-4 mt-3">
-
-
-                @{
-                    var projectTypeList = ViewBag.ProjectTypes as List<SelectListItem>;
-
-                    if (projectTypeList == null || !projectTypeList.Any())
-                    {
-                        <div class="position-relative flex-grow-1">
-                            @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType1,
-                                                 projectTypeList,
-                                                 "No project's are available",
-                                                 new { @class = "", id = "projectTypeFilter", tabindex = "1" })
-                        </div>
-                    }
-                    else
-                    {
-                        // Ensure the "General" option is included
-                        projectTypeList.Insert(0, new SelectListItem { Text = "General", Value = "0" });
-                    }
-                }
-
-                @if (projectTypeList != null && projectTypeList.Any())
-                {
-                    <div class="position-relative flex-grow-1">
-                        @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType1,
-                                             projectTypeList,
-
-                                             new { @class = "", id = "projectTypeFilter1", tabindex = "1" })
-                    </div>
-                }
-
-            </div>
-
-            <div class="col-md-8 d-flex justify-content-md-end justify-content-end mt-sm-3">
-                @using (Html.BeginForm("FAQADMIN", "RecentTickets", FormMethod.Get, new { id = "searchForm" }))
-                {
-                <div class="position-relative w-100">
-                    <input type="text" id="searchPharse" name="searchPharse" autocomplete="off" class="inputcustom" placeholder="Search" value="@Request["searchPharse"]" style="margin-top:9px;" />
-                    <button class="btncolorsubmit res "
-                            style="width: max-content;"
-                            onclick="window.location.href='@Url.Action("FAQADMINPOST","RecentTickets")'">
-                        New FAQ <i class="bi bi-plus-circle ms-1"></i>
-                    </button>
-                </div>
-                }
-            </div>
-
-
-        </div>*@
-
-
-
         <div class="row ms-3 mt-3 mb-3">
 
             <div class="col-md-4 mt-3">
@@ -193,7 +138,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                            style="margin-top:9px;" />
 
                     <button type="button"
-                            class="btncolorsubmit res"
+                            class="btncolorsubmit res ms-4"
                             style="margin-top:9px;width:40%"
                             onclick="window.location.href='@Url.Action("FAQADMINPOST","RecentTickets")'">
                         New FAQ @*<i class="bi bi-plus-circle ms-1"></i>*@

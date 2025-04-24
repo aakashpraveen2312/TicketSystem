@@ -303,7 +303,7 @@ namespace PSS_CMS.Controllers
                             var rootObjects = JsonConvert.DeserializeObject<DashboardPriorityList>(jsonString);
                             dashboardDataPriority = rootObjects.Data;
 
-                            ViewBag.Labels1 = JsonConvert.SerializeObject(new[] { "Total Tickets", "Open Tickets", "Resolved Tickets" });
+                            ViewBag.Labels1 = JsonConvert.SerializeObject(new[] { "Critical", "Emergency", "Urgent", "Normal" });
 
                             var prioritiesToShow = new[] { "Critical", "Emergency", "Urgent", "Normal" };
                             var filteredData = dashboardDataPriority

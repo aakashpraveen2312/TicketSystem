@@ -33,7 +33,7 @@
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -48,7 +48,7 @@
                     <li>USER</li>
                     <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserLogin")">LIST</a></li>
                     <li>@Session["Name"].ToString().ToUpper()</li>
-                    <li>USER ADMIN MAPPING</li>
+                    <li>USER HEADS MAPPING</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
@@ -77,13 +77,13 @@
             var index = Model.ToList().IndexOf(o);
             var isChecked = o.Selected ? "checked" : "";
             var checkboxHtml = $"<input type='checkbox' name='selectedItems[{index}].USERSELECTED' value='true' class='select-item' {isChecked} />";
-            var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].L_USERID' value='{o.L_USERID}' />"; // Bind GL_RECID properly
+            var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].L_USERID' value='{o.U_RECID}' />"; // Bind GL_RECID properly
             return MvcHtmlString.Create(checkboxHtml + hiddenRecId); // Return the HTML
         })
         .SetWidth("30px");
-                   columns.Add(c => c.L_USERID).Titled("ID").SetWidth("100px");
-                   columns.Add(c => c.L_USERNAME).Titled("Name");
-                   columns.Add(c => c.L_ROLE).Titled("Role").SetWidth("100PX");
+                   columns.Add(c => c.U_USERCODE).Titled("Code").SetWidth("100px");
+                   columns.Add(c => c.U_USERNAME).Titled("Name");
+                   columns.Add(c => c.U_RCODE).Titled("Role").SetWidth("200PX");
                }).WithPaging(10)
                 }
                 else

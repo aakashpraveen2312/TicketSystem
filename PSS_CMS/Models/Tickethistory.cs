@@ -83,6 +83,9 @@ namespace PSS_CMS.Models
         public string P_PROJECTRECID { get; set; }
         public string P_CODE { get; set; }
         public string P_NAME { get; set; }
+        public string CU_NAME { get; set; }
+        public int P_RECID { get; set; }
+        public int CU_RECID { get; set; }
         public string P_SORTORDER { get; set; }
         public string P_DISABLE { get; set; }
         public string TPM_PRODUCTNAME { get; set; }

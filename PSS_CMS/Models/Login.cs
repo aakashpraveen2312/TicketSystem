@@ -9,50 +9,48 @@ namespace PSS_CMS.Models
 {
     public class Login
     {
-        public string L_RECID { get; set; }
-
-        [DisplayName("User ID")]
-        [Required]
-        public string L_USERNAME { get; set; }
+        public string U_USERNAME { get; set; }
 
         [DisplayName("Password")]
         [Required]
-        public string L_PASSWORD { get; set; }
-        public string L_ROLE { get; set; }
-        public string L_SORTORDER { get; set; }
-        public string L_DISABLE { get; set; }
-        public string L_EMAILID { get; set; }
+        public string U_PASSWORD { get; set; }
+
         [DisplayName("Domain")]
         [Required]
-        public string L_DOMAIN { get; set; }
+        public string U_DOMAIN { get; set; }
 
-        public string Message { get; set; }
+        [DisplayName("Email ID")]
+        [Required]
+        public string U_EMAILID { get; set; }
+        public string U_RCODE { get; set; }
+        public string U_DISABLE { get; set; }
+        public string U_USERCODE { get; set; }
+        public string U_MOBILENO { get; set; }
 
-        public string Status { get; set; }
-        public string L_USERID { get; set; }
-        public string L_COMPANYID { get; set; }
-        public string L_PROJECTID { get; set; }
-        public string C_LOGO { get; set; }
+        public int U_RECID { get; set; }
+        public int U_SORTORDER { get; set; }
+        public int U_CRECID { get; set; }
 
     }
 
      public class APIResponseLogin
     {
         public List<Login> Data { get; set; }
-        public string Status { get; set; }
-        public string L_PASSWORD { get; set; }
-        public string L_ROLE { get; set; }
-        public string L_SORTORDER { get; set; }
-        public string L_DISABLE { get; set; }
-        public string L_EMAILID { get; set; }
+        public string U_USERNAME { get; set; }
+        public string U_EMAILID { get; set; }
+        public string U_PASSWORD { get; set; }
+        public string U_DOMAIN { get; set; }
+        public string U_RCODE { get; set; }
+        public string U_DISABLE { get; set; }
+        public string U_USERCODE { get; set; }
+        public string U_MOBILENO { get; set; }
         public string Message { get; set; }
-        public string L_USERNAME { get; set; }
-        public string L_USERID { get; set; }
-        public string L_COMPANYID { get; set; }
-        public string L_PROJECTID { get; set; }
+        public string Status { get; set; }
         public string APIkey { get; set; }
-     
 
+        public int U_RECID { get; set; }
+        public int U_SORTORDER { get; set; }
+        public int U_CRECID { get; set; }
     }
 
 }

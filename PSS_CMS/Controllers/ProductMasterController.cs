@@ -82,6 +82,15 @@ namespace PSS_CMS.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ProductMaster productmaster)
         {
+            //if (!ModelState.IsValid)
+            //{
+            //    // If ModelState is invalid, return validation errors
+            //    var errors = ModelState.Values.SelectMany(v => v.Errors)
+            //                                   .Select(e => e.ErrorMessage)
+            //                                   .ToList();
+
+            //    return Json(new { success = false, message = string.Join(" ", errors) });
+            //}
             try
             {
                 var ProductmasterPostURL = ConfigurationManager.AppSettings["PRODUCTPOST"];
@@ -89,9 +98,11 @@ namespace PSS_CMS.Controllers
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""tpm_PRODUCTNAME"": ""{productmaster.TPM_PRODUCTNAME}"",           
-            ""tpm_SORTORDER"": ""{ productmaster.TPM_SORTORDER}"",                    
-            ""tpm_CRECID"": ""{Session["CompanyID"]}""           
+            ""p_CODE"": ""{productmaster.P_CODE}"",           
+            ""p_NAME"": ""{productmaster.P_NAME}"",           
+            ""p_SORTORDER"": ""{ productmaster.P_SORTORDER}"",                    
+            ""p_DISABLE"": ""{(productmaster.P_ProductDisable ? "Y" : "N")}"",                    
+            ""p_CRECID"": ""{Session["CompanyID"]}""           
         }}";
 
                 // Create the HTTP request
@@ -153,7 +164,7 @@ namespace PSS_CMS.Controllers
             return View(productmaster);
         }
 
-        public async Task<ActionResult> Edit(int? Recid,string name)
+        public async Task<ActionResult> Edit(int? Recid, string name)
         {
             Session["ProductName"] = name;
             Session["Productrecid"] = Recid;
@@ -204,6 +215,15 @@ namespace PSS_CMS.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(ProductMaster productmaster)
         {
+            //if (!ModelState.IsValid)
+            //{
+            //    // If ModelState is invalid, return validation errors
+            //    var errors = ModelState.Values.SelectMany(v => v.Errors)
+            //                                   .Select(e => e.ErrorMessage)
+            //                                   .ToList();
+
+            //    return Json(new { success = false, message = string.Join(" ", errors) });
+            //}
             try
             {
                 var ProducttmasterUpdateURL = ConfigurationManager.AppSettings["PRODUCTPUT"];
@@ -211,10 +231,12 @@ namespace PSS_CMS.Controllers
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""tpm_RECID"": ""{Session["Productrecid"]}"",           
-            ""tpm_PRODUCTNAME"": ""{productmaster.TPM_PRODUCTNAME}"",           
-            ""tpm_SORTORDER"": ""{productmaster.TPM_SORTORDER}"",
-            ""tpm_CRECID"": ""{ Session["CompanyID"]}""                              
+            ""p_RECID"": ""{Session["Productrecid"]}"",           
+            ""p_CODE"": ""{productmaster.P_CODE}"",           
+            ""p_NAME"": ""{productmaster.P_NAME}"",           
+            ""p_SORTORDER"": ""{productmaster.P_SORTORDER}"",
+            ""p_DISABLE"": ""{(productmaster.P_ProductDisable ? "Y" : "N")}"",
+            ""p_CRECID"": ""{ Session["CompanyID"]}""                              
         }}";
 
                 // Create the HTTP request

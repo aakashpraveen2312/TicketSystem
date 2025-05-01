@@ -37,7 +37,7 @@
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -48,44 +48,62 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>PRODUCT MASTER</li>
+                    <li>PRODUCT</li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProductMaster")">LIST</a></li>
-                    <li>Edit</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProductMaster")">@Session["ProductName"].ToString().ToUpper()</a></li>
+                    <li>EDIT</li>
                 </ul>
             </div>
         </div>
         @using (Html.BeginForm("Edit", "ProductMaster", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
         {
-<div class="create ms-4 me-2 mt-3">
-    <div class="row mb-3">
-        <div class="col-lg-2 col-md-2 col-sm-12">
-            @Html.LabelFor(model => model.TPM_PRODUCTNAME, new { @class = "labels" })
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-12">
-            @Html.EditorFor(model => model.TPM_PRODUCTNAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+    <div class="create ms-4 me-2 mt-3">
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.P_CODE, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.P_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
+            </div>
         </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col-lg-2 col-md-2 col-sm-12">
-            @Html.LabelFor(model => model.TPM_SORTORDER, new { @class = "labels" })
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-12">
-            @Html.EditorFor(model => model.TPM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.P_NAME, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.P_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
+            </div>
         </div>
-    </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.P_SORTORDER, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.P_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
-    <div class="row ">
-        <div class="col-lg-2">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.P_ProductDisable, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.CheckBoxFor(model => model.P_ProductDisable, new { @class = "form-check-input" })
+            </div>
+        </div>
 
+        <div class="row ">
+            <div class="col-lg-2">
+
+            </div>
+            <div class="col-lg-3 d-flex justify-content-end">
+                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProductMaster", new {CompanyRecID = Session["CompanyID"] })'" />
+            </div>
         </div>
-        <div class="col-lg-3 d-flex justify-content-end">
-            <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-            <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProductMaster", new {CompanyRecID = Session["CompanyID"] })'" />
-        </div>
-    </div>
-</div>}
+    </div>}
     </div>
 
 

@@ -1,55 +1,31 @@
 ﻿
 @model  PSS_CMS.Models.Admintickets
-<style>
-    select#SelectedName {
-        display: block;
-        width: 100%;
-        height: 34px;
-        padding: 6px 12px;
-        font-size: 14px;
-        line-height: 1.42857143;
-        color: #555;
-        background-color: #fff;
-        background-image: none;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-        -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-        transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-    }
-</style>
+
 @using (Html.BeginForm("AdminResponseTicket", "RecentTickets", FormMethod.Post, new { id = "AdminResponseForm", enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
-<div class="row" style="margin-left:5px">
-    <div class="col-md-5">
-        @Html.DropDownList("SelectedName", (List<SelectListItem>)ViewBag.ProjectTypes, "Select Name", new { @class = "select mb-3" })
+    <div class="row" style="margin-left:5px">      
+        <div class="col-md-12">
+            @Html.LabelFor(model => model.RESPONSE_COMMENTS, "Admin Comments", new { @class = "pb-2" })
+            @Html.TextAreaFor(model => model.RESPONSE_COMMENTS, new { @class = "form-control custom-textarea", placeholder = "Please enter your comments here....", rows = "10", cols = "70" })
+        </div>       
+        <div class="col-md-12 mt-2">
+            @Html.Label("myfile", "Attachments:")
+            <input type="file" id="myfile" name="myfile" accept=".pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv" onchange="validateFile()" />
+            <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .docx, .csv)</small>
+        </div>
 
+        <div class="col-md-12 mt-2 mb-3 d-flex justify-content-md-end justify-content-start">
+            <button type="submit" class="btncolorsubmit me-3" id="submitBtn">Submit</button>
+            <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("RecentTicket", "RecentTickets")'">Cancel</button>
+        </div>
     </div>
-    <div class="col-md-12">
-        @Html.LabelFor(model => model.RESPONSE_COMMENTS, "Admin Comments", new { @class = "pb-2" })
-        @Html.TextAreaFor(model => model.RESPONSE_COMMENTS, new { @class = "form-control custom-textarea", placeholder = "Please enter your comments here....", rows = "10", cols = "70", required = "required" })
-    </div>
-    <div class="col-md-12 mt-2">
-        @Html.Label("myfile", "Attachments:")
-        <input type="file" id="myfile" name="myfile" accept=".pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv" onchange="validateFile()" />
-        <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .docx, .csv)</small>
-    </div>
-    <div class="col-md-12 mt-2 mb-3 d-flex justify-content-md-end justify-content-start">
-        <button type="submit" class="btncolorsubmit me-3" id="submitBtn">Assign To</button>
-        <button type="submit" class="btncolorsubmit me-3" id="submitBtn">Submit</button>
-        <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("RecentTicket", "RecentTickets")'">Cancel</button>
-    </div>
-</div>
 
 
 }
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="~/Scripts/Formatcheck.js"></script>
@@ -105,5 +81,8 @@
         });
     });
 </script>
+
+
+
 
 

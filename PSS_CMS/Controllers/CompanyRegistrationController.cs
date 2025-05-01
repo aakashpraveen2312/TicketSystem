@@ -1,15 +1,11 @@
 ﻿using Newtonsoft.Json;
 using PSS_CMS.Models;
-using RestSharp;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace PSS_CMS.Controllers
@@ -19,140 +15,83 @@ namespace PSS_CMS.Controllers
         // GET: CompanyRegistration
         public ActionResult Index()
         {
-            ViewBag.ToastrSuccessMessage = "Request has been successfully sent";
-            ViewBag.ToastrErrorMessage = "Please fill out all required fields.";
-
             return View();
         }
-
-
-
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(Companies cmp)
         {
-            string password = "";
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View();
+
+            string registrationUrl = ConfigurationManager.AppSettings["COMPANYREGISTRATION"];
+            string authKey = ConfigurationManager.AppSettings["AuthKey"];
+            string emailUrl = ConfigurationManager.AppSettings["EMAILURL"];
+
+            var companyPayload = new
             {
-                var Regurl = ConfigurationManager.AppSettings["Registration"];
-                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                c_CODE = cmp.C_CODE,
+                c_NAME = cmp.C_NAME,
+                c_ADDRESS = cmp.C_ADDRESS,
+                c_COUNTRY = cmp.C_COUNTRY,
+                c_PINCODE = cmp.C_PINCODE,
+                c_PHONE = cmp.C_PHONE,
+                c_WEB = cmp.C_WEB,
+                c_EMAILID = cmp.C_EMAILID,
+                c_RBICODE = cmp.C_RBICODE,
+                c_GST = cmp.C_GST,
+                c_APPUSERNAME = cmp.C_APPUSERNAME,
+                c_DOMAIN = cmp.C_Domain,
+                c_SOURCETYPE = "TICKET"
+            };
 
+            try
+            {
+                var requestContent = new StringContent(JsonConvert.SerializeObject(companyPayload), Encoding.UTF8, "application/json");
 
-                try
+                var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true };
+                using (var client = new HttpClient(handler))
                 {
-                    var content = $@"{{
-                    ""C_CODE"": ""{cmp.C_CODE}"",
-                    ""C_NAME"": ""{cmp.C_NAME}"",
-                    ""C_ADDRESS"": ""{cmp.C_ADDRESS}"",
-                    ""C_COUNTRY"":""{cmp.C_COUNTRY}"",
-                    ""C_PINCODE"": ""{cmp.C_PINCODE}"",
-                    ""C_PHONE"": ""{cmp.C_PHONE}"",
-                    ""C_WEB"": ""{cmp.C_WEB}"",
-                    ""C_EMAILID"": ""{cmp.C_EMAILID}"",
-                    ""C_RBICODE"": ""{cmp.C_RBICODE}"",
-                    ""C_GST"": ""{cmp.C_GST}"",
-                    ""C_APPUSERNAME"": ""{cmp.C_APPUSERNAME}"",
-                    ""C_DOMAIN"": ""{cmp.C_Domain}"",
-                    ""C_SOURCETYPE"": ""{"TICKET"}""
-                }}";
+                    client.DefaultRequestHeaders.Add("Authorization", authKey);
 
-                    // Prepare header parameters as per RSGT inputs
-                    var requests = new HttpRequestMessage
+                    var response = await client.PostAsync(registrationUrl, requestContent);
+                    if (!response.IsSuccessStatusCode)
+                        return Json(new { success = false, message = "Registration failed." });
+
+                    var responseData = JsonConvert.DeserializeObject<Companies>(await response.Content.ReadAsStringAsync());
+
+                    if (responseData.Status == "Y")
                     {
-                        RequestUri = new Uri(Regurl),
-                        Method = HttpMethod.Post,
-                        Headers =
-                {
-                    { "X-Version", "1" },
-                    { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" },
-                    { HttpRequestHeader.ContentType.ToString(), "application/json" }
-                },
-                        Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
-                    };
-
-                    // API call and API process
-                    HttpClientHandler handlers = new HttpClientHandler();
-                    handlers.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                    HttpClient clients = new HttpClient(handlers);
-
-                    clients.DefaultRequestHeaders.Add("Authorization", AuthKey);
-
-
-                    var responses = await clients.SendAsync(requests);
-                    if (responses.IsSuccessStatusCode)
-                    {
-
-                        var objOutputTask = await responses.Content.ReadAsStringAsync();
-                        var data = JsonConvert.DeserializeObject<Companies>(objOutputTask);
-                        password = data.Password;
-                        string Status = data.Status;
-                        if (Status == "Y")
+                        var emailPayload = new
                         {
-                            var url = ConfigurationManager.AppSettings["EmailURL"];
-             
+                            emailID = cmp.C_EMAILID,
+                            name = cmp.C_APPUSERNAME,
+                            password = responseData.Password,
+                            Usercode = responseData.Usercode,
+                            domain = cmp.C_Domain
+                        };
 
-                            // Create the payload
-                            var payload = new
-                            {
-                                emailID = cmp.C_EMAILID,
-                                name = cmp.C_APPUSERNAME,
-                                password = password,
-                                domain = cmp.C_Domain
-                            };
+                        var emailContent = new StringContent(JsonConvert.SerializeObject(emailPayload), Encoding.UTF8, "application/json");
 
-                            // Serialize payload to JSON
-                            var jsonPayload = JsonConvert.SerializeObject(payload);
-                            var contents = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-                            using (var httpClient = new HttpClient())
-                            {
-                                httpClient.DefaultRequestHeaders.Add("Authorization", AuthKey);
-
-
-                                try
-                                {
-                                    var response = await httpClient.PostAsync(url, contents);
-
-                                    if (response.IsSuccessStatusCode)
-                                    {
-                                        ViewBag.ToastrSuccessMessage = "Request has been successfully sent";
-                                    }
-                                    else
-                                    {
-                                        return new HttpStatusCodeResult((int)response.StatusCode, "Failed to send request.");
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
-                                }
-                            }
-
-                            return RedirectToAction("Index", "Login");
-                        }
-
-                        else if (Status == "U")
+                        using (var emailClient = new HttpClient())
                         {
-                            @ViewBag.Errormessage = "Email is already exists!";
-                            return View();
+                            emailClient.DefaultRequestHeaders.Add("Authorization", authKey);
+                            var emailResponse = await emailClient.PostAsync(emailUrl, emailContent);
+
+                            bool success = emailResponse.IsSuccessStatusCode;
+                            return Json(new { success, message = responseData.Message });
                         }
                     }
-                }
 
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Exception occurred: {ex.Message}");
-                    return View();
+                    return Json(new { success = false, message = responseData.Message });
                 }
             }
-            return View();
+            catch (Exception ex)
+            {
+                // Log exception if necessary
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError,"An error occurred while processing your request.");
+            }
         }
-
-
-
-
     }
 }

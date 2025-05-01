@@ -16,8 +16,8 @@ function resetTimers() {
         warningShown = false;
     }
 
-    // Start warning timer: 1 min 45s
-    warningTimeout = setTimeout(showToastrWarning, 105000);
+    // Start warning timer: 5 min
+    warningTimeout = setTimeout(showToastrWarning, 300000);
 }
 
 function showToastrWarning() {

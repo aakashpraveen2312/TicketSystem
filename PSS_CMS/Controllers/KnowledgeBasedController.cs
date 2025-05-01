@@ -57,7 +57,7 @@ namespace PSS_CMS.Controllers
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             List<WhitePaper> RecentTicketList = new List<WhitePaper>();
-            string strparams = "projectID=" + projectID + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "productid=" + projectID + "&cmprecid=" + Session["CompanyID"];
             string finalurl = Weburl + "?" + strparams;
 
             try
@@ -101,13 +101,13 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            await ProjectTypeAdminWhitepaper();
+            await ProductAdminWhitepaper();
             return View(RecentTicketList);
         }
 
         public async Task<ActionResult> WhitepaperPost()
         {
-            await ProjectTypeAdminWhitepaper();
+            await ProductAdminWhitepaper();
             return View();
         }
 
@@ -154,9 +154,10 @@ namespace PSS_CMS.Controllers
             ""WP_ATTACHEMENT"": ""{whitepaper.WP_ATTACHEMENT}"",
             ""WP_CREATEDDATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
             ""wP_SORTORDER"": ""{"1"}"",                              
-            ""wP_PROJECTID"": ""{whitepaper.SelectedProjectType2}"",                              
-            ""wP_USERID"": ""{ Session["UserID"]}"",                              
+            ""wP_CURECID"": ""{0}"",                              
             ""wP_CRECID"": ""{ Session["CompanyID"]}"",                              
+            ""wP_PRECID"": ""{ whitepaper.SelectedProjectType2}"",                              
+            ""wP_URECID"": ""{ Session["UserRECID"]}"",                              
             ""wP_DISABLE"": ""{"N"}""           
         }}";
 
@@ -210,16 +211,15 @@ namespace PSS_CMS.Controllers
             }
         }
 
-        public async Task<ActionResult> ProjectTypeAdminWhitepaper()
+        public async Task<ActionResult> ProductAdminWhitepaper()
 
         {
-            List<SelectListItem> projectTypes = new List<SelectListItem>();
+            List<SelectListItem> Product = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOPRODUCTSHOW"];
+            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
-            //string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "cmprecid=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -237,14 +237,14 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<TicketTypeModels>(jsonString);
+                            var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
 
                             if (rootObjects?.Data != null)
                             {
-                                projectTypes = rootObjects.Data.Select(t => new SelectListItem
+                                Product = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.TPM_RECID.ToString(), // or the appropriate value field
-                                    Text = t.TPM_PRODUCTNAME // or the appropriate text field
+                                    Value = t.P_RECID.ToString(), // or the appropriate value field
+                                    Text = t.P_NAME,
                                 }).ToList();
                             }
                         }
@@ -257,17 +257,18 @@ namespace PSS_CMS.Controllers
             }
 
             // Assuming you are passing ticketTypes to the view
-            ViewBag.ProjectTypes = projectTypes;
+            ViewBag.Product = Product;
 
             return View();
         }
 
-      
-        public async Task<ActionResult> Edit(int WP_RECID,int WP_PROJECTID,string WP_USERID)
+
+        public async Task<ActionResult> Edit(int WP_RECID,int WP_PROJECTID,string WP_USERID,int wP_PRECID)
         {
             Session["WP_PROJECTID"] = WP_PROJECTID;
             Session["WP_USERID"] = WP_USERID;
             Session["WP_RECID"] = WP_RECID;
+            Session["wP_PRECID"] = wP_PRECID;
 
             string WEBURLGETBYID = ConfigurationManager.AppSettings["WHITEPAPERGETBYID"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -366,9 +367,10 @@ namespace PSS_CMS.Controllers
             ""WP_ATTACHEMENT"": ""{whitePaper.WP_ATTACHEMENT}"",
             ""WP_CREATEDDATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
             ""wP_SORTORDER"": ""{"1"}"",                              
-            ""wP_PROJECTID"": ""{ Session["WP_PROJECTID"]}"",                              
-            ""wP_USERID"": ""{ Session["UserID"]}"",                              
+            ""wP_CURECID"": ""{0}"",                              
             ""wP_CRECID"": ""{ Session["CompanyID"]}"",                              
+            ""wP_PRECID"": ""{ Session["wP_PRECID"]}"",                              
+            ""wP_URECID"": ""{ Session["UserRECID"]}"",                              
             ""wP_DISABLE"": ""{"N"}""           
         }}";
 

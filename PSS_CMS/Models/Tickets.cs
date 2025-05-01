@@ -74,6 +74,9 @@ namespace PSS_CMS.Models
         public int TT_SORTORDER { get; set; }
         public string TT_TICKETTYPE { get; set; }
         public string P_NAME { get; set; }
+        public string CU_NAME { get; set; }
+        public int P_RECID { get; set; }
+        public int CU_RECID { get; set; }
         public string TT_CODE { get; set; }
         public string TT_DISABLE { get; set; }
     }

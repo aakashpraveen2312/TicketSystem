@@ -115,7 +115,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
 
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
 
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -146,11 +146,11 @@ return input.Replace("\\\"", "\"")        // Double quotes
                 <form>
                     <div class="row mb-2 ms-2">
                         <div class="col-md-5">
-                            @Html.Label("Select Project")
+                            @Html.Label("Select Product")
 
-                            @if (ViewBag.ProjectTypes != null)
+                            @if (ViewBag.Product != null)
                             {
-                                var projectTypeList = ViewBag.ProjectTypes as IEnumerable<SelectListItem>;
+                                var projectTypeList = ViewBag.Product as IEnumerable<SelectListItem>;
 
                                 if (projectTypeList != null && projectTypeList.Any())
                                 {
@@ -159,7 +159,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                     if (projectTypeList.Count() > 1)
                                     {
                                         // Add "--Select Project--" option only if more than one project is available
-                                        modifiedProjectTypeList.Insert(0, new SelectListItem { Text = "--Select Project--", Value = "" });
+                                        modifiedProjectTypeList.Insert(0, new SelectListItem { Text = "--Select Product--", Value = "" });
 
                                         @Html.DropDownList("SelectedProjectType2",
                                                            modifiedProjectTypeList,
@@ -177,7 +177,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                 {
                                     var modifiedProjectTypeList = new List<SelectListItem>(projectTypeList);
                                     // Add "--Select Project--" option only if more than one project is available
-                                    modifiedProjectTypeList.Insert(0, new SelectListItem { Text = "No project's are available", Value = "" });
+                                    modifiedProjectTypeList.Insert(0, new SelectListItem { Text = "No product's are available", Value = "" });
 
                                     @Html.DropDownList("SelectedProjectType2",
                                                        modifiedProjectTypeList,
@@ -186,7 +186,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                             }
                             else
                             {
-                                <p>No projects are available</p>
+                                <p>No product's are available</p>
                             }
                         </div>
 

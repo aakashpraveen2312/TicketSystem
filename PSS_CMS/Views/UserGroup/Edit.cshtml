@@ -30,7 +30,7 @@
             font-weight: bold;
         }
 
-        select#TUG_NAME {
+        select.form-select {
             display: block;
             width: 100%;
             height: 34px;
@@ -58,7 +58,7 @@
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -69,8 +69,9 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER GROUP</li>
+                    <li>ROLE</li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">LIST</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">@Session["Name"].ToString().ToUpper()</a></li>
                     <li>EDIT</li>
                 </ul>
             </div>
@@ -78,47 +79,17 @@
         @using (Html.BeginForm("Edit", "UserGroup", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
         {
             <div class="create ms-4 me-2 mt-3">
+              
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_CODE, new { @class = "labels" })
+                        @Html.LabelFor(model => model.R_ROLEDESCRIPTION, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TUG_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_NAME, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.DropDownListFor(model => model.TUG_NAME,
-                                                   new SelectList(new[] {
-                                                       new { Value = "Super Admin", Text = "Super Admin" },
-                                                       new { Value = "Admin", Text = "Admin" },
-                                                       new { Value = "User", Text = "User" }
-                                                   }, "Value", "Text"),                                                  
-                                                   new { @class = "select textboxcolors" })
+                        @Html.EditorFor(model => model.R_ROLEDESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_ROLEDESCRIPTION, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TUG_ROLEDESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TUG_SORTORDER, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TUG_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
+               
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.IsDisabled, new { @class = "labels" })

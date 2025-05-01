@@ -111,7 +111,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
 
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
 
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -136,7 +136,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
         </div>
         <div class="row">
             <div class="col mb-3 ms-5">
-                @{ var projectTypeList = ViewBag.ProjectTypes as IEnumerable<SelectListItem>;
+                @{ var projectTypeList = ViewBag.Product as IEnumerable<SelectListItem>;
                     var defaultSelectedValue = projectTypeList?.FirstOrDefault()?.Value ?? ""; // Get first project ID }
                 }
                 @if (projectTypeList != null && projectTypeList.Any())
@@ -248,7 +248,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                             </a>
                                         </div>
                                         <div class="col d-flex justify-content-end align-items-center">
-                                            <a href="@Url.Action("Edit", "KnowledgeBased", new {WP_RECID = whitepaper.WP_RECID, WP_PROJECTID = whitepaper.WP_PROJECTID, WP_USERID = whitepaper.WP_USERID})"
+                                            <a href="@Url.Action("Edit", "KnowledgeBased", new {WP_RECID = whitepaper.WP_RECID, WP_PROJECTID = whitepaper.WP_PROJECTID, WP_USERID = whitepaper.WP_USERID,wP_PRECID=whitepaper.wP_PRECID})"
                                                class="text-decoration-none"
                                                data-toggle="tooltip"
                                                title="Edit">
@@ -273,7 +273,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                             <span><b>No files uploaded</b></span>
                                         </div>
                                         <div class="col d-flex justify-content-end">
-                                            <a href="@Url.Action("Edit", "KnowledgeBased", new {WP_RECID = whitepaper.WP_RECID, WP_PROJECTID = whitepaper.WP_PROJECTID, WP_USERID = whitepaper.WP_USERID})"
+                                            <a href="@Url.Action("Edit", "KnowledgeBased", new {WP_RECID = whitepaper.WP_RECID, WP_PROJECTID = whitepaper.WP_PROJECTID, WP_USERID = whitepaper.WP_USERID,wP_PRECID=whitepaper.wP_PRECID})"
                                                class="text-decoration-none"
                                                data-toggle="tooltip"
                                                title="Edit">

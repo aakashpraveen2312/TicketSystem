@@ -33,7 +33,7 @@
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -45,7 +45,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>PROJECT MASTER</li>
+                    <li>CUSTOMER</li>
                     <li>LIST</li>
                 </ul>
             </div>
@@ -67,19 +67,25 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.P_NAME).Titled("Name");
-               columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("50px");
+               columns.Add(c => c.CU_CODE).Titled("Code").SetWidth("100px");
+               columns.Add(c => c.CU_NAME).Titled("Customer Name");
+               columns.Add(c => c.CU_EMAIL).Titled("Email ID");
+               columns.Add(c => c.CU_MOBILENO).Titled("Mobile Number").SetWidth("150px").Css("text-right");
+               columns.Add(c => c.CU_INVOICENO).Titled("Invoice Number").SetWidth("150px");
+               columns.Add(c => c.CU_WARRANTYFREECALLS).Titled("Warranty Calls").SetWidth("50px").Css("text-right");
+               columns.Add(c => c.CU_WARRANTYUPTO).Titled("Warranty Upto").SetWidth("50px");
+               columns.Add(c => c.CU_SORTORDER).Titled("Sort").SetWidth("50px").Css("text-right");
                columns.Add().Titled("Action").SetWidth("100px")
               .Encoded(false)
                .Sanitized(false)
             .RenderValueAs(o =>
             {
 
-                var Editurl = Url.Action("Edit", "ProjectMaster", new { Recid=o.P_PROJECTRECID}, null);
+                var Editurl = Url.Action("Edit", "ProjectMaster", new { Recid=o.CU_RECID,Name=o.CU_NAME}, null);
                 var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
-                var Deleteurl = Url.Action("Delete", "ProjectMaster", new { Recid=o.P_PROJECTRECID}, null);
+                var Deleteurl = Url.Action("Delete", "ProjectMaster", new { Recid=o.CU_RECID}, null);
                 var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
                 var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 

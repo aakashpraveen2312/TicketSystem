@@ -56,7 +56,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                 <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
 
 
-                <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+                <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
 
                 <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                     <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -94,7 +94,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                 <p class="" readonly><b>Subject:</b> @item.TC_SUBJECT</p>
                                             </div>
                                             <div class="col-md-4">
-                                                <p class="" readonly><b>@Convert.ToDateTime(item.TC_TICKETDATE).ToString("dd/MM/yyyy HH:mm:ss")</b></p>
+                                                <p class="" readonly><b>@Convert.ToDateTime(item.TC_TICKETDATE).ToString("dd/MM/yyyy HH:mm")</b></p>
                                             </div>
                                         </div>
 
@@ -308,6 +308,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                                  alt="Response Ticket Image" class="img-fluid"
                                                                  data-toggle="modal" data-target="#modal_@item.TC_RECID" />
                                                         </div>
+                                                       
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-2">

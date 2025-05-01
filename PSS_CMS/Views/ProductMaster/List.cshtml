@@ -33,7 +33,7 @@
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -45,7 +45,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>PRODUCT MASTER</li>
+                    <li>PRODUCT</li>
                     <li>LIST</li>
                 </ul>
             </div>
@@ -66,19 +66,20 @@
             {
 @Html.Grid(Model).Columns(columns =>
 {
-    columns.Add(c => c.TPM_PRODUCTNAME).Titled("Product Name");
-    columns.Add(c => c.TPM_SORTORDER).Titled("Sort").SetWidth("100px");
+    columns.Add(c => c.P_CODE).Titled("Code");
+    columns.Add(c => c.P_NAME).Titled("Product Name");
+    columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("100px").Css("text-right");
     columns.Add().Titled("Action").SetWidth("100px")
    .Encoded(false)
     .Sanitized(false)
  .RenderValueAs(o =>
  {
 
-     var Editurl = Url.Action("Edit", "ProductMaster", new { Recid = o.TPM_RECID,name = o.TPM_PRODUCTNAME }, null);
+     var Editurl = Url.Action("Edit", "ProductMaster", new { Recid = o.P_RECID,name = o.P_NAME }, null);
      var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
      var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
-     var Deleteurl = Url.Action("Delete", "ProductMaster", new { Recid = o.TPM_RECID }, null);
+     var Deleteurl = Url.Action("Delete", "ProductMaster", new { Recid = o.P_RECID }, null);
      var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
      var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
@@ -90,7 +91,7 @@
 else
 {
 <div class="alert alert-warning text-center">
-    <b>No Project's' are available</b>
+    <b>No Product's are available</b>
 </div>}
 
         </div>

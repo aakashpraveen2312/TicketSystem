@@ -38,25 +38,8 @@
             font-weight: bold;
         }
 
-        select#TUG_NAME {
-            display: block;
-            width: 100%;
-            height: 34px;
-            padding: 6px 12px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #555;
-            background-image: none;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        select.form-select {
+            font-size:15px;
         }
     </style>
 </head>
@@ -66,7 +49,7 @@
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -77,7 +60,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>PROJECT MASTER</li>
+                    <li>CUSTOMER</li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProjectMaster")">LIST</a></li>
                     <li>CREATE</li>
                 </ul>
@@ -87,61 +70,139 @@
         {
 
 
-            <div class="create ms-4 me-2 mt-3">
-              
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.SelectedOption, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @*@Html.DropDownListFor(
-            m => m.SelectedOption,
-            Model.Options,
-            "Please select",
-            new { @class = "form-control" }
-        )*@
-                        @Html.DropDownListFor(model => model.P_Product, new SelectList(Model.Options, "Value", "Text"), "-- Select Product --", new { @class = "form-control textboxcolors", autocomplete = "off" })
+    <div class="create ms-4 me-2 mt-3">
 
-                    </div>
-                </div>  
-                
-                
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.P_NAME, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.P_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.P_SORTORDER, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.P_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.IsDisabled, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input" })
-                    </div>
-                </div>
-                <div class="row ">
-                    <div class="col-lg-2">
-
-                    </div>
-                    <div class="col-lg-3 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { })'" />
-                    </div>
-                </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CU_CODE, new { @class = "labels" })
             </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CU_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+            </div>
+        </div> <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CU_NAME, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CU_EMAIL, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CU_EMAIL, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CU_MOBILENO, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CU_MOBILENO, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CU_PRECID, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @if (ViewBag.Product != null)
+                {
+                    var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
+
+                    if (ProductList != null && ProductList.Any())
+                    {
+                        var modifiedProductList = new List<SelectListItem>(ProductList);
+
+                        if (ProductList.Count() > 1)
+                        {
+                            // Add "--Select Project--" option only if more than one project is available
+                            modifiedProductList.Insert(0, new SelectListItem { Text = "--Select Product--", Value = "" });
+
+                            @Html.DropDownList("SelectedProduct",
+                                               modifiedProductList,
+                                               new { @class = "form-select textboxcolors", id = "", required = "required" })
+                        }
+                        else if (ProductList.Count() == 1)
+                        {
+                            // If only one project is available, preselect it
+                            @Html.DropDownList("SelectedProduct",
+                                               modifiedProductList,
+                                               new { @class = "form-select textboxcolors", id = "", required = "required" })
+                        }
+                    }
+                    else
+                    {
+                        var modifiedProductList = new List<SelectListItem>(ProductList);
+                        // Add "--Select Project--" option only if more than one project is available
+                        modifiedProductList.Insert(0, new SelectListItem { Text = "No role's are available", Value = "" });
+
+                        @Html.DropDownList("SelectedProduct",
+                                           modifiedProductList,
+                                           new { @class = "form-select textboxcolors", id = "" })
+                    }
+                }
+                else
+                {
+                    <p>No product's are available</p>
+                }
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CU_INVOICENO, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CU_INVOICENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CU_WARRANTYFREECALLS, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CU_WARRANTYUPTO, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CU_WARRANTYUPTO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CU_SORTORDER, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CU_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.IsDisabled, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input" })
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-lg-2">
+
+            </div>
+            <div class="col-lg-3 d-flex justify-content-end">
+                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { })'" />
+            </div>
+        </div>
+    </div>
         }
 
 

@@ -309,6 +309,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AssignToController.cs" />
     <Compile Include="Controllers\CompanyInfoController.cs" />
     <Compile Include="Controllers\CompanyRegistrationController.cs" />
     <Compile Include="Controllers\ChangePasswordController.cs" />
@@ -329,6 +330,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Admintickets.cs" />
+    <Compile Include="Models\AssignTo.cs" />
     <Compile Include="Models\Changepassword.cs" />
     <Compile Include="Models\Companies.cs" />
     <Compile Include="Models\DashBoardList.cs" />
@@ -535,6 +537,7 @@
     <Content Include="Views\ProductMaster\Edit.cshtml" />
     <Content Include="Views\ProductMaster\List.cshtml" />
     <Content Include="Views\Tickets\Edit.cshtml" />
+    <Content Include="Views\AssignTo\Assignto.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

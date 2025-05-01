@@ -83,7 +83,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
             </div>
 
             <div class="p-2" style="margin-right:10px">
-                <h4 class="heading">@Session["UserName"]</h4>
+                <h4 class="heading">@Session["UserName"].ToString().ToUpper()</h4>
             </div>
 
             <div class="p-2 me-3 dropdown">
@@ -147,7 +147,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
                                 </div>
                                 <div class="col-md-4">
-                                    <p class="" readonly><b>@Convert.ToDateTime(ticket.TC_TICKETDATE).ToString("dd/MM/yyyy HH:mm:ss")</b></p>
+                                    <p class="" readonly><b>@Convert.ToDateTime(ticket.TC_TICKETDATE).ToString("dd/MM/yyyy HH:mm")</b></p>
                                 </div>
                             </div>
 

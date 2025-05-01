@@ -15,7 +15,10 @@ namespace PSS_CMS.Models
         public string F_CREATEDDATETIME { get; set; }
         public int F_PROJECTRECID { get; set; }
         public int F_SORTORDER { get; set; }
-        public string F_USERID { get; set; }
+        public int F_CRECID { get; set; }
+        public int F_URECID { get; set; }
+        public int F_PRECID { get; set; }
+        public int F_CURECID { get; set; }
         public string F_DISABLE { get; set; }
         // Dropdown Selections
         public string SelectedProjectType1 { get; set; }

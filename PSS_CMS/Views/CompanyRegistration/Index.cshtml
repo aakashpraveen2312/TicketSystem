@@ -23,6 +23,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <style>
+        .swal-btn-continue {
+            background-color: #6ed3d0 !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div class="container-fluid pb-2" id="navbar">
@@ -32,7 +41,7 @@
             </div>
             <div class="col-md-6 col-sm-12 d-flex justify-content-md-end justify-content-sm-center justify-content-center" id="imgcol">
                 <img src="~/assets/img/bexlogo_wob.png" id="navimg" class="GSTimg" />
-              
+
             </div>
         </div>
     </div>
@@ -40,7 +49,7 @@
     <div class="container my-3">
         <h3 class="text-center spanheadingGST fw-semibold" id="formname">Prospective Customer Registration Form <span id="mainspan">(TICKET SYSTEM)</span></h3>
         <div class="card mt-3">
-            @using (Html.BeginForm("Index", "CompanyRegistration", FormMethod.Post))
+            @using (Html.BeginForm("Index", "CompanyRegistration", FormMethod.Post, new { id = "regform", enctype = "multipart/form-data" }))
             {
                 @Html.AntiForgeryToken()
                 <div class="p-3">
@@ -48,14 +57,14 @@
                         @Html.LabelFor(model => model.C_CODE, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
                             <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_CODE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "1" } })
+                                @Html.EditorFor(model => model.C_CODE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "1",required= "required" } })
                                 @Html.ValidationMessageFor(model => model.C_CODE, "", new { @class = "text-danger" })
                             </div>
                         </div>
                         @Html.LabelFor(model => model.C_WEB, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
                             <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_WEB, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2" } })
+                                @Html.EditorFor(model => model.C_WEB, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", required = "required" } })
                                 @Html.ValidationMessageFor(model => model.C_WEB, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -65,14 +74,14 @@
                         @Html.LabelFor(model => model.C_NAME, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
                             <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_NAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "3" } })
+                                @Html.EditorFor(model => model.C_NAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "3", required = "required" } })
                                 @Html.ValidationMessageFor(model => model.C_NAME, "", new { @class = "text-danger" })
                             </div>
                         </div>
                         @Html.LabelFor(model => model.C_APPUSERNAME, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
                             <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_APPUSERNAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "4" } })
+                                @Html.EditorFor(model => model.C_APPUSERNAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "4", required = "required" } })
                                 @Html.ValidationMessageFor(model => model.C_APPUSERNAME, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -82,14 +91,14 @@
                         @Html.LabelFor(model => model.C_ADDRESS, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
                             <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_ADDRESS, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "5" } })
+                                @Html.EditorFor(model => model.C_ADDRESS, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "5", required = "required" } })
                                 @Html.ValidationMessageFor(model => model.C_ADDRESS, "", new { @class = "text-danger" })
                             </div>
                         </div>
                         @Html.LabelFor(model => model.C_EMAILID, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
                             <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "6" } })
+                                @Html.EditorFor(model => model.C_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "6", required = "required" } })
                                 @Html.ValidationMessageFor(model => model.C_EMAILID, "", new { @class = "text-danger" })
                                 @if (ViewBag.Errormessage != null)
                                 {
@@ -103,13 +112,13 @@
                         @Html.LabelFor(model => model.C_COUNTRY, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
                             <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_COUNTRY, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "7" } })
+                                @Html.EditorFor(model => model.C_COUNTRY, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "7", required = "required" } })
                                 @Html.ValidationMessageFor(model => model.C_COUNTRY, "", new { @class = "text-danger" })
                             </div>
                         </div>
                         @Html.LabelFor(model => model.C_RBICODE, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4 d-flex justify-content-center">
-                            @Html.EditorFor(model => model.C_RBICODE, new { htmlAttributes = new { @class = "form-control", value = Guid.NewGuid().ToString(), autocomplete = "off", tabindex = "8" } })
+                            @Html.EditorFor(model => model.C_RBICODE, new { htmlAttributes = new { @class = "form-control", value = Guid.NewGuid().ToString(), autocomplete = "off", tabindex = "8", required = "required" } })
                             @Html.ValidationMessageFor(model => model.C_RBICODE, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -118,14 +127,14 @@
                         @Html.LabelFor(model => model.C_PINCODE, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
                             <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_PINCODE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "9" } })
+                                @Html.EditorFor(model => model.C_PINCODE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "9", required = "required" } })
                                 @Html.ValidationMessageFor(model => model.C_PINCODE, "", new { @class = "text-danger" })
                             </div>
                         </div>
                         @Html.LabelFor(model => model.C_GST, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
                             <div class="d-flex justify-content-center flex-column">
-                                @Html.EditorFor(model => model.C_GST, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "10" } })
+                                @Html.EditorFor(model => model.C_GST, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "10", required = "required" } })
                                 @Html.ValidationMessageFor(model => model.C_GST, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -135,7 +144,7 @@
                         @Html.LabelFor(model => model.C_PHONE, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
                             <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_PHONE, new { htmlAttributes = new { @class = "form-control", value = Guid.NewGuid().ToString(), autocomplete = "off", tabindex = "11" } })
+                                @Html.EditorFor(model => model.C_PHONE, new { htmlAttributes = new { @class = "form-control", value = Guid.NewGuid().ToString(), autocomplete = "off", tabindex = "11", required = "required" } })
                                 @Html.ValidationMessageFor(model => model.C_PHONE, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -150,100 +159,86 @@
 
                     <div class="d-flex justify-content-end mt-2">
                         <button type="submit" class="btn" id="submitbtn" tabindex="13">Submit</button>
-                        @*<button type="button" tabindex="14" onclick="window.location.href='@Url.Action("Login", "Home")'" class="btn" id="cancelbtn">Cancel</button>*@
                     </div>
-
-
-
 
                 </div>
             }
         </div>
     </div>
-
+    @*Toastr for created succesfully*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var successMessage = "@ViewBag.ToastrSuccessMessage" || "Form submitted successfully!";
-        var errorMessage = "@ViewBag.ToastrErrorMessage" || "There was an error submitting the form.";
+    $(document).ready(function () {
+        $("#regform").submit(function (event) {
+            event.preventDefault();
 
-        // Function to restrict special characters and lowercase
-        function preventSpecialChars(input, regexPattern) {
-            input.addEventListener('input', function () {
-                this.value = this.value.replace(regexPattern, '');
+            var submitBtn = $("#submitbtn");
+            submitBtn.prop("disabled", true).text("Submitting...");
+
+            var formData = new FormData(this);
+
+            // Disable page interaction
+            $("body").css("pointer-events", "none");
+
+            $.ajax({
+                url: '@Url.Action("Index", "CompanyRegistration")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            confirmButtonText: "Ok",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            customClass: {
+                                confirmButton: "swal-btn-continue",
+                            },
+                            didOpen: () => {
+                                $(".swal2-container").css("pointer-events", "auto");
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '@Url.Action("Index", "Login")';
+                            } 
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: response.message,
+                            icon: "error",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    resetButton();
+                }
             });
+        });
+
+        function resetButton() {
+            $("#submitbtn").prop("disabled", false).text("Submit");
+            $("body").css("pointer-events", "auto");
         }
-
-        // Apply restrictions to specific fields
-        preventSpecialChars(document.getElementById('C_CODE'), /[^A-Za-z0-9]/g); // Alphanumeric
-        preventSpecialChars(document.getElementById('C_NAME'), /[^a-zA-Z\s\.]/g); // Uppercase, spaces, periods
-        preventSpecialChars(document.getElementById('C_PHONE'), /[^0-9]/g); // Digits only
-        preventSpecialChars(document.getElementById('C_GST'), /[^0-9A-Z]/g); // GST format
-        preventSpecialChars(document.getElementById('C_RBICODE'), /[^a-zA-Z\s\.]/g); // Uppercase alphanumeric
-        preventSpecialChars(document.getElementById('C_PINCODE'), /[^0-9]/g); // Digits only
-
-        // Restriction for the domainName field (Only uppercase letters and numbers)
-        document.getElementById('domainName').addEventListener('keypress', function (event) {
-            let char = String.fromCharCode(event.which);
-            if (!/[A-Z0-9]/.test(char) && event.keyCode !== 13) {
-                event.preventDefault();
-            }
-        });
-
-        // Form validation and submission handler
-        document.getElementById('submitbtn').addEventListener('click', function (event) {
-            var form = document.querySelector('form');
-            var isValid = true;
-
-            // Validate each field individually
-            var codeField = document.getElementById('C_CODE');
-            var nameField = document.getElementById('C_NAME');
-            var phoneField = document.getElementById('C_PHONE');
-            var gstField = document.getElementById('C_GST');
-            var rbiCodeField = document.getElementById('C_RBICODE');
-            var pincodeField = document.getElementById('C_PINCODE');
-
-            // Basic validation for all required fields
-            if (codeField.value.trim() === '' || !/^[A-Za-z0-9]+$/.test(codeField.value)) {
-                isValid = false;
-            }
-
-            if (nameField.value.trim() === '' || !/^[a-zA-Z\s\.]+$/.test(nameField.value)) {
-                isValid = false;
-            }
-
-            if (phoneField.value.trim() === '' || !/^\d{10}$/.test(phoneField.value)) {
-                isValid = false;
-            }
-
-            if (gstField.value.trim() === '' || !/^[0-9A-Z]{15}$/.test(gstField.value)) {
-                isValid = false;
-            }
-
-            if (rbiCodeField.value.trim() === '' || !/^[a-zA-Z\s\.]+$/.test(rbiCodeField.value)) {
-                isValid = false;
-            }
-
-            if (pincodeField.value.trim() === '' || !/^\d{6,8}$/.test(pincodeField.value)) {
-                isValid = false;
-            }
-
-            // Check if the form is valid
-            if (isValid) {
-                toastr.options = {
-                    "positionClass": "toast-top-center"
-                };
-                toastr.success(successMessage);
-            } else {
-                toastr.options = {
-                    "positionClass": "toast-top-center"
-                };
-                toastr.error(errorMessage);
-                event.preventDefault(); // Prevent form submission if validation fails
-            }
-        });
     });
     </script>
-
+  
     <script src="~/Scripts/jquery-3.4.1.js"></script>
     <script src="~/Scripts/jquery.validate.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>

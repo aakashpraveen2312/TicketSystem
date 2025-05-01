@@ -52,7 +52,7 @@
         </div>
 
         <div class="p-2" style="margin-right:10px">
-            <h4 class="heading">@Session["UserName"]</h4>
+            <h4 class="heading">@Session["UserName"].ToString().ToUpper()</h4>
         </div>
 
         <div class="p-2 me-3 dropdown">
@@ -96,12 +96,9 @@
             <form>
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
-                        @*<input type="checkbox" id="enableEdit" autocomplete="off" class="mb-4"><span class="ms-2"><b>Date</b></span>*@
-                        @*@Html.TextBoxFor(model => model.TC_Date, new { @class = "form-control", required = "required", id = "dateTextbox", tabindex = "1" })*@
                         @Html.LabelFor(model => model.TC_Date, "Date", new { @class = "pb-2 " })
                         @Html.TextBoxFor(model => model.TC_Date, new { @class = "form-control", id = "date", type = "datetime-local",required = "required", tabindex = "1" })
                     </div>
-
 
                     <div class="col-md-6 col-sm-12 ptypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
 
@@ -109,20 +106,20 @@
                         @if (Model.TicketCombo2.TicketTypes2.Count > 1)
                         {
                             <!-- Show dropdown with "Select Project" placeholder if count > 1 -->
-                            @Html.LabelFor(model => model.SelectedProjectType, "Project", new { @class = "pb-2 " })
-                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "Select Project", new { @class = "form-select", required = "required" })
+                            @Html.LabelFor(model => model.SelectedProjectType, "Customer", new { @class = "pb-2 " })
+                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "Select Customer", new { @class = "form-select", required = "required" })
                         }
                         else if (Model.TicketCombo2.TicketTypes2.Count == 1)
                         {
                             <!-- Show dropdown without placeholder if count == 1 -->
-                            @Html.LabelFor(model => model.SelectedProjectType, "Project", new { @class = "pb-2 " })
+                            @Html.LabelFor(model => model.SelectedProjectType, "Customer", new { @class = "pb-2 " })
                             @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, new { @class = "form-select", required = "required" })
                         }
                         else
                         {
                             <!-- Show dropdown without placeholder if count == 1 -->
-                            @Html.LabelFor(model => model.SelectedProjectType, "Project", new { @class = "pb-2 " })
-                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "No projects are available", new { @class = "form-select", required = "required" })
+                            @Html.LabelFor(model => model.SelectedProjectType, "Customer", new { @class = "pb-2 " })
+                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "No Customer's are available", new { @class = "form-select", required = "required" })
                         }
 
                     </div>

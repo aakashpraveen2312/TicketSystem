@@ -71,7 +71,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
 
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
 
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -98,7 +98,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
         <div class="row ms-3 mt-3 mb-3">
             <div class="col-md-4 mt-3">
-                @{ var projectTypeList = ViewBag.ProjectTypes as IEnumerable<SelectListItem>;
+                @{ var projectTypeList = ViewBag.Product as IEnumerable<SelectListItem>;
                     var defaultSelectedValue = projectTypeList?.FirstOrDefault()?.Value ?? ""; // Get first project ID }
                 }
                 @if (projectTypeList != null && projectTypeList.Any())
@@ -110,7 +110,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                 {
                     @Html.DropDownList("SelectedProjectType1",
                                       projectTypeList,
-                                      "No project's are avialble",
+                                      "No product's are avialble",
                                       new { @class = "", id = "projectTypeFilter1", data_default = defaultSelectedValue })}
 
             </div>
@@ -225,7 +225,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                 </div>
                                                 <div class="col d-flex justify-content-end align-items-center">
 
-                                                    <a href="@Url.Action("Edit", "RecentTickets", new { F_RECID = faq.F_RECID, F_PROJECTRECID = faq.F_PROJECTRECID, F_USERID = faq.F_USERID})"
+                                                    <a href="@Url.Action("Edit", "RecentTickets", new { F_RECID = faq.F_RECID,F_PRECID=faq.F_PRECID})"
                                                        class="text-decoration-none"
                                                        data-toggle="tooltip"
                                                        title="Edit">
@@ -252,7 +252,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                 </div>
                                                 <div class="col d-flex justify-content-end">
 
-                                                    <a href="@Url.Action("Edit", "RecentTickets", new { F_RECID = faq.F_RECID, F_PROJECTRECID = faq.F_PROJECTRECID, F_USERID = faq.F_USERID})"
+                                                    <a href="@Url.Action("Edit", "RecentTickets", new { F_RECID = faq.F_RECID,F_PRECID=faq.F_PRECID})"
                                                        class="text-decoration-none"
                                                        data-toggle="tooltip"
                                                        title="Edit">

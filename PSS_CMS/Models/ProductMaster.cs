@@ -10,13 +10,25 @@ namespace PSS_CMS.Models
 {
     public class ProductMaster
     {
-        public string TPM_RECID { get; set; }
-        public int TPM_CRECID { get; set; }
-        public string TPM_CODE { get; set; }
+        public int P_RECID { get; set; }
+        public int P_CRECID { get; set; }
+        [DisplayName("Code")]
+        public string P_CODE { get; set; }
         [DisplayName("Product Name")]
-        public string TPM_PRODUCTNAME { get; set; }
+        public string P_NAME { get; set; }
         [DisplayName("Sort")]
-        public int TPM_SORTORDER { get; set; }
+        public int P_SORTORDER { get; set; }
+
+        [DisplayName("Disable")]
+        public bool P_ProductDisable
+        {
+            get => ProductDisable == "Y";
+            set => ProductDisable = value ? "Y" : "N";
+        }
+
+        [JsonProperty("P_DISABLE")]
+        private string ProductDisable { get; set; }
+
     }
     public class ProductMasterRootObject
     {

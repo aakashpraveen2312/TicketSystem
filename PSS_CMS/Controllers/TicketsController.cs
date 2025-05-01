@@ -70,7 +70,7 @@ namespace PSS_CMS.Controllers
             }
 
             // Pass the view model to the next method
-            await ComboBoxTicketHistoryProjectTypeNewticket(viewModel);
+            await ComboBoxCustomerNewticket(viewModel);
 
             return View(viewModel);
         }
@@ -127,14 +127,14 @@ namespace PSS_CMS.Controllers
                 string APIKey = Session["APIKEY"].ToString();
              
                 var content = $@"{{           
-            ""tC_USERID"": ""{Session["UserID"]}"",           
+            ""tC_URECID"": ""{Session["UserRECID"]}"",           
             ""tC_CRECID"": ""{ Session["CompanyID"]}"",          
-            ""tC_PROJECTID"": ""{tickets.SelectedProjectType}"",        
+            ""tC_CURECID"": ""{tickets.SelectedProjectType}"",        
             ""tC_TICKETDATE"": ""{tickets.TC_Dates}"",        
             ""tC_SUBJECT"": ""{tickets.TC_SUBJECT}"",        
             ""tC_OTP"": ""{"6757"}"",
-    ""tC_COMMENTS"": ""{HttpUtility.JavaScriptStringEncode(tickets.TC_COMMENTS)}"",
-            ""tC_REQUEST_ATTACHMENT_PREFIX"": ""{base64Image}"",  
+            ""tC_COMMENTS"": ""{HttpUtility.JavaScriptStringEncode(tickets.TC_COMMENTS)}"",
+            ""tC_REQUEST_ATTPREFIX"": ""{base64Image}"",  
             ""tC_REQUEST_DATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",          
             ""tC_STATUS"": ""{"S"}"",
             ""tC_PRIORITYTYPE"": ""{tickets.TC_PRIORITYTYPE}"",
@@ -217,7 +217,7 @@ namespace PSS_CMS.Controllers
 
             List<Tickethistory> RecentTicketListall = new List<Tickethistory>();
             
-            string strparams = "TC_USERID=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "USERID=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -304,7 +304,7 @@ namespace PSS_CMS.Controllers
             }
 
             await ComboBoxTicketHistory();
-            await ComboBoxTicketHistoryProjectType();
+            await ComboBoxTicketHistoryCustomer();
             return View(RecentTicketListall);
         }
 
@@ -635,16 +635,15 @@ namespace PSS_CMS.Controllers
                 return View();
         }
         //new Ticket list view combo project type
-        public async Task<ActionResult> ComboBoxTicketHistoryProjectType()
+        public async Task<ActionResult> ComboBoxTicketHistoryCustomer()
         {
 
-            List<SelectListItem> projectTypes = new List<SelectListItem>();
+            List<SelectListItem> Customer = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOCUSTOMERS"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid="+ Session["CompanyID"];
-            //string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "userid=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -666,10 +665,10 @@ namespace PSS_CMS.Controllers
 
                             if (rootObjects?.Data != null)
                             {
-                                projectTypes = rootObjects.Data.Select(t => new SelectListItem
+                                Customer = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.P_NAME, // or the appropriate value field
-                                    Text = t.P_NAME // or the appropriate text field
+                                    Value = t.CU_RECID.ToString(), // or the appropriate value field
+                                    Text = t.CU_NAME // or the appropriate text field
                                 }).ToList();
                             }
                         }
@@ -682,19 +681,18 @@ namespace PSS_CMS.Controllers
             }
 
             // Assuming you are passing ticketTypes to the view
-            ViewBag.ProjectTypes = projectTypes;
+            ViewBag.Customer = Customer;
 
             return View();
         }
 
         //new Ticket combo project type
-        public async Task ComboBoxTicketHistoryProjectTypeNewticket(Tickets viewModel)
+        public async Task ComboBoxCustomerNewticket(Tickets viewModel)
         {
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOCUSTOMERS"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
-            //string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "userid=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
 
             try
@@ -718,8 +716,8 @@ namespace PSS_CMS.Controllers
 
                             viewModel.TicketCombo2.TicketTypes2 = ticketTypes2.Select(item => new SelectListItem
                             {
-                                Value = item.P_NAME,
-                                Text = item.P_NAME
+                                Value = item.CU_RECID.ToString(),
+                                Text = item.CU_NAME
                             }).ToList();
                         }
                     }
@@ -751,13 +749,13 @@ namespace PSS_CMS.Controllers
                 // Reuse previous value from session
                 searchPharse = Session["searchPharse"].ToString();
             }
-            string Weburl = ConfigurationManager.AppSettings["FAQGET1"];
+            string Weburl = ConfigurationManager.AppSettings["FAQGET"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
             List<Faq> FAQList = new List<Faq>();
 
-           
+
             string strparams = "productid=" + projectID + "&cmprecid=" + Session["CompanyID"];
             string finalurl = Weburl + "?" + strparams;
             try
@@ -798,21 +796,20 @@ namespace PSS_CMS.Controllers
                 // Handle exceptions (e.g., logging)
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            await FAQComboProjectType();
+            await FAQComboProduct();
             return View(FAQList);
         }
 
         //FAQ project type combo
-        public async Task<ActionResult> FAQComboProjectType()
+        public async Task<ActionResult> FAQComboProduct()
         {
 
-            List<SelectListItem> projectTypes = new List<SelectListItem>();
+            List<SelectListItem> Product = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOPRODUCTSHOW"];
+            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
-            //string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "cmprecid=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -834,10 +831,10 @@ namespace PSS_CMS.Controllers
 
                             if (rootObjects?.Data != null)
                             {
-                                projectTypes = rootObjects.Data.Select(t => new SelectListItem
+                                Product = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.TPM_RECID.ToString(), // or the appropriate value field
-                                    Text = t.TPM_PRODUCTNAME // or the appropriate text field
+                                    Value = t.P_RECID.ToString(), // or the appropriate value field
+                                    Text = t.P_NAME // or the appropriate text field
                                 }).ToList();
                             }
                         }
@@ -850,7 +847,7 @@ namespace PSS_CMS.Controllers
             }
 
             // Assuming you are passing ticketTypes to the view
-            ViewBag.ProjectTypes = projectTypes;
+            ViewBag.Product = Product;
 
             return View();
         }

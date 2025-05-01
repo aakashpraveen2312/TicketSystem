@@ -9,6 +9,8 @@ namespace PSS_CMS.Models
     public class WhitePaper: TicketComboTypes2
     {
         public int WP_RECID { get; set; }
+        public int wP_PRECID { get; set; }
+        public int wP_CRECID { get; set; }
         public string WP_TITLE { get; set; }
         public string WP_Description { get; set; }
         public string WP_ATTACHEMENT { get; set; }

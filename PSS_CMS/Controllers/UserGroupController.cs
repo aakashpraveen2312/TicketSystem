@@ -30,7 +30,7 @@ namespace PSS_CMS.Controllers
 
             List<Usergroup> usergrouplist = new List<Usergroup>();
             
-            string strparams ="cmprecid=" + Session["CompanyID"];
+            string strparams = "CompanyRecID=" + Session["CompanyID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -55,10 +55,9 @@ namespace PSS_CMS.Controllers
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
                                 usergrouplist = usergrouplist
-                                    .Where(r => r.TUG_CODE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TUG_NAME.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TUG_ROLEDESCRIPTION.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.TUG_SORTORDER.ToString().Contains(searchPharse.ToLower()))
+                                    .Where(r => r.R_NAME.ToLower().Contains(searchPharse.ToLower()) ||                                               
+                                                r.R_ROLEDESCRIPTION.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.R_SORTORDER.ToString().Contains(searchPharse.ToLower()))
                                     .ToList();
                             }
 
@@ -76,96 +75,17 @@ namespace PSS_CMS.Controllers
             }
             return View(usergrouplist);
         }
-        public ActionResult Create()
+
+        public async Task<ActionResult> Edit(int? Recid,string Name)
         {
-            return View();
-        }
-        [HttpPost]
-        public async Task<ActionResult> Create(Usergroup usergroup)
-        {
-           
-                try
-                {
-                    var UsergroupPostURL = ConfigurationManager.AppSettings["USERGROUPGETPOST"];
-                    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-                    string APIKey = Session["APIKEY"].ToString();
-
-                    var content = $@"{{           
-            ""tuG_CODE"": ""{usergroup.TUG_CODE}"",           
-            ""tuG_NAME"": ""{ usergroup.TUG_NAME}"",          
-            ""tuG_ROLEDESCRIPTION"": ""{usergroup.TUG_ROLEDESCRIPTION}"",        
-            ""tuG_SORTORDER"": ""{usergroup.TUG_SORTORDER}"",        
-            ""tuG_DISABLE"": ""{(usergroup.IsDisabled ? "Y" : "N")}"",        
-            ""tuG_CRECID"": ""{Session["CompanyID"]}""           
-        }}";
-
-                    // Create the HTTP request
-                    var request = new HttpRequestMessage
-                    {
-                        RequestUri = new Uri(UsergroupPostURL),
-                        Method = HttpMethod.Post,
-                        Headers =
-            {
-                { "X-Version", "1" },
-                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
-            },
-                        Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
-                    };
-
-                    // Set up HTTP client with custom validation (for SSL certificates)
-                    var handler = new HttpClientHandler
-                    {
-                        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-                    };
-
-                    var client = new HttpClient(handler);
-                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-
-
-                    var response = await client.SendAsync(request);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        var apiResponse = JsonConvert.DeserializeObject<UserGroupRootObject>(responseBody);
-
-                        if (apiResponse.Status == "Y")
-                        {
-                            return Json(new { success = true, message = apiResponse.Message });
-                        }
-                        else if (apiResponse.Status == "U" || apiResponse.Status == "N")
-                        {
-                            return Json(new { success = false, message = apiResponse.Message });
-                        }
-                        else
-                        {
-                            return Json(new { success = false, message = "An unexpected status was returned." });
-                        }
-                    }
-                    else
-                    {
-                        return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
-                    }
-
-
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
-                }
-        
-            return View(usergroup);
-        }
-        public async Task<ActionResult> Edit(int ? Recid)
-        {           
+            Session["Name"] = Name;
             Session["UsergroupRecid"] = Recid;
             string WEBURLGETBYID = ConfigurationManager.AppSettings["USERGROUPGETBYID"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             Usergroup usergroup = null;
 
-            string strparams = "recID=" + Recid + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "R_RECID=" + Recid + "&COMPANYRECID=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -183,8 +103,8 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var content = JsonConvert.DeserializeObject<UserGroupObjects>(jsonString);                        
-                                usergroup = content.Data;
+                            var content = JsonConvert.DeserializeObject<UserGroupObjects>(jsonString);
+                            usergroup = content.Data;
                         }
                         else
                         {
@@ -200,7 +120,7 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
             }
-
+           
             return View(usergroup);
         }
         [HttpPost]
@@ -213,13 +133,10 @@ namespace PSS_CMS.Controllers
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""tuG_RECID"": ""{Session["UsergroupRecid"]}"",           
-            ""tuG_CODE"": ""{usergroup.TUG_CODE}"",           
-            ""tuG_NAME"": ""{usergroup.TUG_NAME}"",
-            ""tuG_ROLEDESCRIPTION"": ""{usergroup.TUG_ROLEDESCRIPTION}"",
-            ""tuG_SORTORDER"": ""{usergroup.TUG_SORTORDER}"",
-            ""tuG_DISABLE"": ""{(usergroup.IsDisabled ? "Y" : "N")}"",                              
-            ""tuG_CRECID"": ""{ Session["CompanyID"]}""                              
+            ""r_RECID"": ""{Session["UsergroupRecid"]}"",                     
+            ""r_ROLEDESCRIPTION"": ""{usergroup.R_ROLEDESCRIPTION}"",
+            ""r_DISABLE"": ""{(usergroup.IsDisabled ? "Y" : "N")}"",                              
+            ""r_CRECID"": ""{ Session["CompanyID"]}""                              
         }}";
 
                 // Create the HTTP request
@@ -270,76 +187,6 @@ namespace PSS_CMS.Controllers
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
         }
-        public async Task<ActionResult> Delete(int? Recid)
-        {
-            string UsergroupDeleteUrl = ConfigurationManager.AppSettings["USERGROUPGETDELETE"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
 
-            string strparams = "RECID=" + Recid + "&cmprecid=" + Session["CompanyID"];
-            string finalurl = UsergroupDeleteUrl + "?" + strparams;
-
-            try
-            {
-                using (HttpClientHandler handler = new HttpClientHandler())
-                {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
-                    using (HttpClient client = new HttpClient(handler))
-                    {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-
-                        var request = new HttpRequestMessage
-                        {
-                            Method = HttpMethod.Delete,
-                            RequestUri = new Uri(finalurl)
-                        };
-
-                        var response = await client.SendAsync(request);
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            string responseBody = await response.Content.ReadAsStringAsync();
-                            var apiResponse = JsonConvert.DeserializeObject<UserGroupObjects>(responseBody);
-
-                            if (apiResponse.Status == "Y")
-                            {
-
-                                string redirectUrl = Url.Action("List", "UserGroup", new { });
-                                return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
-                            }
-                            else if (apiResponse.Status == "U")
-                            {
-                                return Json(new { status = "error", message = apiResponse.Message });
-                            }
-                            else if (apiResponse.Status == "N")
-                            {
-                                return Json(new { status = "error", message = apiResponse.Message });
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Failed to delete: {response.StatusCode} - {response.ReasonPhrase}");
-                        }
-                    }
-                }
-            }
-            catch (HttpRequestException httpEx)
-            {
-                Console.WriteLine($"HTTP Request error occurred: {httpEx.Message}");
-            }
-            catch (TaskCanceledException tcEx)
-            {
-                Console.WriteLine($"Request timed out: {tcEx.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception occurred: {ex.Message}");
-            }
-            return View();
-        }
     } 
 }

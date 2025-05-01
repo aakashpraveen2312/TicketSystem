@@ -15,10 +15,12 @@ namespace PSS_CMS.Models
     public class Recenttickets
     {
 
+        public string L_AdminDeligate { get; set; }
         public int TC_RECID { get; set; }
         public string TC_USERID { get; set; }
         public string TC_COMPANYID { get; set; }
         public string TC_PROJECTID { get; set; }
+        public string CU_NAME { get; set; }
         public string TC_USERNAME { get; set; }
         public string TC_ADMINNAME { get; set; }
         public string TC_TICKETDATE { get; set; }
@@ -80,6 +82,7 @@ namespace PSS_CMS.Models
 
 
         public string L_USERNAME { get; set; }
+        public string L_USERID { get; set; }
 
 
         public string L_PASSWORD { get; set; }
@@ -114,12 +117,18 @@ namespace PSS_CMS.Models
         public string TT_DISABLE { get; set; }
 
         public string P_PROJECTRECID { get; set; }
+   
+       
+        
         public string P_CODE { get; set; }
         public string P_NAME { get; set; }
         public string P_SORTORDER { get; set; }
         public string P_DISABLE { get; set; }
         public int TPM_RECID { get; set; }
+        public int TC_URECID { get; set; }
+        public int CU_RECID { get; set; }
         public string TPM_PRODUCTNAME { get; set; }
+      
 
         [DisplayName("Ticket Type")]
         public string SelectedTicketType { get; set; }

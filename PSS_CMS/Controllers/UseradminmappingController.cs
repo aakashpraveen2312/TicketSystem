@@ -18,10 +18,10 @@ namespace PSS_CMS.Controllers
     public class UseradminmappingController : Controller
     {
         // GET: Useradminmapping
-        public async Task<ActionResult> List(string Role,string USERID,string Name,string searchPharse)
+        public async Task<ActionResult> List(string Role,string id,string Name,string searchPharse)
         {
             Session["Name"] = Name;
-            Session["USERID"] = USERID;
+            Session["RECID"] = id;
             if (Role == "User")
                 {
                 Role = "Admin";
@@ -40,7 +40,7 @@ namespace PSS_CMS.Controllers
 
             List<Useradminmap> useradminlist = new List<Useradminmap>();
 
-            string strparams = "companyId=" + Session["CompanyID"] + "&role=" + Role+ "&userid=" + USERID;
+            string strparams = "companyId=" + Session["CompanyID"] + "&role=" + Role+ "&userid=" + id;
             string url = Weburl + "?" + strparams;
 
             try
@@ -65,9 +65,9 @@ namespace PSS_CMS.Controllers
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
                                 useradminlist = useradminlist
-                                    .Where(r => r.L_USERID.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.L_USERNAME.ToString().Contains(searchPharse.ToLower())||
-                                                r.L_ROLE.ToString().Contains(searchPharse.ToLower()))
+                                    .Where(r => r.U_USERCODE.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.U_USERNAME.ToString().Contains(searchPharse.ToLower())||
+                                                r.U_RCODE.ToString().Contains(searchPharse.ToLower()))
                                     .ToList();
                             }
 
@@ -113,9 +113,9 @@ namespace PSS_CMS.Controllers
 
 
                     var content = $@"{{
-                    ""uA_CRECID"": ""{Session["CompanyID"]}"",
-                    ""uA_USERID"": ""{ Session["USERID"]}"",                  
-                    ""uA_ADMINID"":""{Session["SELECTEDID"]}""                
+                    ""uH_CRECID"": ""{Session["CompanyID"]}"",
+                    ""uH_USERRECID"": ""{ Session["RECID"]}"",                  
+                    ""uH_HEADRECID"":""{Session["SELECTEDID"]}""                
                    
                         }}";
 
@@ -195,21 +195,21 @@ namespace PSS_CMS.Controllers
         }
 
         //user project mappping
-        public async Task<ActionResult> ListProject(string USERID, string Name,string searchPharse)
+        public async Task<ActionResult> ListProject(string id, string Name,string searchPharse)
         {
 
             Session["Name"] = Name;
-            Session["USERID"] = USERID;
+            Session["RECID"] = id;
             Useradminmap objuseradminprojectmap = new Useradminmap();
 
-            string Weburl = ConfigurationManager.AppSettings["PROJECTTYPEMAPPING"];
+            string Weburl = ConfigurationManager.AppSettings["PRODUCTTYPEMAPPING"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
             List<Useradminmap> useradminprojectlist = new List<Useradminmap>();
 
-            string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + USERID;
+            string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + id;
             string url = Weburl + "?" + strparams;
 
             try
@@ -260,7 +260,7 @@ namespace PSS_CMS.Controllers
             try
             {
 
-                var UserAdminProjectPostURL = ConfigurationManager.AppSettings["USERADMINPROJECTPOST"];
+                var UserAdminProjectPostURL = ConfigurationManager.AppSettings["USERADMINPRODUCTPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
@@ -281,11 +281,11 @@ namespace PSS_CMS.Controllers
 
 
                 var content = $@"{{
-                    ""cP_CRECID"": ""{Session["CompanyID"]}"",
-                    ""cP_CUSTOMERRECID"": ""{ Session["USERID"]}"",                  
-                    ""cP_PROJECTRECID"":""{Session["SELECTEDPROJECTID"]}"",              
-                    ""cP_SORTORDER"":""{1}"",                
-                    ""cP_DISABLE"":""{"Y"}""                
+                    ""pT_CRECID"": ""{Session["CompanyID"]}"",
+                    ""pT_URECID"": ""{ Session["RECID"]}"",                  
+                    ""pT_CURECID"":""{Session["SELECTEDPROJECTID"]}"",              
+                    ""pT_SORTORDER"":""{1}"",                
+                    ""pT_DISABLE"":""{"Y"}""                
                    
                         }}";
 

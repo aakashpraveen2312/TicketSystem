@@ -1,0 +1,320 @@
+﻿@model  PSS_CMS.Models.AssignTo
+@using GridMvc.Html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+    @*Bootstrap Icons and Boxicons link*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="~/Scripts/Script.js"></script>
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <style>
+        #ticetscreen {
+            overflow-x: hidden;
+        }
+
+        select.form-select {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        }
+        /* Custom styling for SweetAlert buttons */
+        .swal-btn-continue {
+            background-color: #6ed3d0 !important; /* Green color */
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        .swal-btn-back {
+            background-color: #f0a72d !important; /* Red color */
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+<body id="ticetscreen">
+
+    <div class="">
+
+        <div class="content">
+            <nav class="nav d-flex">
+                <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
+
+
+                <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
+
+                <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                    <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                        <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+
+                    </a>
+                </div>
+
+
+            </nav>
+            <div class="row" style="margin-top:10px">
+                <div class="col-lg-12 col-sm-12">
+                    <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+
+                        <li class="resadmintic" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">TICKETS</a></li>
+                        <li class="resadmintic" style="color: #2888bb;">ASSIGN TO</li>
+
+                    </ul>
+                </div>
+
+            </div>
+            @using (Html.BeginForm("Assignto", "AssignTo", FormMethod.Post, new { id = "AdminResponseForm", enctype = "multipart/form-data" }))
+            {
+                <div class="row ms-3 me-3 mt-3">
+                    <div class="col-md-4 col-sm-12">
+                        @Html.LabelFor(model => model.A_ASSIGNEDDATEANDTIME, "Assigned Date", new { @class = " " })
+                        @Html.TextBoxFor(model => model.A_ASSIGNEDDATEANDTIME, new { @class = "form-control", id = "assigneddate", type = "datetime-local", required = "required", tabindex = "1" })
+
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        @Html.Label("Select Admin")
+
+                        @if (ViewBag.Admin != null)
+                        {
+                            var admin = ViewBag.Admin as IEnumerable<SelectListItem>;
+
+                            if (admin != null && admin.Any())
+                            {
+                                var modifiedAdmin = new List<SelectListItem>(admin);
+
+                                if (admin.Count() > 1)
+                                {
+                                    // Add "--Select Project--" option only if more than one project is available
+                                    modifiedAdmin.Insert(0, new SelectListItem { Text = "--Select Admin--", Value = "" });
+
+                                    @Html.DropDownList("SelectedAdmin",
+                                                       modifiedAdmin,
+                                                       new { @class = "form-select", id = "", required = "required" })
+                                }
+                                else if (admin.Count() == 1)
+                                {
+                                    // If only one project is available, preselect it
+                                    @Html.DropDownList("SelectedAdmin",
+                                                       modifiedAdmin,
+                                                       new { @class = "form-select", id = "", required = "required" })
+                                }
+                            }
+                            else
+                            {
+                                var modifiedAdmin = new List<SelectListItem>(admin);
+                                // Add "--Select Project--" option only if more than one project is available
+                                modifiedAdmin.Insert(0, new SelectListItem { Text = "No project's are available", Value = "" });
+
+                                @Html.DropDownList("SelectedAdmin",
+                                                   modifiedAdmin,
+                                                   new { @class = "form-select", id = "" })
+                            }
+                        }
+                        else
+                        {
+                            <p>No admin's' are available</p>
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.A_EXPECTEDDATEANDTIME, "Expected Date", new { @class = " " })
+                        @Html.TextBoxFor(model => model.A_EXPECTEDDATEANDTIME, new { @class = "form-control", id = "expecteddate", type = "datetime-local", required = "required", tabindex = "1" })
+
+                    </div>
+                </div>
+                <div class="row ms-3 me-3 mt-3">
+                    <div class="col-md-12 col-sm-12">
+                        @Html.LabelFor(model => model.A_COMMENTS, "User Comments", new { @class = "" })
+                        @Html.TextAreaFor(model => model.A_COMMENTS, new
+ {
+     @class = "form-control custom-textarea",
+     placeholder = "Please enter your comments here....",
+     rows = "10",
+     cols = "70",
+     required = "required",
+     tabindex = "5",
+ })
+                    </div>
+                    <div class="col-md-12 mt-3 mb-3 d-flex justify-content-md-end justify-content-start">
+                        <button type="submit" class="btncolorsubmit me-3" id="submitBtn">Submit</button>
+                        <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("#", "#")'">Cancel</button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+                <h4>Are you sure you want to log out?</h4>
+            </div>
+            <div class="offcanvas-footer d-flex justify-content-center">
+                <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+                <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+            </div>
+        </div>
+    </div>
+
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dateTextbox = document.getElementById("assigneddate");
+
+            function formatForDateTimeLocal(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                const hours = String(date.getHours()).padStart(2, "0");
+                const minutes = String(date.getMinutes()).padStart(2, "0");
+
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
+            const now = new Date();
+            dateTextbox.value = formatForDateTimeLocal(now);
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dateTextbox = document.getElementById("expecteddate");
+
+            function formatForDateTimeLocal(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                const hours = String(date.getHours()).padStart(2, "0");
+                const minutes = String(date.getMinutes()).padStart(2, "0");
+
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
+            const now = new Date();
+            dateTextbox.value = formatForDateTimeLocal(now);
+        });
+    </script>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    $(document).ready(function () {
+        $("#AdminResponseForm").submit(function (event) {
+            event.preventDefault();
+
+            var submitBtn = $("#submitBtn");
+            submitBtn.prop("disabled", true).text("Submitting...");
+
+            var formData = new FormData(this);
+
+            // Disable page interaction
+            $("body").css("pointer-events", "none");
+
+            $.ajax({
+                url: '@Url.Action("Assignto", "AssignTo")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            showCancelButton: true,
+                            confirmButtonText: "Continue",
+                            cancelButtonText: "Back to List",
+                            allowOutsideClick: false, // Prevent closing by clicking outside
+                            allowEscapeKey: false, // Prevent closing using Esc key
+                            customClass: {
+                                confirmButton: "swal-btn-continue",
+                                cancelButton: "swal-btn-back"
+                            },
+                            didOpen: () => {
+                                // Allow interaction inside the alert only
+                                $(".swal2-container").css("pointer-events", "auto");
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            } else {
+                                window.location.href = '@Url.Action("RecentTicket", "RecentTickets")';
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: response.message,
+                            icon: "error",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    resetButton();
+                }
+            });
+        });
+
+        function resetButton() {
+            $("#submitBtn").prop("disabled", false).text("Submit");
+            $("body").css("pointer-events", "auto"); // Re-enable page interaction
+        }
+    });
+    </script>
+
+</body>
+</html>

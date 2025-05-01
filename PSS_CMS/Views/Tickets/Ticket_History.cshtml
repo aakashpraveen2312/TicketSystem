@@ -70,7 +70,7 @@
         </div>
 
         <div class="p-2" style="margin-right:10px">
-            <h4 class="heading">@Session["UserName"]</h4>
+            <h4 class="heading">@Session["UserName"].ToString().ToUpper()</h4>
         </div>
 
         <div class="p-2 me-3 dropdown">
@@ -110,13 +110,13 @@
         <div class="row gx-3 mb-3">
 
             <div class="col-lg-3 col-md-6">
-                @{ var projectTypeList = ViewBag.ProjectTypes as List<SelectListItem>; }
+                @{ var projectTypeList = ViewBag.Customer as List<SelectListItem>; }
 
                 @if (projectTypeList != null)
                 {
                     @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType,
                         projectTypeList,
-                        "Select Project",
+                        "Select Customer",
                         new { @class = "", id = "projectTypeFilter", tabindex = "1" })
                 }
 
@@ -124,7 +124,7 @@
                 {
                     @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType,
                         projectTypeList,
-                        "No projects are available",
+                        "No Customer's are available",
                         new { @class = "", id = "projectTypeFilter", tabindex = "1" })
                 }
             </div>
@@ -190,7 +190,7 @@
            {
                columns.Add(c => c.AdminNameDisplay).Titled("Admin Name").SetWidth("100px");
                columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time").SetWidth("150px");
-               columns.Add(c => c.TC_PROJECTID).Titled("Project").SetWidth("150px;");
+               columns.Add(c => c.CU_NAME).Titled("Customer").SetWidth("150px;");
                columns.Add(c => c.TC_SUBJECT).Titled("Subject");
                columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("120px");
                columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status").SetWidth("120px");

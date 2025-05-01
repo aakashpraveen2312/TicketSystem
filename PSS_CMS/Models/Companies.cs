@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace PSS_CMS.Models
 {
@@ -21,6 +17,7 @@ namespace PSS_CMS.Models
     public class Companies
     {
         public string Password { get; set; }
+        public string Usercode { get; set; }
         public Data Data { get; set; }
         public string SerialNumber { get; set; }
 
@@ -128,14 +125,11 @@ namespace PSS_CMS.Models
 
         public string GST { get; set; }
 
-
         public string Sortorder { get; set; }
         public bool Disable { get; set; }
 
-
-        //BREADCRUMBS
-
         public string COMPANYRECID { get; set; }
         public string Status { get; set; }
+        public string Message { get; set; }
     }
 }

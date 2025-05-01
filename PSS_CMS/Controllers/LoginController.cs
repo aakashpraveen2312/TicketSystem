@@ -24,16 +24,12 @@ namespace PSS_CMS.Controllers
 
         [HttpPost]
        
-        public async Task<ActionResult> Index(string L_USERNAME, string L_PASSWORD,string L_DOMAIN, Login model)        
+        public async Task<ActionResult> Index(string U_EMAILID, string U_PASSWORD,string U_DOMAIN, Login model)        
         {
-            string CompanyID = "";
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];           
-            
-            var Logurl = ConfigurationManager.AppSettings["Login"];
-
-            object content = "StrUserid=" + L_USERNAME + "&strPassword=" + L_PASSWORD + "&domain="+ L_DOMAIN;
-            string urll = Logurl +"?"+ content;
-
+            var LogInurl = ConfigurationManager.AppSettings["LOGIN"];
+            object content = "StrUserid=" + U_EMAILID + "&strPassword=" + U_PASSWORD + "&domain="+ U_DOMAIN;
+            string urll = LogInurl + "?"+ content;
 
             try
             {
@@ -59,8 +55,6 @@ namespace PSS_CMS.Controllers
                  if (responseTask.IsSuccessStatusCode)
                 {
                     var responseContent = responseTask.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-
                     var Response = JsonConvert.DeserializeObject<APIResponseLogin>(responseContent);
 
                     string errormessage = Response.Message;
@@ -69,34 +63,31 @@ namespace PSS_CMS.Controllers
                     if (Status == "Y")
                     {
                         var data = Response.Data[0];
-                        string role = data.L_ROLE;
+                        string role = data.U_RCODE;
 
                         // Common session assignments
-                        Session["DOMAIN"] = data.L_DOMAIN;
-                        Session["UserName"] = data.L_USERNAME;
-                        Session["UserRole"] = data.L_ROLE;
-                        Session["EmailId"] = data.L_EMAILID;
-                        Session["UserID"] = data.L_USERID;
-                        Session["CompanyID"] = data.L_COMPANYID;
-                        CompanyID = data.L_COMPANYID;
-                        //ViewBag.Logo = data.C_LOGO;
-                       
-
+                        Session["DOMAIN"] = data.U_DOMAIN;
+                        Session["UserName"] = data.U_USERNAME;
+                        Session["UserRole"] = data.U_RCODE;
+                        Session["EmailId"] = data.U_EMAILID;
+                        Session["UserRECID"] = data.U_RECID;
+                        Session["CompanyID"] = data.U_CRECID;
+                        int CompanyID = data.U_CRECID;
 
                         if (role == "User")
                         {
-                            
                             await AutoCloseTicket();
                             return RedirectToAction("Ticket_History", "Tickets");
                         }
-                        else if (role == "Admin" || role == "SuperAdmin")
+                        else if (role == "Admin" || role == "SA" || role == "Manager")
                         {
                             await Info(CompanyID);
-                            return RedirectToAction("Dashboard", "DashBoard");
+                            //return RedirectToAction("Dashboard", "DashBoard");
+                            return RedirectToAction("RecentTicket", "RecentTickets");
                         }
                     }
 
-                    else if (Status == "N")
+                    else
                     {                      
                         TempData["ErrorMessage"] = " Invalid User name or Password";
                     }
@@ -116,7 +107,7 @@ namespace PSS_CMS.Controllers
 
 
 
-        public async Task<ActionResult> Info(string companyid)
+        public async Task<ActionResult> Info(int? companyid)
         {
             CompanyInfo companyinfo = null;
 

@@ -69,7 +69,7 @@
             font-weight: bold;
             padding: 4px 8px;
         }
-        i.bx.bx-message-rounded-dots {
+        i.bx.bx-reply-all, i.bx.bx-user-plus {
             font-size: 25px;
         }
     </style>
@@ -87,7 +87,7 @@
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
 
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
 
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -120,18 +120,18 @@
             <div class="col-lg-3 col-md-4 col-sm-4">
                 <div class="position-relative flex-grow-1">
 
-                    @if (ViewBag.ProjectTypes != null)
+                    @if (ViewBag.customer != null)
                     {
                         @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType,
-                                              (IEnumerable<SelectListItem>)ViewBag.ProjectTypes,
-                                              "Select Project",
+                                              (IEnumerable<SelectListItem>)ViewBag.customer,
+                                              "Select Customer",
                                               new { @class = "", id = "projectTypeFilter1" })
                     }
                     else
                     {
                         @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType,
-                                              (IEnumerable<SelectListItem>)ViewBag.ProjectTypes,
-                                                "No projects are available",
+                                              (IEnumerable<SelectListItem>)ViewBag.customer,
+                                                "No Customer are available",
                                               new { @class = "", id = "projectTypeFilter1" })
 
                     }
@@ -203,7 +203,7 @@
            {
                columns.Add(c => c.TC_USERNAME).Titled("User Name").SetWidth("120px");
                columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time").SetWidth("150px");
-               columns.Add(c => c.TC_PROJECTID).Titled("Project");
+               columns.Add(c => c.CU_NAME).Titled("Customer");
                columns.Add(c => c.TC_COMMENTS).Titled("Comments");
                columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority").SetWidth("100px");
                columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("100px");
@@ -214,14 +214,16 @@
                .SetWidth(30)
             .RenderValueAs(o =>
             {
+                var Assigntourl = Url.Action("Assignto", "AssignTo", new {Recid=o.TC_RECID});
+                var AssigntoiconHtml = "<i class='bx bx-user-plus'></i>";
+                var AssigntolinkHtml = $"<a href='{Assigntourl}' data-toggle='tooltip' data-placement='top' title='Assign To'>{AssigntoiconHtml}</a>";
 
+                var LineItemsurl = Url.Action("AdminTickets", "RecentTickets", new { recid2 = o.TC_RECID, userid = o.TC_URECID, status = o.TC_STATUS, adminresolvedname = o.TC_ADMINNAME });
+                var LineItemiconHtml = "<i class='bx bx-reply-all'></i>";
+                var LineItemlinkHtml = $"<a href='{LineItemsurl}' data-toggle='tooltip' data-placement='top' title='Review Tickets'>{LineItemiconHtml}</a>";
+                var extraSpaces = "&nbsp;";
 
-                var LineItemsurl = Url.Action("AdminTickets", "RecentTickets", new { recid2 = o.TC_RECID, userid = o.TC_USERID, status = o.TC_STATUS, adminresolvedname = o.TC_ADMINNAME });
-                var LineItemiconHtml = "<i class='bx bx-message-rounded-dots' style></i>";
-                var LineItemlinkHtml = $"<a href='{LineItemsurl}' data-toggle='tooltip' data-placement='top' title='Tickets'>{LineItemiconHtml}</a>";
-
-
-                return MvcHtmlString.Create($"{LineItemlinkHtml}");
+                return MvcHtmlString.Create($"{AssigntolinkHtml}{extraSpaces}{LineItemlinkHtml}");
             });
 
            }).WithPaging(10).Sortable(true)

@@ -54,28 +54,28 @@
 
 
                         <div class="form-group row mb-3">
-                            @Html.LabelFor(model => Model.L_USERNAME, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
+                            @Html.LabelFor(model => Model.U_EMAILID, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.L_USERNAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "1", type = "text", id = "L_USERNAME" , placeholder = "Email, Code or Mobile number" } })
-                                @Html.ValidationMessageFor(model => model.L_USERNAME, "", new { @class = "text-danger" })
+                                @Html.EditorFor(model => model.U_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "1", type = "text", id = "L_USERNAME" , placeholder = "Email, Code or Mobile number" } })
+                                @Html.ValidationMessageFor(model => model.U_EMAILID, "", new { @class = "text-danger" })
                             </div>
 
                         </div>
                         <div class="form-group row mb-3">
 
-                            @Html.LabelFor(model => Model.L_PASSWORD, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
+                            @Html.LabelFor(model => Model.U_PASSWORD, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.L_PASSWORD, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", type = "password", id = "L_PASSWORD" } })
-                                @Html.ValidationMessageFor(model => model.L_PASSWORD, "", new { @class = "text-danger" })
+                                @Html.EditorFor(model => model.U_PASSWORD, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", type = "password", id = "L_PASSWORD" } })
+                                @Html.ValidationMessageFor(model => model.U_PASSWORD, "", new { @class = "text-danger" })
                             </div>
 
                         </div>
                         <div class="form-group row mb-3">
 
-                            @Html.LabelFor(model => Model.L_DOMAIN, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
+                            @Html.LabelFor(model => Model.U_DOMAIN, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.L_DOMAIN, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", type = "text", id = "L_DOMAIN" } })
-                                @Html.ValidationMessageFor(model => model.L_DOMAIN, "", new { @class = "text-danger" })
+                                @Html.EditorFor(model => model.U_DOMAIN, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", type = "text", id = "L_DOMAIN" } })
+                                @Html.ValidationMessageFor(model => model.U_DOMAIN, "", new { @class = "text-danger" })
                             </div>
 
                         </div>

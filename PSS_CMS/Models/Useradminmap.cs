@@ -9,19 +9,22 @@ namespace PSS_CMS.Models
     {
         public bool USERSELECTED { get; set; }
         public bool Selected { get; set; }
-        public string L_USERNAME { get; set; }
-        public string L_ROLE { get; set; }
-        public string L_USERID { get; set; }
-        public int UA_RECID { get; set; }
 
-        public int P_PROJECTRECID { get; set; }
-        public string TPM_PRODUCTNAME { get; set; }
+        public int UA_RECID { get; set; }
+        public int U_RECID { get; set; }
+        public string U_USERNAME { get; set; }
+        public string U_RCODE { get; set; }
+        public string U_CRECID { get; set; }
+        public string U_USERCODE { get; set; }
 
         public string P_CODE { get; set; }
         public string P_NAME { get; set; }
         public int P_SORTORDER { get; set; }
         public int P_CRECID { get; set; }
+        public int P_RECID { get; set; }
+        public int CU_RECID { get; set; }
         public string P_DISABLE { get; set; }
+        public string CU_NAME { get; set; }
     }
     public class UserAdminRootObject
     {

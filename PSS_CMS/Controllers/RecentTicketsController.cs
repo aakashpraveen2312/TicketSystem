@@ -30,7 +30,7 @@ namespace PSS_CMS.Controllers
             string APIKey = Session["APIKEY"].ToString();
             List<Recenttickets> RecentTicketList = new List<Recenttickets>();
 
-            string strparams = "TC_USERID=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "USERID=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -131,29 +131,22 @@ namespace PSS_CMS.Controllers
             }
 
             await TicketType();
-            await ProjectType();
+            await RecentTicketsCustomerCombo();
             return View(RecentTicketList);
         }
 
 
-        public async Task<ActionResult> AdminTickets(string recid2, string userid, string status)
+        public async Task<ActionResult> AdminTickets(string recid2, string userid, string status,string L_AdminDeligate,string Assigntoclick)
         {
-            await ProjectTypeAdminFAQ();
-            IEnumerable<Admintickets> ticketadminList = await GetAdminTickets(recid2, userid, status); // Your logic to get a list of tickets
+            IEnumerable<Admintickets> ticketadminList = await GetAdminTickets(recid2, userid, status, L_AdminDeligate, Assigntoclick); // Your logic to get a list of tickets
             return View(ticketadminList); // Pass the collection to the view
         }
 
-        public async Task<IEnumerable<Admintickets>> GetAdminTickets(string recid2, string userid, string status)
+        public async Task<IEnumerable<Admintickets>> GetAdminTickets(string recid2, string userid, string status,string L_AdminDeligate,string Assigntoclick)
         {
-            ViewBag.NameOptions = new List<SelectListItem>
-{
-    new SelectListItem { Value = "Neelakrishnan", Text = "Neelakrishnan" },
-    new SelectListItem { Value = "Yogesh", Text = "Yogesh" }
-};
-
-
             Session["RECORDID"] = recid2;
             Session["STATUS"] = status;
+            Session["L_AdminDeligate"] = L_AdminDeligate;
             
 
             string WEBURLGETBYID = ConfigurationManager.AppSettings["AdminGetSingleURL"];
@@ -162,7 +155,7 @@ namespace PSS_CMS.Controllers
 
             List<Admintickets> ticketadminList = new List<Admintickets>();
            
-            string strparams = "TC_USERID=" + userid + "&StrRecid=" + recid2 + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "USERID=" + userid + "&StrRecid=" + recid2 + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -388,15 +381,15 @@ namespace PSS_CMS.Controllers
 
             return View();
         }
-        public async Task<ActionResult> ProjectType()
+        public async Task<ActionResult> RecentTicketsCustomerCombo()
         
         {
-            List<SelectListItem> projectTypes = new List<SelectListItem>();
+            List<SelectListItem> customer = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOBOXPROJECTTYPE"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOCUSTOMERS"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "userid=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             //string strparams = "companyId=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
@@ -419,10 +412,10 @@ namespace PSS_CMS.Controllers
 
                             if (rootObjects?.Data != null)
                             {
-                                projectTypes = rootObjects.Data.Select(t => new SelectListItem
+                                customer = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.P_NAME, // or the appropriate value field
-                                    Text = t.P_NAME // or the appropriate text field
+                                    Value = t.CU_RECID.ToString(), // or the appropriate value field
+                                    Text = t.CU_NAME // or the appropriate text field
                                 }).ToList();
                             }
                         }
@@ -435,7 +428,7 @@ namespace PSS_CMS.Controllers
             }
 
             // Assuming you are passing ticketTypes to the view
-            ViewBag.ProjectTypes = projectTypes;
+            ViewBag.customer = customer;
 
             return View();
         }
@@ -458,7 +451,7 @@ namespace PSS_CMS.Controllers
                 // Reuse previous value from session
                 searchPharse = Session["searchPharse"].ToString();
             }
-            string Weburl = ConfigurationManager.AppSettings["FAQGET1"];
+            string Weburl = ConfigurationManager.AppSettings["FAQGET"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
@@ -507,7 +500,7 @@ namespace PSS_CMS.Controllers
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
            
-            await ProjectTypeAdminFAQ();
+            await ProductAdminFAQ();
       
             return View(FAQList);
         }
@@ -515,7 +508,7 @@ namespace PSS_CMS.Controllers
       
         public async Task <ActionResult> FAQADMINPOST()
         {
-            await ProjectTypeAdminFAQ();
+            await ProductAdminFAQ();
             return View();
         }
 
@@ -524,7 +517,7 @@ namespace PSS_CMS.Controllers
         {
             try
             {
-                await ProjectTypeAdminFAQ();
+                await ProductAdminFAQ();
                 // Declare fileBytes and base64Image once, before the if block
                 byte[] fileBytes = null;
                 string base64Image = null;
@@ -553,8 +546,6 @@ namespace PSS_CMS.Controllers
                 var FaqPostURL = ConfigurationManager.AppSettings["FAQPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
-                //faq.F_QUESTION = faq.F_QUESTION?.Replace("\"", ""); // Removes double quotes
-                //faq.F_ANSWER = faq.F_ANSWER?.Replace("\"", ""); // Removes double quotes
 
                 // Construct the JSON content for the API request
                 var content = $@"{{                     
@@ -563,12 +554,13 @@ namespace PSS_CMS.Controllers
             ""f_ATTACHEMENT"": ""{faq.F_ATTACHEMENT}"",
             ""f_CREATEDDATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
             ""f_SORTORDER"": ""{"1"}"",                              
-            ""F_PROJECTRECID"": ""{faq.SelectedProjectType1}"",                              
-            ""F_USERID"": ""{Session["UserID"]}"",                              
             ""f_CRECID"": ""{Session["CompanyID"]}"",                              
+            ""f_URECID"": ""{Session["UserRECID"]}"",                              
+            ""f_PRECID"": ""{faq.SelectedProjectType1}"",                              
+            ""f_CURECID"": ""{0}"",                              
             ""f_DISABLE"": ""{"N"}""               
         }}";
-              
+
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
@@ -618,20 +610,19 @@ namespace PSS_CMS.Controllers
                 return Json(new { success = false, message = "Exception occurred: " + ex.Message });
             }
 
-           
+
         }
 
         //Admintickets FAQ Ticket type combo
-        public async Task<ActionResult> ProjectTypeAdminFAQ()
+        public async Task<ActionResult> ProductAdminFAQ()
 
         {
-            List<SelectListItem> projectTypes = new List<SelectListItem>();
+            List<SelectListItem> Product = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOPRODUCTSHOW"];
+            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "userid=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
-            //string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "cmprecid=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -649,14 +640,14 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<TicketTypeModels>(jsonString);
+                            var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
 
                             if (rootObjects?.Data != null)
                             {
-                                projectTypes = rootObjects.Data.Select(t => new SelectListItem
+                                Product = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.TPM_RECID.ToString(), // or the appropriate value field
-                                    Text = t.TPM_PRODUCTNAME // or the appropriate text field
+                                    Value = t.P_RECID.ToString(), // or the appropriate value field
+                                    Text = t.P_NAME,
                                 }).ToList();
                             }
                         }
@@ -669,25 +660,24 @@ namespace PSS_CMS.Controllers
             }
 
             // Assuming you are passing ticketTypes to the view
-            ViewBag.ProjectTypes = projectTypes;
+            ViewBag.Product = Product;
 
             return View();
         }
 
 
-       
-
-        public async Task<ActionResult> Edit(int F_RECID,int F_PROJECTRECID)
+        public async Task<ActionResult> Edit(int F_RECID,int F_PRECID)
         {
-            
-            
+
+            Session["F_RECID"] = F_RECID;
+            Session["F_PRECID"] = F_PRECID;
             string WEBURLGETBYID = ConfigurationManager.AppSettings["FAQGETBYID"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
             Faq faq = null;
 
-            string strparams = "recID=" + F_RECID + "&cmprecid=" + Session["CompanyID"] + "&projectID="+ F_PROJECTRECID;
+            string strparams ="cmprecid=" + Session["CompanyID"] + "&recID=" + F_RECID;
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -707,9 +697,6 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var content = JsonConvert.DeserializeObject<RootObjectFAQGET>(jsonString);
                             string base64Image = content.Data.F_ATTACHEMENT;
-                            Session["F_USERID"] =content.Data.F_USERID;
-                            Session["F_RECID"] =content.Data. F_RECID;
-                            Session["F_PROJECTRECID"] =content.Data.F_PROJECTRECID;
                             if (!string.IsNullOrEmpty(base64Image))
                             {
 
@@ -782,9 +769,10 @@ namespace PSS_CMS.Controllers
             ""f_ATTACHEMENT"": ""{faq.F_ATTACHEMENT}"",
             ""f_CREATEDDATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
             ""f_SORTORDER"": ""{"1"}"",                              
-            ""f_PROJECTRECID"": ""{Session["F_PROJECTRECID"]}"",                              
-            ""f_USERID"": ""{Session["F_USERID"]}"",                              
             ""f_CRECID"": ""{Session["CompanyID"]}"",                              
+            ""f_URECID"": ""{Session["UserRECID"]}"",                              
+            ""f_PRECID"": ""{Session["F_PRECID"]}"",                              
+            ""f_CURECID"": ""{0}"",                              
             ""f_DISABLE"": ""{"N"}""           
         }}";
 
@@ -953,7 +941,6 @@ namespace PSS_CMS.Controllers
                 return Content("Exception occurred: " + ex.Message);
             }
         }
-
-
+       
     }
 }

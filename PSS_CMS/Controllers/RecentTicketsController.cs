@@ -131,7 +131,7 @@ namespace PSS_CMS.Controllers
             }
 
             await TicketType();
-            await RecentTicketsCustomerCombo();
+            await RecentTicketsProductCombo();
             return View(RecentTicketList);
         }
 
@@ -218,7 +218,7 @@ namespace PSS_CMS.Controllers
                         base64Image = Convert.ToBase64String(fileBytes);
 
                         // Assign the base64 image to the model property
-                        Admintickets.TC_REQUEST_ATTACHMENT_PREFIX = base64Image;
+                        Admintickets.TC_REQUEST_ATTPREFIX = base64Image;
                     }
                     else
                     {
@@ -233,10 +233,10 @@ namespace PSS_CMS.Controllers
                 var content = $@"{{           
             ""tC_RECID"": ""{Session["LastRecid"]}"",           
             ""tC_CRECID"": ""{Session["CompanyID"]}"",           
-            ""tC_RESPONSE_ATTACHMENT_PREFIX"": ""{base64Image}"",
-            ""tC_RESPONSE_USERID"": ""{Session["UserID"]}"",
+            ""tC_RESPONSE_ATTPREFIX"": ""{base64Image}"",
+            ""tC_RESPONSE_URECID"": ""{Session["UserRECID"]}"",
             ""tC_RESPONSE_DATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
-            ""tC_RESPONSE_COMMENTS"": ""{HttpUtility.JavaScriptStringEncode(RESPONSE_COMMENTS)}"",                              
+            ""tC_RESPONSECOMMENTS"": ""{HttpUtility.JavaScriptStringEncode(RESPONSE_COMMENTS)}"",                              
             ""tC_ADMINNAME"": ""{Session["UserName"]}"",                              
             ""tC_STATUS"": ""{"R"}""           
         }}";
@@ -381,16 +381,15 @@ namespace PSS_CMS.Controllers
 
             return View();
         }
-        public async Task<ActionResult> RecentTicketsCustomerCombo()
+        public async Task<ActionResult> RecentTicketsProductCombo()
         
         {
-            List<SelectListItem> customer = new List<SelectListItem>();
+            List<SelectListItem> product = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOCUSTOMERS"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOFORPRODUCTANDLISTVIEW"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "userid=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
-            //string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + Session["UserRECID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -412,10 +411,10 @@ namespace PSS_CMS.Controllers
 
                             if (rootObjects?.Data != null)
                             {
-                                customer = rootObjects.Data.Select(t => new SelectListItem
+                                product = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.CU_RECID.ToString(), // or the appropriate value field
-                                    Text = t.CU_NAME // or the appropriate text field
+                                    Value = t.P_RECID.ToString(), // or the appropriate value field
+                                    Text = t.P_NAME // or the appropriate text field
                                 }).ToList();
                             }
                         }
@@ -428,7 +427,7 @@ namespace PSS_CMS.Controllers
             }
 
             // Assuming you are passing ticketTypes to the view
-            ViewBag.customer = customer;
+            ViewBag.product = product;
 
             return View();
         }
@@ -905,7 +904,7 @@ namespace PSS_CMS.Controllers
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
-            string strparams = "TC_USERID=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "TC_USERID=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string url = Weburl + "?" + strparams;
 
             try

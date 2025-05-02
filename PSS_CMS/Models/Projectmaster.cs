@@ -12,7 +12,7 @@ namespace PSS_CMS.Models
     public class Projectmaster
     {
         public int CU_RECID { get; set; }
-        [DisplayName("Code")]
+        [DisplayName("Store Reference Code")]
         public string CU_CODE { get; set; }
         [DisplayName("Customer Name")]
         public string CU_NAME { get; set; }

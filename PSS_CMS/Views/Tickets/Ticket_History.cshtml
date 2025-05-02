@@ -110,13 +110,13 @@
         <div class="row gx-3 mb-3">
 
             <div class="col-lg-3 col-md-6">
-                @{ var projectTypeList = ViewBag.Customer as List<SelectListItem>; }
+                @{ var projectTypeList = ViewBag.Product as List<SelectListItem>; }
 
                 @if (projectTypeList != null)
                 {
                     @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType,
                         projectTypeList,
-                        "Select Customer",
+                        "Select Product",
                         new { @class = "", id = "projectTypeFilter", tabindex = "1" })
                 }
 
@@ -124,7 +124,7 @@
                 {
                     @Html.DropDownListFor(model => model.FirstOrDefault().SelectedProjectType,
                         projectTypeList,
-                        "No Customer's are available",
+                        "No Product's are available",
                         new { @class = "", id = "projectTypeFilter", tabindex = "1" })
                 }
             </div>
@@ -190,7 +190,7 @@
            {
                columns.Add(c => c.AdminNameDisplay).Titled("Admin Name").SetWidth("100px");
                columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time").SetWidth("150px");
-               columns.Add(c => c.CU_NAME).Titled("Customer").SetWidth("150px;");
+               columns.Add(c => c.P_NAME).Titled("Product").SetWidth("150px;");
                columns.Add(c => c.TC_SUBJECT).Titled("Subject");
                columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("120px");
                columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status").SetWidth("120px");
@@ -200,7 +200,7 @@
                    .SetWidth(30)
 .RenderValueAs(o =>
 {
-    var reviewUrl = Url.Action("ReviewTickets", "Tickets", new { recid2 = o.TC_RECID, status = o.TC_STATUS, REOPENUSERNAME = o.TC_USERNAME,projectid=o.TC_PROJECTID });
+    var reviewUrl = Url.Action("ReviewTickets", "Tickets", new { recid2 = o.TC_RECID, status = o.TC_STATUS, REOPENUSERNAME = o.TC_USERNAME,projectid=o.P_RECID });
     var deleteUrl = Url.Action("DeleteUpdateTicket", "Tickets");
     var timelineurl = Url.Action("TimelineChart", "DashBoard", new { recid3 = o.TC_RECID });
   

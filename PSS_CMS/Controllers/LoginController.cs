@@ -170,7 +170,7 @@ namespace PSS_CMS.Controllers
         public async Task<ActionResult> AutoCloseTicket()
         {
             string WEBURLGET = ConfigurationManager.AppSettings["TICKETAUTOCLOSE"];
-            string strparams = "userid=" + Session["UserID"]+"&cmprecid=" + Session["CompanyID"];
+            string strparams = "userid=" + Session["UserRECID"] +"&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
           
 

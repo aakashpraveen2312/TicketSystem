@@ -141,7 +141,7 @@
                             {
                                 var modifiedAdmin = new List<SelectListItem>(admin);
                                 // Add "--Select Project--" option only if more than one project is available
-                                modifiedAdmin.Insert(0, new SelectListItem { Text = "No project's are available", Value = "" });
+                                modifiedAdmin.Insert(0, new SelectListItem { Text = "No Admin's are available", Value = "" });
 
                                 @Html.DropDownList("SelectedAdmin",
                                                    modifiedAdmin,

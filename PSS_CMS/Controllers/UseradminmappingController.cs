@@ -202,14 +202,14 @@ namespace PSS_CMS.Controllers
             Session["RECID"] = id;
             Useradminmap objuseradminprojectmap = new Useradminmap();
 
-            string Weburl = ConfigurationManager.AppSettings["PRODUCTTYPEMAPPING"];
+            string Weburl = ConfigurationManager.AppSettings["COMBOFORPRODUCTANDLISTVIEW"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
             List<Useradminmap> useradminprojectlist = new List<Useradminmap>();
 
-            string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + id;
+            string strparams = "companyId=" + Session["CompanyID"]+ "&UserID=" + id;
             string url = Weburl + "?" + strparams;
 
             try
@@ -283,7 +283,7 @@ namespace PSS_CMS.Controllers
                 var content = $@"{{
                     ""pT_CRECID"": ""{Session["CompanyID"]}"",
                     ""pT_URECID"": ""{ Session["RECID"]}"",                  
-                    ""pT_CURECID"":""{Session["SELECTEDPROJECTID"]}"",              
+                    ""pT_PRECID"":""{Session["SELECTEDPROJECTID"]}"",              
                     ""pT_SORTORDER"":""{1}"",                
                     ""pT_DISABLE"":""{"Y"}""                
                    

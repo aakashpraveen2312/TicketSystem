@@ -70,7 +70,7 @@ namespace PSS_CMS.Controllers
             }
 
             // Pass the view model to the next method
-            await ComboBoxCustomerNewticket(viewModel);
+            await ComboBoxProductNewticket(viewModel);
 
             return View(viewModel);
         }
@@ -113,7 +113,7 @@ namespace PSS_CMS.Controllers
                         base64Image = Convert.ToBase64String(fileBytes);
 
                         // Assign the base64 image to the model property
-                        tickets.TC_REQUEST_ATTACHMENT_PREFIX = base64Image;
+                        tickets.TC_REQUEST_ATTPREFIX = base64Image;
                     }
                     else
                     {
@@ -129,7 +129,7 @@ namespace PSS_CMS.Controllers
                 var content = $@"{{           
             ""tC_URECID"": ""{Session["UserRECID"]}"",           
             ""tC_CRECID"": ""{ Session["CompanyID"]}"",          
-            ""tC_CURECID"": ""{tickets.SelectedProjectType}"",        
+            ""tC_PRECID"": ""{tickets.SelectedProjectType}"",        
             ""tC_TICKETDATE"": ""{tickets.TC_Dates}"",        
             ""tC_SUBJECT"": ""{tickets.TC_SUBJECT}"",        
             ""tC_OTP"": ""{"6757"}"",
@@ -140,7 +140,7 @@ namespace PSS_CMS.Controllers
             ""tC_PRIORITYTYPE"": ""{tickets.TC_PRIORITYTYPE}"",
             ""tC_TICKETTYPE"": ""{tickets.SelectedTicketType}"",
             ""tC_USERNAME"": ""{Session["UserName"]}"",
-            ""tC_REFERENCEID"": ""{0}""
+            ""tC_REFERENCETRECID"": ""{0}""
         }}";
 
                 // Create the HTTP request
@@ -304,7 +304,7 @@ namespace PSS_CMS.Controllers
             }
 
             await ComboBoxTicketHistory();
-            await ComboBoxTicketHistoryCustomer();
+            await ComboBoxTicketHistoryProduct();
             return View(RecentTicketListall);
         }
 
@@ -328,20 +328,20 @@ namespace PSS_CMS.Controllers
 
                     var content = JsonConvert.SerializeObject(new
                     {
-                        tC_USERID = Session["UserID"],
+                        tC_URECID = Session["UserRECID"],
                         tC_CRECID = Session["CompanyID"],
-                        tC_PROJECTID = Session["ProjectID"],
+                        tC_PRECID = Session["ProjectID"],
                         tC_TICKETDATE = DateTime.Now.ToString("yyyy-MM-dd"),
                         tC_SUBJECT = Session["Subject"],
                         tC_OTP = "6757",
                         tC_COMMENTS =  HttpUtility.JavaScriptStringEncode(tickets.TC_COMMENTS),
-                        tC_REQUEST_ATTACHMENT_PREFIX = base64Image,
+                        tC_REQUEST_ATTPREFIX = base64Image,
                         tC_REQUEST_DATETIME = DateTime.Now.ToString("yyyy-MM-dd"),
                         tC_STATUS = combox,
                         tC_PRIORITYTYPE = Session["TC_PRIORITYTYPE"],
                         tC_TICKETTYPE = Session["TC_TICKETTYPE"],
                         tC_USERNAME = Session["REOPENUSERNAME"],
-                        tC_REFERENCEID = Session["ReferenceRecID"]
+                        tC_REFERENCETRECID = Session["ReferenceRecID"]
                     });
                     // Set up HTTP client with custom validation (for SSL certificates)
                     var handler = new HttpClientHandler
@@ -474,7 +474,7 @@ namespace PSS_CMS.Controllers
             string APIKey = Session["APIKEY"].ToString();
             List<Ticket> ticketList = new List<Ticket>();
 
-            string strparams = "TC_USERID=" + Session["UserID"] + "&StrRecid=" + recid2 + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "USERID=" + Session["UserRECID"] + "&StrRecid=" + recid2 + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -635,15 +635,15 @@ namespace PSS_CMS.Controllers
                 return View();
         }
         //new Ticket list view combo project type
-        public async Task<ActionResult> ComboBoxTicketHistoryCustomer()
+        public async Task<ActionResult> ComboBoxTicketHistoryProduct()
         {
 
-            List<SelectListItem> Customer = new List<SelectListItem>();
+            List<SelectListItem> Product = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOCUSTOMERS"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOFORPRODUCTANDLISTVIEW"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "userid=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + Session["UserRECID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -665,10 +665,10 @@ namespace PSS_CMS.Controllers
 
                             if (rootObjects?.Data != null)
                             {
-                                Customer = rootObjects.Data.Select(t => new SelectListItem
+                                Product = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.CU_RECID.ToString(), // or the appropriate value field
-                                    Text = t.CU_NAME // or the appropriate text field
+                                    Value = t.P_RECID.ToString(), // or the appropriate value field
+                                    Text = t.P_NAME // or the appropriate text field
                                 }).ToList();
                             }
                         }
@@ -681,18 +681,18 @@ namespace PSS_CMS.Controllers
             }
 
             // Assuming you are passing ticketTypes to the view
-            ViewBag.Customer = Customer;
+            ViewBag.Product = Product;
 
             return View();
         }
 
         //new Ticket combo project type
-        public async Task ComboBoxCustomerNewticket(Tickets viewModel)
+        public async Task ComboBoxProductNewticket(Tickets viewModel)
         {
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOCUSTOMERS"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOFORPRODUCTANDLISTVIEW"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "userid=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + Session["UserRECID"];
             string url = webUrlGet + "?" + strparams;
 
             try
@@ -716,8 +716,8 @@ namespace PSS_CMS.Controllers
 
                             viewModel.TicketCombo2.TicketTypes2 = ticketTypes2.Select(item => new SelectListItem
                             {
-                                Value = item.CU_RECID.ToString(),
-                                Text = item.CU_NAME
+                                Value = item.P_RECID.ToString(),
+                                Text = item.P_NAME
                             }).ToList();
                         }
                     }
@@ -858,7 +858,7 @@ namespace PSS_CMS.Controllers
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
-            string strparams = "TC_USERID=" + Session["UserID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "TC_USERID=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string url = Weburl + "?" + strparams;
 
             try

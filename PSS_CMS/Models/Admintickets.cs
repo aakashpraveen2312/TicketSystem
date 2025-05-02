@@ -22,9 +22,9 @@ namespace PSS_CMS.Models
         public string TC_TICKETDATE { get; set; }
         public string TC_SUBJECT { get; set; }
         public string TC_COMMENTS { get; set; }
-        public string TC_REQUEST_ATTACHMENT_PREFIX { get; set; }
-        public string TC_RESPONSE_ATTACHMENT_PREFIX { get; set; }
-        public string TC_RESPONSE_COMMENTS { get; set; }
+        public string TC_REQUEST_ATTPREFIX { get; set; }
+        public string TC_RESPONSE_ATTPREFIX { get; set; }
+        public string TC_RESPONSECOMMENTS { get; set; }
         public string TC_REQUEST_DATETIME { get; set; }
         public string TC_RESPONSE_DATETIME { get; set; }
         public string REQUEST_DATETIME { get; set; }
@@ -33,6 +33,10 @@ namespace PSS_CMS.Models
         public string TC_USERNAME { get; set; }
         public string TC_ADMINNAME { get; set; }
         public string LastStatus { get; set; }
+        //public int TC_ASSIGNTOURECID { get; set; }
+        public string TC_ASSIGNETODATETIME { get; set; }
+        public string TC_EXPECTEDDATETIME { get; set; }
+        public string TC_ASSIGNBY { get; set; }
 
         public int LastRecid { get; set; }
 

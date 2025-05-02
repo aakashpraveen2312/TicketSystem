@@ -44,6 +44,7 @@ namespace PSS_CMS.Models
         public string TC_OTP { get; set; }
         public string TC_COMMENTS { get; set; }
         public string TC_REQUEST_ATTACHMENT_PREFIX { get; set; }
+      
         public string TC_REQUEST_DATETIME { get; set; }
         public string TC_RESPONSE_ATTACHMENT_PREFIX { get; set; }
         public string TC_RESPONSE_USERID { get; set; }

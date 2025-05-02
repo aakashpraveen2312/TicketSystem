@@ -106,20 +106,20 @@
                         @if (Model.TicketCombo2.TicketTypes2.Count > 1)
                         {
                             <!-- Show dropdown with "Select Project" placeholder if count > 1 -->
-                            @Html.LabelFor(model => model.SelectedProjectType, "Customer", new { @class = "pb-2 " })
-                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "Select Customer", new { @class = "form-select", required = "required" })
+                            @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
+                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "Select Product", new { @class = "form-select", required = "required" })
                         }
                         else if (Model.TicketCombo2.TicketTypes2.Count == 1)
                         {
                             <!-- Show dropdown without placeholder if count == 1 -->
-                            @Html.LabelFor(model => model.SelectedProjectType, "Customer", new { @class = "pb-2 " })
+                            @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
                             @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, new { @class = "form-select", required = "required" })
                         }
                         else
                         {
                             <!-- Show dropdown without placeholder if count == 1 -->
-                            @Html.LabelFor(model => model.SelectedProjectType, "Customer", new { @class = "pb-2 " })
-                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "No Customer's are available", new { @class = "form-select", required = "required" })
+                            @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
+                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "No Product's are available", new { @class = "form-select", required = "required" })
                         }
 
                     </div>

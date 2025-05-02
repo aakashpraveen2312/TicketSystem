@@ -67,7 +67,7 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.CU_CODE).Titled("Code").SetWidth("100px");
+               columns.Add(c => c.CU_CODE).Titled("Store Reference Code").SetWidth("100px");
                columns.Add(c => c.CU_NAME).Titled("Customer Name");
                columns.Add(c => c.CU_EMAIL).Titled("Email ID");
                columns.Add(c => c.CU_MOBILENO).Titled("Mobile Number").SetWidth("150px").Css("text-right");

@@ -56,7 +56,7 @@
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
-               
+
             </div>
 
         </div>
@@ -178,33 +178,17 @@
     </script>
     <script>
     $(document).ready(function () {
-        // Initially disable the submit button
-        toggleSubmitButton();
-
         // Select/Deselect all checkboxes
         $('#selectAll').click(function () {
             var isChecked = $(this).is(':checked');
             $('input[name^="selectedItems"][type="checkbox"]').prop('checked', isChecked);
-            toggleSubmitButton(); // Update button state
-        });
-
-        // Event for individual checkbox selection
-        $('input[name^="selectedItems"][type="checkbox"]').change(function () {
-            toggleSubmitButton(); // Update button state
         });
 
         // Handle submit button click
         $('#submitButton').click(function (event) {
             event.preventDefault(); // Prevent the default form submission
-
             updateSecondGrid(); // Call the function to gather selected IDs and send them to the server
         });
-
-        // Function to enable/disable submit button based on selection
-        function toggleSubmitButton() {
-            let anyChecked = $('input[name^="selectedItems"][type="checkbox"]:checked').length > 0;
-            $('#submitButton').prop('disabled', !anyChecked);
-        }
 
         function updateSecondGrid() {
             let selectedIds = [];
@@ -212,18 +196,15 @@
             // Loop through all checked checkboxes
             $('input[name^="selectedItems"][type="checkbox"]:checked').each(function () {
                 let index = $(this).attr('name').match(/\d+/)[0]; // Get index from name attribute
-
-                // Get the corresponding hidden input value using the same index
                 let userId = $('input[name="selectedItems[' + index + '].L_USERID"]').val();
 
                 if (userId) {
-                    selectedIds.push(userId); // Push to array
+                    selectedIds.push(userId);
                 }
             });
 
             console.log("selectedIds", selectedIds);
 
-            // Send to controller via AJAX
             $.ajax({
                 type: 'POST',
                 url: '@Url.Action("CheckedValue", "Useradminmapping")',
@@ -254,6 +235,7 @@
         }
     });
     </script>
+
 
 
 </body>

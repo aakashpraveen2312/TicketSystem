@@ -110,9 +110,9 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                         </div>
 
 
-                                        @if (!string.IsNullOrEmpty(item.TC_REQUEST_ATTACHMENT_PREFIX))
+                                        @if (!string.IsNullOrEmpty(item.TC_REQUEST_ATTPREFIX))
                                         {
-                                            string base64String = item.TC_REQUEST_ATTACHMENT_PREFIX;
+                                            string base64String = item.TC_REQUEST_ATTPREFIX;
 
                                             // Detect file type from Base64 prefix
                                             string fileType = "";
@@ -166,7 +166,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                             {
                                                 <div class="row">
                                                     <div class="col-7">
-                                                        <img src="data:@mimeType;base64,@item.TC_REQUEST_ATTACHMENT_PREFIX"
+                                                        <img src="data:@mimeType;base64,@item.TC_REQUEST_ATTPREFIX"
                                                              alt="Ticket Image" class="img-fluid "
                                                              data-toggle="modal" data-target="#modal_@item.TC_RECID" />
                                                     </div>
@@ -182,7 +182,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                             <div class="modal-dialog" role="document">
                                                                 <div class="custom modal-content">
                                                                     <div class="modal-body">
-                                                                        <img src="data:@mimeType;base64,@item.TC_REQUEST_ATTACHMENT_PREFIX" alt="Ticket Image" class="img-fluid logical" />
+                                                                        <img src="data:@mimeType;base64,@item.TC_REQUEST_ATTPREFIX" alt="Ticket Image" class="img-fluid logical" />
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -200,7 +200,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                 // If it's a document (PDF, XLSX, TXT), show the Download button
                                                 <div class="row">
                                                     <div class="col-2">
-                                                        <a href="data:@mimeType;base64,@item.TC_REQUEST_ATTACHMENT_PREFIX"
+                                                        <a href="data:@mimeType;base64,@item.TC_REQUEST_ATTPREFIX"
                                                            download="Attachment.@fileType"
                                                            class="btn btn-success" style="margin:10px">
                                                             Download
@@ -219,7 +219,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
                         @* Show form if data exists *@
 
-                        if (!string.IsNullOrEmpty(item.TC_RESPONSE_COMMENTS))
+                        if (!string.IsNullOrEmpty(item.TC_RESPONSECOMMENTS))
                         {
                             using (Html.BeginForm("AdminResponseTicket", "RecentTickets", FormMethod.Post, new { enctype = "multipart/form-data" }))
                             {
@@ -241,16 +241,16 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                             <div class="row">
                                                 <div class="col-md-8">
                                                     @Html.Label("Admin Comments", new { @class = "pb-2" })
-                                                    <p class="" readonly>@item.TC_RESPONSE_COMMENTS</p>
+                                                    <p class="" readonly>@item.TC_RESPONSECOMMENTS</p>
                                                 </div>
 
 
                                             </div>
 
 
-                                            @if (!string.IsNullOrEmpty(item.TC_RESPONSE_ATTACHMENT_PREFIX))
+                                            @if (!string.IsNullOrEmpty(item.TC_RESPONSE_ATTPREFIX))
                                             {
-                                                string base64String = item.TC_RESPONSE_ATTACHMENT_PREFIX;
+                                                string base64String = item.TC_RESPONSE_ATTPREFIX;
 
                                                 // Detect file type from Base64 prefix
                                                 string fileType = "";
@@ -304,7 +304,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                 {
                                                     <div class="row">
                                                         <div class="col-7">
-                                                            <img src="data:@mimeType;base64,@item.TC_RESPONSE_ATTACHMENT_PREFIX"
+                                                            <img src="data:@mimeType;base64,@item.TC_RESPONSE_ATTPREFIX"
                                                                  alt="Response Ticket Image" class="img-fluid"
                                                                  data-toggle="modal" data-target="#modal_@item.TC_RECID" />
                                                         </div>
@@ -321,7 +321,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                                 <div class="modal-dialog" role="document">
                                                                     <div class="custom modal-content imagewidth">
                                                                         <div class="modal-body">
-                                                                            <img src="data:@mimeType;base64,@item.TC_RESPONSE_ATTACHMENT_PREFIX" alt="Response Ticket Image" class="img-fluid logical" />
+                                                                            <img src="data:@mimeType;base64,@item.TC_RESPONSE_ATTPREFIX" alt="Response Ticket Image" class="img-fluid logical" />
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -339,7 +339,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                     // If it's a document (PDF, XLSX, TXT), show the Download button
                                                     <div class="row">
                                                         <div class="col-2">
-                                                            <a href="data:@mimeType;base64,@item.TC_RESPONSE_ATTACHMENT_PREFIX"
+                                                            <a href="data:@mimeType;base64,@item.TC_RESPONSE_ATTPREFIX"
                                                                download="Attachment.@fileType"
                                                                class="btn btn-success" style="margin:10px">
                                                                 Download

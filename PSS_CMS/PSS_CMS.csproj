@@ -416,6 +416,7 @@
     <Content Include="Content\Colors.css" />
     <Content Include="Content\Companyinfo.css" />
     <Content Include="Content\EditiSub.css" />
+    <Content Include="Content\FooterResponsive.css" />
     <Content Include="Content\Forgot.css" />
     <Content Include="Content\Gallery.css" />
     <Content Include="Content\Gridmvc.css" />

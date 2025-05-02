@@ -20,7 +20,7 @@ namespace PSS_CMS.Controllers
             string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDGET"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "Userid=" + Session["UserID"]+ "&type="+ Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "Userid=" + Session["UserRECID"] + "&type="+ Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
             Dashborardchart dashboardData = null;
 
@@ -86,7 +86,7 @@ namespace PSS_CMS.Controllers
             string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDMTDandWTD"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "Userid=" + Session["UserID"] + "&type=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "Userid=" + Session["UserRECID"] + "&type=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
             Dashborardchart wtdMtdData = null;
 
@@ -180,7 +180,7 @@ namespace PSS_CMS.Controllers
 
             List<DashBoardList> totalticketlist = new List<DashBoardList>();
 
-            string strparams = "Userid=" + Session["UserID"] + "&type=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "Userid=" + Session["UserRECID"] + "&type=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
 
             string url = Weburl + "?" + strparams;
 
@@ -248,7 +248,7 @@ namespace PSS_CMS.Controllers
                                 var lowerSearch = searchPharse.ToLower();
                                 totalticketlist = totalticketlist
                                     .Where(r =>
-                                        (r.TC_PROJECTID?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.P_RECID.ToString()?.ToLower().Contains(lowerSearch) ?? false) ||
                                         (r.TC_USERNAME?.ToLower().Contains(lowerSearch) ?? false) ||
                                         (r.TC_COMMENTS?.ToLower().Contains(lowerSearch) ?? false) ||
                                         (r.TC_PRIORITYTYPE?.ToLower().Contains(lowerSearch) ?? false) ||
@@ -279,7 +279,7 @@ namespace PSS_CMS.Controllers
             string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDSTACKEDBARCHART"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "Userid=" + Session["UserID"] + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
             List<DashboardPriority> dashboardDataPriority = new List<DashboardPriority>();
 

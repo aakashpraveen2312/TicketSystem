@@ -92,7 +92,7 @@
         </div>
     </nav>
 
-    <div class="content">
+    <div class="content" style="overflow-x:hidden;">
         <div class="row mb-4" style="margin-top:10px">
             <div class="col-lg-10 col-md-10 col-sm-10">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
@@ -304,7 +304,7 @@
         var selectedTicketType = localStorage.getItem('ticketType') || '';
         var startDate = localStorage.getItem('StartDate') || '';
         var endDate = localStorage.getItem('EndDate') || '';
-
+        console.log("selectedProjectType", selectedProjectType)
         // Set filter values
         if (selectedStatus) $("#statusDropdown").val(selectedStatus);
         if (selectedProjectType) $("#projectTypeFilter").val(selectedProjectType);
@@ -319,7 +319,7 @@
             var ticketType = $("#ticketTypeFilter").val();
             var startDate = $('input[name="StartDate"]').val();
             var endDate = $('input[name="EndDate"]').val();
-
+            console.log("projectType", projectType)
             // Store selected values in localStorage
             localStorage.setItem('ticketStatus', status);
             localStorage.setItem('projectType', projectType);

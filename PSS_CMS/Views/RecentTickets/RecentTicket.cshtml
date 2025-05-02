@@ -214,16 +214,24 @@
                .SetWidth(30)
             .RenderValueAs(o =>
             {
-                var Assigntourl = Url.Action("Assignto", "AssignTo", new {Recid=o.TC_RECID});
-                var AssigntoiconHtml = "<i class='bx bx-user-plus'></i>";
-                var AssigntolinkHtml = $"<a href='{Assigntourl}' data-toggle='tooltip' data-placement='top' title='Assign To'>{AssigntoiconHtml}</a>";
+                string assigntoLinkHtml = "";
+                if ((Session["UserRole"]?.ToString() == "Manager") && (o.TC_STATUS != "C"))
+                {
+                    var assignToUrl = Url.Action("Assignto", "AssignTo", new { Recid = o.TC_RECID });
+                    assigntoLinkHtml = $"<a href='{assignToUrl}' data-toggle='tooltip' data-placement='top' title='Assign To'><i class='bx bx-user-plus'></i></a>&nbsp;";
+                }
 
-                var LineItemsurl = Url.Action("AdminTickets", "RecentTickets", new { recid2 = o.TC_RECID, userid = o.TC_URECID, status = o.TC_STATUS, adminresolvedname = o.TC_ADMINNAME });
-                var LineItemiconHtml = "<i class='bx bx-reply-all'></i>";
-                var LineItemlinkHtml = $"<a href='{LineItemsurl}' data-toggle='tooltip' data-placement='top' title='Review Tickets'>{LineItemiconHtml}</a>";
-                var extraSpaces = "&nbsp;";
+                var lineItemsUrl = Url.Action("AdminTickets", "RecentTickets", new
+                {
+                    recid2 = o.TC_RECID,
+                    userid = o.TC_URECID,
+                    status = o.TC_STATUS,
+                    adminresolvedname = o.TC_ADMINNAME
+                });
 
-                return MvcHtmlString.Create($"{AssigntolinkHtml}{extraSpaces}{LineItemlinkHtml}");
+                var lineItemLinkHtml = $"<a href='{lineItemsUrl}' data-toggle='tooltip' data-placement='top' title='Review Tickets'><i class='bx bx-reply-all'></i></a>";
+
+                return MvcHtmlString.Create($"{assigntoLinkHtml}{lineItemLinkHtml}");
             });
 
            }).WithPaging(10).Sortable(true)

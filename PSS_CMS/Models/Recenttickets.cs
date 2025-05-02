@@ -79,6 +79,8 @@ namespace PSS_CMS.Models
 
 
         public string L_RECID { get; set; }
+        public string U_USERNAME { get; set; }
+        public int U_RECID { get; set; }
 
 
         public string L_USERNAME { get; set; }

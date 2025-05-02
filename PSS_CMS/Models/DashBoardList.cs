@@ -24,6 +24,8 @@ namespace PSS_CMS.Models
         public string TC_COMMENTS { get; set; }
         public string TC_PRIORITYTYPE { get; set; }
         public string TC_TICKETTYPE { get; set; }
+        public int P_RECID { get; set; }
+        public string P_NAME { get; set; }
         public string TC_STATUS { get; set; }
         public string TC_STATUS_DISPLAY
         {

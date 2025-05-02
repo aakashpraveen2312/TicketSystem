@@ -72,7 +72,7 @@ namespace PSS_CMS.Controllers
 
                                 RecentTicketList = RecentTicketList
                                     .Where(r =>
-                                        (r.TC_PROJECTID?.ToLower().Contains(lowerSearch) ?? false) ||
+                                        (r.P_RECID.ToString()?.ToLower().Contains(lowerSearch) ?? false) ||
                                         (r.TC_USERNAME?.ToLower().Contains(lowerSearch) ?? false) ||
                                         (r.TC_COMMENTS?.ToLower().Contains(lowerSearch) ?? false) ||
                                         (r.TC_PRIORITYTYPE?.ToLower().Contains(lowerSearch) ?? false) ||
@@ -93,7 +93,7 @@ namespace PSS_CMS.Controllers
                             // Apply Project Type Filter
                             if (!string.IsNullOrEmpty(projectType))
                             {
-                                RecentTicketList = RecentTicketList.Where(t => t.TC_PROJECTID == projectType).ToList();
+                                RecentTicketList = RecentTicketList.Where(t => t.P_RECID.ToString() == projectType).ToList();
                             }
 
                             // Apply Ticket Type Filter
@@ -386,7 +386,7 @@ namespace PSS_CMS.Controllers
         {
             List<SelectListItem> product = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOFORPRODUCTANDLISTVIEW"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOFORPRODUCTSELECTED"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + Session["UserRECID"];

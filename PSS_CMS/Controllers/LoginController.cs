@@ -79,11 +79,16 @@ namespace PSS_CMS.Controllers
                             await AutoCloseTicket();
                             return RedirectToAction("Ticket_History", "Tickets");
                         }
-                        else if (role == "Admin" || role == "SA" || role == "Manager")
+                        else if (role == "Admin" || role == "Manager")
                         {
                             await Info(CompanyID);
-                            //return RedirectToAction("Dashboard", "DashBoard");
-                            return RedirectToAction("RecentTicket", "RecentTickets");
+                           return RedirectToAction("Dashboard", "DashBoard");
+                            //return RedirectToAction("RecentTicket", "RecentTickets");
+                        }
+                        else if (role == "SA")
+                        {
+                            await Info(CompanyID);
+                            return RedirectToAction("FAQADMIN", "RecentTickets");
                         }
                     }
 

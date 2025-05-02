@@ -36,10 +36,11 @@ namespace PSS_CMS.Controllers
 
                 // Construct the JSON content for the API request
                 var content = $@"{{           
-                ""tC_ASSIGNTO"": ""{ assignTo.SelectedAdmin}"",           
-                ""tC_EXPECTEDDATE"": ""{assignTo.A_EXPECTEDDATEANDTIME}"",                                     
-                ""tC_EXPECTEDDATE"": ""{assignTo.A_ASSIGNEDDATEANDTIME}"",                                     
-                ""tC_EXPECTEDDATE"": ""{assignTo.A_COMMENTS}"",                                     
+                ""tC_EXPECTEDDATETIME"": ""{ assignTo.A_EXPECTEDDATEANDTIME}"",           
+                ""tC_ASSIGNBY"": ""{Session["UserRECID"]}"",           
+                ""tC_ASSIGNETODATETIME"": ""{assignTo.A_ASSIGNEDDATEANDTIME}"",                                     
+                ""tC_ASSIGNTOURECID"": ""{assignTo.SelectedAdmin}"",                                     
+                ""tC_COMMENTS"": ""{assignTo.A_COMMENTS}"",                                     
                 ""tC_CRECID"": ""{Session["CompanyID"]}"",                                     
                 ""tC_RECID"": ""{Session["RECORDID"]}""           
             }}";
@@ -129,8 +130,8 @@ namespace PSS_CMS.Controllers
                             {
                                 admin = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.L_USERID, // or the appropriate value field
-                                    Text = t.L_USERNAME // or the appropriate text field
+                                    Value = t.U_RECID.ToString(), // or the appropriate value field
+                                    Text = t.U_USERNAME // or the appropriate text field
                                 }).ToList();
                             }
                         }

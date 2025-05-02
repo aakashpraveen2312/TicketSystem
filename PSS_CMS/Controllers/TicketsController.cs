@@ -243,7 +243,7 @@ namespace PSS_CMS.Controllers
                             if (
                                  string.IsNullOrWhiteSpace(ticketType) &&
                                  string.IsNullOrWhiteSpace(status) &&
-                                 string.IsNullOrWhiteSpace(projectType) &&
+                                 string.IsNullOrWhiteSpace(projectType) &&                                
                                  string.IsNullOrWhiteSpace(StartDate) &&
                                  string.IsNullOrWhiteSpace(EndDate) &&
                                  string.IsNullOrWhiteSpace(searchPharse))
@@ -262,10 +262,15 @@ namespace PSS_CMS.Controllers
                             {
                                 RecentTicketListall = RecentTicketListall.Where(t => t.TC_STATUS == status).ToList();
                             }
+                            //if (!string.IsNullOrEmpty(projectType))
+                            //{
+                            //    RecentTicketListall = RecentTicketListall.Where(t => t.P_RECID == projectType).ToList();
+                            //}
                             if (!string.IsNullOrEmpty(projectType))
                             {
-                                RecentTicketListall = RecentTicketListall.Where(t => t.TC_PROJECTID == projectType).ToList();
+                                RecentTicketListall = RecentTicketListall.Where(t => t.P_RECID.ToString() == projectType).ToList();
                             }
+
                             if (!string.IsNullOrEmpty(StartDate) && !string.IsNullOrEmpty(EndDate))
                             {
                                 //DateTime fromDate = DateTime.Parse(StartDate);//parse it is used to convert the string to datetime object
@@ -280,7 +285,7 @@ namespace PSS_CMS.Controllers
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
                                 RecentTicketListall = RecentTicketListall
-                                    .Where(r => r.TC_PROJECTID.ToLower().Contains(searchPharse.ToLower()) ||
+                                    .Where(r => r.P_RECID.ToString().ToLower().Contains(searchPharse.ToLower()) ||
                                                 r.TC_SUBJECT.ToLower().Contains(searchPharse.ToLower()) ||
                                                 r.AdminNameDisplay.ToLower().Contains(searchPharse.ToLower()) ||
                                                 r.TC_PRIORITYTYPE.ToLower().Contains(searchPharse.ToLower()) ||
@@ -640,7 +645,7 @@ namespace PSS_CMS.Controllers
 
             List<SelectListItem> Product = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOFORPRODUCTANDLISTVIEW"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOFORPRODUCTSELECTED"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + Session["UserRECID"];
@@ -689,7 +694,7 @@ namespace PSS_CMS.Controllers
         //new Ticket combo project type
         public async Task ComboBoxProductNewticket(Tickets viewModel)
         {
-            string webUrlGet = ConfigurationManager.AppSettings["COMBOFORPRODUCTANDLISTVIEW"];
+            string webUrlGet = ConfigurationManager.AppSettings["COMBOFORPRODUCTSELECTED"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + Session["UserRECID"];

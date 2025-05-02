@@ -1,0 +1,114 @@
+﻿/*
+Footer
+*/
+
+.scroll-wrapper {
+    /*height: calc(100vh - 60px);*/ /* Adjust based on your footer or header height */
+    overflow-y: auto;
+    padding-bottom: 40px; /* Prevent buttons from being hidden behind footer */
+    box-sizing: border-box;
+}
+
+.footer {
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    padding: 0px;
+    font-family: sans-serif;
+    background-color: var(--footer);
+    font-size: 15px;
+    margin-top: 40px;
+    height: 25px;
+   /* z-index: 1;*/
+}
+
+/* Flex container for footer items */
+.flex-container {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 15px; /* space between items */
+    padding-top: 5px;
+    padding-left: 10px;
+    flex-wrap: nowrap; /* default no wrap */
+}
+
+/* Flex items */
+.flex-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Inner div styling */
+.footerb {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+    /* Icon and text alignment */
+    .footerb img,
+    .footerb i {
+        margin-top: 0; /* adjust if needed */
+    }
+
+/* Responsive styles for mobile */
+@media (max-width: 576px) {
+    .footer {
+        font-size: 12px;
+        height: auto; /* allow height to grow */
+        padding: 5px 0;
+        margin-top: 0;
+        position: fixed;
+        bottom: 0;
+    }
+
+    .flex-container {
+        flex-wrap: wrap; /* allow items to wrap */
+        padding-left: 5px;
+        gap: 10px;
+    }
+
+    .flex-item {
+        flex: 1 1 45%; /* take about half width */
+        justify-content: flex-start; /* align left on small screens */
+        padding-left: 10px;
+    }
+
+    .footerb {
+        gap: 3px;
+    }
+
+        .footerb img,
+        .footerb i {
+            width: 14px;
+            height: 14px;
+            font-size: 14px;
+            margin-top: 0;
+        }
+}
+
+.minicheck1 {
+    background-color: #dceef5;
+    border: 0.5px solid grey;
+}
+
+.minicheck2 {
+    background-color: #fcfccc;
+    border: 0.5px solid grey;
+}
+
+.minicheck3 {
+    background-color: #eee;
+    border: 0.5px solid grey;
+}
+
+.minicheck {
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    margin-right: 4px;
+    border-radius: 4px;
+}

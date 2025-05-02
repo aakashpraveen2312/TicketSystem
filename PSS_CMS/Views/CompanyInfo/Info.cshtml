@@ -13,7 +13,7 @@
     <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
     <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
     <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
 
 
     @*Bootstrap Icons and Boxicons*@
@@ -61,8 +61,8 @@
             transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
         }
         .image-container {
-            width: 220px;
-            height: 150px; /* Ensuring consistent height */
+            width: 205px;
+            height: 100px; /* Ensuring consistent height */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -94,123 +94,163 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER GROUP</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">LIST</a></li>
-                    <li>CREATE</li>
+                    <li>SECURITY</li>
+                    <li class="" style="color: #2888bb;text-decoration:none">COMPANY INFO</li>
                 </ul>
             </div>
         </div>
 
+        <div class="scroll-wrapper">
 
+            <div class="create ms-4 me-2 mt-3">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.C_CODE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.C_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.C_CODE, "", new { @class = "text-danger" })
 
-        <div class="create ms-4 me-2 mt-3">
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.C_CODE, new { @class = "labels" })
+                    </div>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.C_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-                    @Html.ValidationMessageFor(model => model.C_CODE, "", new { @class = "text-danger" })
 
-                </div>
-            </div>
-
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.C_NAME, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.C_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-                    @Html.ValidationMessageFor(model => model.C_NAME, "", new { @class = "text-danger" })
-
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.C_EMAILID, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.C_EMAILID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-
-                </div>
-            </div>
-
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.C_PHONE, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.C_PHONE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
-
-                </div>
-            </div>
-
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.C_ADDRESS, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.C_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-
-                </div>
-            </div>
-
-            @using (Html.BeginForm("UpdateLogo", "CompanyInfo", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
-            {
 
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.C_LOGO, new { @class = "labels" })
+                        @Html.LabelFor(model => model.C_NAME, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        <h6 style="text-align:center">Preview</h6>
-                        <div class="image-container">
+                        @Html.EditorFor(model => model.C_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.C_NAME, "", new { @class = "text-danger" })
 
-                            @if (!string.IsNullOrEmpty(Model.C_LOGO))
-                            {
+                    </div>
+                </div>
 
-                                <img id="gstPreview" class="img-thumbnail mt-2"
-                                     src="@(string.IsNullOrEmpty(ViewBag.GstImageBase64) ?
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.C_EMAILID, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.C_EMAILID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.C_PHONE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.C_PHONE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.C_ADDRESS, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.C_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+
+                @using (Html.BeginForm("UpdateLogo", "CompanyInfo", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
+                {
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.C_LOGO, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            <h6 style="text-align:center">Preview</h6>
+                            <div class="image-container">
+
+                                @if (!string.IsNullOrEmpty(Model.C_LOGO))
+                                {
+
+                                    <img id="gstPreview" class="img-thumbnail mt-2"
+                                         src="@(string.IsNullOrEmpty(ViewBag.GstImageBase64) ?
                                                     (Model.C_LOGO.Contains("data:image/") ?
                                                     Model.C_LOGO : (Model.C_LOGO.StartsWith("/") ||
                                                     Model.C_LOGO.StartsWith("iVBORw0KGgo") ? "data:image/png;base64," : "data:image/jpeg;base64,") +
                                                     Model.C_LOGO) : "data:image/png;base64," + ViewBag.imageGst)"
-                                     style="width: 100%; height: 100%; display: block;" /> }
-                            else
-                            {
-                                <img id="gstPreview" class="img-thumbnail mt-2"
-                                     style="width: 100%; height: 100%; display: none;" />}
+                                         style="width: 100%; height: 100%; display: block;" /> }
+                                else
+                                {
+                                    <img id="gstPreview" class="img-thumbnail mt-2"
+                                         style="width: 100%; height: 100%; display: none;" />}
+                            </div>
+                            <input type="file" id="C_LOGO" name="C_LOGO" class="form-input"
+                                   accept="image/*" onchange="previewImage('C_LOGO', 'gstPreview'); showLabels();" />
+                            <input type="hidden" name="ExistingGstImage" value="@ViewBag.imageGst" />
                         </div>
-                        <input type="file" id="C_LOGO" name="C_LOGO" class="form-input"
-                               accept="image/*" onchange="previewImage('C_LOGO', 'gstPreview'); showLabels();" />
-                        <input type="hidden" name="ExistingGstImage" value="@ViewBag.imageGst" />
                     </div>
-                </div>
 
 
-                <div class="row ">
-                    <div class="col-lg-2">
+                    <div class="row ">
+                        <div class="col-lg-2">
 
+                        </div>
+                        <div class="col-lg-3 d-flex justify-content-end">
+                            <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                            <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Info", "CompanyInfo")'" />
+                        </div>
                     </div>
-                    <div class="col-lg-3 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Info", "CompanyInfo")'" />
-                    </div>
-                </div>
-            }
+                }
+
+
+
+            </div>
 
         </div>
+
+        <footer>
+            <div class="footer">
+                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck1"></span>
+                            - Text Fields
+                        </div>
+                    </div>
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck2"></span>
+                            - Number Fields
+                        </div>
+                    </div>
+                    
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck3"></span>
+                            - Read Only
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+
+
         <!-- Validation Errors below the form fields -->
+
+
         <div>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         </div>
 
-
     </div>
+
+
+
+
+
 
 
     <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
@@ -226,6 +266,9 @@
             <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
         </div>
     </div>
+
+
+
     <div id="preloader2"></div>
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
@@ -406,6 +449,11 @@
         </script>*@
 
 </body>
+
+
+
+
+
 </html>
 
 

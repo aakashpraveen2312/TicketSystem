@@ -25,7 +25,7 @@
     <script src="~/Scripts/Script.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
-
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -76,7 +76,7 @@
             .RenderValueAs(o =>
             {
 
-                var Editurl = Url.Action("Edit", "UserGroup", new { Recid = o.R_RECID,Name=o.R_NAME }, null);
+                var Editurl = Url.Action("Edit", "UserGroup", new { Recid = o.R_RECID, Name = o.R_NAME }, null);
                 var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
@@ -99,13 +99,29 @@
         </div>
 
 
-        @*<footer class="footer">
-          <ul>
-              <li class="lists"><i class='bx bx-plus-circle'></i> - Create</li>
-              <li class="lists"><i class='bx bxs-pencil bx-sm'></i> - Edit</li>
-              <li class="lists"><i class='bx bxs-trash bx-sm red'></i> - Delete</li>
-          </ul>
-        </footer>*@
+        <footer>
+            <div class="footer">
+                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
+                            -Edit
+                        </div>
+                    </div>
+
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bx bxs-trash bx-sm red mt-1'></i>
+                            -Delete
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+
     </div>
 
 

@@ -3,7 +3,9 @@
 @{
     ViewBag.Title = "Create";
 }
-
+@{
+    string userRole = Session["UNAME"]?.ToString().ToUpper();
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -57,7 +59,9 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">USER CATEGORY</a></li>
+
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">@Session["EditName"].ToString().ToUpper()</a></li>
                     <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserLogin")">LIST</a></li>
                     <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserLogin")">@Session["Names"].ToString().ToUpper()</a></li>
                     <li>EDIT</li>
@@ -100,29 +104,41 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.U_MOBILENO, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                        @Html.HiddenFor(model => model.U_RCODE)
 
                     </div>
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.U_RCODE, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @if (ViewBag.Roles != null)
-                        {
-                            @Html.DropDownListFor(model => model.U_RCODE,
-                                                  ViewBag.Roles as IEnumerable<SelectListItem>,
-                                                  "--Select Role--",
-                                                  new { @class = "form-select textboxcolors", required = "required" })
-                        }
-                        else
-                        {
-                            <p>No roles are available</p>
-                        }
+                    @if (userRole == "USER")
+                    {
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.U_LOCATION, new { @class = "labels" })
+                        </div>
+                    }
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            @if (userRole == "USER")
+                            {
+                                if (ViewBag.Location != null)
+                                {
+                                    @Html.DropDownListFor(model => model.U_LOCATION,
+                                                          ViewBag.Location as IEnumerable<SelectListItem>,
+                                                          "--Select Location--",
+                                                          new { @class = "form-select textboxcolors", required = "required" })
+                                }
+                                else
+                                {
+                                    <p>No Location are available</p>
+                                }
+                            }
+                            else
+                            {
+                                // Admin or Manager - hide dropdown and pass value 0 to U_LOCATION
+                                @Html.HiddenFor(model => model.U_LOCATION, new { Value = "0" })
+                            }
 
+                        </div>
                     </div>
-                </div>
 
 
                 <div class="row mb-3">

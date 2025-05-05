@@ -195,11 +195,12 @@ namespace PSS_CMS.Controllers
         }
 
         //user project mappping
-        public async Task<ActionResult> ListProject(string id, string Name,string searchPharse)
+        public async Task<ActionResult> ListProject(string id, string Name,string searchPharse,string Productmapppingname)
         {
 
             Session["Name"] = Name;
             Session["RECID"] = id;
+            Session["Productmapppingname"] = Productmapppingname;
             Useradminmap objuseradminprojectmap = new Useradminmap();
 
             string Weburl = ConfigurationManager.AppSettings["COMBOFORPRODUCTANDLISTVIEW"];

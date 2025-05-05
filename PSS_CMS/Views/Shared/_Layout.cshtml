@@ -16,15 +16,31 @@
     <nav class="sidebar close">
         <header>
             <div class="text logo-text" style="display:inline-block">
-                <a href="@Url.Action("Dashboard", "DashBoard")">
+                @if (Session["UserRole"] == null || Session["UserRole"].ToString().ToLower() == "sa")
+                {
+                    <a href="@Url.Action("SuperAdminCountDashboard", "DashBoard")">
 
 
-                    @if (Session["Logo"] != null)
-                    {
-                        <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
-                    }
+                        @if (Session["Logo"] != null)
+                        {
+                            <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
+                        }
 
-                </a>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Dashboard", "DashBoard")">
+
+
+                        @if (Session["Logo"] != null)
+                        {
+                            <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
+                        }
+
+                    </a>
+                }
+
             </div>
             @if (Session["UserRole"] == null || Session["UserRole"].ToString().ToLower() != "sa")
             {
@@ -70,16 +86,16 @@
                         <li class="nav-link">
                             <a href="@Url.Action("List", "UserGroup")">
                                 <i class='bx bx-user-circle' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Role</span>
+                                <span class="text nav-text" style="margin-left:15px">User Category</span>
                             </a>
                         </li>
                     
-                        <li class="nav-link">
+                        @*<li class="nav-link">
                             <a href="@Url.Action("List", "UserLogin")">
                                 <i class='bx bx-user' style="font-size:24px"></i>
                                 <span class="text nav-text" style="margin-left:15px">User</span>
                             </a>
-                        </li>
+                        </li>*@
                         <li class="nav-link">
                             <a href="@Url.Action("List", "ProductMaster")">
                                 <i class='bx bx-spreadsheet' style="font-size:24px"></i>

@@ -1,0 +1,218 @@
+﻿@model PSS_CMS.Models.DashboardSA
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+    @*Bootstrap Icons and Boxicons link*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <!-- JustGage Library -->
+    <script src="https://cdn.jsdelivr.net/npm/justgage@1.3.0/justgage.min.js"></script>
+    <!-- Correct Raphael.js (Dependency for JustGage) -->
+    <script src="https://cdn.jsdelivr.net/npm/raphael@2.1.4/raphael-min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="~/Scripts/Script.js"></script>
+
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+
+
+    <style>
+        h5.d-flex.flex-column.align-items-center.headingscolor {
+            background-color: #f5f5f5;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        tspan {
+            font-weight: bold;
+            color: black !important;
+            font-size: 19px;
+        }
+
+        h5.d-flex.justify-content-center.headingscolor {
+            background-color: #f5f5f5;
+            padding: 15px;
+            font-weight: bold;
+        }
+        h5.card-title, h3.card-text {
+            font-size: 25px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="content" style=" overflow-x: hidden;">
+
+        <nav class="nav d-flex">
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
+
+
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
+
+            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+
+                </a>
+            </div>
+
+
+        </nav>
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-12">
+
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+
+                    <li>DASHBOARD</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="container-fluid mt-4 card ms-2 p-5">
+
+
+            <!-- Count Cards -->
+            @{
+                // Total Tickets
+                var TotalticketStats = new[]
+                    {
+        new { Title = "Role", Count = (Model != null && Model.TotalRoleCount != null) ? (int)Model.TotalRoleCount : 0, Color = "primary" }
+    };
+
+
+                // Open Tickets
+                var openTicketStats = new[]
+                {
+  new { Title = "User", Count = (Model != null && Model.TotalUserCount != null) ? (int)Model.TotalUserCount : 0, Color = "warning" }
+                };
+
+                // Ressolved Tickets
+                var ressolvedTicketStats = new[]
+                {
+ new { Title = "Product", Count = (Model != null && Model.TotalProductCount != null) ? (int)Model.TotalProductCount : 0, Color = "success" }                };
+
+
+                // Closed Tickets
+                var closedTicketStats = new[]
+                {
+ new { Title = "Customer", Count = (Model != null && Model.TotalCustomerCount != null) ? (int)Model.TotalCustomerCount : 0, Color = "secondary" }                };
+
+
+
+            }
+
+            <div class="row mt-3">
+                @foreach (var stat in TotalticketStats)
+                {
+                    <div class="col-md-6">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("#","#",new { status="TotalTickets"})'">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("#","#",new { status="TotalTickets"})'">(@stat.Count)</h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @foreach (var stat in openTicketStats)
+                {
+                    <div class="col-md-6">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body">
+
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("#","#",new { status="OpenTickets"})'">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("#","#",new { status="TotalTickets"})'">(@stat.Count)</h3>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                }
+                @foreach (var stat in ressolvedTicketStats)
+                {
+                    <div class="col-md-6">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("#","#",new { status="ResolvedTickets"})'">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("#","#",new { status="ResolvedTickets"})'">(@stat.Count)</h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @foreach (var stat in closedTicketStats)
+                {
+                    <div class="col-md-6">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("#","#",new { status="CloseTickets"})'">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("#","#",new { status="CloseTickets"})'">(@stat.Count)</h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+            <h4>Are you sure you want to log out?</h4>
+        </div>
+        <div class="offcanvas-footer d-flex justify-content-center">
+            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+        </div>
+    </div>
+
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.getElementById("logoutLink").addEventListener("click", function () {
+        Swal.fire({
+            title: "Are you sure you want to log out?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#dc3545",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '@Url.Action("Logout", "Login")';
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>

@@ -885,7 +885,7 @@ namespace PSS_CMS.Controllers
 
                             return File(fileBytes,
                                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                        "UserTickets.xlsx");
+                                        Session["UserRole"]+"-Tickets"+".xlsx");
                         }
                         else
                         {

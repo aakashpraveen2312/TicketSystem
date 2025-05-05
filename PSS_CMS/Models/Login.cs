@@ -19,7 +19,7 @@ namespace PSS_CMS.Models
         [Required]
         public string U_DOMAIN { get; set; }
 
-        [DisplayName("Email ID")]
+        [DisplayName("User ID")]
         [Required]
         public string U_EMAILID { get; set; }
         public string U_RCODE { get; set; }

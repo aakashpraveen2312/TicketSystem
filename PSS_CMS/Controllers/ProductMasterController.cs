@@ -51,13 +51,13 @@ namespace PSS_CMS.Controllers
                             var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
                             productmasterlist = rootObjects.Data;
 
-                            //if (!string.IsNullOrEmpty(searchPharse))
-                            //{
-                            //    projectmasterlist = projectmasterlist
-                            //        .Where(r => r.P_NAME.ToLower().Contains(searchPharse.ToLower()) ||
-                            //                    r.P_SORTORDER.ToString().Contains(searchPharse.ToLower()))
-                            //        .ToList();
-                            //}
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                productmasterlist = productmasterlist
+                                    .Where(r => r.P_NAME.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.P_SORTORDER.ToString().Contains(searchPharse.ToLower()))
+                                    .ToList();
+                            }
 
                         }
                         else
@@ -358,6 +358,67 @@ namespace PSS_CMS.Controllers
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
             return View();
+        }
+
+        public async Task<ActionResult> View(string searchPharse,int? Recid,string prodname)
+        {
+            Session["Recid"] = Recid;
+            Session["prodname"] = prodname;
+            string Weburl = ConfigurationManager.AppSettings["VIEW"];
+
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            List<User> userList = new List<User>();
+
+            string strparams = "productid="+ Recid + "&cmprecid=" + Session["CompanyID"];
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseUserObjects>(jsonString);
+                            userList = rootObjects.Data;
+
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                userList = userList
+                                    .Where(r => r.U_USERNAME.ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_USERCODE.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_EMAILID.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_RCODE.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_SORTORDER.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_MOBILENO.ToString().ToLower().Contains(searchPharse.ToLower()))
+                                    .ToList();
+
+                            }
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+            return View(userList);
         }
 
     }

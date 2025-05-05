@@ -100,7 +100,7 @@
             </div>
         </div>
 
-        <div class="scroll-wrapper">
+        <div class="scroll-wrapper" style="overflow-x:hidden;">
 
             <div class="create ms-4 me-2 mt-3">
                 <div class="row mb-3">
@@ -208,6 +208,39 @@
 
         </div>
 
+        @{
+            var locations = ViewBag.LocationList as IEnumerable<PSS_CMS.Models.Locations>;
+        }
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-12">
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">              
+                    <li class="" style="color: #2888bb;text-decoration:none">LOCATIONS</li>
+                </ul>
+            </div>
+        </div>
+        <div class="table mt-3 ms-1 me-5" id="ticketTable1">
+
+            @if (locations != null)
+            {
+                @Html.Grid(locations).Columns(columns =>
+           {
+               columns.Add(c => c.L_CODE).Titled("Code").SetWidth("100px");
+               columns.Add(c => c.L_NAME).Titled("Location").SetWidth("350px");
+               columns.Add(c => c.L_TYPE).Titled("Type");
+               columns.Add(c => c.L_DATETIME).Titled("Date").SetWidth("200px");
+               columns.Add(c => c.L_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
+           }).WithPaging(10).Sortable(false)
+            }
+            else
+            {
+                <div class="alert alert-warning text-center">
+                    <b>No Locaions's' are available</b>
+                </div>}
+
+        </div>
+
+
+
         <footer>
             <div class="footer">
                 <div class="flex-container" style="padding-top:5px;padding-left:5px">
@@ -225,7 +258,7 @@
                             - Number Fields
                         </div>
                     </div>
-                    
+
                     <div class="flex-item">
                         <div class="d-flex justify-content-center footerb">
                             <span class="minicheck minicheck3"></span>
@@ -296,163 +329,7 @@
     });
     </script>
 
-    @*Toastr for created succesfully*@
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- jQuery CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-
-    <script>
-    $(document).ready(function () {
-        $("#createform").submit(function (event) {
-            event.preventDefault();
-
-            var submitBtn = $("#savebutton");
-            submitBtn.prop("disabled", true).text("Submitting...");
-
-            var formData = new FormData(this);
-
-            // Disable page interaction
-            $("body").css("pointer-events", "none");
-
-            $.ajax({
-                url: '@Url.Action("UpdateLogo", "CompanyInfo")',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response.status === "success") {
-                        Swal.fire({
-                            title: "Success!",
-                            text: response.message,
-                            icon: "success",
-                            confirmButtonText: "Ok",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            customClass: {
-                                confirmButton: "swal-btn-continue",
-                            },
-                            didOpen: () => {
-                                $(".swal2-container").css("pointer-events", "auto");
-                            }
-                        }).then((result) => {
-                            window.location.href = '@Url.Action("Info", "CompanyInfo")';
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Error!",
-                            text: response.message,
-                            icon: "error",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                        resetButton();
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "An unexpected error occurred.",
-                        icon: "error",
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                    });
-                    resetButton();
-                }
-            });
-
-            function resetButton() {
-                submitBtn.prop("disabled", false).text("Submit");
-                $("body").css("pointer-events", "auto");
-            }
-        });
-    });
-    </script>
-
-
-
-
-    @*<script>
-        $(document).ready(function () {
-            $("#createform").submit(function (event) {
-                event.preventDefault();
-
-                var submitBtn = $("#savebutton");
-                submitBtn.prop("disabled", true).text("Submitting...");
-
-                var formData = new FormData(this);
-
-                // Disable page interaction
-                $("body").css("pointer-events", "none");
-
-                $.ajax({
-                    url: '@Url.Action("UpdateLogo", "CompanyInfo")',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        if (response.success) {
-                            Swal.fire({
-                                title: "Success!",
-                                text: response.message,
-                                icon: "success",
-                                confirmButtonText: "Ok",
-                                allowOutsideClick: false,
-                                allowEscapeKey: false,
-                                customClass: {
-                                    confirmButton: "swal-btn-continue",
-                                },
-                                didOpen: () => {
-                                    $(".swal2-container").css("pointer-events", "auto");
-                                }
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = '@Url.Action("Info", "CompanyInfo")';
-                                } else {
-                                     window.location.href = '@Url.Action("Info", "CompanyInfo")';
-                                }
-                            });
-                        }
-
-                        else {
-                            Swal.fire({
-                                title: "Error!",
-                                text: response.message,
-                                icon: "error",
-                                allowOutsideClick: false,
-                                allowEscapeKey: false
-                            });
-                            resetButton();
-                        }
-                    },
-                    error: function () {
-                        Swal.fire({
-                            title: "Error!",
-                            text: "An unexpected error occurred.",
-                            icon: "error",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                        resetButton();
-                    }
-                });
-            });
-
-            function resetButton() {
-                $("#savebutton").prop("disabled", false).text("Submit");
-                $("body").css("pointer-events", "auto"); // Re-enable page interaction
-            }
-        });
-        </script>*@
-
 </body>
-
-
-
-
 
 </html>
 

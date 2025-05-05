@@ -3,7 +3,9 @@
 @{
     ViewBag.Title = "Create";
 }
-
+@{
+    string userRole = Session["UNAME"]?.ToString().ToUpper();
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -65,7 +67,9 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">USER CATEGORY</a></li>
+
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">@Session["UNAME"].ToString().ToUpper()</a></li>
                     <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserLogin")">LIST</a></li>
                     <li>CREATE</li>
                 </ul>
@@ -120,53 +124,55 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.U_RCODE, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
+                    @if (userRole == "USER")
+                    {
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.U_LOCATION, new { @class = "labels" })
+                        </div>
+                    }
+                        <div class="col-lg-3 col-md-3 col-sm-12">
 
-                        @if (ViewBag.Roles != null)
-                        {
-                            var RoleList = ViewBag.Roles as IEnumerable<SelectListItem>;
-
-                            if (RoleList != null && RoleList.Any())
+                            @if (userRole == "USER")
                             {
-                                var modifiedRoleList = new List<SelectListItem>(RoleList);
-
-                                if (RoleList.Count() > 1)
+                                if (ViewBag.Location != null)
                                 {
-                                    // Add "--Select Project--" option only if more than one project is available
-                                    modifiedRoleList.Insert(0, new SelectListItem { Text = "--Select Role--", Value = "" });
+                                    var RoleList = ViewBag.Location as IEnumerable<SelectListItem>;
 
-                                    @Html.DropDownList("SelectedRole",
-                                                       modifiedRoleList,
-                                                       new { @class = "form-select textboxcolors", id = "", required = "required" })
+                                    if (RoleList != null && RoleList.Any())
+                                    {
+                                        var modifiedRoleList = new List<SelectListItem>(RoleList);
+
+                                        if (RoleList.Count() > 1)
+                                        {
+                                            modifiedRoleList.Insert(0, new SelectListItem { Text = "--Select Location--", Value = "" });
+                                        }
+
+                                        @Html.DropDownList("SelectedRole",
+                                                           modifiedRoleList,
+                                                           new { @class = "form-select textboxcolors", required = "required" })
+                                    }
+                                    else
+                                    {
+                                        var modifiedRoleList = new List<SelectListItem>();
+                                        modifiedRoleList.Insert(0, new SelectListItem { Text = "No location's are available", Value = "" });
+
+                                        @Html.DropDownList("SelectedRole",
+                                                           modifiedRoleList,
+                                                           new { @class = "form-select textboxcolors" })
+                                    }
                                 }
-                                else if (RoleList.Count() == 1)
+                                else
                                 {
-                                    // If only one project is available, preselect it
-                                    @Html.DropDownList("SelectedRole",
-                                                       modifiedRoleList,
-                                                       new { @class = "form-select textboxcolors", id = "", required = "required" })
+                                    <p>No location's are available</p>
                                 }
                             }
                             else
                             {
-                                var modifiedRoleList = new List<SelectListItem>(RoleList);
-                                // Add "--Select Project--" option only if more than one project is available
-                                modifiedRoleList.Insert(0, new SelectListItem { Text = "No role's are available", Value = "" });
-
-                                @Html.DropDownList("SelectedRole",
-                                                   modifiedRoleList,
-                                                   new { @class = "form-select textboxcolors", id = "" })
+                                // For Admin or Manager, send value = 0 (can be stored in a hidden field)
+                                <input type="hidden" name="SelectedRole" value="0" />
                             }
-                        }
-                        else
-                        {
-                            <p>No role's are available</p>
-                        }
+                        </div>
                     </div>
-                </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.U_SORTORDER, new { @class = "labels" })
@@ -339,7 +345,7 @@
         }
     });
     </script>
-   
+
 </body>
 
 </html>

@@ -88,7 +88,7 @@ namespace PSS_CMS.Controllers
                         else if (role == "SA")
                         {
                             await Info(CompanyID);
-                            return RedirectToAction("FAQADMIN", "RecentTickets");
+                            return RedirectToAction("SuperAdminCountDashboard", "Dashboard");
                         }
                     }
 

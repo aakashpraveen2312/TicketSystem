@@ -324,5 +324,49 @@ namespace PSS_CMS.Controllers
 
             return View(dashboardDataPriority);
         }
+
+        public async Task<ActionResult> SuperAdminCountDashboard()
+        {
+            string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDGETSUPERADMIN"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams ="cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            DashboardSA dashboardData = null;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            dashboardData = JsonConvert.DeserializeObject<DashboardSA>(jsonString); 
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+
+        
+            return View(dashboardData);
+        }
     }
 }

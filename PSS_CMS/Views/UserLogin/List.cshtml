@@ -45,7 +45,9 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER</li>
+
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">USER CATEGORY</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">@Session["UNAME"].ToString().ToUpper()</a></li>
                     <li>LIST</li>
                 </ul>
             </div>
@@ -54,10 +56,13 @@
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
-                <!-- Add button with icon -->
-                <a href="@Url.Action("Create", "UserLogin")" class=" ms-3" style="margin-left: 30px;">
-                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add User" />
-                </a>
+                @if (Session["R_CODE"] == null || Session["R_CODE"].ToString().ToLower() != "sa")
+                {
+                    <!-- Add button with icon -->
+                    <a href="@Url.Action("Create", "UserLogin")" class=" ms-3" style="margin-left: 30px;">
+                        <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add User" />
+                    </a>
+                }
             </div>
 
         </div>
@@ -78,24 +83,37 @@
                    .Sanitized(false)
                    .RenderValueAs(o =>
                    {
-                       var Editurl = Url.Action("Edit", "UserLogin", new { id = o.U_RECID, Username = o.U_USERNAME });
-                       var Deleteurl = Url.Action("Delete", "UserLogin", new { id = o.U_RECID });
-                       var Infourl1 = Url.Action("ListProject", "Useradminmapping", new { id = o.U_RECID, Name = o.U_USERNAME });
+                       var Editurl = Url.Action("Edit", "UserLogin", new { id = o.U_RECID, Username = o.U_USERNAME, EditName = o.U_RCODE });
+                       var Deleteurl = Url.Action("Delete", "UserLogin", new { id = o.U_RECID});
+
 
                        var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                        var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
-                       var InfoiconHtml1 = "<i class='bx bxl-product-hunt bx-sm'></i>";
+
 
                        var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
                        var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
-                       var InfolinkHtml1 = $"<a href='{Infourl1}' data-toggle='tooltip' data-placement='top' title='Product Mapping'>{InfoiconHtml1}</a>";
+
 
                        string InfolinkHtml = string.Empty;
+                       //string LocationlinkHtml = string.Empty;
                        if (!string.IsNullOrEmpty(o.U_RCODE) && o.U_RCODE.Trim().ToLower() == "user")
                        {
                            var Infourl = Url.Action("List", "Useradminmapping", new { id = o.U_RECID, Name = o.U_USERNAME, Role = o.U_RCODE });
                            var InfoiconHtml = "<i class='bx bx-info-circle bx-sm'></i>";
                            InfolinkHtml = $"<a href='{Infourl}' data-toggle='tooltip' data-placement='top' title='User Heads Mapping'>{InfoiconHtml}</a>";
+
+                           //var Locationurl = Url.Action("#", "#", new { id = o.U_RECID, Name = o.U_USERNAME, Role = o.U_RCODE });
+                           //var LocationiconHtml = "<i class='bx bx-map bx-sm'></i>";
+                           //LocationlinkHtml = $"<a href='{Locationurl}' data-toggle='tooltip' data-placement='top' title='Location'>{LocationiconHtml}</a>";
+                       }
+
+                       string InfolinkHtml1 = string.Empty;
+                       if (!string.IsNullOrEmpty(o.U_RCODE) && o.U_RCODE.Trim().ToLower() != "sa")
+                       {
+                           var Infourl1 = Url.Action("ListProject", "Useradminmapping", new { id = o.U_RECID, Name = o.U_USERNAME, Productmapppingname = o.U_RCODE });
+                           var InfoiconHtml1 = "<i class='bx bxl-product-hunt bx-sm'></i>";
+                           InfolinkHtml1 = $"<a href='{Infourl1}' data-toggle='tooltip' data-placement='top' title='Product Mapping'>{InfoiconHtml1}</a>";
                        }
 
                        var extraSpaces = "&nbsp;&nbsp;&nbsp;";
@@ -111,55 +129,55 @@
                 </div>}
 
         </div>
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <img class="mt-1" src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
-                            -Create
-                        </div>
-                    </div>
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
-                            -Edit
-                        </div>
-                    </div>
-
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bx bxs-trash bx-sm red mt-1'></i>
-                            -Delete
-                        </div>
-                    </div>
-
-
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bxl-product-hunt bx-sm mt-1'></i>
-                            -Product Mapping
-                        </div>
-                    </div>
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bx-info-circle bx-sm mt-1'></i>
-                            -UserAdmin Mapping
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </footer>
 
 
     </div>
+    <footer>
+        <div class="footer">
+            <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <img class="mt-1" src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
+                        -Create
+                    </div>
+                </div>
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
+                        -Edit
+                    </div>
+                </div>
+
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i class='bx bxs-trash bx-sm red mt-1'></i>
+                        -Delete
+                    </div>
+                </div>
+
+
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i style="color:#337ab7" class='bx bxl-product-hunt bx-sm mt-1'></i>
+                        -Product Mapping
+                    </div>
+                </div>
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i style="color:#337ab7" class='bx bx-info-circle bx-sm mt-1'></i>
+                        -UserAdmin Mapping
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </footer>
 
     <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
         <div class="offcanvas-header">

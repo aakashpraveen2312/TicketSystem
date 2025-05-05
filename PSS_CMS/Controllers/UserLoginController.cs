@@ -21,7 +21,7 @@ namespace PSS_CMS.Controllers
         // GET: UserLogin
         public async Task<ActionResult> Create()
         {
-            await ComboRoleSelection();//we cannot call the combo gteby id here we need to pass the model class here its showing error cauz it already have post method
+            await ComboLocationSelection();//we cannot call the combo gteby id here we need to pass the model class here its showing error cauz it already have post method
             return View();
         }
 
@@ -39,13 +39,14 @@ namespace PSS_CMS.Controllers
                 {
                     u_USERNAME = objUser.U_USERNAME,
                     u_PASSWORD = objUser.U_PASSWORD,
-                    u_RCODE = objUser.SelectedRole,
+                    u_RCODE = Session["R_CODE"],
                     u_SORTORDER = objUser.U_SORTORDER,
                     u_EMAILID = objUser.U_EMAILID,
                     u_CRECID = Session["CompanyID"],
                     u_USERCODE = objUser.U_USERCODE,
                     u_MOBILENO = objUser.U_MOBILENO,
                     u_DOMAIN = Session["DOMAIN"],
+                    u_LOCATION = objUser.SelectedRole,
                     u_DISABLE = objUser.U_UserDisable ? "Y" : "N"
                 };
 
@@ -108,11 +109,17 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> List(string searchPharse)
+        public async Task<ActionResult> List(string searchPharse, string R_CODE, string Role)
         {
+            if (R_CODE!=null && Role!=null)
+            {
+                Session["UNAME"] = Role;
+                Session["R_CODE"] = R_CODE;
+            }
+            
             User objuser = new User();
 
-            string WEBURLGET = ConfigurationManager.AppSettings["GETUSERS"];
+            string WEBURLGET = ConfigurationManager.AppSettings["GETUSERSBASEDONROLE"];
             string Authkey = ConfigurationManager.AppSettings["Authkey"];
 
             List<User> userList = new List<User>();
@@ -121,7 +128,7 @@ namespace PSS_CMS.Controllers
             string APIKey = Session["APIKEY"].ToString();
 
 
-            string strparams = "companyId=" + Session["CompanyID"];
+            string strparams = "role=" + Session["R_CODE"] + "&companyId=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
             try
             {
@@ -156,8 +163,10 @@ namespace PSS_CMS.Controllers
                                 userList = userList
                                     .Where(r => r.U_USERNAME.ToLower().Contains(searchPharse.ToLower()) ||
                                    r.U_USERCODE.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-                                   r.R_CODE.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-                                   r.U_EMAILID.ToString().ToLower().Contains(searchPharse.ToLower()))
+                                   r.U_EMAILID.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_RCODE.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_SORTORDER.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_MOBILENO.ToString().ToLower().Contains(searchPharse.ToLower()))
                                     .ToList();
 
                             }
@@ -179,9 +188,10 @@ namespace PSS_CMS.Controllers
             return View(userList);
         }
 
-        public async Task<ActionResult> Edit(int id,string Username)
+        public async Task<ActionResult> Edit(int id,string Username,string EditName)
         {
             Session["Names"] = Username;
+            Session["EditName"] = EditName;
             string WEBURLGETBYID = ConfigurationManager.AppSettings["GETBYIDUSERS"];
             string Authkey = ConfigurationManager.AppSettings["Authkey"];
 
@@ -227,7 +237,7 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            await ComboRoleSelectionGetbyID(user?.U_RCODE);
+            await ComboLocationSelectionGetbyID(user?.U_RCODE);
             return View(user);
         }
 
@@ -254,6 +264,7 @@ namespace PSS_CMS.Controllers
                     ""u_CRECID"":""{Session["CompanyID"]}"",
                     ""u_USERCODE"":""{UserEdit.U_USERCODE }"",
                     ""u_MOBILENO"":""{ UserEdit.U_MOBILENO}"",
+                    ""u_LOCATION"":""{ UserEdit.U_LOCATION}"",
                     ""u_DOMAIN"":""{Session["DOMAIN"]}""
                      }}";
                 //""BIN_SPRECID"": ""{ objbins.BIN_SPRECID}"",
@@ -397,122 +408,15 @@ namespace PSS_CMS.Controllers
 
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult> CheckedValue(List<string> selectedItems)
-        //{
-        //    try
-        //    {
-
-        //        var AdmindeleigatePostURL = ConfigurationManager.AppSettings["ADMINCHECKBOXDELIGATE"];
-        //        string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-        //        string APIKey = Session["APIKEY"].ToString();
-
-        //        if (selectedItems != null)
-        //        {
-
-
-        //            var selectedCategoryIds = selectedItems.Distinct().ToArray(); // Remove duplicates if necessary
-        //            string formattedOutput = string.Join(",", selectedCategoryIds);
-        //            Session["SELECTEDID"] = formattedOutput;
-        //        }
-        //        else
-        //        {
-        //            //var selectedCategoryIds = selectedItems.Distinct().ToArray();
-        //            string formattedOutput = "";
-        //            Session["SELECTEDID"] = formattedOutput;
-        //        }
-
-
-        //        var content = $@"{{
-        //            ""l_COMPANYID"": ""{Session["CompanyID"]}"",                
-        //            ""l_AdminDeligate"":""{Session["SELECTEDID"]}""                
-
-        //                }}";
-
-
-
-
-        //        var request = new HttpRequestMessage
-        //        {
-        //            RequestUri = new Uri(AdmindeleigatePostURL),
-        //            Method = HttpMethod.Post,
-        //            Headers =
-        //                {
-        //                    {"X-Version", "1" },
-        //                    {HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
-        //                },
-
-        //            Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
-        //        };
-
-        //        var handler = new HttpClientHandler
-        //        {
-        //            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-
-        //        };
-        //        var client = new HttpClient(handler)
-        //        {
-        //            Timeout = TimeSpan.FromSeconds(120)
-        //        };
-
-
-
-
-
-        //        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-        //        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-
-        //        var response = await client.SendAsync(request);
-
-
-
-
-        //        if (response.IsSuccessStatusCode)
-
-        //        {
-
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-
-        //            var apiResponse = JsonConvert.DeserializeObject<ApiResponseUserS>(responseBody);
-        //            string message = apiResponse.Message;
-
-        //            if (apiResponse.Status == "Y")
-        //            {
-        //                return Json(new { success = true, message = apiResponse.Message });
-        //            }
-        //            else if (apiResponse.Status == "U" || apiResponse.Status == "N")
-        //            {
-        //                return Json(new { success = false, message = apiResponse.Message });
-        //            }
-        //            else
-        //            {
-        //                return Json(new { success = false, message = "An unexpected status was returned." });
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
-        //        }
-
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
-        //    }
-
-        //    return View();
-        //}
-
-        public async Task<ActionResult> ComboRoleSelection()
+        public async Task<ActionResult> ComboLocationSelection()
 
         {
-            List<SelectListItem> Roles = new List<SelectListItem>();
+            List<SelectListItem> Location = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["USERSCREATECOMBO"];
+            string webUrlGet = ConfigurationManager.AppSettings["LOCATIONS"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "CompanyRecID=" + Session["CompanyID"];
+            string strparams = "cmprecid=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -534,10 +438,10 @@ namespace PSS_CMS.Controllers
 
                             if (rootObjects?.Data != null)
                             {
-                                Roles = rootObjects.Data.Select(t => new SelectListItem
+                                Location = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.R_CODE, // or the appropriate value field
-                                    Text = t.R_NAME,
+                                    Value = t.L_RECID.ToString(), // or the appropriate value field
+                                    Text = t.L_NAME,
                                 }).ToList();
                             }
                         }
@@ -550,20 +454,20 @@ namespace PSS_CMS.Controllers
             }
 
             // Assuming you are passing ticketTypes to the view
-            ViewBag.Roles = Roles;
+            ViewBag.Location = Location;
 
             return View();
         }
 
 
-        public async Task ComboRoleSelectionGetbyID(string selectedRoleCode)
+        public async Task ComboLocationSelectionGetbyID(string selectedRoleCode)
         {
-            List<SelectListItem> Roles = new List<SelectListItem>();
+            List<SelectListItem> Location = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["USERSCREATECOMBO"];
+            string webUrlGet = ConfigurationManager.AppSettings["LOCATIONS"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "CompanyRecID=" + Session["CompanyID"];
+            string strparams = "cmprecid=" + Session["CompanyID"];
             string url = webUrlGet + "?" + strparams;
 
             try
@@ -586,11 +490,11 @@ namespace PSS_CMS.Controllers
 
                             if (rootObjects?.Data != null)
                             {
-                                Roles = rootObjects.Data.Select(t => new SelectListItem
+                                Location = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.R_CODE,
-                                    Text = t.R_NAME,
-                                    Selected = (t.R_CODE == selectedRoleCode) // ✅ compare with passed selectedRoleCode
+                                    Value = t.L_RECID.ToString(),
+                                    Text = t.L_NAME,
+                                    Selected = (t.L_RECID.ToString() == selectedRoleCode) // ✅ compare with passed selectedRoleCode
                                 }).ToList();
                             }
                         }
@@ -602,7 +506,7 @@ namespace PSS_CMS.Controllers
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
 
-            ViewBag.Roles = Roles;
+            ViewBag.Location = Location;
         }
 
     }

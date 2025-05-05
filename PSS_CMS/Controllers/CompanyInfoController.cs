@@ -51,6 +51,7 @@ namespace PSS_CMS.Controllers
                             //    string base64Logo = Convert.ToBase64String(logoBytes);
                             //    ViewBag.Logo = base64Logo;
                             //}
+                            await LocationList();
                             return View(companyinfo);
                         }
                         else
@@ -64,6 +65,7 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
+            await LocationList();
             return View();
         }
 
@@ -188,6 +190,65 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
+        public async Task<ActionResult> LocationList()
+        {
+           
+            string Weburl = ConfigurationManager.AppSettings["LOCATIONS"];
 
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            List<Locations> Locationslist = new List<Locations>();
+
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<LocationsObjects>(jsonString);
+                            Locationslist = rootObjects.Data;
+                            ViewBag.LocationList = Locationslist;
+                            //if (!string.IsNullOrEmpty(searchPharse))
+                            //{
+                            //    projectmasterlist = projectmasterlist
+                            //        .Where(r => r.CU_CODE.ToLower().Contains(searchPharse.ToLower()) ||
+                            //                    r.CU_EMAIL.ToString().Contains(searchPharse.ToLower()) ||
+                            //                    r.CU_NAME.ToString().Contains(searchPharse.ToLower()) ||
+                            //                    r.CU_MOBILENO.ToString().Contains(searchPharse.ToLower()) ||
+                            //                    r.CU_INVOICENO.ToString().Contains(searchPharse.ToLower()) ||
+                            //                    r.CU_WARRANTYFREECALLS.ToString().Contains(searchPharse.ToLower()) ||
+                            //                    r.CU_WARRANTYUPTO.ToString().Contains(searchPharse.ToLower()) ||
+                            //                    r.CU_SORTORDER.ToString().Contains(searchPharse.ToLower()))
+                            //        .ToList();
+                            //}
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+            return View(Locationslist);
+        }
     }
 }

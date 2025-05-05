@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PSS_CMS.Models.Usergroup>
+﻿@model IEnumerable<PSS_CMS.Models.User>
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -14,7 +14,7 @@
     <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
     <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
     @*Bootstrap Icons and Boxicons and Fontawesome link*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
@@ -24,8 +24,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="~/Scripts/Script.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/Colors.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -45,16 +45,17 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER CATEGORY</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProductMaster")">MAPPED USERS</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProductMaster")">@Session["prodname"].ToString().ToUpper()</a></li>
                     <li>LIST</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "UserGroup", FormMethod.Get, new { id = "searchForm" }))
+                @using (Html.BeginForm("View", "ProductMaster", FormMethod.Get, new { id = "searchForm" }))
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
-                }
-               
+                    <input type="hidden" id="Recid" name="Recid" value="@Request["Recid"]" />
+                }               
             </div>
 
         </div>
@@ -64,55 +65,70 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.R_NAME).Titled("Role").SetWidth("400PX");
-               columns.Add(c => c.R_ROLEDESCRIPTION).Titled("Description");
-               columns.Add(c => c.R_SORTORDER).Titled("Sort").SetWidth("50PX").Css("text-right");
-               columns.Add().Titled("Action").SetWidth("50PX")
-              .Encoded(false)
-               .Sanitized(false)
-            .RenderValueAs(o =>
-            {
-
-                var Editurl = Url.Action("Edit", "UserGroup", new { Recid = o.R_RECID, Name = o.R_NAME }, null);
-                var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
-                var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
-
-                var usercategoryurl = Url.Action("List", "UserLogin", new { R_CODE = o.R_CODE, Recid = o.R_RECID,Role=o.R_NAME }, null);
-                var usercategoryiconHtml = "<i class='bx bx-user bx-sm'></i>";
-                var usercategorylinkHtml = $"<a href='{usercategoryurl}' data-toggle='tooltip' data-placement='top' title='User'>{usercategoryiconHtml}</a>";
-
-                var extraSpaces = "&nbsp;&nbsp;&nbsp;";
-                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{usercategorylinkHtml}");
-            });
-
+               columns.Add(c => c.U_USERCODE).Titled("Code").SetWidth("100px");
+               columns.Add(c => c.U_USERNAME).Titled("Name").SetWidth("150px");
+               columns.Add(c => c.U_EMAILID).Titled("Email ID");
+               columns.Add(c => c.U_MOBILENO).Titled("Mobile Number").SetWidth("450px").Css("text-right");
+               columns.Add(c => c.U_RCODE).Titled("Role").SetWidth("70px");
+               columns.Add(c => c.U_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");             
            }).WithPaging(10).Sortable(true)
             }
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No Usergroup's' are available</b>
+                    <b>No User's' are available</b>
                 </div>}
 
         </div>
 
 
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
-                            -Edit
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </footer>
 
     </div>
+    @*<footer>
+        <div class="footer">
+            <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <img class="mt-1" src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
+                        -Create
+                    </div>
+                </div>
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
+                        -Edit
+                    </div>
+                </div>
+
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i class='bx bxs-trash bx-sm red mt-1'></i>
+                        -Delete
+                    </div>
+                </div>
+
+
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i style="color:#337ab7" class='bx bxl-product-hunt bx-sm mt-1'></i>
+                        -Product Mapping
+                    </div>
+                </div>
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i style="color:#337ab7" class='bx bx-info-circle bx-sm mt-1'></i>
+                        -UserAdmin Mapping
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </footer>*@
 
     <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
         <div class="offcanvas-header">
@@ -152,8 +168,7 @@
         });
     });
     </script>
-
-    <script src="~/Scripts/Fordelete.js"></script>
+  
 </body>
 </html>
 

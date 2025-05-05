@@ -61,6 +61,10 @@ namespace PSS_CMS.Models
         public string SelectedRole { get; set; }
         public string R_NAME { get; set; }
         public string R_CODE { get; set; }
+        [DisplayName("Location")]
+        public string U_LOCATION { get; set; }
+        public int L_RECID { get; set; }
+        public string L_NAME { get; set; }
     }
 
     public class ApiResponseUserObject

@@ -336,9 +336,11 @@
     <Compile Include="Models\DashBoardList.cs" />
     <Compile Include="Models\CompanyInfo.cs" />
     <Compile Include="Models\DashboardPriority.cs" />
+    <Compile Include="Models\DashboardSA.cs" />
     <Compile Include="Models\Dashborardchart.cs" />
     <Compile Include="Models\Faq.cs" />
     <Compile Include="Models\Forgotpassword.cs" />
+    <Compile Include="Models\Locations.cs" />
     <Compile Include="Models\Login.cs" />
     <Compile Include="Models\ProductMaster.cs" />
     <Compile Include="Models\Projectmaster.cs" />
@@ -539,6 +541,9 @@
     <Content Include="Views\ProductMaster\List.cshtml" />
     <Content Include="Views\Tickets\Edit.cshtml" />
     <Content Include="Views\AssignTo\Assignto.cshtml" />
+    <Content Include="Views\ProductMaster\View.cshtml" />
+    <Content Include="Views\DashBoard\SuperAdminCountDashboard.cshtml" />
+    <Content Include="Views\UserGroup\UserCategory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

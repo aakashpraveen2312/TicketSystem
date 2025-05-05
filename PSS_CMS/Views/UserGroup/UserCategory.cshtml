@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PSS_CMS.Models.Useradminmap>
+﻿@model IEnumerable<PSS_CMS.Models.User>
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -14,7 +14,7 @@
     <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
     <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
     @*Bootstrap Icons and Boxicons and Fontawesome link*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
@@ -24,8 +24,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="~/Scripts/Script.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/Colors.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
-
 </head>
 
 <body>
@@ -45,65 +45,133 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">USER CATEGORY</a></li>
-
-                    <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserLogin")">@Session["Productmapppingname"].ToString().ToUpper()</a></li>
-                    <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserLogin")">LIST</a></li>
-                    <li>@Session["Name"].ToString().ToUpper()</li>
-                    <li>PRODUCT MAPPING</li>
+                    <li>ROLE</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">USER</a></li>
+                    <li>LIST</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("ListProject", "Useradminmapping", FormMethod.Get, new { id = "searchForm" }))
+                @using (Html.BeginForm("List", "UserLogin", FormMethod.Get, new { id = "searchForm" }))
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
-
+                @if (Session["R_CODE"] == null || Session["R_CODE"].ToString().ToLower() != "sa")
+                { 
+                    <!-- Add button with icon -->
+                <a href="@Url.Action("Create", "UserLogin")" class=" ms-3" style="margin-left: 30px;">
+                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add User" />
+                </a>
+                }
             </div>
 
         </div>
 
         <div class="table mt-3 ms-1 me-5" id="ticketTable1">
-            <form method="get" action="/Useradminmapping/CheckedValueProject">
-                @if (Model != null)
-                {
-                    @Html.Grid(Model).Columns(columns =>
-               {
+            @if (Model != null)
+            {
+                @Html.Grid(Model).Columns(columns =>
+           {
+               columns.Add(c => c.U_USERCODE).Titled("Code").SetWidth("100px");
+               columns.Add(c => c.U_USERNAME).Titled("Name").SetWidth("150px");
+               columns.Add(c => c.U_EMAILID).Titled("Email ID");
+               columns.Add(c => c.U_MOBILENO).Titled("Mobile Number").Css("text-right");
+               columns.Add(c => c.U_RCODE).Titled("Role").SetWidth("70px");
+               columns.Add(c => c.U_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
+               columns.Add().Titled("Action").SetWidth("150px")
+                   .Encoded(false)
+                   .Sanitized(false)
+                   .RenderValueAs(o =>
+                   {
+                       var Editurl = Url.Action("Edit", "UserLogin", new { id = o.U_RECID, Username = o.U_USERNAME });
+                       var Deleteurl = Url.Action("Delete", "UserLogin", new { id = o.U_RECID });
+                     
 
-                   columns.Add(c => c.Selected)
-        .Titled(" <input type='checkbox' id='selectAll' />  &nbsp;&nbsp;") // "Select All" checkbox in the header
-        .Encoded(false)
-        .Sanitized(false)
-        .RenderValueAs(o =>
-        {
-            var index = Model.ToList().IndexOf(o);
-            var isChecked = o.Selected ? "checked" : "";
-            var checkboxHtml = $"<input type='checkbox' name='selectedItems[{index}].USERSELECTED' value='true' class='select-item' {isChecked} />";
-            var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].P_PROJECTRECID' value='{o.P_RECID}' />"; // Bind GL_RECID properly
-            return MvcHtmlString.Create(checkboxHtml + hiddenRecId); // Return the HTML
-        })
-        .SetWidth("50px");
-                   columns.Add(c => c.P_NAME).Titled("Product Name");
-               }).WithPaging(10)
-                }
-                else
-                {
-                    <div class="alert alert-warning text-center">
-                        <b>No Projects's' are available</b>
-                    </div>}
+                       var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
+                       var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
+                      
 
+                       var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
+                       var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
+                      
 
-                <div class="button-container d-flex justify-content-end mt-3">
-                    <input type="submit" id="submitButton" value="Save" class="btn btn-default1 me-2 text-white" tabindex="8" />
-                    <input type="button" class="btn btn-default2 text-white" tabindex="9"
-                           onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'"
-                           value="Cancel" />
-                </div>
-            </form>
+                       string InfolinkHtml = string.Empty;
+                       if (!string.IsNullOrEmpty(o.U_RCODE) && o.U_RCODE.Trim().ToLower() == "user")
+                       {
+                           var Infourl = Url.Action("List", "Useradminmapping", new { id = o.U_RECID, Name = o.U_USERNAME, Role = o.U_RCODE });
+                           var InfoiconHtml = "<i class='bx bx-info-circle bx-sm'></i>";
+                           InfolinkHtml = $"<a href='{Infourl}' data-toggle='tooltip' data-placement='top' title='User Heads Mapping'>{InfoiconHtml}</a>";
+                       }
+
+                       string InfolinkHtml1 = string.Empty;
+                       if (!string.IsNullOrEmpty(o.U_RCODE) && o.U_RCODE.Trim().ToLower() != "sa")
+                       {
+                           var Infourl1 = Url.Action("ListProject", "Useradminmapping", new { id = o.U_RECID, Name = o.U_USERNAME });
+                           var InfoiconHtml1 = "<i class='bx bxl-product-hunt bx-sm'></i>";
+                           InfolinkHtml1 = $"<a href='{Infourl1}' data-toggle='tooltip' data-placement='top' title='Product Mapping'>{InfoiconHtml1}</a>";
+                       }
+
+                       var extraSpaces = "&nbsp;&nbsp;&nbsp;";
+                       return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{InfolinkHtml1}{extraSpaces}{InfolinkHtml}");
+                   });
+
+           }).WithPaging(10).Sortable(true)
+            }
+            else
+            {
+                <div class="alert alert-warning text-center">
+                    <b>No User's' are available</b>
+                </div>}
+
         </div>
 
-    </div>
 
+
+    </div>
+    <footer>
+        <div class="footer">
+            <div class="flex-container" style="padding-top:5px;padding-left:5px">
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <img class="mt-1" src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
+                        -Create
+                    </div>
+                </div>
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
+                        -Edit
+                    </div>
+                </div>
+
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i class='bx bxs-trash bx-sm red mt-1'></i>
+                        -Delete
+                    </div>
+                </div>
+
+
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i style="color:#337ab7" class='bx bxl-product-hunt bx-sm mt-1'></i>
+                        -Product Mapping
+                    </div>
+                </div>
+
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i style="color:#337ab7" class='bx bx-info-circle bx-sm mt-1'></i>
+                        -UserAdmin Mapping
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </footer>
 
     <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
         <div class="offcanvas-header">
@@ -143,52 +211,21 @@
         });
     });
     </script>
-
-    <script src="~/Scripts/Fordelete.js"></script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Select/Deselect all checkboxes
-            $('#selectAll').click(function () {
-                var isChecked = $(this).is(':checked');
-                console.log(isChecked);
-                $('input[name^="selectedItems"][type="checkbox"]').prop('checked', isChecked);
-            });
-
-            // Debug form data
-            $('form').submit(function (event) {
-                event.preventDefault();
-                var formData = new FormData(this);
-                var object = {};
-                formData.forEach((value, key) => {
-                    if (object[key]) {
-                        if (!Array.isArray(object[key])) {
-                            object[key] = [object[key]];
-                        }
-                        object[key].push(value);
-                    } else {
-                        object[key] = value;
-                    }
-                });
-                console.log(object); // Log form data to the console
-                this.submit(); // Submit the form after debugging
-            });
-        });
-    </script>
     <script>
     $(document).ready(function () {
 
-        // Select/Deselect all checkboxes
-        $('#selectAll').click(function () {
-            var isChecked = $(this).is(':checked');
-            $('input[name^="selectedItems"][type="checkbox"]').prop('checked', isChecked);
-        });
+        // When a checkbox is checked or unchecked
+        $(document).on('change', 'input[type="checkbox"].select-item', function () {
+            Swal.fire({
+                title: 'Processing...',
+                html: 'Please wait while we update the data.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading(); // Show loading spinner
+                }
+            });
 
-        // Handle submit button click
-        $('#submitButton').click(function (event) {
-            event.preventDefault(); // Prevent the default form submission
-            updateSecondGrid(); // Call the function to gather selected IDs and send them to the server
+            updateSecondGrid();
         });
 
         function updateSecondGrid() {
@@ -196,13 +233,11 @@
 
             // Loop through all checked checkboxes
             $('input[name^="selectedItems"][type="checkbox"]:checked').each(function () {
-                let index = $(this).attr('name').match(/\d+/)[0]; // Get index from name attribute
-
-                // Get the corresponding hidden input value using the same index
-                let userId = $('input[name="selectedItems[' + index + '].P_PROJECTRECID"]').val();
+                let index = $(this).attr('name').match(/\d+/)[0];
+                let userId = $('input[name="selectedItems[' + index + '].L_USERID"]').val();
 
                 if (userId) {
-                    selectedIds.push(userId); // Push to array
+                    selectedIds.push(userId);
                 }
             });
 
@@ -211,11 +246,13 @@
             // Send to controller via AJAX
             $.ajax({
                 type: 'POST',
-                url: '@Url.Action("CheckedValueProject", "Useradminmapping")',
+                url: '@Url.Action("CheckedValue", "UserLogin")',
                 data: JSON.stringify({ selectedItems: selectedIds }),
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function (response) {
+                    Swal.close(); // Close the loading spinner
+
                     Swal.fire({
                         title: response.success ? 'Success!' : 'Error!',
                         text: response.message,
@@ -228,6 +265,8 @@
                     });
                 },
                 error: function () {
+                    Swal.close(); // Close the loading spinner
+
                     Swal.fire({
                         title: 'Error!',
                         text: 'Something went wrong while processing your request.',
@@ -240,7 +279,7 @@
     });
     </script>
 
-
+    <script src="~/Scripts/Fordelete.js"></script>
 
 </body>
 </html>

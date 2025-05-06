@@ -111,12 +111,15 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> List(string searchPharse, string R_CODE, string Role)
         {
-            if (R_CODE!=null && Role!=null)
+            if (R_CODE!=null)
             {
-                Session["UNAME"] = Role;
                 Session["R_CODE"] = R_CODE;
             }
-            
+            if (Role != null)
+            {
+                Session["UNAME"] = Role;
+            }
+
             User objuser = new User();
 
             string WEBURLGET = ConfigurationManager.AppSettings["GETUSERSBASEDONROLE"];

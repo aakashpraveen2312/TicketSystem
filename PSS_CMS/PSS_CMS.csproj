@@ -323,6 +323,7 @@
     <Compile Include="Controllers\RecentTicketsController.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
     <Compile Include="Controllers\UseradminmappingController.cs" />
+    <Compile Include="Controllers\UserDashboardController.cs" />
     <Compile Include="Controllers\UserGroupController.cs" />
     <Compile Include="Controllers\UserLoginController.cs" />
     <Compile Include="Fillter\ApiKeyAuthorizeAttribute.cs" />
@@ -335,8 +336,10 @@
     <Compile Include="Models\Companies.cs" />
     <Compile Include="Models\DashBoardList.cs" />
     <Compile Include="Models\CompanyInfo.cs" />
+    <Compile Include="Models\DashboardListUser.cs" />
     <Compile Include="Models\DashboardPriority.cs" />
     <Compile Include="Models\DashboardSA.cs" />
+    <Compile Include="Models\DashboardUser.cs" />
     <Compile Include="Models\Dashborardchart.cs" />
     <Compile Include="Models\Faq.cs" />
     <Compile Include="Models\Forgotpassword.cs" />
@@ -544,6 +547,8 @@
     <Content Include="Views\ProductMaster\View.cshtml" />
     <Content Include="Views\DashBoard\SuperAdminCountDashboard.cshtml" />
     <Content Include="Views\UserGroup\UserCategory.cshtml" />
+    <Content Include="Views\UserDashboard\UserDashboardCount.cshtml" />
+    <Content Include="Views\UserDashboard\DashboardListTotalTicketUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

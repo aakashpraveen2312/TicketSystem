@@ -1,0 +1,518 @@
+﻿@model PSS_CMS.Models.DashboardUser
+@using GridMvc.Html
+@{ 
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+    @*Bootstrap Icons and Boxicons link*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <!-- JustGage Library -->
+    <script src="https://cdn.jsdelivr.net/npm/justgage@1.3.0/justgage.min.js"></script>
+    <!-- Correct Raphael.js (Dependency for JustGage) -->
+    <script src="https://cdn.jsdelivr.net/npm/raphael@2.1.4/raphael-min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="~/Scripts/Script.js"></script>
+
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+
+
+    <style>
+        h5.d-flex.flex-column.align-items-center.headingscolor {
+            background-color: #f5f5f5;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        tspan {
+            font-weight: bold;
+            color: black !important;
+            font-size: 19px;
+        }
+
+        h5.d-flex.justify-content-center.headingscolor {
+            background-color: #f5f5f5;
+            padding: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="content" style=" overflow-x: hidden;">
+
+        <nav class="nav d-flex">
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
+
+
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
+
+            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+
+                </a>
+            </div>
+
+
+        </nav>
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-12">
+
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "Tickets")">BACK TO LIST</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "Tickets")">DASHBOARD</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="container-fluid mt-4 card ms-2">
+
+
+            <!-- Count Cards -->
+            @{
+                // Total Tickets
+                var TotalticketStats = new[]
+                    {
+        new { Title = "Total Tickets", Count = (Model != null && Model.TotalTickets != null) ? (int)Model.TotalTickets : 0, Color = "primary" }
+    };
+
+
+                // Open Tickets
+                var openTicketStats = new[]
+                {
+  new { Title = "Open Tickets", Count = (Model != null && Model.OpenTickets != null) ? (int)Model.OpenTickets : 0,
+      OpenDate = (Model != null && Model.OpenDate != null) ? (int)Model.OpenDate : 0,
+      OpenLastMonth = (Model != null && Model.OpenLastMonth != null) ? (int)Model.OpenLastMonth : 0,
+      OpenLastweek = (Model != null && Model.OpenLastweek != null) ? (int)Model.OpenLastweek : 0,
+      Color = "warning" }
+                };
+
+                // Ressolved Tickets
+                var ressolvedTicketStats = new[]
+                {
+ new { Title = "Resolved Tickets", Count = (Model != null && Model.ResolvedTickets != null) ? (int)Model.ResolvedTickets : 0, Color = "success" }                };
+
+
+                // Closed Tickets
+                var closedTicketStats = new[]
+                {
+ new { Title = "Closed Tickets", Count = (Model != null && Model.CloseTickets != null) ? (int)Model.CloseTickets : 0, Color = "secondary" }                };
+
+
+
+            }
+
+            <div class="row mt-3">
+                @foreach (var stat in TotalticketStats)
+                {
+                    <div class="col-md-3">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="TotalTickets"})'">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="TotalTickets"})'">@stat.Count</h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @foreach (var stat in openTicketStats)
+                {
+                    <div class="col-md-3">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body">
+
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenTickets"})'">@stat.Title - (@stat.Count)</h5>
+
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <small style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenDate"})'">Current</small>
+                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenDate"})'"><strong>(@stat.OpenDate)</strong></div>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-primary" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastweek"})'">>1 Week</small>
+                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastweek"})'"><strong class="text-primary">(@stat.OpenLastweek)</strong></div>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-danger" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastMonth"})'">>1 Month</small>
+                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastMonth"})'"><strong class="text-danger">(@stat.OpenLastMonth)</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+                @foreach (var stat in ressolvedTicketStats)
+                {
+                    <div class="col-md-3">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="ResolvedTickets"})'">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="ResolvedTickets"})'">@stat.Count</h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @foreach (var stat in closedTicketStats)
+                {
+                    <div class="col-md-3">
+                        <div class="card text-white bg-@stat.Color mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="CloseTickets"})'">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="CloseTickets"})'">@stat.Count</h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+
+
+
+            @*Month to Date Chart*@
+            <div class="row">
+
+                @*Week to Date Chart*@
+                <div class="col-md-4">
+                    <h5 class="d-flex flex-column align-items-center headingscolor">
+                        Week to Date
+                        <span class="small">(Last 7 days including today)</span>
+                    </h5>
+                    <canvas id="ticketBarChartWTD"></canvas>
+                </div>
+                @*Week to Date Chart*@
+                <script>
+    var ctxBarWTD = document.getElementById('ticketBarChartWTD').getContext('2d');
+    new Chart(ctxBarWTD, {
+        type: 'bar',
+        data: {
+            labels: ['Total Tickets', 'Open', 'Resolved', 'Closed'],
+            datasets: [{
+                label: 'Week to Date',
+                data: [@ViewBag.WeekTotalTickets, @ViewBag.WeekOpenTickets, @ViewBag.WeekResolvedTickets, @ViewBag.WeekCloseTickets],
+                backgroundColor: ['#0070FC', '#ffc107', '#198754', '#6c757d']
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false // Hide the dataset label
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        display: true // Hide x-axis labels
+                    }
+                }
+            }
+        }
+    });
+                </script>
+
+
+                <div class="col-md-4">
+
+                    <h5 class="d-flex flex-column align-items-center headingscolor">
+                        Month to Date
+                        <span class="small">(Last 27 days including today)</span>
+                    </h5>
+
+
+                    <canvas id="ticketBarChartMTD"></canvas>
+                </div>
+                @*Month to Date Chart*@
+                <script>
+    // Month to Date Chart
+    var ctxBarMTD = document.getElementById('ticketBarChartMTD').getContext('2d');
+    new Chart(ctxBarMTD, {
+        type: 'bar',
+        data: {
+            labels: ['Total Tickets', 'Open', 'Resolved', 'Closed'],
+            datasets: [{
+                data: [@ViewBag.MonthTotalTickets, @ViewBag.MonthOpenTickets, @ViewBag.MonthResolvedTickets, @ViewBag.MonthCloseTickets],
+                backgroundColor: ['#0070FC', '#ffc107', '#198754', '#6c757d']
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false  // Hides the label
+                }
+            }
+        }
+    });
+                </script>
+
+                <div class="col-md-4">
+                    <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Over all tickets</h5>
+                    <canvas id="ticketBarChart"></canvas>
+                </div>
+                @*Over all ticket bar chart script*@
+                <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ctxBar = document.getElementById('ticketBarChart').getContext('2d');
+
+        var totalTickets = @(Model?.TotalTickets ?? 0);
+        var openTickets = @(Model?.OpenTickets ?? 0);
+        var resolvedTickets = @(Model?.ResolvedTickets ?? 0);
+        var closedTickets = @(Model?.CloseTickets ?? 0);
+
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Total Tickets', 'Open', 'Resolved', 'Closed'],
+                datasets: [{
+                    label: 'Ticket Count',
+                    data: [totalTickets, openTickets, resolvedTickets, closedTickets],
+                    backgroundColor: ['#0070FC', '#ffc107', '#198754', '#6c757d'],
+                    borderColor: ['#0056b3', '#d39e00', '#146c43', '#5a6268'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+
+                plugins: {
+                    legend: {
+                        display: false // Hide the legend
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            display: true // Show x-axis labels
+                        }
+                    }
+
+                }
+            }
+        });
+    });
+                </script>
+            </div>
+
+
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <h5 class="d-flex justify-content-center headingscolor">Priority vise Stacked Tickets</h5>
+                    <canvas id="ticketChart"></canvas>
+                </div>
+                @*Prioritytype bar chart script*@
+                <script>
+    const labels = @Html.Raw(ViewBag.Labels1); // ["Critical", "Emergency", "High", "Medium", "Low"]
+
+    const data = {
+        labels: labels,
+        datasets: [
+
+            {
+                label: 'Open',
+                data: @Html.Raw(ViewBag.OpenTickets1 ?? "[]"), // [2, 6, 3, 9, 1]
+                backgroundColor: '#FFBE00'
+            },
+            {
+                label: 'Resolved',
+                data: @Html.Raw(ViewBag.ResolvedTickets1 ?? "[]"), // [6, 4, 8, 1, 3]
+                backgroundColor: '#008959'
+            },
+            {
+                label: 'Closed',
+                data: @Html.Raw(ViewBag.ClosedTickets1 ?? "[]"), // [5, 10, 7, 3, 2]
+                backgroundColor: '#69757D'
+            }
+        ]
+    };
+
+    const config = {
+        type: 'bar',
+        data: data,
+        options: {
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: {
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                y: {
+                    stacked: true,
+                }
+            }
+        }
+    };
+
+    new Chart(document.getElementById('ticketChart'), config);
+                </script>
+
+
+
+
+                @* Speedometer Container *@
+                <div class="col-md-6 ">
+
+                    <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Percentage of Closed tickets</h5>
+                    <div class="d-flex justify-content-center">
+                        <div class="" id="speedometer" style="max-width: 600px; max-height: 300px; height: 300px; width: 470px "></div>
+                    </div>
+                </div>
+                @*Script for Speedometer graph values*@
+                <script>
+    const closedPercentage = Math.round(@((ViewBag.ClosedPercentage ?? 0))); // Default to 0 if null
+    const totalTickets = @((ViewBag.TotalTickets ?? 0)); // Default to 0 if null
+    const closedTickets = @((ViewBag.ClosedTickets ?? 0)); // Default to 0 if null
+
+                    function updateSpeedometer(percentage) {
+                        console.log("percentage", percentage);
+        if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+            percentage = 0; // Ensure a valid range (0-100)
+        }
+
+        // Create the gauge
+        var gage = new JustGage({
+            id: "speedometer",
+            value: percentage,
+            min: 0,
+            max: 100,
+            title: "Ticket Progress",
+            label: `${percentage}% Closed\n(${closedTickets}/${totalTickets})`,
+            labelFontColor: "#000000", // Pure black color
+            gaugeWidthScale: 0.1,
+            pointer: true,
+            pointerOptions: {
+                length: 0.6,
+                strokeWidth: 0.04
+            },
+            customSectors: [
+                { color: "#ff0000", lo: 0, hi: 30 },  // Red (0-30%)
+                { color: "#ffff00", lo: 31, hi: 70 }, // Yellow (31-70%)
+                { color: "#00ff00", lo: 71, hi: 100 } // Green (71-100%)
+            ],
+            levelColors: ["#ff0000", "#ffff00", "#00ff00"],
+            hideValue: true // Hide the number inside the gauge
+        });
+
+        // Tooltip logic for hovering over yellow sector
+        document.getElementById("speedometer").addEventListener("mousemove", function (event) {
+            let x = event.pageX, y = event.pageY;
+            if (percentage >= 0 && percentage <= 100) {
+               showTooltip(`Closed Tickets: ${percentage}%`, x, y);
+
+            } else {
+                hideTooltip();
+            }
+        });
+
+        document.getElementById("speedometer").addEventListener("mouseleave", function () {
+            hideTooltip();
+        });
+    }
+
+    function showTooltip(text, x, y) {
+        let tooltip = document.getElementById("tooltip");
+        if (!tooltip) {
+            tooltip = document.createElement("div");
+            tooltip.id = "tooltip";
+            tooltip.style.position = "absolute";
+            tooltip.style.background = "black";
+            tooltip.style.color = "white";
+            tooltip.style.padding = "5px 10px";
+            tooltip.style.borderRadius = "5px";
+            tooltip.style.fontSize = "12px";
+            tooltip.style.display = "none";
+            tooltip.style.zIndex = "1000";
+            document.body.appendChild(tooltip);
+        }
+        tooltip.innerHTML = text;
+        tooltip.style.left = x + 10 + "px";
+        tooltip.style.top = y + 10 + "px";
+        tooltip.style.display = "block";
+    }
+
+    function hideTooltip() {
+        let tooltip = document.getElementById("tooltip");
+        if (tooltip) {
+            tooltip.style.display = "none";
+        }
+    }
+
+                    if (closedPercentage !== null && closedPercentage !== undefined) {
+                        console.log("closedPercentage",closedPercentage);
+        updateSpeedometer(closedPercentage);
+    }
+                </script>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+            <h4>Are you sure you want to log out?</h4>
+        </div>
+        <div class="offcanvas-footer d-flex justify-content-center">
+            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+        </div>
+    </div>
+
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.getElementById("logoutLink").addEventListener("click", function () {
+        Swal.fire({
+            title: "Are you sure you want to log out?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#dc3545",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '@Url.Action("Logout", "Login")';
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>

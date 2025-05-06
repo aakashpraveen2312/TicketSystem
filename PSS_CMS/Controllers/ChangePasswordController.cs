@@ -31,7 +31,7 @@ namespace PSS_CMS.Controllers
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""userId"": ""{Session["UserID"]}"",           
+            ""userId"": ""{Session["UserRECID"]}"",           
             ""newpassword"": ""{changepassword.U_NewPassword}"",                                 
             ""compRecordID"": ""{ Session["CompanyID"]}""                              
         }}";

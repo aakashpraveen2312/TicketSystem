@@ -78,13 +78,16 @@
                columns.Add(c => c.U_MOBILENO).Titled("Mobile Number").Css("text-right");
                columns.Add(c => c.U_RCODE).Titled("Role").SetWidth("70px");
                columns.Add(c => c.U_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
-               columns.Add().Titled("Action").SetWidth("150px")
+
+               if(Session["R_CODE"] == null || Session["R_CODE"].ToString().ToLower() != "sa")
+               {
+                   columns.Add().Titled("Action").SetWidth("150px")
                    .Encoded(false)
                    .Sanitized(false)
                    .RenderValueAs(o =>
                    {
                        var Editurl = Url.Action("Edit", "UserLogin", new { id = o.U_RECID, Username = o.U_USERNAME, EditName = o.U_RCODE });
-                       var Deleteurl = Url.Action("Delete", "UserLogin", new { id = o.U_RECID});
+                       var Deleteurl = Url.Action("Delete", "UserLogin", new { id = o.U_RECID });
 
 
                        var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
@@ -119,7 +122,7 @@
                        var extraSpaces = "&nbsp;&nbsp;&nbsp;";
                        return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{InfolinkHtml1}{extraSpaces}{InfolinkHtml}");
                    });
-
+               }
            }).WithPaging(10).Sortable(true)
             }
             else

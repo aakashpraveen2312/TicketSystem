@@ -9,9 +9,11 @@ using System.Web.Mvc;
 using PSS_CMS.Models;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using PSS_CMS.Fillter;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class UserDashboardController : Controller
     {
         // GET: UserDashboard

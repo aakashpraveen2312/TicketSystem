@@ -77,7 +77,8 @@ namespace PSS_CMS.Controllers
                         if (role == "User")
                         {
                             await AutoCloseTicket();
-                            return RedirectToAction("Ticket_History", "Tickets");
+                            //return RedirectToAction("Ticket_History", "Tickets");
+                            return RedirectToAction("UserDashboardCount", "UserDashboard");
                         }
                         else if (role == "Admin" || role == "Manager")
                         {

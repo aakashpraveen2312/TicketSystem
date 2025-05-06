@@ -63,6 +63,8 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li><a class="dropdown-item" href="@Url.Action("FAQ", "Tickets")">FAQ</a></li>
                 <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="@Url.Action("UserDashboardCount", "UserDashboard")">DashBoard</a></li>
+                <li><hr class="dropdown-divider"></li>
                 <li>
                     <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                         Logout    <i class='bx bx-log-out' style="font-size:24px !important;color:red !important;"></i>
@@ -184,7 +186,7 @@
                         <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .docx, .csv)</small>
                     </div>
 
-                  
+
 
                     <div class="col-md-12 mt-2 mb-3 d-flex justify-content-lg-end justify-content-md-end justify-content-start">
 
@@ -391,12 +393,12 @@
                     Swal.fire({
                         title: "",
                         html: `
-                                                                <p style="font-size: 15px;"><b>Ticket Raised Successfuly <br/> Admin Will Reach You Soon</b></p>
-                                                                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
-                                                                    <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
-                                                                    <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
-                                                                </div>
-                                                            `,
+                                                                    <p style="font-size: 15px;"><b>Ticket Raised Successfuly <br/> Admin Will Reach You Soon</b></p>
+                                                                    <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+                                                                        <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
+                                                                        <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
+                                                                    </div>
+                                                                `,
                         showConfirmButton: false,
                         showCancelButton: false,
                         allowOutsideClick: false,

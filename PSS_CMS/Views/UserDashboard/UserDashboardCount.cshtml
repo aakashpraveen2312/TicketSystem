@@ -60,46 +60,68 @@
     <div class="content" style=" overflow-x: hidden;">
 
         <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-
-
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
-
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
-
-                </a>
+            <div class="p-2 flex-grow-1">
+                <h3 style="margin-top:10px" class="heading ms-3">TICKET SYSTEM</h3>
             </div>
 
+            <div class="p-2" style="margin-right:10px">
+                <h4 class="heading">@Session["UserName"].ToString().ToUpper()</h4>
+            </div>
 
+            <div class="p-2 me-3 dropdown">
+                <a href="#" class="text-decoration-none" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class='bx bx-user-circle' style="font-size:24px !important; color:purple !important;"></i>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="@Url.Action("FAQ", "Tickets")">FAQ</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="@Url.Action("UserDashboardCount", "UserDashboard")">DashBoard</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                            Logout    <i class='bx bx-log-out' style="font-size:24px !important;color:red !important;"></i>
+
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
         </nav>
         <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
+            <div class="col-lg-9">
 
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "Tickets")">BACK TO LIST</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "Tickets")">TICKET HISTORY</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "Tickets")">DASHBOARD</a></li>
                 </ul>
             </div>
+            <div class="col-lg-3 d-flex justify-content-end">
+                <button type="button"
+                        class="btncolorsubmit res ms-4"
+                        style="margin-top:9px;width:40%"
+                        onclick="window.location.href='@Url.Action("Ticket","Tickets")'">
+                    Create Ticket
+                </button>
+            </div>
 
-        </div>
+            </div>
 
-        <div class="container-fluid mt-4 card ms-2">
+            <div class="container-fluid mt-4 card ms-2">
 
 
-            <!-- Count Cards -->
-            @{
-                // Total Tickets
-                var TotalticketStats = new[]
-                    {
+                <!-- Count Cards -->
+                @{
+                    // Total Tickets
+                    var TotalticketStats = new[]
+                        {
         new { Title = "Total Tickets", Count = (Model != null && Model.TotalTickets != null) ? (int)Model.TotalTickets : 0, Color = "primary" }
     };
 
 
-                // Open Tickets
-                var openTicketStats = new[]
-                {
+                    // Open Tickets
+                    var openTicketStats = new[]
+                    {
   new { Title = "Open Tickets", Count = (Model != null && Model.OpenTickets != null) ? (int)Model.OpenTickets : 0,
       OpenDate = (Model != null && Model.OpenDate != null) ? (int)Model.OpenDate : 0,
       OpenLastMonth = (Model != null && Model.OpenLastMonth != null) ? (int)Model.OpenLastMonth : 0,
@@ -107,102 +129,102 @@
       Color = "warning" }
                 };
 
-                // Ressolved Tickets
-                var ressolvedTicketStats = new[]
-                {
+                    // Ressolved Tickets
+                    var ressolvedTicketStats = new[]
+                    {
  new { Title = "Resolved Tickets", Count = (Model != null && Model.ResolvedTickets != null) ? (int)Model.ResolvedTickets : 0, Color = "success" }                };
 
 
-                // Closed Tickets
-                var closedTicketStats = new[]
-                {
+                    // Closed Tickets
+                    var closedTicketStats = new[]
+                    {
  new { Title = "Closed Tickets", Count = (Model != null && Model.CloseTickets != null) ? (int)Model.CloseTickets : 0, Color = "secondary" }                };
 
 
 
-            }
-
-            <div class="row mt-3">
-                @foreach (var stat in TotalticketStats)
-                {
-                    <div class="col-md-3">
-                        <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="TotalTickets"})'">@stat.Title</h5>
-                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="TotalTickets"})'">@stat.Count</h3>
-                            </div>
-                        </div>
-                    </div>
                 }
 
-                @foreach (var stat in openTicketStats)
-                {
-                    <div class="col-md-3">
-                        <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body">
+                <div class="row mt-3">
+                    @foreach (var stat in TotalticketStats)
+                    {
+                        <div class="col-md-3">
+                            <div class="card text-white bg-@stat.Color mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="TotalTickets"})'">@stat.Title</h5>
+                                    <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="TotalTickets"})'">@stat.Count</h3>
+                                </div>
+                            </div>
+                        </div>
+                    }
 
-                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenTickets"})'">@stat.Title - (@stat.Count)</h5>
+                    @foreach (var stat in openTicketStats)
+                    {
+                        <div class="col-md-3">
+                            <div class="card text-white bg-@stat.Color mb-3">
+                                <div class="card-body">
 
-                                <div class="row text-center">
-                                    <div class="col-4">
-                                        <small style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenDate"})'">Current</small>
-                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenDate"})'"><strong>(@stat.OpenDate)</strong></div>
-                                    </div>
-                                    <div class="col-4">
-                                        <small class="text-primary" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastweek"})'">>1 Week</small>
-                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastweek"})'"><strong class="text-primary">(@stat.OpenLastweek)</strong></div>
-                                    </div>
-                                    <div class="col-4">
-                                        <small class="text-danger" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastMonth"})'">>1 Month</small>
-                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastMonth"})'"><strong class="text-danger">(@stat.OpenLastMonth)</strong></div>
+                                    <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenTickets"})'">@stat.Title - (@stat.Count)</h5>
+
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <small style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenDate"})'">Current</small>
+                                            <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenDate"})'"><strong>(@stat.OpenDate)</strong></div>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-primary" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastweek"})'">>1 Week</small>
+                                            <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastweek"})'"><strong class="text-primary">(@stat.OpenLastweek)</strong></div>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-danger" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastMonth"})'">>1 Month</small>
+                                            <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="OpenLastMonth"})'"><strong class="text-danger">(@stat.OpenLastMonth)</strong></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                }
-                @foreach (var stat in ressolvedTicketStats)
-                {
-                    <div class="col-md-3">
-                        <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="ResolvedTickets"})'">@stat.Title</h5>
-                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="ResolvedTickets"})'">@stat.Count</h3>
+                    }
+                    @foreach (var stat in ressolvedTicketStats)
+                    {
+                        <div class="col-md-3">
+                            <div class="card text-white bg-@stat.Color mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="ResolvedTickets"})'">@stat.Title</h5>
+                                    <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="ResolvedTickets"})'">@stat.Count</h3>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
 
-                @foreach (var stat in closedTicketStats)
-                {
-                    <div class="col-md-3">
-                        <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="CloseTickets"})'">@stat.Title</h5>
-                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="CloseTickets"})'">@stat.Count</h3>
+                    @foreach (var stat in closedTicketStats)
+                    {
+                        <div class="col-md-3">
+                            <div class="card text-white bg-@stat.Color mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="CloseTickets"})'">@stat.Title</h5>
+                                    <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicketUser","UserDashboard",new { status="CloseTickets"})'">@stat.Count</h3>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
-            </div>
-
-
-
-
-            @*Month to Date Chart*@
-            <div class="row">
-
-                @*Week to Date Chart*@
-                <div class="col-md-4">
-                    <h5 class="d-flex flex-column align-items-center headingscolor">
-                        Week to Date
-                        <span class="small">(Last 7 days including today)</span>
-                    </h5>
-                    <canvas id="ticketBarChartWTD"></canvas>
+                    }
                 </div>
-                @*Week to Date Chart*@
-                <script>
+
+
+
+
+                @*Month to Date Chart*@
+                <div class="row">
+
+                    @*Week to Date Chart*@
+                    <div class="col-md-4">
+                        <h5 class="d-flex flex-column align-items-center headingscolor">
+                            Week to Date
+                            <span class="small">(Last 7 days including today)</span>
+                        </h5>
+                        <canvas id="ticketBarChartWTD"></canvas>
+                    </div>
+                    @*Week to Date Chart*@
+                    <script>
     var ctxBarWTD = document.getElementById('ticketBarChartWTD').getContext('2d');
     new Chart(ctxBarWTD, {
         type: 'bar',
@@ -229,21 +251,21 @@
             }
         }
     });
-                </script>
+                    </script>
 
 
-                <div class="col-md-4">
+                    <div class="col-md-4">
 
-                    <h5 class="d-flex flex-column align-items-center headingscolor">
-                        Month to Date
-                        <span class="small">(Last 27 days including today)</span>
-                    </h5>
+                        <h5 class="d-flex flex-column align-items-center headingscolor">
+                            Month to Date
+                            <span class="small">(Last 27 days including today)</span>
+                        </h5>
 
 
-                    <canvas id="ticketBarChartMTD"></canvas>
-                </div>
-                @*Month to Date Chart*@
-                <script>
+                        <canvas id="ticketBarChartMTD"></canvas>
+                    </div>
+                    @*Month to Date Chart*@
+                    <script>
     // Month to Date Chart
     var ctxBarMTD = document.getElementById('ticketBarChartMTD').getContext('2d');
     new Chart(ctxBarMTD, {
@@ -263,14 +285,14 @@
             }
         }
     });
-                </script>
+                    </script>
 
-                <div class="col-md-4">
-                    <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Over all tickets</h5>
-                    <canvas id="ticketBarChart"></canvas>
-                </div>
-                @*Over all ticket bar chart script*@
-                <script>
+                    <div class="col-md-4">
+                        <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Over all tickets</h5>
+                        <canvas id="ticketBarChart"></canvas>
+                    </div>
+                    @*Over all ticket bar chart script*@
+                    <script>
     document.addEventListener("DOMContentLoaded", function () {
         var ctxBar = document.getElementById('ticketBarChart').getContext('2d');
 
@@ -309,19 +331,19 @@
             }
         });
     });
-                </script>
-            </div>
-
-
-
-            <div class="row">
-
-                <div class="col-md-6">
-                    <h5 class="d-flex justify-content-center headingscolor">Priority vise Stacked Tickets</h5>
-                    <canvas id="ticketChart"></canvas>
+                    </script>
                 </div>
-                @*Prioritytype bar chart script*@
-                <script>
+
+
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <h5 class="d-flex justify-content-center headingscolor">Priority vise Stacked Tickets</h5>
+                        <canvas id="ticketChart"></canvas>
+                    </div>
+                    @*Prioritytype bar chart script*@
+                    <script>
     const labels = @Html.Raw(ViewBag.Labels1); // ["Critical", "Emergency", "High", "Medium", "Low"]
 
     const data = {
@@ -367,21 +389,21 @@
     };
 
     new Chart(document.getElementById('ticketChart'), config);
-                </script>
+                    </script>
 
 
 
 
-                @* Speedometer Container *@
-                <div class="col-md-6 ">
+                    @* Speedometer Container *@
+                    <div class="col-md-6 ">
 
-                    <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Percentage of Closed tickets</h5>
-                    <div class="d-flex justify-content-center">
-                        <div class="" id="speedometer" style="max-width: 600px; max-height: 300px; height: 300px; width: 470px "></div>
+                        <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Percentage of Closed tickets</h5>
+                        <div class="d-flex justify-content-center">
+                            <div class="" id="speedometer" style="max-width: 600px; max-height: 300px; height: 300px; width: 470px "></div>
+                        </div>
                     </div>
-                </div>
-                @*Script for Speedometer graph values*@
-                <script>
+                    @*Script for Speedometer graph values*@
+                    <script>
     const closedPercentage = Math.round(@((ViewBag.ClosedPercentage ?? 0))); // Default to 0 if null
     const totalTickets = @((ViewBag.TotalTickets ?? 0)); // Default to 0 if null
     const closedTickets = @((ViewBag.ClosedTickets ?? 0)); // Default to 0 if null
@@ -464,16 +486,16 @@
                         console.log("closedPercentage",closedPercentage);
         updateSpeedometer(closedPercentage);
     }
-                </script>
+                    </script>
+
+
+                </div>
 
 
             </div>
 
 
         </div>
-
-
-    </div>
 
 
 

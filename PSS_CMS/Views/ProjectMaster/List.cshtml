@@ -67,9 +67,12 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.CU_CODE).Titled("Store Reference Code").SetWidth("100px");
-               columns.Add(c => c.CU_NAME).Titled("Customer Name");
+               columns.Add()
+     .Titled("Customer")
+     .SetWidth("200px")
+     .RenderValueAs(c => $"{c.CU_CODE} - {c.CU_NAME}");
                columns.Add(c => c.CU_EMAIL).Titled("Email ID");
+               columns.Add(c => c.P_NAME).Titled("Product");
                columns.Add(c => c.CU_MOBILENO).Titled("Mobile Number").SetWidth("150px").Css("text-right");
                columns.Add(c => c.CU_INVOICENO).Titled("Invoice Number").SetWidth("150px");
                columns.Add(c => c.CU_WARRANTYFREECALLS).Titled("Warranty Calls").SetWidth("50px").Css("text-right");

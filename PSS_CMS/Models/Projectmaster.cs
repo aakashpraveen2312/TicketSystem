@@ -42,6 +42,8 @@ namespace PSS_CMS.Models
 
         private string CU_DISABLED { get; set; }
         public string SelectedProduct { get; set; }
+        public string P_NAME { get; set; }
+        public int P_RECID { get; set; }
     }
 
 

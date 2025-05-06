@@ -14,6 +14,9 @@ namespace PSS_CMS.Models
         public int TotalProductCount { get; set; }
         public int TotalCompanyLocationCount { get; set; }
 
+        public string Admindescription { get; set; }
+        public string Managerdescription { get; set; }
+        public string Userdescription { get; set; }
     }
     public class SAdashboard
     {

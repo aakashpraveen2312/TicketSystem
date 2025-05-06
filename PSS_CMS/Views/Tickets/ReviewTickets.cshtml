@@ -94,6 +94,8 @@ return input.Replace("\\\"", "\"")        // Double quotes
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li><a class="dropdown-item" href="@Url.Action("FAQ", "Tickets")">FAQ</a></li>
                     <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="@Url.Action("UserDashboardCount", "UserDashboard")">DashBoard</a></li>
+                    <li><hr class="dropdown-divider"></li>
                     <li>
                         <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                             Logout    <i class='bx bx-log-out' style="font-size:24px !important;color:red !important;"></i>
@@ -153,11 +155,11 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
 
                             @*<div class="col-md-5">
-                                    @if (!string.IsNullOrEmpty(ticket.TC_REQUEST_ATTACHMENT_PREFIX))
-                                    {
-                                        <img src="data:image/png;base64,@ticket.TC_REQUEST_ATTACHMENT_PREFIX" alt="Ticket Image" class="img-fluid logical" />
-                                    }
-                                </div>*@
+                                @if (!string.IsNullOrEmpty(ticket.TC_REQUEST_ATTACHMENT_PREFIX))
+                                {
+                                    <img src="data:image/png;base64,@ticket.TC_REQUEST_ATTACHMENT_PREFIX" alt="Ticket Image" class="img-fluid logical" />
+                                }
+                            </div>*@
 
 
                             @if (!string.IsNullOrEmpty(ticket.TC_REQUEST_ATTPREFIX))

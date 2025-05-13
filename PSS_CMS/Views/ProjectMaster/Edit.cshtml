@@ -95,6 +95,22 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CU_ADDRESS, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CU_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", rows = "10", cols = "70" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CU_GST, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CU_GST, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.CU_PRECID, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
@@ -133,7 +149,7 @@
                         @Html.LabelFor(model => model.CU_WARRANTYUPTO, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CU_WARRANTYUPTO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.CU_WARRANTYUPTO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",type="date" } })
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -153,7 +169,7 @@
                         @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input" })
                     </div>
                 </div>
-                <div class="row ">
+                <div class="row mb-5 ">
                     <div class="col-lg-2">
 
                     </div>
@@ -164,27 +180,27 @@
                 </div>
             </div>
         }
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+        @*<footer>
+                <div class="footer">
+                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck1"></span>
-                            - Text Fields
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <span class="minicheck minicheck1"></span>
+                                - Text Fields
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck2"></span>
-                            - Number Fields
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <span class="minicheck minicheck2"></span>
+                                - Number Fields
+                            </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
-            </div>
-        </footer>
+            </footer>*@
 
     </div>
 
@@ -302,7 +318,6 @@
         }
     });
     </script>
-
 
 </body>
 </html>

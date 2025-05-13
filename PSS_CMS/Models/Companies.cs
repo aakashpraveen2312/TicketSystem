@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Newtonsoft.Json;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace PSS_CMS.Models
@@ -90,10 +91,6 @@ namespace PSS_CMS.Models
         [DisplayName("Authorization")]
         public string C_AUTHKEY { get; set; }
 
-
-        [DisplayName("City")]
-        [RegularExpression(@"^[a-zA-Z\s\.]*$", ErrorMessage = "RBICode should be capital letters with Numerics.")]
-
         public string C_RBICODE { get; set; }
 
 
@@ -131,5 +128,17 @@ namespace PSS_CMS.Models
         public string COMPANYRECID { get; set; }
         public string Status { get; set; }
         public string Message { get; set; }
+
+        [DisplayName("Material")]
+        public bool IsDisabled
+        {
+            get => M_CONSUMPTION == "Y";
+            set => M_CONSUMPTION = value ? "Y" : "N";
+        }
+        [JsonProperty("M_CONSUMPTIONS")]
+
+        private string M_CONSUMPTION { get; set; }
+
+
     }
 }

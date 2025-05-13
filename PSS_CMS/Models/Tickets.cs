@@ -12,7 +12,19 @@ namespace PSS_CMS.Models
         public int TC_URECID { get; set; }       
         public int TC_CRECID { get; set; }       
         public int TC_PRECID { get; set; }       
+        public int CU_WARRANTYFREECALLS { get; set; }
+
+        public bool IsDisabled
+        {
+            get => CU_DISABLEDCHCEK == "Y";
+            set => CU_DISABLEDCHCEK = value ? "Y" : "N";
+        }
+        private string CU_DISABLEDCHCEK { get; set; }
+
         public string TC_USERID { get; set; }
+        public string TC_WARRANTYUPTO { get; set; }
+        public string CU_WARRANTYUPTO { get; set; }
+       
         public string TC_COMPANYID { get; set; }
         public string TC_PROJECTID { get; set; }
         public string TC_Date { get; set; }
@@ -32,6 +44,8 @@ namespace PSS_CMS.Models
         public string TC_SUBJECT { get; set; }
         public string TC_OTP { get; set; }
         public string TC_COMMENTS { get; set; }
+        public string TC_CUSTOMER { get; set; }
+        public string SelectedCustomer { get; set; }
         public string TC_REQUEST_ATTPREFIX { get; set; }
         public string TC_REQUEST_DATETIME { get; set; }
         public string TC_RESPONSE_ATTPREFIX { get; set; }
@@ -86,6 +100,7 @@ namespace PSS_CMS.Models
         public int CU_RECID { get; set; }
         public string TT_CODE { get; set; }
         public string TT_DISABLE { get; set; }
+
     }
 
     public class ApiResponseTicketsResponseTypes
@@ -93,6 +108,13 @@ namespace PSS_CMS.Models
         public string Status { get; set; }
         public string Message { get; set; }
         public List<TicketComboTypes> Data { get; set; }
+    }
+
+    public class ApiResponse
+    {
+        public string Status { get; set; }
+        public string Message { get; set; }
+        public List<Tickets> Data { get; set; }
     }
 
 }

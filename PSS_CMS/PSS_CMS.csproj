@@ -318,6 +318,10 @@
     <Compile Include="Controllers\InActivityController.cs" />
     <Compile Include="Controllers\KnowledgeBasedController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\MaterialCategoryController.cs" />
+    <Compile Include="Controllers\MaterialConsumptionController.cs" />
+    <Compile Include="Controllers\MaterialController.cs" />
+    <Compile Include="Controllers\PDFController.cs" />
     <Compile Include="Controllers\ProductMasterController.cs" />
     <Compile Include="Controllers\ProjectMasterController.cs" />
     <Compile Include="Controllers\RecentTicketsController.cs" />
@@ -345,6 +349,10 @@
     <Compile Include="Models\Forgotpassword.cs" />
     <Compile Include="Models\Locations.cs" />
     <Compile Include="Models\Login.cs" />
+    <Compile Include="Models\Material.cs" />
+    <Compile Include="Models\Materialcategory.cs" />
+    <Compile Include="Models\Materialconsumption.cs" />
+    <Compile Include="Models\PDFDetails.cs" />
     <Compile Include="Models\ProductMaster.cs" />
     <Compile Include="Models\Projectmaster.cs" />
     <Compile Include="Models\Recenttickets.cs" />
@@ -470,6 +478,7 @@
     <Content Include="assets\vendor\swiper\swiper-bundle.min.js.map" />
     <Content Include="Grid.mvc.readme" />
     <Content Include="Json\Main.json" />
+    <None Include="Json\Main1.json" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\ComboFilter.js" />
     <Content Include="Scripts\Fordelete.js" />
@@ -549,10 +558,20 @@
     <Content Include="Views\UserGroup\UserCategory.cshtml" />
     <Content Include="Views\UserDashboard\UserDashboardCount.cshtml" />
     <Content Include="Views\UserDashboard\DashboardListTotalTicketUser.cshtml" />
+    <Content Include="Views\MaterialConsumption\List.cshtml" />
+    <Content Include="Views\MaterialConsumption\Create.cshtml" />
+    <Content Include="Views\MaterialConsumption\Edit.cshtml" />
+    <Content Include="Views\Material\List.cshtml" />
+    <Content Include="Views\MaterialCategory\List.cshtml" />
+    <Content Include="Views\MaterialCategory\Create.cshtml" />
+    <Content Include="Views\MaterialCategory\Edit.cshtml" />
+    <Content Include="Views\Material\Create.cshtml" />
+    <Content Include="Views\Material\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\InActivity\" />
+    <Folder Include="Views\PDF\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

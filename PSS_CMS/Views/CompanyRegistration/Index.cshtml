@@ -31,6 +31,10 @@
             padding: 8px 20px;
             font-weight: bold;
         }
+        input#IsDisabled {
+            width: 16px;
+            height: 18px;        
+        }
     </style>
 </head>
 <body>
@@ -116,10 +120,12 @@
                                 @Html.ValidationMessageFor(model => model.C_COUNTRY, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                        @Html.LabelFor(model => model.C_RBICODE, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4 d-flex justify-content-center">
-                            @Html.EditorFor(model => model.C_RBICODE, new { htmlAttributes = new { @class = "form-control", value = Guid.NewGuid().ToString(), autocomplete = "off", tabindex = "8", required = "required" } })
-                            @Html.ValidationMessageFor(model => model.C_RBICODE, "", new { @class = "text-danger" })
+                        @Html.LabelFor(model => model.C_GST, htmlAttributes: new { @class = "col-md-2 col-form-label" })
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-center flex-column">
+                                @Html.EditorFor(model => model.C_GST, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "8", required = "required" } })
+                                @Html.ValidationMessageFor(model => model.C_GST, "", new { @class = "text-danger" })
+                            </div>
                         </div>
                     </div>
 
@@ -131,11 +137,11 @@
                                 @Html.ValidationMessageFor(model => model.C_PINCODE, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                        @Html.LabelFor(model => model.C_GST, htmlAttributes: new { @class = "col-md-2 col-form-label" })
+                        @Html.LabelFor(model => model.C_Domain, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                         <div class="col-md-4">
-                            <div class="d-flex justify-content-center flex-column">
-                                @Html.EditorFor(model => model.C_GST, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "10", required = "required" } })
-                                @Html.ValidationMessageFor(model => model.C_GST, "", new { @class = "text-danger" })
+                            <div class="d-flex flex-column">
+                                @Html.EditorFor(model => model.C_Domain, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "10", id = "domainName" } })
+                                @Html.ValidationMessageFor(model => model.C_Domain, "", new { @class = "text-danger" })
                             </div>
                         </div>
                     </div>
@@ -148,11 +154,11 @@
                                 @Html.ValidationMessageFor(model => model.C_PHONE, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                        @Html.LabelFor(model => model.C_Domain, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_Domain, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "12", id = "domainName" } })
-                                @Html.ValidationMessageFor(model => model.C_Domain, "", new { @class = "text-danger" })
+                        @Html.LabelFor(model => model.IsDisabled, htmlAttributes: new { @class = "col-md-2 col-form-label" })
+                        <div class="col-md-4 d-flex align-items-center">
+                            <div class="">
+                                @Html.CheckBoxFor(model => model.IsDisabled, new { htmlAttributes = new { @class = "form-control",tabindex = "12"} })
+                               
                             </div>
                         </div>
                     </div>

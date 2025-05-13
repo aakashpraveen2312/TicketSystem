@@ -43,6 +43,7 @@ namespace PSS_CMS.Controllers
                 c_GST = cmp.C_GST,
                 c_APPUSERNAME = cmp.C_APPUSERNAME,
                 c_DOMAIN = cmp.C_Domain,
+                c_MATERIALCONSUMPTION = cmp.IsDisabled ? "Y" : "N",
                 c_SOURCETYPE = "TICKET"
             };
 

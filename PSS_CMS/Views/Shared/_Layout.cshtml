@@ -16,7 +16,7 @@
     <nav class="sidebar close">
         <header>
             <div class="text logo-text" style="display:inline-block">
-                @if (Session["UserRole"] == null || Session["UserRole"].ToString().ToLower() == "sa")
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa")
                 {
                     <a href="@Url.Action("SuperAdminCountDashboard", "DashBoard")">
 
@@ -42,7 +42,7 @@
                 }
 
             </div>
-            @if (Session["UserRole"] == null || Session["UserRole"].ToString().ToLower() != "sa")
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "sa")
             {
                 <a href="@Url.Action("RecentTicket", "RecentTickets")" title="Tickets">
                     <i class="bi bi-card-list text logo-text" style="position: absolute; top: 50%; left: 52%; color: #695cfe; font-size: 27px; display: inline-block"></i>
@@ -81,7 +81,7 @@
                         <span class="text nav-text" style="margin-left:15px">SECURITY</span>
                     </li>
                     <!-- Change Password -->
-                    @if (Session["UserRole"] == null || Session["UserRole"].ToString().ToLower() != "admin")
+                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "admin")
                     {
                         <li class="nav-link">
                             <a href="@Url.Action("List", "UserGroup")">
@@ -89,49 +89,53 @@
                                 <span class="text nav-text" style="margin-left:15px">User Category</span>
                             </a>
                         </li>
-                    
-                        @*<li class="nav-link">
-                            <a href="@Url.Action("List", "UserLogin")">
-                                <i class='bx bx-user' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">User</span>
-                            </a>
-                        </li>*@
+
                         <li class="nav-link">
                             <a href="@Url.Action("List", "ProductMaster")">
                                 <i class='bx bx-spreadsheet' style="font-size:24px"></i>
                                 <span class="text nav-text" style="margin-left:15px">Product</span>
                             </a>
-                        </li>   
-                    
-                    <li class="nav-link">
+                        </li>
+
+                        <li class="nav-link">
                             <a href="@Url.Action("List", "ProjectMaster")">
-                                <i class='bx bx-spreadsheet' style="font-size:24px"></i>
+                                <i class='bi bi-bag-check' style="font-size:24px"></i>
                                 <span class="text nav-text" style="margin-left:15px">Customer</span>
                             </a>
                         </li>
                     }
+                    @if ((Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa") && (Session["MaterialConsumptionFlag"] != null && Session["MaterialConsumptionFlag"].ToString().ToLower() == "y"))
+                    {
+                        <li class="nav-link">
+                            <a href="@Url.Action("List", "MaterialCategory")">
+                                <i class='bx bxs-category' style="font-size:24px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Category</span>
+                            </a>
+                        </li>
+                    }
+
                     <li class="nav-link">
-                            <a href="@Url.Action("Info", "CompanyInfo")">
-                                <i class='bx bx-spreadsheet' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Company Info</span>
-                            </a>
-                        </li>
+                        <a href="@Url.Action("Info", "CompanyInfo")">
+                            <i class='bi bi-buildings-fill' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Company Info</span>
+                        </a>
+                    </li>
 
 
-                        <li class="nav-link">
-                            <a href="@Url.Action("ChangePassword", "ChangePassword")">
-                                <i class='bx bxs-key' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Change Password</span>
-                            </a>
-                        </li>
-                        <!-- Logout -->
-                        <li class="nav-link">
-                            <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
-                                <i class='bx bx-log-out' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Logout</span>
-                            </a>
-                        </li>
-                    </ul>
+                    <li class="nav-link">
+                        <a href="@Url.Action("ChangePassword", "ChangePassword")">
+                            <i class='bx bxs-key' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                        </a>
+                    </li>
+                    <!-- Logout -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
+                            <i class='bx bx-log-out' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Logout</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>

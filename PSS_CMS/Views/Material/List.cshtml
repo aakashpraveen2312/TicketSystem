@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PSS_CMS.Models.Usergroup>
+﻿@model IEnumerable<PSS_CMS.Models.Material>
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -26,6 +26,11 @@
     <link href="~/Content/Responsive.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
     <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
+    <style>
+        i.bi.bi-basket2 {
+            font-size: 16px;
+        }
+    </style>
 </head>
 
 <body>
@@ -45,16 +50,22 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER CATEGORY</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialCategory")">CATEGORY</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialCategory")">@Session["MC_DESCRIPTION"].ToString().ToUpper()</a></li>
+                    <li>MATERIAL</li>
                     <li>LIST</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "UserGroup", FormMethod.Get, new { id = "searchForm" }))
+                @using (Html.BeginForm("List", "Material", FormMethod.Get, new { id = "searchForm" }))
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
-               
+                <!-- Add button with icon -->
+                <a href="@Url.Action("Create", "Material")" class=" ms-3" style="margin-left: 30px;">
+                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add Material" />
+                </a>
+
             </div>
 
         </div>
@@ -64,25 +75,33 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.R_NAME).Titled("Role").SetWidth("400PX");
-               columns.Add(c => c.R_ROLEDESCRIPTION).Titled("Description");
-               columns.Add(c => c.R_SORTORDER).Titled("Sort").SetWidth("50PX").Css("text-right");
-               columns.Add().Titled("Action").SetWidth("50PX")
+               columns.Add(c => c.M_CODE).Titled("Code").SetWidth("100PX");
+               columns.Add(c => c.M_NAME).Titled("Description");
+               columns.Add(c => c.M_UOM).Titled("UOM");
+               columns.Add(c => c.M_QUANTITY).Titled("Qty").Css("text-right");
+               columns.Add(c => c.M_PRICE).Titled("Price");
+               columns.Add(c => c.M_DISCOUNT).Titled("Discount (%)").Css("text-right");
+               columns.Add(c => c.M_CGST).Titled("CGST (%)").Css("text-right");
+               columns.Add(c => c.M_SGST).Titled("SGST (%)").Css("text-right");
+               columns.Add(c => c.M_TOTALAMOUNT).Titled("Total Amount").Format("{0:F2}");
+               columns.Add(c => c.M_NETAMOUNT).Titled("Net Amount").Format("{0:F2}");
+               columns.Add(c => c.M_SORTORDER).Titled("Sort").SetWidth("50PX").Css("text-right");
+               columns.Add().Titled("Action").SetWidth("150PX")
               .Encoded(false)
                .Sanitized(false)
             .RenderValueAs(o =>
             {
 
-                var Editurl = Url.Action("Edit", "UserGroup", new { Recid = o.R_RECID, Name = o.R_NAME }, null);
+                var Editurl = Url.Action("Edit", "Material", new { Recid = o.M_RECID, MName = o.M_NAME }, null);
                 var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
-                var usercategoryurl = Url.Action("List", "UserLogin", new { R_CODE = o.R_CODE, Recid = o.R_RECID,Role=o.R_NAME }, null);
-                var usercategoryiconHtml = "<i class='bx bx-user bx-sm'></i>";
-                var usercategorylinkHtml = $"<a href='{usercategoryurl}' data-toggle='tooltip' data-placement='top' title='User'>{usercategoryiconHtml}</a>";
+                var Deleteurl = Url.Action("Delete", "Material", new { Recid = o.M_RECID });
+                var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
+                var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
                 var extraSpaces = "&nbsp;&nbsp;&nbsp;";
-                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{usercategorylinkHtml}");
+                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}");
             });
 
            }).WithPaging(10).Sortable(false)
@@ -90,7 +109,7 @@
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No Usergroup's' are available</b>
+                    <b>No Material's are available</b>
                 </div>}
 
         </div>

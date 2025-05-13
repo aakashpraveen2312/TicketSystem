@@ -59,6 +59,8 @@ namespace PSS_CMS.Controllers
 
                     string errormessage = Response.Message;
                     string Status = Response.Status;
+                    Session["MaterialConsumptionFlag"] = Response.MaterialConsumption?.Replace(" ", "").Trim();
+
                     Session["APIKEY"] = Response.APIkey;
                     if (Status == "Y")
                     {
@@ -72,6 +74,7 @@ namespace PSS_CMS.Controllers
                         Session["EmailId"] = data.U_EMAILID;
                         Session["UserRECID"] = data.U_RECID;
                         Session["CompanyID"] = data.U_CRECID;
+
                         int CompanyID = data.U_CRECID;
 
                         if (role == "User")

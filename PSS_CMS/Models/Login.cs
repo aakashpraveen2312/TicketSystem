@@ -26,6 +26,7 @@ namespace PSS_CMS.Models
         public string U_DISABLE { get; set; }
         public string U_USERCODE { get; set; }
         public string U_MOBILENO { get; set; }
+        public string MaterialConsumption { get; set; }
 
         public int U_RECID { get; set; }
         public int U_SORTORDER { get; set; }
@@ -47,7 +48,7 @@ namespace PSS_CMS.Models
         public string Message { get; set; }
         public string Status { get; set; }
         public string APIkey { get; set; }
-
+        public string MaterialConsumption { get; set; }
         public int U_RECID { get; set; }
         public int U_SORTORDER { get; set; }
         public int U_CRECID { get; set; }

@@ -76,7 +76,7 @@
                columns.Add(c => c.CU_MOBILENO).Titled("Mobile Number").SetWidth("150px").Css("text-right");
                columns.Add(c => c.CU_INVOICENO).Titled("Invoice Number").SetWidth("150px");
                columns.Add(c => c.CU_WARRANTYFREECALLS).Titled("Warranty Calls").SetWidth("50px").Css("text-right");
-               columns.Add(c => c.CU_WARRANTYUPTO).Titled("Warranty Upto").SetWidth("50px");
+               columns.Add(c => c.CU_WARRANTYUPTODATE).Titled("Warranty Upto").SetWidth("50px");
                columns.Add(c => c.CU_SORTORDER).Titled("Sort").SetWidth("50px").Css("text-right");
                columns.Add().Titled("Action").SetWidth("100px")
               .Encoded(false)
@@ -96,12 +96,12 @@
                 return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}");
             });
 
-           }).WithPaging(10).Sortable(true)
+           }).WithPaging(10).Sortable(false)
             }
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No Project's' are available</b>
+                    <b>No Customer's are available</b>
                 </div>}
 
         </div>

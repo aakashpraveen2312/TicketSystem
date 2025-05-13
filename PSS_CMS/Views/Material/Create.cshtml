@@ -1,4 +1,4 @@
-﻿@model PSS_CMS.Models.CompanyInfo
+﻿@model PSS_CMS.Models.Material
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -6,15 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
     <link href="~/Content/ClientSide.css" rel="stylesheet" />
     <link href="~/Content/Style1.css" rel="stylesheet" />
     <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
     <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
     <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
     <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
-
 
     @*Bootstrap Icons and Boxicons*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -40,7 +38,7 @@
             font-weight: bold;
         }
 
-        select#TUG_NAME {
+        select#TUG_NAME, select#M_UOM {
             display: block;
             width: 100%;
             height: 34px;
@@ -60,21 +58,6 @@
             transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
             transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
         }
-        .image-container {
-            width: 205px;
-            height: 100px; /* Ensuring consistent height */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px dashed #ccc; /* Optional border */
-            margin: 10px auto;
-        }
-
-            .image-container img {
-                width: 220px;
-                height: 150px;
-                object-fit: contain;
-            }
     </style>
 </head>
 
@@ -94,22 +77,32 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>SECURITY</li>
-                    <li class="" style="color: #2888bb;text-decoration:none">COMPANY INFO</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialCategory")">CATEGORY</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialCategory")">@Session["MC_DESCRIPTION"].ToString().ToUpper()</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "Material")">MATERIAL</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "Material")">LIST</a></li>
+                    <li>CREATE</li>
                 </ul>
             </div>
         </div>
+        @using (Html.BeginForm("Create", "Material", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
+        {
 
-        <div class="scroll-wrapper" style="overflow-x:hidden;">
 
             <div class="create ms-4 me-2 mt-3">
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.C_CODE, new { @class = "labels" })
+                        @Html.LabelFor(model => model.M_CODE, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.C_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-                        @Html.ValidationMessageFor(model => model.C_CODE, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.M_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_NAME, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
                     </div>
                 </div>
@@ -117,127 +110,124 @@
 
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.C_NAME, new { @class = "labels" })
+                        @Html.LabelFor(model => model.M_UOM, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.C_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-                        @Html.ValidationMessageFor(model => model.C_NAME, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.M_UOM, new SelectList(new List<string>
+                        {
+                            "pieces",
+                            "kilograms",
+                            "grams",
+                            "litre",
+                            "milli litre",
+                            "meter",
+                            "centimeter",
+                            "milli meter",
+                            "box",
+                            "packet",
+                            "set"
+                        }), "-- Select UOM --", new { @class = "select textboxcolors", autocomplete = "off" })
+
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_PRICE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_PRICE", oninput = "Netamount()" } })
 
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.C_EMAILID, new { @class = "labels" })
+                        @Html.LabelFor(model => model.M_QUANTITY, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.C_EMAILID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.M_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_QUANTITY", oninput = "Netamount()" } })
+
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_DISCOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_DISCOUNT", oninput = "Netamount()" } })
 
                     </div>
                 </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_TOTALAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_TOTALAMOUNT", @readonly = "readonly", oninput = "Netamount()" } })
 
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_CGST, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_CGST", oninput = "Netamount()" } })
+
+                    </div>
+                </div>
 
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.C_PHONE, new { @class = "labels" })
+                        @Html.LabelFor(model => model.M_SGST, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.C_PHONE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.M_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_SGST", oninput = "Netamount()" } })
+
+                    </div>
+                   
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_NETAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_NETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_NETAMOUNT", @readonly = "readonly" } })
 
                     </div>
                 </div>
-
 
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.C_ADDRESS, new { @class = "labels" })
+                        @Html.LabelFor(model => model.M_SORTORDER, new { @class = "labels" })
+
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.C_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.M_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.IsDisabled, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input" })
                     </div>
                 </div>
 
-                @using (Html.BeginForm("UpdateLogo", "CompanyInfo", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
-                {
+                <div class="row mb-3">
+                    <div class="col-lg-2">
 
-                    <div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.C_LOGO, new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12">
-                            <h6 style="text-align:center">Preview</h6>
-                            <div class="image-container">
-
-                                @if (!string.IsNullOrEmpty(Model.C_LOGO))
-                                {
-
-                                    <img id="gstPreview" class="img-thumbnail mt-2"
-                                         src="@(string.IsNullOrEmpty(ViewBag.GstImageBase64) ?
-                                                    (Model.C_LOGO.Contains("data:image/") ?
-                                                    Model.C_LOGO : (Model.C_LOGO.StartsWith("/") ||
-                                                    Model.C_LOGO.StartsWith("iVBORw0KGgo") ? "data:image/png;base64," : "data:image/jpeg;base64,") +
-                                                    Model.C_LOGO) : "data:image/png;base64," + ViewBag.imageGst)"
-                                         style="width: 100%; height: 100%; display: block;" /> }
-                                else
-                                {
-                                    <img id="gstPreview" class="img-thumbnail mt-2"
-                                         style="width: 100%; height: 100%; display: none;" />}
-                            </div>
-                            <input type="file" id="C_LOGO" name="C_LOGO" class="form-input"
-                                   accept="image/*" onchange="previewImage('C_LOGO', 'gstPreview'); showLabels();" />
-                            <input type="hidden" name="ExistingGstImage" value="@ViewBag.imageGst" />
-                        </div>
                     </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
 
-
-                    <div class="row ">
-                        <div class="col-lg-2">
-
-                        </div>
-                        <div class="col-lg-3 d-flex justify-content-end">
-                            <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                            <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Info", "CompanyInfo")'" />
-                        </div>
                     </div>
-                }
+                    <div class="col-lg-2">
 
-
-
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "Material", new { })'" />
+                    </div>
+                </div>
             </div>
-
-        </div>
-
-        @{
-            var locations = ViewBag.LocationList as IEnumerable<PSS_CMS.Models.Locations>;
+            <!-- Validation Errors below the form fields -->
+            <div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            </div>
         }
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none">LOCATIONS</li>
-                </ul>
-            </div>
-        </div>
-        <div class="table mt-3 ms-1 me-5" id="ticketTable1">
-
-            @if (locations != null)
-            {
-                @Html.Grid(locations).Columns(columns =>
-           {
-               columns.Add(c => c.L_CODE).Titled("Code").SetWidth("100px");
-               columns.Add(c => c.L_NAME).Titled("Location").SetWidth("350px");
-               columns.Add(c => c.L_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
-           }).WithPaging(10).Sortable(false)
-            }
-            else
-            {
-                <div class="alert alert-warning text-center">
-                    <b>No Locaions's are available</b>
-                </div>}
-
-        </div>
-
-
 
         <footer>
             <div class="footer">
@@ -257,31 +247,11 @@
                         </div>
                     </div>
 
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck3"></span>
-                            - Read Only
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </footer>
 
-
-        <!-- Validation Errors below the form fields -->
-
-
-        <div>
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        </div>
-
     </div>
-
-
-
-
-
 
 
     <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
@@ -297,9 +267,6 @@
             <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
         </div>
     </div>
-
-
-
     <div id="preloader2"></div>
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
@@ -327,6 +294,10 @@
     });
     </script>
 
+    @*Toastr for created succesfully*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     $(document).ready(function () {
         $("#createform").submit(function (event) {
@@ -341,28 +312,36 @@
             $("body").css("pointer-events", "none");
 
             $.ajax({
-                url: '@Url.Action("UpdateLogo", "CompanyInfo")',
+                url: '@Url.Action("Create", "Material")',
                 type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    if (response.status === "success") {
+                    if (response.success) {
                         Swal.fire({
                             title: "Success!",
                             text: response.message,
                             icon: "success",
-                            confirmButtonText: "Ok",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
+                            showCancelButton: true,
+                            confirmButtonText: "Continue",
+                            cancelButtonText: "Back to List",
+                            allowOutsideClick: false, // Prevent closing by clicking outside
+                            allowEscapeKey: false, // Prevent closing using Esc key
                             customClass: {
                                 confirmButton: "swal-btn-continue",
+                                cancelButton: "swal-btn-back"
                             },
                             didOpen: () => {
+                                // Allow interaction inside the alert only
                                 $(".swal2-container").css("pointer-events", "auto");
                             }
                         }).then((result) => {
-                            window.location.href = '@Url.Action("Info", "CompanyInfo")';
+                            if (result.isConfirmed) {
+                                location.reload();
+                            } else {
+                                window.location.href = '@Url.Action("List", "Material")';
+                            }
                         });
                     } else {
                         Swal.fire({
@@ -386,16 +365,43 @@
                     resetButton();
                 }
             });
-
-            function resetButton() {
-                submitBtn.prop("disabled", false).text("Submit");
-                $("body").css("pointer-events", "auto");
-            }
         });
+
+        function resetButton() {
+            $("#savebutton").prop("disabled", false).text("Submit");
+            $("body").css("pointer-events", "auto"); // Re-enable page interaction
+        }
     });
     </script>
-</body>
+    <!-- Net Amount Calculation -->
+    <script>
+        function Netamount() {
+            /* Total Amount and Discount */
+            var price = document.getElementById("M_PRICE").value;
+            var quantity = document.getElementById("M_QUANTITY").value;
+            var discount = document.getElementById("M_DISCOUNT").value;
 
+            var TotalAmount = (price * quantity) * (1 - discount/100)
+            document.getElementById("M_TOTALAMOUNT").value = TotalAmount;
+
+            /*SGST and CGST*/
+
+            var SGST = document.getElementById("M_SGST").value;
+            var SGSTamount = TotalAmount * SGST / 100;
+
+            var CGST = document.getElementById("M_CGST").value;
+            var CGSTamount = TotalAmount * CGST / 100;
+
+            /* Net Amount*/
+
+            var NetAmount = TotalAmount + SGSTamount + CGSTamount
+            Totalnetamount = parseFloat(NetAmount).toFixed(3);
+            document.getElementById("M_NETAMOUNT").value = Totalnetamount;
+        }
+    </script>
+
+
+</body>
 </html>
 
 

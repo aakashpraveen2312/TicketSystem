@@ -1,0 +1,20 @@
+﻿[
+  {
+
+    "M_CODE": "1001",
+    "M_DESCRIPTION": "Eggs and Meats",
+    "M_SORTORDER": 1
+  },
+  {
+
+    "M_CODE": "1002",
+    "M_DESCRIPTION": "Leather",
+    "M_SORTORDER": 2
+  },
+  {
+
+    "M_CODE": "1003",
+    "M_DESCRIPTION": "Dairy product",
+    "M_SORTORDER": 3
+  }
+]

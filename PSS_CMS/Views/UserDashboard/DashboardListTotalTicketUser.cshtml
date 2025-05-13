@@ -93,7 +93,7 @@
                columns.Add(c => c.TC_SUBJECT).Titled("Subject");
                columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("120px");
                columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status").SetWidth("120px");
-           }).WithPaging(10).Sortable(true)
+           }).WithPaging(10).Sortable(false)
             }
             else
             {

@@ -4,6 +4,7 @@ using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -192,65 +193,36 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
+
         public async Task<ActionResult> LocationList()
         {
-           
-            string Weburl = ConfigurationManager.AppSettings["LOCATIONS"];
-
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-
-            List<Locations> Locationslist = new List<Locations>();
-
-            string strparams = "cmprecid=" + Session["CompanyID"];
-            string url = Weburl + "?" + strparams;
-
-            try
+            Locations objstoragePoint = new Locations();
+            List<Locations> StorageList = new List<Locations>();
+            string connectionString = ConfigurationManager.ConnectionStrings["Mystring"].ConnectionString;
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
             {
-                using (HttpClientHandler handler = new HttpClientHandler())
+                sqlcon.Open();
+
+                string cmd1 = "SELECT ROW_NUMBER() OVER(ORDER BY SP_CRECID) AS SerialNumber,SP_CRECID,SP_RECID,SP_Code,SP_Name,SP_Type,SP_Sortorder FROM IM_StoragePoint where SP_CRECID =" + Session["CompanyID"] + " ";
+
+                SqlCommand sqlCdm = new SqlCommand(cmd1, sqlcon); // take the values from the DB
+                SqlDataReader sqlread = sqlCdm.ExecuteReader(); // to read the value reader class called
+                while (sqlread.Read()) // each value to read create function
                 {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    var SPList = new Locations();
 
-                    using (HttpClient client = new HttpClient(handler))
-                    {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        var response = await client.GetAsync(url);
+                    SPList.L_CRECID = (int)sqlread["SP_CRECID"];
+                    SPList.L_RECID = (int)sqlread["SP_RECID"];
+                    SPList.L_CODE = sqlread["SP_Code"].ToString();
+                    SPList.L_NAME = sqlread["SP_Name"].ToString();
+                    SPList.L_SORTORDER = (int)sqlread["SP_Sortorder"];
 
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<LocationsObjects>(jsonString);
-                            Locationslist = rootObjects.Data;
-                            ViewBag.LocationList = Locationslist;
-                            //if (!string.IsNullOrEmpty(searchPharse))
-                            //{
-                            //    projectmasterlist = projectmasterlist
-                            //        .Where(r => r.CU_CODE.ToLower().Contains(searchPharse.ToLower()) ||
-                            //                    r.CU_EMAIL.ToString().Contains(searchPharse.ToLower()) ||
-                            //                    r.CU_NAME.ToString().Contains(searchPharse.ToLower()) ||
-                            //                    r.CU_MOBILENO.ToString().Contains(searchPharse.ToLower()) ||
-                            //                    r.CU_INVOICENO.ToString().Contains(searchPharse.ToLower()) ||
-                            //                    r.CU_WARRANTYFREECALLS.ToString().Contains(searchPharse.ToLower()) ||
-                            //                    r.CU_WARRANTYUPTO.ToString().Contains(searchPharse.ToLower()) ||
-                            //                    r.CU_SORTORDER.ToString().Contains(searchPharse.ToLower()))
-                            //        .ToList();
-                            //}
-
-                        }
-                        else
-                        {
-                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
-                        }
-                    }
+                    StorageList.Add(SPList);
+                    ViewBag.LocationList = StorageList;
                 }
+                sqlcon.Close();           
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
-            }
-            return View(Locationslist);
+            return View(StorageList);
         }
     }
 }

@@ -123,7 +123,7 @@
                        return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{InfolinkHtml1}{extraSpaces}{InfolinkHtml}");
                    });
                }
-           }).WithPaging(10).Sortable(true)
+           }).WithPaging(10).Sortable(false)
             }
             else
             {

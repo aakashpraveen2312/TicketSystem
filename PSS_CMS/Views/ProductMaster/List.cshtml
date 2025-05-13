@@ -97,7 +97,7 @@
                 return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}{extraSpaces2}{ViewlinkHtml}");
             });
 
-           }).WithPaging(10).Sortable(true) }
+           }).WithPaging(10).Sortable(false) }
             else
             {
                 <div class="alert alert-warning text-center">

@@ -1,35 +1,40 @@
-﻿using System;
+﻿using PSS_CMS.Fillter;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Newtonsoft.Json;
-using PSS_CMS.Fillter;
 using PSS_CMS.Models;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Configuration;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net;
 
 namespace PSS_CMS.Controllers
 {
     [ApiKeyAuthorize]
-    public class ProjectMasterController : Controller
+    public class MaterialConsumptionController : Controller
     {
-        // GET: ProjectMaster
-        public async Task<ActionResult> List(string searchPharse)
+        // GET: MaterialConsumption
+        public async Task<ActionResult> List(string searchPharse,int? TC_RECID)
         {
-            Projectmaster objprojectmaster = new Projectmaster();
+            if (TC_RECID!=null)
+            {
+                Session["TC_RECID"] = TC_RECID;
+            }
 
-            string Weburl = ConfigurationManager.AppSettings["CUSTOMERGET"];
+            Materialconsumption objmaterialconsumption = new Materialconsumption();
+
+            string Weburl = ConfigurationManager.AppSettings["MATERIALCONSUMPTIONGET"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
-            List<Projectmaster> projectmasterlist = new List<Projectmaster>();
+            List<Materialconsumption> materialconsumptionlist = new List<Materialconsumption>();
 
-            string strparams = "CompanyRecID=" + Session["CompanyID"];
+            string strparams = "cmprecid=" + Session["CompanyID"]+ "&ticketrecid=" + Session["TC_RECID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -48,20 +53,21 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
-                            projectmasterlist = rootObjects.Data;
+                            var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
+                            materialconsumptionlist = rootObjects.Data;
 
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
-                                projectmasterlist = projectmasterlist
-                                    .Where(r => r.CU_CODE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.CU_EMAIL.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_NAME.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_MOBILENO.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_INVOICENO.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_WARRANTYFREECALLS.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_WARRANTYUPTO.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_SORTORDER.ToString().Contains(searchPharse.ToLower()))
+                                materialconsumptionlist = materialconsumptionlist
+                                    .Where(r => r.tM_UOM.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.tM_QUANTITY.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.tM_PRICE.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.tM_DISCOUNT.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.tM_SGST.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.tM_CGST.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.tM_TOTALAMOUNT.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.tM_NETAMOUNT.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.tM_SORTORDER.ToString().Contains(searchPharse.ToLower()))
                                     .ToList();
                             }
 
@@ -77,42 +83,45 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            return View(projectmasterlist);
+            return View(materialconsumptionlist);
         }
+
         public async Task<ActionResult> Create()
         {
-            await ComboProductSelection();
+            await ComboMaterialCategory();
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> Create(Projectmaster projectmaster)
+        public async Task<ActionResult> Create(Materialconsumption materialcategory)
         {
             try
             {
-                var ProjectmasterPostURL = ConfigurationManager.AppSettings["CUSTOMERPOST"];
+                var MaterialPostURL = ConfigurationManager.AppSettings["MATERIALCONSUMPTIONPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""cU_CODE"": ""{projectmaster.CU_CODE}"",           
-            ""cU_NAME"": ""{projectmaster.CU_NAME}"",           
-            ""cU_EMAIL"": ""{ projectmaster.CU_EMAIL}"",                    
-            ""CU_PRECID"": ""{ projectmaster.SelectedProduct}"",                    
-            ""cU_MOBILENO"": ""{ projectmaster.CU_MOBILENO}"",                    
-            ""cU_INVOICENO"": ""{ projectmaster.CU_INVOICENO}"",                    
-            ""cU_WARRANTYUPTO"": ""{ projectmaster.CU_WARRANTYUPTO}"",                    
-            ""cU_WARRANTYFREECALLS"": ""{ projectmaster.CU_WARRANTYFREECALLS}"",                    
-            ""cU_ADDRESS"": ""{ projectmaster.CU_ADDRESS}"",                    
-            ""cU_GST"": ""{ projectmaster.CU_GST}"",                    
-            ""cU_SORTORDER"": ""{ projectmaster.CU_SORTORDER}"",                    
-            ""cU_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",        
-            ""cU_CRECID"": ""{Session["CompanyID"]}""           
+            ""tM_UOM"": ""{materialcategory.tM_UOM}"",           
+            ""tM_QUANTITY"": ""{materialcategory.tM_QUANTITY}"",           
+            ""tM_PRICE"": ""{materialcategory.tM_PRICE}"",                    
+            ""tM_DISCOUNT"": ""{materialcategory.tM_DISCOUNT}"",                    
+            ""tM_TOTALAMOUNT"": ""{materialcategory.tM_TOTALAMOUNT}"",                    
+            ""tM_CGST"": ""{materialcategory.tM_CGST}"",                    
+            ""tM_SGST"": ""{materialcategory.tM_SGST}"",                    
+            ""tM_NETAMOUNT"": ""{materialcategory.tM_NETAMOUNT}"",                    
+            ""tM_TCRECID"": ""{Session["TC_RECID"]}"",                    
+            ""tM_CRECID"": ""{Session["CompanyID"]}"",                    
+            ""tM_MCRECID"": ""{materialcategory.SelectedCategory}"",                    
+            ""tM_MRECID"": ""{materialcategory.SelectedMaterial}"",                    
+            ""tM_SORTORDER"": ""{materialcategory.tM_SORTORDER}"",                    
+            ""tM_BILLABLE"": ""{(materialcategory.IsDisable ? "Y" : "N")}"" ,               
+            ""tM_DISABLE"": ""{"N"}""                
         }}";
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(ProjectmasterPostURL),
+                    RequestUri = new Uri(MaterialPostURL),
                     Method = HttpMethod.Post,
                     Headers =
             {
@@ -138,7 +147,7 @@ namespace PSS_CMS.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
+                    var apiResponse = JsonConvert.DeserializeObject<MaterialpObjects>(responseBody);
 
                     if (apiResponse.Status == "Y")
                     {
@@ -165,18 +174,20 @@ namespace PSS_CMS.Controllers
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
 
-            return View(projectmaster);
+            return View();
         }
-        public async Task<ActionResult> Edit(int? Recid,string Name)
+
+        public async Task<ActionResult> Edit(int? MACRecid, string MACNAME,int? TICRECID)
         {
-            Session["Productrecid"] = Recid;
-            Session["Name"] = Name;
-            string WEBURLGETBYID = ConfigurationManager.AppSettings["CUSTOMERGETBYID"];
+            Session["MACRecid"] = MACRecid;
+            Session["MACNAME"] = MACNAME;
+            Session["TICRECID"] = TICRECID;
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["MATERIALCONSUMPTIONBYID"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            Projectmaster projectmaster = null;
+            Materialconsumption materialconsumption = null;
 
-            string strparams = "Recid=" + Recid + "&companyId=" + Session["CompanyID"];
+            string strparams = "Recid=" + MACRecid + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -194,8 +205,10 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var content = JsonConvert.DeserializeObject<ProjectMasterObjects>(jsonString);
-                            projectmaster = content.Data;
+                            var content = JsonConvert.DeserializeObject<MaterialconsumptionObjects>(jsonString);
+                            materialconsumption = content.Data;
+                            ViewBag.SelectedMaterialRecid = materialconsumption?.tM_MRECID;
+
                         }
                         else
                         {
@@ -211,39 +224,41 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
             }
-            await ComboProductSelectionEdit(projectmaster.CU_PRECID);
-            return View(projectmaster);
+            await ComboMaterialCategory();
+            return View(materialconsumption);
         }
         [HttpPost]
-        public async Task<ActionResult> Edit(Projectmaster projectmaster)
+        public async Task<ActionResult> Edit(Materialconsumption materialcategory)
         {
             try
             {
-                var ProjectmasterUpdateURL = ConfigurationManager.AppSettings["CUSTOMERPUT"];
+                var MaterialconsumptionUpdateURL = ConfigurationManager.AppSettings["MATERIALCONSUMPTIONPUT"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""cU_RECID"": ""{Session["Productrecid"]}"",           
-            ""cU_CODE"": ""{projectmaster.CU_CODE}"",           
-            ""cU_NAME"": ""{projectmaster.CU_NAME}"",
-            ""cU_EMAIL"": ""{projectmaster.CU_EMAIL}"",
-            ""cU_MOBILENO"": ""{projectmaster.CU_MOBILENO}"",
-            ""cU_PRECID"": ""{projectmaster.CU_PRECID}"",
-            ""cU_INVOICENO"": ""{projectmaster.CU_INVOICENO}"",
-            ""cU_WARRANTYUPTO"": ""{projectmaster.CU_WARRANTYUPTO}"",
-            ""cU_WARRANTYFREECALLS"": ""{projectmaster.CU_WARRANTYFREECALLS}"",
-            ""cU_SORTORDER"": ""{projectmaster.CU_SORTORDER}"",
-            ""cU_ADDRESS"": ""{ projectmaster.CU_ADDRESS}"",                    
-            ""cU_GST"": ""{ projectmaster.CU_GST}"",     
-            ""cU_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",                              
-            ""cU_CRECID"": ""{ Session["CompanyID"]}""                              
+            ""tM_RECID"": ""{Session["MACRecid"]}"",           
+            ""tM_UOM"": ""{materialcategory.tM_UOM}"",           
+            ""tM_QUANTITY"": ""{materialcategory.tM_QUANTITY}"",           
+            ""tM_PRICE"": ""{materialcategory.tM_PRICE}"",                    
+            ""tM_DISCOUNT"": ""{materialcategory.tM_DISCOUNT}"",                    
+            ""tM_TOTALAMOUNT"": ""{materialcategory.tM_TOTALAMOUNT}"",                    
+            ""tM_CGST"": ""{materialcategory.tM_CGST}"",                    
+            ""tM_SGST"": ""{materialcategory.tM_SGST}"",                    
+            ""tM_NETAMOUNT"": ""{materialcategory.tM_NETAMOUNT}"",                    
+            ""tM_TCRECID"": ""{Session["TICRECID"]}"",                    
+            ""tM_CRECID"": ""{Session["CompanyID"]}"",                    
+            ""tM_MCRECID"": ""{materialcategory.tM_MCRECID}"",                    
+            ""tM_MRECID"": ""{materialcategory.tM_MRECID}"",                    
+            ""tM_SORTORDER"": ""{materialcategory.tM_SORTORDER}"",                    
+            ""tM_BILLABLE"": ""{(materialcategory.IsDisable ? "Y" : "N")}"" ,               
+            ""tM_DISABLE"": ""{"N"}""                
         }}";
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(ProjectmasterUpdateURL),
+                    RequestUri = new Uri(MaterialconsumptionUpdateURL),
                     Method = HttpMethod.Put,
                     Headers =
             {
@@ -267,7 +282,7 @@ namespace PSS_CMS.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
+                    var apiResponse = JsonConvert.DeserializeObject<MaterialconsumptionObjects>(responseBody);
 
                     if (apiResponse.Status == "Y")
                     {
@@ -288,14 +303,14 @@ namespace PSS_CMS.Controllers
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
         }
-        public async Task<ActionResult> Delete(int? Recid)
+        public async Task<ActionResult> Delete(int Recid)
         {
-            string ProjectmasterDeleteUrl = ConfigurationManager.AppSettings["CUSTOMERDELETE"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string WEBURLDELETE = ConfigurationManager.AppSettings["MATERIALCONSUMPTIONDELETE"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&RECID=" + Recid;
+            string finalurl = WEBURLDELETE + "?" + strparams;
             string APIKey = Session["APIKEY"].ToString();
 
-            string strparams = "RecordId=" + Recid + "&companyId=" + Session["CompanyID"];
-            string finalurl = ProjectmasterDeleteUrl + "?" + strparams;
 
             try
             {
@@ -321,12 +336,12 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             string responseBody = await response.Content.ReadAsStringAsync();
-                            var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
+                            var apiResponse = JsonConvert.DeserializeObject<MaterialconsumptionObjects>(responseBody);
 
                             if (apiResponse.Status == "Y")
                             {
 
-                                string redirectUrl = Url.Action("List", "ProjectMaster", new { });
+                                string redirectUrl = Url.Action("List", "MaterialConsumption", new { });
                                 return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
                             }
                             else if (apiResponse.Status == "U")
@@ -358,14 +373,15 @@ namespace PSS_CMS.Controllers
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
             return View();
+
         }
 
-        public async Task<ActionResult> ComboProductSelection()
+        public async Task<ActionResult> ComboMaterialCategory()
 
         {
-            List<SelectListItem> Product = new List<SelectListItem>();
+            List<SelectListItem> MaterialCategory = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
+            string webUrlGet = ConfigurationManager.AppSettings["MATERIALCATEGORYGET"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "cmprecid=" + Session["CompanyID"];
@@ -386,14 +402,14 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
+                            var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
 
                             if (rootObjects?.Data != null)
                             {
-                                Product = rootObjects.Data.Select(t => new SelectListItem
+                                MaterialCategory = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.P_RECID.ToString(), // or the appropriate value field
-                                    Text = t.P_NAME,
+                                    Value = t.MC_RECID.ToString(), // or the appropriate value field
+                                    Text = t.MC_DESCRIPTION,
                                 }).ToList();
                             }
                         }
@@ -406,21 +422,21 @@ namespace PSS_CMS.Controllers
             }
 
             // Assuming you are passing ticketTypes to the view
-            ViewBag.Product = Product;
-
+            ViewBag.MaterialCategory = MaterialCategory;
             return View();
         }
 
-        public async Task<ActionResult> ComboProductSelectionEdit(int selectedRoleCode)
-
+        public async Task<JsonResult> ComboMaterial(string Recid)
         {
-            List<SelectListItem> Product = new List<SelectListItem>();
+            List<Materialconsumption> MaterialList = new List<Materialconsumption>(); // Use your full model here
 
-            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
+            string webUrlGet = ConfigurationManager.AppSettings["MATERIALGET"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"];
+            string APIKey = Session["APIKEY"]?.ToString();
+            string cmpRecId = Session["CompanyID"]?.ToString();
+            string strparams = "cmprecid=" + cmpRecId + "&Recid=" + Recid;
             string url = webUrlGet + "?" + strparams;
+
             try
             {
                 using (HttpClientHandler handler = new HttpClientHandler())
@@ -437,16 +453,11 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
+                            var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
 
                             if (rootObjects?.Data != null)
                             {
-                                Product = rootObjects.Data.Select(t => new SelectListItem
-                                {
-                                    Value = t.P_RECID.ToString(), // or the appropriate value field
-                                    Text = t.P_NAME,
-                                    Selected = (t.P_RECID == selectedRoleCode) // ✅ compare with passed selectedRoleCode
-                                }).ToList();
+                                MaterialList = rootObjects.Data.ToList(); // Move assignment to outer scope
                             }
                         }
                     }
@@ -454,13 +465,58 @@ namespace PSS_CMS.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
             }
 
-            // Assuming you are passing ticketTypes to the view
-            ViewBag.Product = Product;
-
-            return View();
+            return Json(MaterialList, JsonRequestBehavior.AllowGet);
         }
+
+        public async Task<JsonResult> ComboMaterialEdit(string Recid)
+        {
+            List<Materialconsumption> MaterialList = new List<Materialconsumption>(); // Use your full model here
+
+            string webUrlGet = ConfigurationManager.AppSettings["MATERIALGET"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+            string cmpRecId = Session["CompanyID"]?.ToString();
+            string strparams = "cmprecid=" + cmpRecId + "&Recid=" + Recid;
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                MaterialList = rootObjects.Data.ToList(); // Move assignment to outer scope
+                               
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(MaterialList, JsonRequestBehavior.AllowGet);
+        }
+
+
     }
 }

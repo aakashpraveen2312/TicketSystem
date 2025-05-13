@@ -130,6 +130,7 @@ namespace PSS_CMS.Controllers
             ""tC_URECID"": ""{Session["UserRECID"]}"",           
             ""tC_CRECID"": ""{ Session["CompanyID"]}"",          
             ""tC_PRECID"": ""{tickets.SelectedProjectType}"",        
+            ""tC_CURECID"": ""{tickets.SelectedCustomer}"",        
             ""tC_TICKETDATE"": ""{tickets.TC_Dates}"",        
             ""tC_SUBJECT"": ""{tickets.TC_SUBJECT}"",        
             ""tC_OTP"": ""{"6757"}"",
@@ -733,7 +734,57 @@ namespace PSS_CMS.Controllers
                 ModelState.AddModelError(string.Empty, $"Exception occurred: {ex.Message}");
             }
         }
+     
+        public async Task<JsonResult> ComboProductTicketNew(string Recid)
+        {
+            var customerResult = new List<object>();
 
+            string webUrlGet = ConfigurationManager.AppSettings["CUSTOMERPRODUCTCOMBO"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+            string cmpRecId = Session["CompanyID"]?.ToString();
+            string strparams = "companyId=" + cmpRecId + "&productid=" + Recid;
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(jsonString);
+
+                            if (apiResponse?.Data != null)
+                            {
+                                customerResult = apiResponse.Data.Select(data => new
+                                {
+                                    Value = data.CU_RECID.ToString(),
+                                    Text = data.CU_NAME,
+                                    WarrantyUpto = data.CU_WARRANTYUPTO,
+                                    WarrantyFreeCalls = data.CU_WARRANTYFREECALLS
+                                }).ToList<object>();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(customerResult, JsonRequestBehavior.AllowGet);
+        }
 
         public async Task<ActionResult> FAQ(string searchPharse,int? projectID)
         
@@ -900,57 +951,6 @@ namespace PSS_CMS.Controllers
             }
         }
 
-        //public async Task<ActionResult> Edit(int? recid)
-        //{
-        //    Session["EDITRECID"] = recid;
-        //    var viewModel = new Tickets();
-        //    Tickets RecentTicketListall = null;
-        //    string Weburl = ConfigurationManager.AppSettings["GetByID"];
-        //    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-        //    string APIKey = Session["APIKEY"].ToString();
-        //    string strparams = "cmprecid=" + Session["CompanyID"] + "&RECID=" + recid;
-        //    string finalurl = Weburl + "?" + strparams;
-
-        //    try
-        //    {
-        //        using (HttpClientHandler handler = new HttpClientHandler())
-        //        {
-        //            handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
-        //            using (HttpClient client = new HttpClient(handler))
-        //            {
-        //                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-        //                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //                var response = await client.GetAsync(finalurl);
-        //                if (response.IsSuccessStatusCode)
-        //                {
-        //                    var jsonString = await response.Content.ReadAsStringAsync();                         
-        //                    var rootObjects = JsonConvert.DeserializeObject<ApiResponseTicketsResponse>(jsonString);
-        //                    RecentTicketListall = rootObjects.Data;
-        //                }
-        //                else
-        //                {
-        //                    ModelState.AddModelError(string.Empty, $"Error: {response.ReasonPhrase}");
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ModelState.AddModelError(string.Empty, $"Exception occurred: {ex.Message}");
-        //    }
-
-        //    await Ticket();
-
-        //    return View(RecentTicketListall);
-        //}
-        //[HttpPost]
-        //public async Task<ActionResult> Edit(Tickets tickets)
-        //{
-        //    return View();
-        //}
 
     }
 }

@@ -72,6 +72,12 @@
         i.bx.bx-reply-all, i.bx.bx-user-plus {
             font-size: 25px;
         }
+        i.bx.bx-cart-alt{
+            font-size:20px;
+        }
+        i.bx.bxs-file-pdf.red {
+            font-size: 22px;
+        }
     </style>
 
 </head>
@@ -220,6 +226,19 @@
                     var assignToUrl = Url.Action("Assignto", "AssignTo", new { Recid = o.TC_RECID });
                     assigntoLinkHtml = $"<a href='{assignToUrl}' data-toggle='tooltip' data-placement='top' title='Assign To'><i class='bx bx-user-plus'></i></a>&nbsp;";
                 }
+                string MCLinkHtml = "";
+                if ((Session["MaterialConsumptionFlag"]?.ToString() == "Y") && (o.TC_STATUS != "C"))
+                {
+                    var MCUrl = Url.Action("List", "MaterialConsumption", new {TC_RECID=o.TC_RECID});
+                    MCLinkHtml = $"<a href='{MCUrl}' data-toggle='tooltip' data-placement='top' title='Material Consumption'><i class='bx bx-cart-alt'></i></a>&nbsp;";
+                }
+
+                string PDFLinkHtml = "";
+                if (o.TC_STATUS == "C")
+                {
+                    var PDFUrl = Url.Action("DownloadPDF", "PDF", new {TRECID=o.TC_RECID });
+                    PDFLinkHtml = $"<a href='#' class='download-pdf' data-id='{o.TC_RECID}' data-toggle='tooltip' title='PDF'><i class='bx bxs-file-pdf red'></i></a>&nbsp;";
+                }
 
                 var lineItemsUrl = Url.Action("AdminTickets", "RecentTickets", new
                 {
@@ -231,10 +250,10 @@
 
                 var lineItemLinkHtml = $"<a href='{lineItemsUrl}' data-toggle='tooltip' data-placement='top' title='Review Tickets'><i class='bx bx-reply-all'></i></a>";
 
-                return MvcHtmlString.Create($"{assigntoLinkHtml}{lineItemLinkHtml}");
+                return MvcHtmlString.Create($"{assigntoLinkHtml}{lineItemLinkHtml}{MCLinkHtml}{PDFLinkHtml}");
             });
 
-           }).WithPaging(10).Sortable(true)
+           }).WithPaging(10).Sortable(false)
             }
             else
             {
@@ -391,6 +410,54 @@
 
     });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).on('click', '.download-pdf', function (e) {
+        e.preventDefault();
+        var trecid = $(this).data('id');
+
+        Swal.fire({
+            title: 'Processing PDF...',
+            text: 'Please wait while the PDF is being generated.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        });
+
+        $.ajax({
+            url: '@Url.Action("DownloadPDF", "PDF")',
+            type: 'POST',
+            data: { TRECID: trecid },
+            success: function (response) {
+                Swal.close();
+
+                if (response.status === "success") {
+                    console.log("response=",response.status);
+                    window.open(response.url, '_blank'); // Open PDF in a new tab
+                    console.log("url", response.url)
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: response.message
+                    });
+                }
+            }
+,
+            error: function () {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong. Please try again.'
+                });
+            }
+        });
+    });
+</script>
+
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
 
 </body>

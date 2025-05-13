@@ -4,6 +4,7 @@ using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -416,101 +417,68 @@ namespace PSS_CMS.Controllers
         {
             List<SelectListItem> Location = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["LOCATIONS"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"];
-            string url = webUrlGet + "?" + strparams;
-            try
+            string connectionString = ConfigurationManager.ConnectionStrings["Mystring"].ConnectionString;
+            string cmpRecId = Session["CompanyID"].ToString();
+
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
             {
-                using (HttpClientHandler handler = new HttpClientHandler())
+                sqlcon.Open();
+                string cmd1 = "SELECT SP_CRECID, SP_RECID, SP_Code, SP_Name, SP_Sortorder FROM IM_StoragePoint WHERE SP_CRECID = @cmpRecId";
+
+                SqlCommand sqlCdm = new SqlCommand(cmd1, sqlcon);
+                sqlCdm.Parameters.AddWithValue("@cmpRecId", cmpRecId);
+
+                SqlDataReader sqlread = sqlCdm.ExecuteReader();
+                while (sqlread.Read())
                 {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
-                    using (HttpClient client = new HttpClient(handler))
+                    Location.Add(new SelectListItem
                     {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        var response = await client.GetAsync(url);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseUserObjects>(jsonString);
-
-                            if (rootObjects?.Data != null)
-                            {
-                                Location = rootObjects.Data.Select(t => new SelectListItem
-                                {
-                                    Value = t.L_RECID.ToString(), // or the appropriate value field
-                                    Text = t.L_NAME,
-                                }).ToList();
-                            }
-                        }
-                    }
+                        Value = sqlread["SP_RECID"].ToString(),
+                        Text = sqlread["SP_Name"].ToString()
+                    });
                 }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                sqlcon.Close();
             }
 
-            // Assuming you are passing ticketTypes to the view
             ViewBag.Location = Location;
-
             return View();
         }
 
-
-        public async Task ComboLocationSelectionGetbyID(string selectedRoleCode)
+        public async Task<ActionResult> ComboLocationSelectionGetbyID(string selectedRoleCode)
         {
             List<SelectListItem> Location = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["LOCATIONS"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"];
-            string url = webUrlGet + "?" + strparams;
+            string connectionString = ConfigurationManager.ConnectionStrings["Mystring"].ConnectionString;
+            string cmpRecId = Session["CompanyID"].ToString();
 
-            try
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
             {
-                using (HttpClientHandler handler = new HttpClientHandler())
+                sqlcon.Open();
+                string query = "SELECT SP_CRECID, SP_RECID, SP_Code, SP_Name, SP_Sortorder FROM IM_StoragePoint WHERE SP_CRECID = @cmpRecId";
+
+                using (SqlCommand cmd = new SqlCommand(query, sqlcon))
                 {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    cmd.Parameters.AddWithValue("@cmpRecId", cmpRecId);
 
-                    using (HttpClient client = new HttpClient(handler))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        var response = await client.GetAsync(url);
-                        if (response.IsSuccessStatusCode)
+                        while (reader.Read())
                         {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseUserObjects>(jsonString);
-
-                            if (rootObjects?.Data != null)
+                            Location.Add(new SelectListItem
                             {
-                                Location = rootObjects.Data.Select(t => new SelectListItem
-                                {
-                                    Value = t.L_RECID.ToString(),
-                                    Text = t.L_NAME,
-                                    Selected = (t.L_RECID.ToString() == selectedRoleCode) // ✅ compare with passed selectedRoleCode
-                                }).ToList();
-                            }
+                                Value = reader["SP_RECID"].ToString(),
+                                Text = reader["SP_Name"].ToString(),
+                                Selected = (reader["SP_RECID"].ToString() == selectedRoleCode)
+                            });
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
-            }
 
             ViewBag.Location = Location;
+            return View(); 
         }
+
 
     }
 }

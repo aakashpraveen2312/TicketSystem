@@ -15,21 +15,21 @@ using PSS_CMS.Models;
 namespace PSS_CMS.Controllers
 {
     [ApiKeyAuthorize]
-    public class ProjectMasterController : Controller
+    public class MaterialCategoryController : Controller
     {
-        // GET: ProjectMaster
+        // GET: MaterialCategory
         public async Task<ActionResult> List(string searchPharse)
         {
-            Projectmaster objprojectmaster = new Projectmaster();
+            Materialcategory objmaterialcategory = new Materialcategory();
 
-            string Weburl = ConfigurationManager.AppSettings["CUSTOMERGET"];
+            string Weburl = ConfigurationManager.AppSettings["MATERIALCATEGORYGET"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
-            List<Projectmaster> projectmasterlist = new List<Projectmaster>();
+            List<Materialcategory> materialcategorylist = new List<Materialcategory>();
 
-            string strparams = "CompanyRecID=" + Session["CompanyID"];
+            string strparams = "cmprecid=" + Session["CompanyID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -48,20 +48,16 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
-                            projectmasterlist = rootObjects.Data;
+                            var rootObjects = JsonConvert.DeserializeObject<MaterialcategoryRootObject>(jsonString);
+                            materialcategorylist = rootObjects.Data;
 
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
-                                projectmasterlist = projectmasterlist
-                                    .Where(r => r.CU_CODE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.CU_EMAIL.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_NAME.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_MOBILENO.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_INVOICENO.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_WARRANTYFREECALLS.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_WARRANTYUPTO.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_SORTORDER.ToString().Contains(searchPharse.ToLower()))
+                                materialcategorylist = materialcategorylist
+                                    .Where(r => r.MC_CODE.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.MC_DESCRIPTION.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.MC_DATETIME.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.MC_SORTORDER.ToString().Contains(searchPharse.ToLower()))
                                     .ToList();
                             }
 
@@ -77,42 +73,35 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            return View(projectmasterlist);
+            return View(materialcategorylist);
         }
+
         public async Task<ActionResult> Create()
         {
-            await ComboProductSelection();
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> Create(Projectmaster projectmaster)
+        public async Task<ActionResult> Create(Materialcategory materialcategory)
         {
             try
             {
-                var ProjectmasterPostURL = ConfigurationManager.AppSettings["CUSTOMERPOST"];
+                var MaterialcategoryPostURL = ConfigurationManager.AppSettings["MATERIALCATEGORYPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""cU_CODE"": ""{projectmaster.CU_CODE}"",           
-            ""cU_NAME"": ""{projectmaster.CU_NAME}"",           
-            ""cU_EMAIL"": ""{ projectmaster.CU_EMAIL}"",                    
-            ""CU_PRECID"": ""{ projectmaster.SelectedProduct}"",                    
-            ""cU_MOBILENO"": ""{ projectmaster.CU_MOBILENO}"",                    
-            ""cU_INVOICENO"": ""{ projectmaster.CU_INVOICENO}"",                    
-            ""cU_WARRANTYUPTO"": ""{ projectmaster.CU_WARRANTYUPTO}"",                    
-            ""cU_WARRANTYFREECALLS"": ""{ projectmaster.CU_WARRANTYFREECALLS}"",                    
-            ""cU_ADDRESS"": ""{ projectmaster.CU_ADDRESS}"",                    
-            ""cU_GST"": ""{ projectmaster.CU_GST}"",                    
-            ""cU_SORTORDER"": ""{ projectmaster.CU_SORTORDER}"",                    
-            ""cU_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",        
-            ""cU_CRECID"": ""{Session["CompanyID"]}""           
+            ""mC_CODE"": ""{materialcategory.MC_CODE}"",           
+            ""mC_DESCRIPTION"": ""{materialcategory.MC_DESCRIPTION}"",           
+            ""mC_SORTORDER"": ""{ materialcategory.MC_SORTORDER}"",                    
+            ""mC_DATETIME"": ""{""}"",                    
+            ""mC_CRECID"": ""{Session["CompanyID"]}"",                    
+            ""mC_DISABLE"": ""{(materialcategory.IsDisabled ? "Y" : "N")}""                
         }}";
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(ProjectmasterPostURL),
+                    RequestUri = new Uri(MaterialcategoryPostURL),
                     Method = HttpMethod.Post,
                     Headers =
             {
@@ -138,7 +127,7 @@ namespace PSS_CMS.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
+                    var apiResponse = JsonConvert.DeserializeObject<MaterialcategorypObjects>(responseBody);
 
                     if (apiResponse.Status == "Y")
                     {
@@ -165,18 +154,19 @@ namespace PSS_CMS.Controllers
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
 
-            return View(projectmaster);
+            return View();
         }
-        public async Task<ActionResult> Edit(int? Recid,string Name)
+
+        public async Task<ActionResult> Edit(int? Recid, string MCName)
         {
-            Session["Productrecid"] = Recid;
-            Session["Name"] = Name;
-            string WEBURLGETBYID = ConfigurationManager.AppSettings["CUSTOMERGETBYID"];
+            Session["MCName"] = MCName;
+            Session["MC_RECID"] = Recid;
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["MATERIALCATEGORYGETBYID"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            Projectmaster projectmaster = null;
+            Materialcategory materialcategory  = null;
 
-            string strparams = "Recid=" + Recid + "&companyId=" + Session["CompanyID"];
+            string strparams = "Recid=" + Recid + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -194,8 +184,8 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var content = JsonConvert.DeserializeObject<ProjectMasterObjects>(jsonString);
-                            projectmaster = content.Data;
+                            var content = JsonConvert.DeserializeObject<MaterialcategorypObjects>(jsonString);
+                            materialcategory = content.Data;
                         }
                         else
                         {
@@ -211,39 +201,32 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
             }
-            await ComboProductSelectionEdit(projectmaster.CU_PRECID);
-            return View(projectmaster);
+
+            return View(materialcategory);
         }
         [HttpPost]
-        public async Task<ActionResult> Edit(Projectmaster projectmaster)
+        public async Task<ActionResult> Edit(Materialcategory materialcategory)
         {
             try
             {
-                var ProjectmasterUpdateURL = ConfigurationManager.AppSettings["CUSTOMERPUT"];
+                var MaterialcategoryUpdateURL = ConfigurationManager.AppSettings["MATERIALCATEGORYGETPUT"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""cU_RECID"": ""{Session["Productrecid"]}"",           
-            ""cU_CODE"": ""{projectmaster.CU_CODE}"",           
-            ""cU_NAME"": ""{projectmaster.CU_NAME}"",
-            ""cU_EMAIL"": ""{projectmaster.CU_EMAIL}"",
-            ""cU_MOBILENO"": ""{projectmaster.CU_MOBILENO}"",
-            ""cU_PRECID"": ""{projectmaster.CU_PRECID}"",
-            ""cU_INVOICENO"": ""{projectmaster.CU_INVOICENO}"",
-            ""cU_WARRANTYUPTO"": ""{projectmaster.CU_WARRANTYUPTO}"",
-            ""cU_WARRANTYFREECALLS"": ""{projectmaster.CU_WARRANTYFREECALLS}"",
-            ""cU_SORTORDER"": ""{projectmaster.CU_SORTORDER}"",
-            ""cU_ADDRESS"": ""{ projectmaster.CU_ADDRESS}"",                    
-            ""cU_GST"": ""{ projectmaster.CU_GST}"",     
-            ""cU_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",                              
-            ""cU_CRECID"": ""{ Session["CompanyID"]}""                              
+            ""mC_RECID"": ""{Session["MC_RECID"]}"",                     
+            ""mC_CODE"": ""{materialcategory.MC_CODE}"",
+            ""mC_DESCRIPTION"": ""{materialcategory.MC_DESCRIPTION}"",
+            ""mC_SORTORDER"": ""{materialcategory.MC_SORTORDER}"",
+            ""mC_DATETIME"": ""{""}"",
+            ""mC_DISABLE"": ""{(materialcategory.IsDisabled ? "Y" : "N")}"",                              
+            ""mC_CRECID"": ""{ Session["CompanyID"]}""                              
         }}";
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(ProjectmasterUpdateURL),
+                    RequestUri = new Uri(MaterialcategoryUpdateURL),
                     Method = HttpMethod.Put,
                     Headers =
             {
@@ -267,7 +250,7 @@ namespace PSS_CMS.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
+                    var apiResponse = JsonConvert.DeserializeObject<MaterialcategorypObjects>(responseBody);
 
                     if (apiResponse.Status == "Y")
                     {
@@ -288,14 +271,17 @@ namespace PSS_CMS.Controllers
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
         }
-        public async Task<ActionResult> Delete(int? Recid)
+
+        public async Task<ActionResult> Delete(int Recid)
+
         {
-            string ProjectmasterDeleteUrl = ConfigurationManager.AppSettings["CUSTOMERDELETE"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+
+            string WEBURLDELETE = ConfigurationManager.AppSettings["MATERIALCATEGORYGETDELETE"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&RECID=" + Recid;
+            string finalurl = WEBURLDELETE + "?" + strparams;
             string APIKey = Session["APIKEY"].ToString();
 
-            string strparams = "RecordId=" + Recid + "&companyId=" + Session["CompanyID"];
-            string finalurl = ProjectmasterDeleteUrl + "?" + strparams;
 
             try
             {
@@ -321,12 +307,12 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             string responseBody = await response.Content.ReadAsStringAsync();
-                            var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
+                            var apiResponse = JsonConvert.DeserializeObject<MaterialcategorypObjects>(responseBody);
 
                             if (apiResponse.Status == "Y")
                             {
 
-                                string redirectUrl = Url.Action("List", "ProjectMaster", new { });
+                                string redirectUrl = Url.Action("List", "MaterialCategory", new { });
                                 return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
                             }
                             else if (apiResponse.Status == "U")
@@ -358,109 +344,7 @@ namespace PSS_CMS.Controllers
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
             return View();
-        }
 
-        public async Task<ActionResult> ComboProductSelection()
-
-        {
-            List<SelectListItem> Product = new List<SelectListItem>();
-
-            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"];
-            string url = webUrlGet + "?" + strparams;
-            try
-            {
-                using (HttpClientHandler handler = new HttpClientHandler())
-                {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
-                    using (HttpClient client = new HttpClient(handler))
-                    {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        var response = await client.GetAsync(url);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
-
-                            if (rootObjects?.Data != null)
-                            {
-                                Product = rootObjects.Data.Select(t => new SelectListItem
-                                {
-                                    Value = t.P_RECID.ToString(), // or the appropriate value field
-                                    Text = t.P_NAME,
-                                }).ToList();
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
-            }
-
-            // Assuming you are passing ticketTypes to the view
-            ViewBag.Product = Product;
-
-            return View();
-        }
-
-        public async Task<ActionResult> ComboProductSelectionEdit(int selectedRoleCode)
-
-        {
-            List<SelectListItem> Product = new List<SelectListItem>();
-
-            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"];
-            string url = webUrlGet + "?" + strparams;
-            try
-            {
-                using (HttpClientHandler handler = new HttpClientHandler())
-                {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
-                    using (HttpClient client = new HttpClient(handler))
-                    {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        var response = await client.GetAsync(url);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
-
-                            if (rootObjects?.Data != null)
-                            {
-                                Product = rootObjects.Data.Select(t => new SelectListItem
-                                {
-                                    Value = t.P_RECID.ToString(), // or the appropriate value field
-                                    Text = t.P_NAME,
-                                    Selected = (t.P_RECID == selectedRoleCode) // ✅ compare with passed selectedRoleCode
-                                }).ToList();
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
-            }
-
-            // Assuming you are passing ticketTypes to the view
-            ViewBag.Product = Product;
-
-            return View();
         }
     }
 }

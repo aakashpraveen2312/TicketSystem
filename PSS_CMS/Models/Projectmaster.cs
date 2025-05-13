@@ -14,8 +14,12 @@ namespace PSS_CMS.Models
         public int CU_RECID { get; set; }
         [DisplayName("Store Reference Code")]
         public string CU_CODE { get; set; }
+        [DisplayName("Address")]
+        public string CU_ADDRESS { get; set; }
         [DisplayName("Customer Name")]
         public string CU_NAME { get; set; }
+        [DisplayName("GST (If applicable)")]
+        public string CU_GST { get; set; }
         [DisplayName("Email ID")]
         public string CU_EMAIL { get; set; }
         [DisplayName("Mobile Number")]
@@ -26,6 +30,17 @@ namespace PSS_CMS.Models
         public string CU_INVOICENO { get; set; }
         [DisplayName("Warranty Upto")]
         public string CU_WARRANTYUPTO { get; set; }
+        public string CU_WARRANTYUPTODATE
+        {
+            get
+            {
+                if (DateTime.TryParse(CU_WARRANTYUPTO, out DateTime parsedDate))
+                {
+                    return parsedDate.ToString("dd-MM-yyyy");
+                }
+                return string.Empty; // Return an empty string or handle as needed if parsing fails
+            }
+        }
         [DisplayName("Warranty free calls")]
         public int CU_WARRANTYFREECALLS { get; set; }
         [DisplayName("Sort")]

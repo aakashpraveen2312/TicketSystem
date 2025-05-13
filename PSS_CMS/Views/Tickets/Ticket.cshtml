@@ -32,9 +32,16 @@
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
-        input#dateTextbox, select#SelectedProjectType, input#sub, select#SelectedTicketType, select#TC_PRIORITYTYPE, input#date {
+        input#dateTextbox, select#SelectedProjectType, input#sub, input#warranty, input#warrantyfreecalls, select#SelectedTicketType, select#TC_PRIORITYTYPE, input#date, select#CustomerDropdown {
             max-width: 450px;
             height: 35px;
+        }
+        select#CustomerDropdown{
+            font-size: 15px;
+        }
+        input#termsCheckbox {
+            width: 23px;
+            height: 21px;
         }
     </style>
 </head>
@@ -105,18 +112,13 @@
                     <div class="col-md-6 col-sm-12 ptypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
 
                         <!-- First Dropdown for Project Types -->
-                        @if (Model.TicketCombo2.TicketTypes2.Count > 1)
+                        @if (Model.TicketCombo2.TicketTypes2 != null)
                         {
                             <!-- Show dropdown with "Select Project" placeholder if count > 1 -->
                             @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
-                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "Select Product", new { @class = "form-select", required = "required" })
+                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "Select Product", new { @class = "form-select", required = "required", onchange = "loadMaterials(this.value)", tabindex = "2" })
                         }
-                        else if (Model.TicketCombo2.TicketTypes2.Count == 1)
-                        {
-                            <!-- Show dropdown without placeholder if count == 1 -->
-                            @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
-                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, new { @class = "form-select", required = "required" })
-                        }
+
                         else
                         {
                             <!-- Show dropdown without placeholder if count == 1 -->
@@ -125,9 +127,6 @@
                         }
 
                     </div>
-
-
-
                 </div>
 
 
@@ -137,14 +136,15 @@
                         @Html.TextBoxFor(model => model.TC_SUBJECT, new { @class = "form-control", id = "sub", required = "required", tabindex = "3" })
                     </div>
                     <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
-                        <!-- Scond Dropdown for Ticket Types -->
-                        @Html.LabelFor(model => model.SelectedTicketType, "Ticket type", new { @class = "pb-2" })
-                        @Html.DropDownListFor(model => model.SelectedTicketType, Model.TicketCombo.TicketTypes, "Select Ticket Type", new { @class = "form-select", required = "required" })
+                        @Html.LabelFor(model => model.TC_CUSTOMER, "Customer", new { @class = "pb-2" })
+                        @Html.DropDownList("SelectedCustomer",
+                        new List<SelectListItem> {
+                        new SelectListItem { Text = "No Product is selected", Value = "", Selected = true }
+                        },
+                         new { @class = "form-select textboxcolors", id = "CustomerDropdown", required = "required" })
+
                     </div>
-
                 </div>
-
-
 
                 <div class="row">
                     <div class="col-md-6 col-sm-12 mt-2">
@@ -156,27 +156,29 @@
                      "Select priority type",
                      new { @class = "form-select prioritystyle", required = "required", tabindex = "4" })
                     </div>
+                    <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+                        @Html.LabelFor(model => model.TC_WARRANTYUPTO, "Warranty Upto", new { @class = "pb-2" })
+                        @Html.TextBoxFor(model => model.TC_WARRANTYUPTO, new { @class = "form-control", id = "warranty", @readonly = "readonly", tabindex = "5" })
+                    </div>
                 </div>
 
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-12">
+                        @Html.LabelFor(model => model.SelectedTicketType, "Ticket type", new { @class = "pb-2" })
+                        @Html.DropDownListFor(model => model.SelectedTicketType, Model.TicketCombo.TicketTypes, "Select Ticket Type", new { @class = "form-select", required = "required", tabindex = "6" })
 
+                    </div>
+                    <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+                        @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, "Warranty Free Calls", new { @class = "pb-2" })
+                        @Html.TextBoxFor(model => model.CU_WARRANTYFREECALLS, new { @class = "form-control", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
+                    </div>
+                </div>
                 <div class="row mt-2">
                     <div class="col-md-12 col-sm-12">
                         @Html.LabelFor(model => model.TC_COMMENTS, "User Comments", new { @class = "pb-2" })
-                        @Html.TextAreaFor(model => model.TC_COMMENTS, new
- {
-     @class = "form-control custom-textarea",
-     placeholder = "Please enter your comments here....",
-     rows = "10",
-     cols = "70",
-     required = "required",
-     tabindex = "5",
- })
-
+                        @Html.TextAreaFor(model => model.TC_COMMENTS, new { @class = "form-control custom-textarea", placeholder = "Please enter your comments here....", rows = "10", cols = "70", required = "required", tabindex = "8", })
 
                     </div>
-
-
-
 
                     <div class="col-md-12 col-sm-12 mt-2">
                         @Html.Label("myfile", "Attachments:")
@@ -192,13 +194,12 @@
                     </div>
 
                     <div class="col-md-12 mt-2 mb-3 d-flex justify-content-lg-end justify-content-md-end justify-content-start">
-
-                        <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="7">Submit</button>
-                        <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","Tickets")'" tabindex="8">
+                        <input type="checkbox" id="termsCheckbox" name="termsAndConditions" class="me-2" />
+                        <label for="termsCheckbox" class="me-4 mt-2">I agree to paid service</label>
+                        <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="9">Submit</button>
+                        <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","Tickets")'" tabindex="10">
                             Cancel
                         </button>
-
-
                     </div>
 
 
@@ -285,59 +286,6 @@
         });
     </script>
 
-    @*<script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const dateTextbox = document.getElementById("dateTextbox");
-                const enableEditCheckbox = document.getElementById("enableEdit");
-                let intervalId; // To store interval reference
-
-                function updateDateTime() {
-                    if (!dateTextbox.hasAttribute("readonly")) return; // Stop updating if editing is enabled
-
-                    const now = new Date();
-                    const year = now.getFullYear();
-                    const month = String(now.getMonth() + 1).padStart(2, "0");
-                    const day = String(now.getDate()).padStart(2, "0");
-
-                    let hours = now.getHours();
-                    const minutes = String(now.getMinutes()).padStart(2, "0");
-                    const seconds = String(now.getSeconds()).padStart(2, "0");
-
-                    const ampm = hours >= 12 ? "PM" : "AM";
-                    hours = hours % 12 || 12; // Convert to 12-hour format
-
-                    dateTextbox.value = `${day}-${month}-${year} ${hours}:${minutes}:${seconds} ${ampm}`;
-                }
-
-                // Start updating time every second
-                function startAutoUpdate() {
-                    updateDateTime();
-                    intervalId = setInterval(updateDateTime, 1000);
-                }
-
-                // Stop the interval updates
-                function stopAutoUpdate() {
-                    clearInterval(intervalId);
-                }
-
-                // Initially start auto-update
-                startAutoUpdate();
-
-                enableEditCheckbox.addEventListener("change", function () {
-                    if (this.checked) {
-                        stopAutoUpdate();
-                        dateTextbox.removeAttribute("readonly");
-                        dateTextbox.setAttribute("required", "required"); // Enable required
-                        dateTextbox.type = "datetime-local"; // Show calendar & time picker
-                    } else {
-                        dateTextbox.setAttribute("readonly", "true");
-                        dateTextbox.removeAttribute("required"); // Remove required
-                        dateTextbox.type = "text"; // Switch back to text
-                        startAutoUpdate(); // Resume automatic updates
-                    }
-                });
-            });
-        </script>*@
 
     <script>
         document.querySelector('form').addEventListener('submit', function (event) {
@@ -396,12 +344,12 @@
                     Swal.fire({
                         title: "",
                         html: `
-                                                                    <p style="font-size: 15px;"><b>Ticket Raised Successfuly <br/> Admin Will Reach You Soon</b></p>
-                                                                    <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
-                                                                        <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
-                                                                        <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
-                                                                    </div>
-                                                                `,
+                                                                                    <p style="font-size: 15px;"><b>Ticket Raised Successfuly <br/> Admin Will Reach You Soon</b></p>
+                                                                                    <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+                                                                                        <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
+                                                                                        <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
+                                                                                    </div>
+                                                                                `,
                         showConfirmButton: false,
                         showCancelButton: false,
                         allowOutsideClick: false,
@@ -472,6 +420,150 @@
         }
     </script>
     @*Preloader script*@
+
+
+    <!-- Loading of Customers based on product -->
+    <script>
+    function loadMaterials(selectedRecId) {
+        $.ajax({
+            url: '@Url.Action("ComboProductTicketNew", "Tickets")',
+            type: 'GET',
+            data: { Recid: selectedRecId },
+            success: function (response) {
+                $('#CustomerDropdown').empty();
+                $('#warranty').val('');
+                $('#warrantyfreecalls').val('');
+
+                if (response.error) {
+                    alert(response.error);
+                    $('#CustomerDropdown').append($('<option>', {
+                        value: '',
+                        text: 'Error: ' + response.error
+                    }));
+                    clearMaterialFields();
+                    return;
+                }
+
+                if (response.length > 0) {
+                    $('#CustomerDropdown').append($('<option>', {
+                        value: '',
+                        text: '--Select Customer--'
+                    }));
+
+                    $.each(response, function (i, item) {
+                        $('#CustomerDropdown').append($('<option>', {
+                            value: item.Value,
+                            text: item.Text,
+                            'data-warranty': item.WarrantyUpto,
+                            'data-warrantyfreecalls': item.WarrantyFreeCalls
+                        }));
+                    });
+                } else {
+                    $('#CustomerDropdown').append($('<option>', {
+                        value: '',
+                        text: 'No customer available'
+                    }));
+
+                }
+            },
+            error: function () {
+                alert('Failed to load customers.');
+                $('#CustomerDropdown').append($('<option>', {
+                    value: '',
+                    text: 'Error loading customers'
+                }));
+            }
+        });
+    }
+
+    </script>
+
+    @*If i chnage the customer it fills the waranty upto and warranty calls input box*@
+    <script>
+        $(document).on('change', '#CustomerDropdown', function () {
+            const selectedOption = $(this).find('option:selected');
+            const warrantyUpto = selectedOption.data('warranty');
+            const warrantyFreeCalls = selectedOption.data('warrantyfreecalls');
+
+            if (warrantyUpto) {
+                const date = new Date(warrantyUpto);
+                const formattedDate = ("0" + date.getDate()).slice(-2) + "-" +
+                    ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
+                    date.getFullYear();
+                $('#warranty').val(formattedDate);
+                $('#warrantyfreecalls').val(warrantyFreeCalls);
+            } else {
+                $('#warranty').val('');
+            }
+        });
+    </script>
+
+    @*Check for warranty upto*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+
+            // Handle warranty logic on dropdown change
+            $(document).on('change', '#CustomerDropdown', function () {
+                const selectedOption = $(this).find('option:selected');
+                const warrantyUpto = selectedOption.data('warranty');
+                const warrantyFreeCalls = selectedOption.data('warrantyfreecalls');
+
+                if (warrantyUpto) {
+                    const date = new Date(warrantyUpto);
+                    const formattedDate = ("0" + date.getDate()).slice(-2) + "-" +
+                        ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
+                        date.getFullYear();
+                    $('#warranty').val(formattedDate);
+                    $('#warrantyfreecalls').val(warrantyFreeCalls);
+
+                    // Compare dates to enable/disable checkbox
+                    const currentDate = new Date();
+                    currentDate.setHours(0, 0, 0, 0);
+                    date.setHours(0, 0, 0, 0);
+
+                    if (date >= currentDate) {
+                        // Warranty is valid
+                        $('#termsCheckbox').prop('checked', false).prop('disabled', true);
+                    } else {
+                        // Warranty expired
+                        $('#termsCheckbox').prop('disabled', false);
+                    }
+
+                } else {
+                    $('#warranty').val('');
+                    $('#termsCheckbox').prop('checked', false).prop('disabled', true);
+                }
+            });
+
+            // Handle submit button click
+            $('#submitBtn').on('click', function (e) {
+                const warrantyDateStr = $('#warranty').val(); // Format: DD-MM-YYYY
+                const isCheckboxChecked = $('#termsCheckbox').is(':checked');
+
+                if (warrantyDateStr) {
+                    const parts = warrantyDateStr.split('-');
+                    const warrantyDate = new Date(parts[2], parts[1] - 1, parts[0]); // YYYY, MM-1, DD
+                    const currentDate = new Date();
+                    currentDate.setHours(0, 0, 0, 0);
+
+                    if (warrantyDate < currentDate && !isCheckboxChecked) {
+                        e.preventDefault(); // Block submission
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Warranty Expired',
+                            text: 'The warranty has expired. Please agree to paid service.',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
+                    // else: allow submit
+                }
+            });
+        });
+    </script>
+
+
+
     <script src="~/Scripts/Inactivitylogout.js"></script>
 </body>
 </html>

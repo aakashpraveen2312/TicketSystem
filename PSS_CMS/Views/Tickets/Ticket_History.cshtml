@@ -16,7 +16,7 @@
     <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
     <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
     @*Bootstrap Icons and Boxicons link*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
@@ -202,10 +202,10 @@
                    .SetWidth(30)
 .RenderValueAs(o =>
 {
-    var reviewUrl = Url.Action("ReviewTickets", "Tickets", new { recid2 = o.TC_RECID, status = o.TC_STATUS, REOPENUSERNAME = o.TC_USERNAME,projectid=o.P_RECID });
+    var reviewUrl = Url.Action("ReviewTickets", "Tickets", new { recid2 = o.TC_RECID, status = o.TC_STATUS, REOPENUSERNAME = o.TC_USERNAME, projectid = o.P_RECID });
     var deleteUrl = Url.Action("DeleteUpdateTicket", "Tickets");
     var timelineurl = Url.Action("TimelineChart", "DashBoard", new { recid3 = o.TC_RECID });
-  
+
 
     string actionHtml = $@"
         <div class='d-flex justify-content-center align-items-center gap-2'>
@@ -240,6 +240,49 @@
                 <div class="alert alert-warning text-center">
                     <b>No Ticket's are available</b>
                 </div>}
+
+
+            <footer>
+                <div class="footer">
+                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
+
+
+
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class="bi bi-calendar3" id="daterange" style="cursor: pointer; color: #357ebd;font-size:15px"></i>
+                                ~ Date Picker
+                            </div>
+                        </div>
+
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
+                                ~ Excel Download
+                            </div>
+                        </div>
+
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bx-line-chart text-danger' data-toggle='tooltip' data-placement='top' title='Timeline Chart'></i>
+                               ~ Time line history
+                            </div>
+                        </div>
+
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bx-refresh' data-toggle='tooltip' data-placement='top' title='Close Ticket'></i>
+                               ~ Self Close
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </footer>
+
+
+
         </div>
 
 

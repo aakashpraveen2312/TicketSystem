@@ -205,68 +205,62 @@
 
 
             </div>
-
-        </div>
-
-        @{
-            var locations = ViewBag.LocationList as IEnumerable<PSS_CMS.Models.Locations>;
-        }
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none">LOCATIONS</li>
-                </ul>
-            </div>
-        </div>
-        <div class="table mt-3 ms-1 me-5" id="ticketTable1">
-
-            @if (locations != null)
-            {
-                @Html.Grid(locations).Columns(columns =>
-           {
-               columns.Add(c => c.L_CODE).Titled("Code").SetWidth("100px");
-               columns.Add(c => c.L_NAME).Titled("Location").SetWidth("350px");
-               columns.Add(c => c.L_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
-           }).WithPaging(10).Sortable(false)
+            @{
+                var locations = ViewBag.LocationList as IEnumerable<PSS_CMS.Models.Locations>;
             }
-            else
-            {
-                <div class="alert alert-warning text-center">
-                    <b>No Locaions's are available</b>
-                </div>}
-
-        </div>
-
-
-
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck1"></span>
-                            - Text Fields
-                        </div>
-                    </div>
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck2"></span>
-                            - Number Fields
-                        </div>
-                    </div>
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck3"></span>
-                            - Read Only
-                        </div>
-                    </div>
-
+            <div class="row" style="margin-top:10px">
+                <div class="col-lg-12">
+                    <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                        <li class="" style="color: #2888bb;text-decoration:none">LOCATIONS</li>
+                    </ul>
                 </div>
             </div>
-        </footer>
+            <div class="table mt-3 ms-1 me-5" id="ticketTable1">
+
+                @if (locations != null)
+                {
+                    @Html.Grid(locations).Columns(columns =>
+               {
+                   columns.Add(c => c.L_CODE).Titled("Code").SetWidth("100px");
+                   columns.Add(c => c.L_NAME).Titled("Location").SetWidth("350px");
+                   columns.Add(c => c.L_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
+               }).WithPaging(10).Sortable(false)
+                }
+                else
+                {
+                    <div class="alert alert-warning text-center">
+                        <b>No Locaions's are available</b>
+                    </div>}
+
+            </div>
+            <footer>
+                <div class="footer">
+                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
+
+                        @*<div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <span class="minicheck minicheck1"></span>
+                                - Text Fields
+                            </div>
+                        </div>*@
+
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <span class="minicheck minicheck3"></span>
+                                - Read Only
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+       
+
+
+
 
 
         <!-- Validation Errors below the form fields -->
@@ -278,7 +272,7 @@
 
     </div>
 
-
+    
 
 
 

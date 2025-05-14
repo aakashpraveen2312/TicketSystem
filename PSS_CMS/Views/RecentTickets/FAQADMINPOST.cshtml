@@ -22,6 +22,7 @@
     <link href="~/Content/Responsive.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
     <script src="~/Scripts/Script.js"></script>
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
     <style>
 
         .container-fluid {
@@ -136,26 +137,26 @@
                                 if (projectTypeList != null && projectTypeList.Any())
                                 {
                                     var modifiedProjectTypeList = new List<SelectListItem>
-                                                                                                                                            {
-            };
+                                    {
+                                    };
                                     modifiedProjectTypeList.AddRange(projectTypeList);
 
                                     @Html.DropDownList("SelectedProjectType1",
                                                        modifiedProjectTypeList,
                                                        "Select Product",
-                                                       new { @class = "form-select", id = "projectTypeFilter1", required = "required" })
+                                                       new { @class = "form-select ", id = "projectTypeFilter1", required = "required" })
                                 }
                                 else
                                 {
                                     var modifiedProjectTypeList = new List<SelectListItem>
-                                                                                                                                            {
-            };
+                                    {
+                                    };
                                     modifiedProjectTypeList.AddRange(projectTypeList);
 
                                     @Html.DropDownList("SelectedProjectType1",
                                                        modifiedProjectTypeList,
                                                        "No product's are available",
-                                                       new { @class = "form-select", id = "projectTypeFilter1" })
+                                                       new { @class = "form-select ", id = "projectTypeFilter1" })
                                 }
                             }
                             else
@@ -167,14 +168,14 @@
                     <div class="row ms-2">
                         <div class="col-md-5">
                             @Html.LabelFor(model => model.F_QUESTION, "Question:", new { @class = "pb-2" })
-                            @Html.TextBoxFor(model => model.F_QUESTION, new { @class = "form-control", id = "", tabindex = "1", required = "required" })
+                            @Html.TextBoxFor(model => model.F_QUESTION, new { @class = "form-control minicheck1", id = "", tabindex = "1", required = "required" })
                         </div>
 
                     </div>
                     <div class="row mt-2 ms-2">
                         <div class="col-md-12">
                             @Html.LabelFor(model => model.F_ANSWER, "Answer", new { @class = "pb-2" })
-                            @Html.TextAreaFor(model => model.F_ANSWER, new { @class = "form-control custom-textarea", placeholder = "Please enter your answers here....", rows = "10", required = "required", tabindex = "5" })
+                            @Html.TextAreaFor(model => model.F_ANSWER, new { @class = "form-control custom-textarea minicheck1", placeholder = "Please enter your answers here....", rows = "10", required = "required", tabindex = "5" })
                         </div>
                     </div>
                     <div class="row mt-2 ms-2">
@@ -204,7 +205,30 @@
             }
 
         </div>
+        <footer>
+            <div class="footer">
+                <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck1"></span>
+                            - Text Fields
+                        </div>
+                    </div>
+
+                    @*<div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck2"></span>
+                            - Number Fields
+                        </div>
+                    </div>*@
+
+
+
+
+                </div>
+            </div>
+        </footer>
     </div>
 
 

@@ -352,6 +352,7 @@
     <Compile Include="Models\Material.cs" />
     <Compile Include="Models\Materialcategory.cs" />
     <Compile Include="Models\Materialconsumption.cs" />
+    <Compile Include="Models\MaterialProductmap.cs" />
     <Compile Include="Models\PDFDetails.cs" />
     <Compile Include="Models\ProductMaster.cs" />
     <Compile Include="Models\Projectmaster.cs" />
@@ -567,6 +568,7 @@
     <Content Include="Views\MaterialCategory\Edit.cshtml" />
     <Content Include="Views\Material\Create.cshtml" />
     <Content Include="Views\Material\Edit.cshtml" />
+    <Content Include="Views\Material\ListProduct.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

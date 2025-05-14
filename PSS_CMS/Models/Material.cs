@@ -34,6 +34,8 @@ namespace PSS_CMS.Models
         public string M_NAME { get; set; }
         [DisplayName("UOM")]
         public string M_UOM { get; set; }
+        [DisplayName("Type")]
+        public string M_TYPE { get; set; }
 
         [DisplayName("Disable")]
         public bool IsDisabled

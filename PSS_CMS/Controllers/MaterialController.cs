@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class MaterialController : Controller
     {
         // GET: Material
@@ -61,6 +63,7 @@ namespace PSS_CMS.Controllers
                                     .Where(r => r.M_CODE.ToLower().Contains(searchPharse.ToLower()) ||
                                                 r.M_NAME.ToLower().Contains(searchPharse.ToLower()) ||
                                                 r.M_UOM.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.M_TYPE.ToLower().Contains(searchPharse.ToLower()) ||
                                                 r.M_QUANTITY.ToString().Contains(searchPharse.ToLower()) ||
                                                 r.M_PRICE.ToString().Contains(searchPharse.ToLower()) ||
                                                 r.M_DISCOUNT.ToString().Contains(searchPharse.ToLower()) ||
@@ -105,6 +108,7 @@ namespace PSS_CMS.Controllers
             ""m_NAME"": ""{material.M_NAME}"",           
             ""m_MCRECID"": ""{Session["MC_Recid"]}"",                    
             ""m_UOM"": ""{material.M_UOM}"",                    
+            ""m_TYPE"": ""{material.M_TYPE}"",                    
             ""m_QUANTITY"": ""{material.M_QUANTITY}"",                    
             ""m_PRICE"": ""{material.M_PRICE}"",                    
             ""m_DISCOUNT"": ""{material.M_DISCOUNT}"",                    
@@ -237,7 +241,8 @@ namespace PSS_CMS.Controllers
             ""m_CODE"": ""{material.M_CODE}"",           
             ""m_NAME"": ""{material.M_NAME}"",           
             ""m_MCRECID"": ""{Session["MC_Recid"]}"",                    
-            ""m_UOM"": ""{material.M_UOM}"",                    
+            ""m_UOM"": ""{material.M_UOM}"",     
+            ""m_TYPE"": ""{material.M_TYPE}"",    
             ""m_QUANTITY"": ""{material.M_QUANTITY}"",                    
             ""m_PRICE"": ""{material.M_PRICE}"",                    
             ""m_DISCOUNT"": ""{material.M_DISCOUNT}"",                    
@@ -372,6 +377,166 @@ namespace PSS_CMS.Controllers
             }
             return View();
 
+        }
+
+        public async Task<ActionResult> ListProduct(string Recid,string searchPharse,string MName)
+        {          
+            Session["MRECID"] = Recid;
+            Session["MNAME"] = MName;
+            MaterialProductmap objmaterialproductmap = new MaterialProductmap();
+
+            string Weburl = ConfigurationManager.AppSettings["MATERIALMAPPINGLISTFORPRODUCT"];
+
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            List<MaterialProductmap> usermaterialproductlist = new List<MaterialProductmap>();
+
+            string strparams = "companyId=" + Session["CompanyID"] + "&materialID=" + Recid;
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<MaterialProductmapRootObject>(jsonString);
+                            usermaterialproductlist = rootObjects.Data;
+
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                usermaterialproductlist = usermaterialproductlist
+                                    .Where(r => r.P_NAME.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.P_SORTORDER.ToString().Contains(searchPharse.ToLower()))
+                                    .ToList();
+                            }
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+            return View(usermaterialproductlist);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CheckedValueProduct(List<int> selectedItems, MaterialProductmap materialProductmap)
+        {
+            try
+            {
+
+                var MaterialProductPostURL = ConfigurationManager.AppSettings["MATERIALMAPPINGLISTFORPRODUCTPOST"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                if (selectedItems != null)
+                {
+                    var selectedCategoryIds = selectedItems.Distinct().ToArray(); // Remove duplicates if necessary
+                    string formattedOutput = string.Join(",", selectedCategoryIds);
+                    Session["SELECTEDPROJECTID"] = formattedOutput;
+                }
+                else
+                {
+                    //var selectedCategoryIds = selectedItems.Distinct().ToArray();
+                    string formattedOutput = "";
+                    Session["SELECTEDPROJECTID"] = formattedOutput;
+                }
+
+
+                var content = $@"{{
+                    ""mP_CRECID"": ""{Session["CompanyID"]}"",
+                    ""mP_MRECID"": ""{ Session["MRECID"]}"",                  
+                    ""mP_PRECID"":""{Session["SELECTEDPROJECTID"]}""                                            
+                        }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(MaterialProductPostURL),
+                    Method = HttpMethod.Post,
+                    Headers =
+                        {
+                            {"X-Version", "1" },
+                            {HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+                        },
+
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+
+                };
+                var client = new HttpClient(handler)
+                {
+                    Timeout = TimeSpan.FromSeconds(120)
+                };
+
+
+
+
+
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                var response = await client.SendAsync(request);
+
+
+
+
+                if (response.IsSuccessStatusCode)
+
+                {
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    var apiResponse = JsonConvert.DeserializeObject<MaterialProductmapObjects>(responseBody);
+                    string message = apiResponse.Message;
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { success = true, message = apiResponse.Message });
+                    }
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
+                    {
+                        return Json(new { success = false, message = apiResponse.Message });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "An unexpected status was returned." });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return View();
         }
     }
 }

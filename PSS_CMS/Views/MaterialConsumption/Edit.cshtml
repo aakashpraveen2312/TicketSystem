@@ -73,7 +73,8 @@
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">TICKETS</a></li>
-                    <li>MATERIAL CONSUMPTION</li>
+                    <li>LINE ITEM</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialConsumption")">@Session["Type"].ToString().ToUpper()</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialConsumption")">LIST</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialConsumption")">@Session["MACNAME"].ToString().ToUpper()</a></li>
                     <li>EDIT</li>
@@ -82,159 +83,174 @@
         </div>
         @using (Html.BeginForm("Edit", "MaterialConsumption", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
         {
-            <div class="create ms-4 me-2 mt-3">
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.MATERIALCATEGORY, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @if (ViewBag.MaterialCategory != null)
-                        {
-                            var MaterialCategoryList = ViewBag.MaterialCategory as IEnumerable<SelectListItem>;
-
-                            if (MaterialCategoryList != null && MaterialCategoryList.Any())
-                            {
-                                var modifiedMaterialCategoryList = new List<SelectListItem>(MaterialCategoryList);
-
-                                if (MaterialCategoryList.Count() > 1)
-                                {
-                                    modifiedMaterialCategoryList.Insert(0, new SelectListItem { Text = "Select Material Category", Value = "" });
-                                }
-
-                                @Html.DropDownList("tM_MCRECID",
-                                                   modifiedMaterialCategoryList,
-                                                   new { @class = "form-select textboxcolors", required = "required", onchange = "loadMaterials(this.value)" })
-                            }
-                            else
-                            {
-                                var modifiedMaterialCategoryList = new List<SelectListItem>();
-                                modifiedMaterialCategoryList.Insert(0, new SelectListItem { Text = "No Material Category's are available", Value = "" });
-
-                                @Html.DropDownList("tM_MCRECID",
-                                                   modifiedMaterialCategoryList,
-                                                   new { @class = "form-select textboxcolors" })
-                            }
-                        }
-                        else
-                        {
-                            <p>No Material Category's are available</p>
-                        }
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.MATERIAL, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.DropDownList("tM_MRECID",
-                            new List<SelectListItem> {
-                                new SelectListItem { Text = "No Category is selected", Value = "" }
-                            },
-                            new { @class = "form-select textboxcolors", id = "MaterialDropdown" })
-
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_UOM, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_UOM, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_QUANTITY, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
-
-                    </div>
-                </div>
-
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_PRICE, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_DISCOUNT, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
-
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_SGST, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
-
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_CGST, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
-
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_TOTALAMOUNT, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
-
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_NETAMOUNT, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_NETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
-
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_SORTORDER, new { @class = "labels" })
-
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-
-                    </div>
-
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.IsDisable, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.CheckBoxFor(model => model.IsDisable, new { @class = "form-check-input" })
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2">
-
-                    </div>
-                    <div class="col-lg-3 d-flex justify-content-end">
-
-                    </div>
-                    <div class="col-lg-2">
-
-                    </div>
-                    <div class="col-lg-3 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "MaterialConsumption", new { })'" />
-                    </div>
-                </div>
+    <div class="create ms-4 me-2 mt-3">
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.MATERIALCATEGORY, new { @class = "labels" })
             </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @if (ViewBag.MaterialCategory != null)
+                {
+                    var MaterialCategoryList = ViewBag.MaterialCategory as IEnumerable<SelectListItem>;
+
+                    if (MaterialCategoryList != null && MaterialCategoryList.Any())
+                    {
+                        var modifiedMaterialCategoryList = new List<SelectListItem>(MaterialCategoryList);
+
+                        if (MaterialCategoryList.Count() > 1)
+                        {
+                            modifiedMaterialCategoryList.Insert(0, new SelectListItem { Text = "Select Item Category", Value = "" });
+                        }
+
+                        @Html.DropDownList("tM_MCRECID",
+                                           modifiedMaterialCategoryList,
+                                           new { @class = "form-select textboxcolors", required = "required", onchange = "loadMaterials(this.value)" })
+                    }
+                    else
+                    {
+                        var modifiedMaterialCategoryList = new List<SelectListItem>();
+                        modifiedMaterialCategoryList.Insert(0, new SelectListItem { Text = "No Item Category's are available", Value = "" });
+
+                        @Html.DropDownList("tM_MCRECID",
+                                           modifiedMaterialCategoryList,
+                                           new { @class = "form-select textboxcolors" })
+                    }
+                }
+                else
+                {
+                    <p>No Material Category's are available</p>
+                }
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.MATERIAL, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.DropDownList("tM_MRECID",
+                    new List<SelectListItem> {
+                        new SelectListItem { Text = "No Item Category is selected", Value = "" }
+                    },
+                    new { @class = "form-select textboxcolors", id = "MaterialDropdown" })
+
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_UOM, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_UOM, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_QUANTITY, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
+
+            </div>
+        </div>
+
+
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_PRICE, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_DISCOUNT, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
+
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_SGST, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_CGST, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_TOTALAMOUNT, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_NETAMOUNT, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_NETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_SORTORDER, new { @class = "labels" })
+
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+
+            </div>
+
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_TYPE, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_TYPE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+
+            </div>
+
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.IsDisable, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.CheckBoxFor(model => model.IsDisable, new { @class = "form-check-input" })
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-2">
+
+            </div>
+            <div class="col-lg-3 d-flex justify-content-end">
+
+            </div>
+            <div class="col-lg-2">
+
+            </div>
+            <div class="col-lg-3 d-flex justify-content-end">
+                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "MaterialConsumption", new { })'" />
+            </div>
+        </div>
+    </div>
         }
         <footer>
             <div class="footer">
@@ -253,7 +269,12 @@
                             - Number Fields
                         </div>
                     </div>
-
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck3"></span>
+                            - Read Only
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>
@@ -421,7 +442,7 @@
             } else {
                 $('#MaterialDropdown').append($('<option>', {
                     value: '',
-                    text: 'No materials available'
+                    text: 'No line items available'
                 }));
                 clearMaterialFields();
             }

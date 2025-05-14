@@ -46,10 +46,12 @@ namespace PSS_CMS.Models
         [DisplayName("Net Amount")]
 
         public decimal tM_NETAMOUNT { get; set; }
-        [DisplayName("Material Category")]
+        [DisplayName("Item Category")]
         public string MATERIALCATEGORY { get; set; }
-        [DisplayName("Material")]
+        [DisplayName("Line Item")]
         public string MATERIAL { get; set; }
+        [DisplayName("Type")]
+        public string tM_TYPE { get; set; }
         public string TM_MNAME { get; set; }
         public string TM_MCATDESC { get; set; }
 
@@ -61,6 +63,7 @@ namespace PSS_CMS.Models
         public string MC_DESCRIPTION { get; set; }
         public int M_MCRECID { get; set; }
         public string M_UOM { get; set; }
+        public string M_TYPE { get; set; }
         public decimal M_QUANTITY { get; set; }
         public decimal M_PRICE { get; set; }
         public decimal M_DISCOUNT { get; set; }
@@ -70,6 +73,7 @@ namespace PSS_CMS.Models
         public decimal M_NETAMOUNT { get; set; }
         public int M_SORTORDER { get; set; }
         public string M_DISABLE { get; set; }
+
         public int M_CRECID { get; set; }
 
         public string SelectedCategory { get; set; }

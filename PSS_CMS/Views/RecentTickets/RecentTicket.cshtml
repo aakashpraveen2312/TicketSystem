@@ -25,6 +25,7 @@
     <script src="~/Scripts/Script.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
 
     <!-- DateRangePicker CSS and JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -64,19 +65,26 @@
         }
 
         .daterangepicker .drp-buttons .btn {
-            margin-left: 4px!important;
+            margin-left: 4px !important;
             font-size: 12px;
             font-weight: bold;
             padding: 4px 8px;
         }
+
         i.bx.bx-reply-all, i.bx.bx-user-plus {
-            font-size: 25px;
+            font-size: 23px;
         }
-        i.bx.bx-cart-alt{
-            font-size:20px;
+
+        i.bx.bx-cart-alt {
+            font-size: 19px;
         }
+
         i.bx.bxs-file-pdf.red {
             font-size: 22px;
+        }
+
+        i.bi.bi-card-checklist {
+            font-size: 20px;
         }
     </style>
 
@@ -207,17 +215,16 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.TC_USERNAME).Titled("User Name").SetWidth("120px");
-               columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time").SetWidth("150px");
+               columns.Add(c => c.TC_USERNAME).Titled("User Name");
+               columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time");
                columns.Add(c => c.P_NAME).Titled("Product");
                columns.Add(c => c.TC_COMMENTS).Titled("Comments");
-               columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority").SetWidth("100px");
-               columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("100px");
-               columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status").SetWidth("100px");
+               columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority");
+               columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type");
+               columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status");
                columns.Add().Titled("Action")
               .Encoded(false)
                .Sanitized(false)
-               .SetWidth(30)
             .RenderValueAs(o =>
             {
                 string assigntoLinkHtml = "";
@@ -227,10 +234,14 @@
                     assigntoLinkHtml = $"<a href='{assignToUrl}' data-toggle='tooltip' data-placement='top' title='Assign To'><i class='bx bx-user-plus'></i></a>&nbsp;";
                 }
                 string MCLinkHtml = "";
+                string ServiceLinkHtml = "";
                 if ((Session["MaterialConsumptionFlag"]?.ToString() == "Y") && (o.TC_STATUS != "C"))
                 {
-                    var MCUrl = Url.Action("List", "MaterialConsumption", new {TC_RECID=o.TC_RECID});
-                    MCLinkHtml = $"<a href='{MCUrl}' data-toggle='tooltip' data-placement='top' title='Material Consumption'><i class='bx bx-cart-alt'></i></a>&nbsp;";
+                    var MCUrl = Url.Action("List", "MaterialConsumption", new {TC_RECID=o.TC_RECID,Type="Material",P_RECID=o.P_RECID});
+                    MCLinkHtml = $"<a href='{MCUrl}' data-toggle='tooltip' data-placement='top' title='Materials'><i class='bx bx-cart-alt'></i></a>&nbsp;";
+
+                    var ServiceUrl = Url.Action("List", "MaterialConsumption", new { TC_RECID = o.TC_RECID, Type = "Service", P_RECID = o.P_RECID });
+                    ServiceLinkHtml = $"<a href='{ServiceUrl}' data-toggle='tooltip' data-placement='top' title='Services'><i class='bi bi-card-checklist'></i></a>";
                 }
 
                 string PDFLinkHtml = "";
@@ -250,7 +261,7 @@
 
                 var lineItemLinkHtml = $"<a href='{lineItemsUrl}' data-toggle='tooltip' data-placement='top' title='Review Tickets'><i class='bx bx-reply-all'></i></a>";
 
-                return MvcHtmlString.Create($"{assigntoLinkHtml}{lineItemLinkHtml}{MCLinkHtml}{PDFLinkHtml}");
+                return MvcHtmlString.Create($"{assigntoLinkHtml}{lineItemLinkHtml}{MCLinkHtml}{PDFLinkHtml}{ServiceLinkHtml}");
             });
 
            }).WithPaging(10).Sortable(false)
@@ -260,7 +271,55 @@
                 <div class="alert alert-warning text-center">
                     <b>No Ticket's are available</b>
                 </div>}
+              <footer>
+            <div class="footer">
+                <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
+                            ~Excel Download
+                        </div>
+                    </div>
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class="bi bi-calendar3" id="daterange" style="cursor: pointer; color: #357ebd;font-size:20px"></i>
+                            ~ Date Picker
+                        </div>
+                    </div>
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bx bx-reply-all'></i>
+                            ~ Reply/Respond
+                        </div>
+                    </div>
+                    @if ((Session["UserRole"]?.ToString() == "Manager"))
+                    {
+                <div class="flex-item">
+                    <div class="d-flex justify-content-center footerb">
+                        <i style="color:#337ab7" class='bx bx-user-plus'></i>
+                        ~ Assign To
+                    </div>
+                </div>}
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <i style="color:#337ab7" class='bx bx-cart-alt'></i>
+                            ~ Materials
+                        </div>
+                    </div>
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <i style="color:#337ab7" class='bi bi-card-checklist'></i>
+                            ~ Services
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
         </div>
 
     </div>

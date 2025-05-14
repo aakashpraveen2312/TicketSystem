@@ -50,7 +50,9 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">MATERIAL CONSUMPTION</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">TICKETS</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none">@Session["Type"].ToString().ToUpper()</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">LINE ITEM</a></li>
                     <li>LIST</li>
                 </ul>
             </div>
@@ -73,9 +75,10 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.TM_MCATDESC).Titled("Category");
-               columns.Add(c => c.TM_MNAME).Titled("Material");
+               columns.Add(c => c.TM_MCATDESC).Titled("Item Category");
+               columns.Add(c => c.TM_MNAME).Titled("Line Item");
                columns.Add(c => c.tM_UOM).Titled("UOM");
+               columns.Add(c => c.tM_TYPE).Titled("Type");
                columns.Add(c => c.tM_QUANTITY).Titled("Qty").Css("text-right");
                columns.Add(c => c.tM_PRICE).Titled("Price").Css("text-right");
                columns.Add(c => c.tM_DISCOUNT).Titled("Discount (%)").Css("text-right");
@@ -90,11 +93,11 @@
             .RenderValueAs(o =>
             {
 
-                var Editurl = Url.Action("Edit", "MaterialConsumption", new { MACRecid = o.tM_RECID, MACNAME = o.TM_MNAME,TICRECID=o.tM_TCRECID }, null);
+                var Editurl = Url.Action("Edit", "MaterialConsumption", new { MACRecid = o.tM_RECID, MACNAME = o.TM_MNAME, TICRECID = o.tM_TCRECID }, null);
                 var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
-                var Deleteurl = Url.Action("Delete", "MaterialConsumption", new {Recid=o.tM_RECID  });
+                var Deleteurl = Url.Action("Delete", "MaterialConsumption", new { Recid = o.tM_RECID });
                 var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
                 var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
@@ -107,27 +110,42 @@
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No Material Consumption's are available</b>
+                    <b>No line items are available</b>
                 </div>}
+            <footer>
+                <div class="footer">
+                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <img class="mt-1" src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
+                                -Create
+                            </div>
+                        </div>
+
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
+                                -Edit
+                            </div>
+                        </div>
+
+
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bxs-trash bx-sm red mt-1'></i>
+                                -Delete
+                            </div>
+                        </div>
+                      
+
+                    </div>
+                </div>
+            </footer>
         </div>
 
 
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
-                            -Edit
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </footer>
-
+       
     </div>
 
 

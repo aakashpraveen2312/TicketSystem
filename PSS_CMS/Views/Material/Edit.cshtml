@@ -30,7 +30,7 @@
             font-weight: bold;
         }
 
-        select.form-select, select#M_UOM {
+        select.form-select, select#M_UOM, select#M_TYPE {
             display: block;
             width: 100%;
             height: 34px;
@@ -69,9 +69,9 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialCategory")">CATEGORY</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialCategory")">ITEM CATEGORY</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialCategory")">@Session["MC_DESCRIPTION"].ToString().ToUpper()</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "Material")">MATERIAL</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "Material")">ITEM</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "Material")">@Session["MName"].ToString().ToUpper()</a></li>
                     <li>EDIT</li>
                 </ul>
@@ -97,27 +97,40 @@
                     </div>
                 </div>
 
-
                 <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_TYPE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.DropDownListFor(model => model.M_TYPE, new SelectList(new List<string>
+                        {
+                            "Material",
+                            "Service"
+                        }), "-- Select Type --", new { @class = "select textboxcolors", autocomplete = "off" })
+
+                    </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.M_UOM, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.DropDownListFor(model => model.M_UOM, new SelectList(new List<string>
-                                               {
-                                                   "pieces",
-                                                   "kilograms",
-                                                   "grams",
-                                                   "litre",
-                                                   "milli litre",
-                                                   "meter",
-                                                   "centimeter",
-                                                   "milli meter",
-                                                   "box",
-                                                   "packet",
-                                                   "set"
-                                               }), "-- Select UOM --", new { @class = "select textboxcolors", autocomplete = "off" })
+                        {
+                            "pieces",
+                            "kilograms",
+                            "grams",
+                            "litre",
+                            "milli litre",
+                            "meter",
+                            "centimeter",
+                            "milli meter",
+                            "box",
+                            "packet",
+                            "set"
+                        }), "-- Select UOM --", new { @class = "select textboxcolors", autocomplete = "off" })
+
                     </div>
+                </div>
+                <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.M_PRICE, new { @class = "labels" })
                     </div>
@@ -125,9 +138,6 @@
                         @Html.EditorFor(model => model.M_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_PRICE", oninput = "Netamount()" } })
 
                     </div>
-                </div>
-
-                <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.M_QUANTITY, new { @class = "labels" })
                     </div>
@@ -135,6 +145,9 @@
                         @Html.EditorFor(model => model.M_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_QUANTITY", oninput = "Netamount()" } })
 
                     </div>
+                </div>
+
+                <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.M_DISCOUNT, new { @class = "labels" })
                     </div>
@@ -142,13 +155,20 @@
                         @Html.EditorFor(model => model.M_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_DISCOUNT", oninput = "Netamount()" } })
 
                     </div>
-                </div>
-                <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.M_TOTALAMOUNT, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.M_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_TOTALAMOUNT", @readonly = "readonly", oninput = "Netamount()" } })
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_SGST, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_SGST", oninput = "Netamount()" } })
 
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
@@ -162,29 +182,28 @@
 
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.M_SGST, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.M_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_SGST", oninput = "Netamount()" } })
-
-                    </div>
-
-                    <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.M_NETAMOUNT, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.M_NETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_NETAMOUNT", @readonly = "readonly" } })
 
                     </div>
-                </div>
 
-                <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.M_SORTORDER, new { @class = "labels" })
 
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.M_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
 
                     </div>
 
@@ -228,6 +247,12 @@
                         <div class="d-flex justify-content-center footerb">
                             <span class="minicheck minicheck2"></span>
                             - Number Fields
+                        </div>
+                    </div>
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck3"></span>
+                            - Read Only
                         </div>
                     </div>
 

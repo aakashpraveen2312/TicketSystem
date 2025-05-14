@@ -77,7 +77,7 @@
                 var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
-                var usercategoryurl = Url.Action("List", "UserLogin", new { R_CODE = o.R_CODE, Recid = o.R_RECID,Role=o.R_NAME }, null);
+                var usercategoryurl = Url.Action("List", "UserLogin", new { R_CODE = o.R_CODE, Recid = o.R_RECID, Role = o.R_NAME }, null);
                 var usercategoryiconHtml = "<i class='bx bx-user bx-sm'></i>";
                 var usercategorylinkHtml = $"<a href='{usercategoryurl}' data-toggle='tooltip' data-placement='top' title='User'>{usercategoryiconHtml}</a>";
 
@@ -92,24 +92,30 @@
                 <div class="alert alert-warning text-center">
                     <b>No Usergroup's' are available</b>
                 </div>}
+            <footer>
+                <div class="footer">
+                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
+                                -Edit
+                            </div>
+                        </div>
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <i style="color:#337ab7" class='bx bx-user bx-sm mt-1'></i>
+                                -User
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </footer>
         </div>
 
 
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
-                            -Edit
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </footer>
+   
 
     </div>
 

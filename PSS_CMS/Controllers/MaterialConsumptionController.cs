@@ -18,11 +18,13 @@ namespace PSS_CMS.Controllers
     public class MaterialConsumptionController : Controller
     {
         // GET: MaterialConsumption
-        public async Task<ActionResult> List(string searchPharse,int? TC_RECID)
+        public async Task<ActionResult> List(string searchPharse,int? TC_RECID,string Type,int? P_RECID)
         {
-            if (TC_RECID!=null)
+            if (TC_RECID!=null && Type!=null && P_RECID!=null)
             {
                 Session["TC_RECID"] = TC_RECID;
+                Session["Type"] = Type;
+                Session["P_RECID"] = P_RECID;
             }
 
             Materialconsumption objmaterialconsumption = new Materialconsumption();
@@ -34,7 +36,7 @@ namespace PSS_CMS.Controllers
 
             List<Materialconsumption> materialconsumptionlist = new List<Materialconsumption>();
 
-            string strparams = "cmprecid=" + Session["CompanyID"]+ "&ticketrecid=" + Session["TC_RECID"];
+            string strparams = "cmprecid=" + Session["CompanyID"]+ "&ticketrecid=" + Session["TC_RECID"] + "&type=" + Session["Type"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -61,6 +63,7 @@ namespace PSS_CMS.Controllers
                                 materialconsumptionlist = materialconsumptionlist
                                     .Where(r => r.tM_UOM.ToString().Contains(searchPharse.ToLower()) ||
                                                 r.tM_QUANTITY.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.tM_TYPE.ToString().Contains(searchPharse.ToLower()) ||
                                                 r.tM_PRICE.ToString().Contains(searchPharse.ToLower()) ||
                                                 r.tM_DISCOUNT.ToString().Contains(searchPharse.ToLower()) ||
                                                 r.tM_SGST.ToString().Contains(searchPharse.ToLower()) ||
@@ -102,6 +105,7 @@ namespace PSS_CMS.Controllers
 
                 var content = $@"{{           
             ""tM_UOM"": ""{materialcategory.tM_UOM}"",           
+            ""tM_TYPE"": ""{materialcategory.tM_TYPE}"",           
             ""tM_QUANTITY"": ""{materialcategory.tM_QUANTITY}"",           
             ""tM_PRICE"": ""{materialcategory.tM_PRICE}"",                    
             ""tM_DISCOUNT"": ""{materialcategory.tM_DISCOUNT}"",                    
@@ -238,7 +242,8 @@ namespace PSS_CMS.Controllers
 
                 var content = $@"{{           
             ""tM_RECID"": ""{Session["MACRecid"]}"",           
-            ""tM_UOM"": ""{materialcategory.tM_UOM}"",           
+            ""tM_UOM"": ""{materialcategory.tM_UOM}"", 
+            ""tM_TYPE"": ""{materialcategory.tM_TYPE}"", 
             ""tM_QUANTITY"": ""{materialcategory.tM_QUANTITY}"",           
             ""tM_PRICE"": ""{materialcategory.tM_PRICE}"",                    
             ""tM_DISCOUNT"": ""{materialcategory.tM_DISCOUNT}"",                    
@@ -430,11 +435,11 @@ namespace PSS_CMS.Controllers
         {
             List<Materialconsumption> MaterialList = new List<Materialconsumption>(); // Use your full model here
 
-            string webUrlGet = ConfigurationManager.AppSettings["MATERIALGET"];
+            string webUrlGet = ConfigurationManager.AppSettings["MATERIALTYPECOMBO"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"]?.ToString();
             string cmpRecId = Session["CompanyID"]?.ToString();
-            string strparams = "cmprecid=" + cmpRecId + "&Recid=" + Recid;
+            string strparams = "cmprecid=" + cmpRecId + "&Recid=" + Recid+ "&type=" + Session["Type"] + "&productrecid=" + Session["P_RECID"];
             string url = webUrlGet + "?" + strparams;
 
             try
@@ -475,11 +480,11 @@ namespace PSS_CMS.Controllers
         {
             List<Materialconsumption> MaterialList = new List<Materialconsumption>(); // Use your full model here
 
-            string webUrlGet = ConfigurationManager.AppSettings["MATERIALGET"];
+            string webUrlGet = ConfigurationManager.AppSettings["MATERIALTYPECOMBO"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"]?.ToString();
             string cmpRecId = Session["CompanyID"]?.ToString();
-            string strparams = "cmprecid=" + cmpRecId + "&Recid=" + Recid;
+            string strparams = "cmprecid=" + cmpRecId + "&Recid=" + Recid + "&type=" + Session["Type"] + "&productrecid=" + Session["P_RECID"];
             string url = webUrlGet + "?" + strparams;
 
             try

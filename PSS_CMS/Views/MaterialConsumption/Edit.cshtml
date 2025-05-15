@@ -85,55 +85,14 @@
         {
     <div class="create ms-4 me-2 mt-3">
         <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.MATERIALCATEGORY, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @if (ViewBag.MaterialCategory != null)
-                {
-                    var MaterialCategoryList = ViewBag.MaterialCategory as IEnumerable<SelectListItem>;
 
-                    if (MaterialCategoryList != null && MaterialCategoryList.Any())
-                    {
-                        var modifiedMaterialCategoryList = new List<SelectListItem>(MaterialCategoryList);
-
-                        if (MaterialCategoryList.Count() > 1)
-                        {
-                            modifiedMaterialCategoryList.Insert(0, new SelectListItem { Text = "Select Item Category", Value = "" });
-                        }
-
-                        @Html.DropDownList("tM_MCRECID",
-                                           modifiedMaterialCategoryList,
-                                           new { @class = "form-select textboxcolors", required = "required", onchange = "loadMaterials(this.value)" })
-                    }
-                    else
-                    {
-                        var modifiedMaterialCategoryList = new List<SelectListItem>();
-                        modifiedMaterialCategoryList.Insert(0, new SelectListItem { Text = "No Item Category's are available", Value = "" });
-
-                        @Html.DropDownList("tM_MCRECID",
-                                           modifiedMaterialCategoryList,
-                                           new { @class = "form-select textboxcolors" })
-                    }
-                }
-                else
-                {
-                    <p>No Material Category's are available</p>
-                }
-            </div>
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.MATERIAL, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.DropDownList("tM_MRECID",
-                    new List<SelectListItem> {
-                        new SelectListItem { Text = "No Item Category is selected", Value = "" }
-                    },
-                    new { @class = "form-select textboxcolors", id = "MaterialDropdown" })
+                @Html.EditorFor(model => model.M_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
             </div>
-        </div>
-        <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_UOM, new { @class = "labels" })
             </div>
@@ -141,6 +100,9 @@
                 @Html.EditorFor(model => model.tM_UOM, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
             </div>
+        </div>
+        <div class="row mb-3">
+
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_QUANTITY, new { @class = "labels" })
             </div>
@@ -148,10 +110,6 @@
                 @Html.EditorFor(model => model.tM_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
 
             </div>
-        </div>
-
-
-        <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_PRICE, new { @class = "labels" })
             </div>
@@ -159,6 +117,11 @@
                 @Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
             </div>
+        </div>
+
+
+        <div class="row mb-3">
+
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_DISCOUNT, new { @class = "labels" })
             </div>
@@ -166,9 +129,6 @@
                 @Html.EditorFor(model => model.tM_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
 
             </div>
-        </div>
-
-        <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_SGST, new { @class = "labels" })
             </div>
@@ -176,6 +136,10 @@
                 @Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
             </div>
+        </div>
+
+        <div class="row mb-3">
+
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_CGST, new { @class = "labels" })
             </div>
@@ -183,9 +147,6 @@
                 @Html.EditorFor(model => model.tM_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
             </div>
-        </div>
-
-        <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_TOTALAMOUNT, new { @class = "labels" })
             </div>
@@ -193,6 +154,10 @@
                 @Html.EditorFor(model => model.tM_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
             </div>
+        </div>
+
+        <div class="row mb-3">
+
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_NETAMOUNT, new { @class = "labels" })
             </div>
@@ -200,8 +165,6 @@
                 @Html.EditorFor(model => model.tM_NETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
             </div>
-        </div>
-        <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_SORTORDER, new { @class = "labels" })
 
@@ -210,6 +173,9 @@
                 @Html.EditorFor(model => model.tM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
             </div>
+        </div>
+        <div class="row mb-3">
+
 
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_TYPE, new { @class = "labels" })
@@ -217,16 +183,6 @@
             <div class="col-lg-3 col-md-3 col-sm-12">
                 @Html.EditorFor(model => model.tM_TYPE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
             </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-
-            </div>
-
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.IsDisable, new { @class = "labels" })
             </div>
@@ -397,89 +353,7 @@
     </script>
 
     <!-- Loadin of material and display the values in the Input box -->
-    <script>
-    $(function () {
-        var selectedRecId = $("#tM_MCRECID").val(); // Grab the selected value from another dropdown
-        console.log("selectedRecId", selectedRecId); // Log the selected value
-        loadMaterials(selectedRecId); // Load materials when the page is ready
-    });
-
-  function loadMaterials(selectedRecId) {
-    $.ajax({
-        url: '@Url.Action("ComboMaterialEdit", "MaterialConsumption")',
-        type: 'GET',
-        data: { Recid: selectedRecId },
-        success: function (response) {
-            $('#MaterialDropdown').empty();
-           
-            window.materialList = response;
-
-            if (response.error) {
-                alert(response.error);
-                $('#MaterialDropdown').append($('<option>', {
-                    value: '',
-                    text: 'Error: ' + response.error
-                }));
-                clearMaterialFields();
-
-                return;
-            }
-
-            if (response.length > 0) {
-                $.each(response, function (i, item) {
-                    $('#MaterialDropdown').append($('<option>', {
-                        value: item.M_RECID,
-                        text: item.M_NAME
-                    }));
-                });
-
-                // Get saved selected ID from hidden field or Razor
-                const savedRecId = '@ViewBag.SelectedMaterialRecid';
-                console.log("savedRecId", savedRecId)
-                if (savedRecId) {
-                    $('#MaterialDropdown').val(savedRecId);                   
-                }
-            } else {
-                $('#MaterialDropdown').append($('<option>', {
-                    value: '',
-                    text: 'No line items available'
-                }));
-                clearMaterialFields();
-            }
-        },
-        error: function () {
-            alert('Failed to load materials.');
-        }
-    });
-}
-
-
-    function fillMaterialFields(material) {
-        $('#tM_UOM').val(material.M_UOM);
-        $('#tM_QUANTITY').val(material.M_QUANTITY);
-        $('#tM_PRICE').val(material.M_PRICE);
-        $('#tM_DISCOUNT').val(material.M_DISCOUNT);
-        $('#tM_TOTALAMOUNT').val(material.M_TOTALAMOUNT);
-        $('#tM_CGST').val(material.M_CGST);
-        $('#tM_SGST').val(material.M_SGST);
-        $('#tM_NETAMOUNT').val(material.M_NETAMOUNT);
-    }
-
-    function clearMaterialFields() {
-        $('#tM_UOM, #tM_QUANTITY, #tM_PRICE, #tM_DISCOUNT, #tM_TOTALAMOUNT, #tM_CGST, #tM_SGST, #tM_NETAMOUNT').val('');
-    }
-
-    // Handle dropdown change
-    $(document).on('change', '#MaterialDropdown', function () {
-        const selectedRecId = $(this).val();
-        const selectedMaterial = window.materialList.find(x => x.M_RECID == selectedRecId);
-        if (selectedMaterial) {
-            fillMaterialFields(selectedMaterial); // Fill fields with material data
-        } else {
-            clearMaterialFields(); // Clear fields if no material is selected
-        }
-    });
-    </script>
+  
 
     <!-- Net Amount Calculation -->
     <script>

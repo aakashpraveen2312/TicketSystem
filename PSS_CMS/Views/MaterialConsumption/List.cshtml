@@ -75,7 +75,6 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.TM_MCATDESC).Titled("Item Category");
                columns.Add(c => c.TM_MNAME).Titled("Line Item");
                columns.Add(c => c.tM_UOM).Titled("UOM");
                columns.Add(c => c.tM_TYPE).Titled("Type");

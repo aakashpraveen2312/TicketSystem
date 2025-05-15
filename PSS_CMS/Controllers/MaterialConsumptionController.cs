@@ -91,7 +91,6 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> Create()
         {
-            await ComboMaterialCategory();
             return View();
         }
         [HttpPost]
@@ -115,7 +114,7 @@ namespace PSS_CMS.Controllers
             ""tM_NETAMOUNT"": ""{materialcategory.tM_NETAMOUNT}"",                    
             ""tM_TCRECID"": ""{Session["TC_RECID"]}"",                    
             ""tM_CRECID"": ""{Session["CompanyID"]}"",                    
-            ""tM_MCRECID"": ""{materialcategory.SelectedCategory}"",                    
+            ""tM_MCRECID"": ""{0}"",                    
             ""tM_MRECID"": ""{materialcategory.SelectedMaterial}"",                    
             ""tM_SORTORDER"": ""{materialcategory.tM_SORTORDER}"",                    
             ""tM_BILLABLE"": ""{(materialcategory.IsDisable ? "Y" : "N")}"" ,               
@@ -210,9 +209,7 @@ namespace PSS_CMS.Controllers
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var content = JsonConvert.DeserializeObject<MaterialconsumptionObjects>(jsonString);
-                            materialconsumption = content.Data;
-                            ViewBag.SelectedMaterialRecid = materialconsumption?.tM_MRECID;
-
+                            materialconsumption = content.Data;                          
                         }
                         else
                         {
@@ -228,7 +225,6 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
             }
-            await ComboMaterialCategory();
             return View(materialconsumption);
         }
         [HttpPost]
@@ -253,7 +249,7 @@ namespace PSS_CMS.Controllers
             ""tM_NETAMOUNT"": ""{materialcategory.tM_NETAMOUNT}"",                    
             ""tM_TCRECID"": ""{Session["TICRECID"]}"",                    
             ""tM_CRECID"": ""{Session["CompanyID"]}"",                    
-            ""tM_MCRECID"": ""{materialcategory.tM_MCRECID}"",                    
+            ""tM_MCRECID"": ""{0}"",                    
             ""tM_MRECID"": ""{materialcategory.tM_MRECID}"",                    
             ""tM_SORTORDER"": ""{materialcategory.tM_SORTORDER}"",                    
             ""tM_BILLABLE"": ""{(materialcategory.IsDisable ? "Y" : "N")}"" ,               
@@ -381,65 +377,15 @@ namespace PSS_CMS.Controllers
 
         }
 
-        public async Task<ActionResult> ComboMaterialCategory()
-
+        public async Task<JsonResult> ComboMaterial()
         {
-            List<SelectListItem> MaterialCategory = new List<SelectListItem>();
-
-            string webUrlGet = ConfigurationManager.AppSettings["MATERIALCATEGORYGET"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"];
-            string url = webUrlGet + "?" + strparams;
-            try
-            {
-                using (HttpClientHandler handler = new HttpClientHandler())
-                {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
-                    using (HttpClient client = new HttpClient(handler))
-                    {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        var response = await client.GetAsync(url);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
-
-                            if (rootObjects?.Data != null)
-                            {
-                                MaterialCategory = rootObjects.Data.Select(t => new SelectListItem
-                                {
-                                    Value = t.MC_RECID.ToString(), // or the appropriate value field
-                                    Text = t.MC_DESCRIPTION,
-                                }).ToList();
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
-            }
-
-            // Assuming you are passing ticketTypes to the view
-            ViewBag.MaterialCategory = MaterialCategory;
-            return View();
-        }
-
-        public async Task<JsonResult> ComboMaterial(string Recid)
-        {
-            List<Materialconsumption> MaterialList = new List<Materialconsumption>(); // Use your full model here
+            List<Materialconsumption> materialList = new List<Materialconsumption>();
 
             string webUrlGet = ConfigurationManager.AppSettings["MATERIALTYPECOMBO"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"]?.ToString();
             string cmpRecId = Session["CompanyID"]?.ToString();
-            string strparams = "cmprecid=" + cmpRecId + "&Recid=" + Recid+ "&type=" + Session["Type"] + "&productrecid=" + Session["P_RECID"];
+            string strparams = "cmprecid=" + cmpRecId + "&type=" + Session["Type"] + "&productrecid=" + Session["P_RECID"];
             string url = webUrlGet + "?" + strparams;
 
             try
@@ -462,7 +408,21 @@ namespace PSS_CMS.Controllers
 
                             if (rootObjects?.Data != null)
                             {
-                                MaterialList = rootObjects.Data.ToList(); // Move assignment to outer scope
+                                materialList = rootObjects.Data.Select(m => new Materialconsumption
+                                {
+                                    M_RECID = m.M_RECID,
+                                    M_NAME = m.M_NAME,
+                                    M_UOM = m.M_UOM,
+                                    M_QUANTITY = m.M_QUANTITY,
+                                    M_PRICE = m.M_PRICE,
+                                    M_DISCOUNT = m.M_DISCOUNT,
+                                    M_TOTALAMOUNT = m.M_TOTALAMOUNT,
+                                    M_CGST = m.M_CGST,
+                                    M_SGST = m.M_SGST,
+                                    M_NETAMOUNT = m.M_NETAMOUNT,
+                                    M_SORTORDER = m.M_SORTORDER,
+                                    M_TYPE = m.M_TYPE
+                                }).ToList();
                             }
                         }
                     }
@@ -473,10 +433,11 @@ namespace PSS_CMS.Controllers
                 return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(MaterialList, JsonRequestBehavior.AllowGet);
+            return Json(materialList, JsonRequestBehavior.AllowGet);
         }
 
-        public async Task<JsonResult> ComboMaterialEdit(string Recid)
+
+        public async Task<JsonResult> ComboMaterialEdit()
         {
             List<Materialconsumption> MaterialList = new List<Materialconsumption>(); // Use your full model here
 
@@ -484,7 +445,7 @@ namespace PSS_CMS.Controllers
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"]?.ToString();
             string cmpRecId = Session["CompanyID"]?.ToString();
-            string strparams = "cmprecid=" + cmpRecId + "&Recid=" + Recid + "&type=" + Session["Type"] + "&productrecid=" + Session["P_RECID"];
+            string strparams = "cmprecid=" + cmpRecId + "&type=" + Session["Type"] + "&productrecid=" + Session["P_RECID"];
             string url = webUrlGet + "?" + strparams;
 
             try

@@ -250,12 +250,14 @@ namespace PSS_CMS.Controllers
             ""tM_TCRECID"": ""{Session["TICRECID"]}"",                    
             ""tM_CRECID"": ""{Session["CompanyID"]}"",                    
             ""tM_MCRECID"": ""{0}"",                    
-            ""tM_MRECID"": ""{materialcategory.tM_MRECID}"",                    
+            ""tM_MRECID"": ""{materialcategory.M_RECID}"",                    
             ""tM_SORTORDER"": ""{materialcategory.tM_SORTORDER}"",                    
             ""tM_BILLABLE"": ""{(materialcategory.IsDisable ? "Y" : "N")}"" ,               
             ""tM_DISABLE"": ""{"N"}""                
         }}";
-
+                // if any error came kindly replace before
+                //before  ""tM_MRECID"": ""{materialcategory.tM_MRECID}"",  
+                //after  ""tM_MRECID"": ""{materialcategory.M_RECID}"",  
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {

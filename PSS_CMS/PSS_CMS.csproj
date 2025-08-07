@@ -315,6 +315,7 @@
     <Compile Include="Controllers\CompanyRegistrationController.cs" />
     <Compile Include="Controllers\ChangePasswordController.cs" />
     <Compile Include="Controllers\ContractInvoiceController.cs" />
+    <Compile Include="Controllers\UserManagerController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\ForgotpasswordController.cs" />
     <Compile Include="Controllers\HelpDeskController.cs" />
@@ -589,6 +590,7 @@
     <Content Include="Views\HelpDesk\ReviewTickets.cshtml" />
     <Content Include="Views\Shared\_HelpDeskResponse.cshtml" />
     <Content Include="Views\HelpDesk\HDDashboard.cshtml" />
+    <Content Include="Views\UserManager\Dashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

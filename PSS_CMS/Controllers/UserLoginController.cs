@@ -48,7 +48,8 @@ namespace PSS_CMS.Controllers
                     u_MOBILENO = objUser.U_MOBILENO,
                     u_DOMAIN = Session["DOMAIN"],
                     u_LOCATION = objUser.SelectedRole,
-                    u_DISABLE = objUser.U_UserDisable ? "Y" : "N"
+                    u_DISABLE = objUser.U_UserDisable ? "Y" : "N",
+                    u_UserManager = objUser.U_UserManager ? "Y" : "N"
                 };
 
                 var request = new HttpRequestMessage
@@ -269,6 +270,7 @@ namespace PSS_CMS.Controllers
                     ""u_USERCODE"":""{UserEdit.U_USERCODE }"",
                     ""u_MOBILENO"":""{ UserEdit.U_MOBILENO}"",
                     ""u_LOCATION"":""{ UserEdit.U_LOCATION}"",
+                    ""u_UserManager"":""{ UserEdit.U_UserManager}"",
                     ""u_DOMAIN"":""{Session["DOMAIN"]}""
                      }}";
                 //""BIN_SPRECID"": ""{ objbins.BIN_SPRECID}"",

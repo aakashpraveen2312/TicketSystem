@@ -58,6 +58,17 @@ namespace PSS_CMS.Models
         [JsonProperty("U_DISABLE")]
         private string UserDisable { get; set; }
 
+        [DisplayName("User Manager")]
+        public bool U_UserManager
+        {
+            get => UUserManager == "Y";
+            set => UUserManager = value ? "Y" : "N";
+        }
+
+        [JsonProperty("U_USERMANAGER")]
+        private string UUserManager { get; set; }
+
+
         public string SelectedRole { get; set; }
         public string R_NAME { get; set; }
         public string R_CODE { get; set; }

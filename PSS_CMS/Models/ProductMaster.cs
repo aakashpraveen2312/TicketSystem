@@ -11,6 +11,8 @@ namespace PSS_CMS.Models
     public class ProductMaster
     {
         public int P_RECID { get; set; }
+        [DisplayName("Grace Period")]
+        public int P_GRACEPERIOD { get; set; }
         public int P_CRECID { get; set; }
         [DisplayName("Code")]
         public string P_CODE { get; set; }

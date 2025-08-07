@@ -92,9 +92,8 @@ return input.Replace("\\\"", "\"")        // Double quotes
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="@Url.Action("FAQ", "Tickets")">FAQ</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="@Url.Action("UserDashboardCount", "UserDashboard")">DashBoard</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("HDDashboard", "HelpDesk")">DashBoard</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -118,7 +117,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
             <div class="row" style="margin-top:10px">
                 <div class="col-lg-12 col-sm-12">
                     <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                        <li class="resticketclresbreadcrumb" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "Tickets")">TICKET HISTORY</a></li>
+                        <li class="resticketclresbreadcrumb" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "HelpDesk")">TICKET HISTORY</a></li>
 
                         <li class="resticketclresbreadcrumb" style="color: #2888bb;">REVIEW TICKETS</li>
                     </ul>
@@ -155,11 +154,11 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
 
                             @*<div class="col-md-5">
-                                @if (!string.IsNullOrEmpty(ticket.TC_REQUEST_ATTACHMENT_PREFIX))
-                                {
-                                    <img src="data:image/png;base64,@ticket.TC_REQUEST_ATTACHMENT_PREFIX" alt="Ticket Image" class="img-fluid logical" />
-                                }
-                            </div>*@
+                                    @if (!string.IsNullOrEmpty(ticket.TC_REQUEST_ATTACHMENT_PREFIX))
+                                    {
+                                        <img src="data:image/png;base64,@ticket.TC_REQUEST_ATTACHMENT_PREFIX" alt="Ticket Image" class="img-fluid logical" />
+                                    }
+                                </div>*@
 
 
                             @if (!string.IsNullOrEmpty(ticket.TC_REQUEST_ATTPREFIX))
@@ -441,7 +440,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
                     @{
 
-                        Html.RenderPartial("_ClientResponse", new PSS_CMS.Models.Ticket());  // Pass the single ticket to the partial view
+                        Html.RenderPartial("_HelpDeskResponse", new PSS_CMS.Models.Ticket());  // Pass the single ticket to the partial view
 
                     }
 

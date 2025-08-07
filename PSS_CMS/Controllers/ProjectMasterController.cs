@@ -55,12 +55,12 @@ namespace PSS_CMS.Controllers
                             {
                                 projectmasterlist = projectmasterlist
                                     .Where(r => r.CU_CODE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.CU_EMAIL.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_NAME.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_MOBILENO.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_INVOICENO.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_WARRANTYFREECALLS.ToString().Contains(searchPharse.ToLower())||
-                                                r.CU_WARRANTYUPTO.ToString().Contains(searchPharse.ToLower())||
+                                                r.CU_EMAIL.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.CU_NAME.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.CU_MOBILENO.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.CU_INVOICENO.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.CU_WARRANTYFREECALLS.ToString().Contains(searchPharse.ToLower()) ||
+                                                r.CU_WARRANTYUPTO.ToString().Contains(searchPharse.ToLower()) ||
                                                 r.CU_SORTORDER.ToString().Contains(searchPharse.ToLower()))
                                     .ToList();
                             }
@@ -105,6 +105,24 @@ namespace PSS_CMS.Controllers
             ""cU_ADDRESS"": ""{ projectmaster.CU_ADDRESS}"",                    
             ""cU_GST"": ""{ projectmaster.CU_GST}"",                    
             ""cU_SORTORDER"": ""{ projectmaster.CU_SORTORDER}"",                    
+            ""cU_PANNUMBER"": ""{ projectmaster.CU_PANNUMBER}"",                    
+            ""cU_TANNUMBER"": ""{ projectmaster.CU_TANNUMBER}"",                    
+            ""cU_CONTACTPERSONNAME1"": ""{ projectmaster.CU_CONTACTPERSONNAME1}"",                    
+            ""cU_CONTACTPERSONMOBILE1"": ""{ projectmaster.CU_CONTACTPERSONMOBILE1}"",                    
+            ""cU_CONTACTPERSONEMAILID1"": ""{ projectmaster.CU_CONTACTPERSONEMAILID1}"",                    
+            ""cU_CONTACTPERSONDESIGINATION1"": ""{ projectmaster.CU_CONTACTPERSONDESIGINATION1}"",   
+              
+            ""cU_CONTACTPERSONNAME2"": ""{ projectmaster.CU_CONTACTPERSONNAME2}"",                    
+            ""cU_CONTACTPERSONMOBILE2"": ""{ projectmaster.CU_CONTACTPERSONMOBILE2}"",                    
+            ""cU_CONTACTPERSONEMAILID2"": ""{ projectmaster.CU_CONTACTPERSONEMAILID2}"",                    
+            ""cU_CONTACTPERSONDESIGINATION2"": ""{ projectmaster.CU_CONTACTPERSONDESIGINATION2}"",                    
+                        
+            ""cU_CONTACTPERSONNAME3"": ""{ projectmaster.CU_CONTACTPERSONNAME3}"",                    
+            ""cU_CONTACTPERSONMOBILE3"": ""{ projectmaster.CU_CONTACTPERSONMOBILE3}"",                    
+            ""cU_CONTACTPERSONEMAILID3"": ""{ projectmaster.CU_CONTACTPERSONEMAILID3}"",                    
+            ""cU_CONTACTPERSONDESIGINATION3"": ""{ projectmaster.CU_CONTACTPERSONDESIGINATION3}"",                    
+                          
+                          
             ""cU_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",        
             ""cU_CRECID"": ""{Session["CompanyID"]}""           
         }}";
@@ -167,7 +185,7 @@ namespace PSS_CMS.Controllers
 
             return View(projectmaster);
         }
-        public async Task<ActionResult> Edit(int? Recid,string Name)
+        public async Task<ActionResult> Edit(int? Recid, string Name)
         {
             Session["Productrecid"] = Recid;
             Session["Name"] = Name;
@@ -236,7 +254,24 @@ namespace PSS_CMS.Controllers
             ""cU_SORTORDER"": ""{projectmaster.CU_SORTORDER}"",
             ""cU_ADDRESS"": ""{ projectmaster.CU_ADDRESS}"",                    
             ""cU_GST"": ""{ projectmaster.CU_GST}"",     
-            ""cU_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",                              
+            ""cU_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",  
+  ""cU_PANNUMBER"": ""{ projectmaster.CU_PANNUMBER}"",                    
+            ""cU_TANNUMBER"": ""{ projectmaster.CU_TANNUMBER}"",                    
+            ""cU_CONTACTPERSONNAME1"": ""{ projectmaster.CU_CONTACTPERSONNAME1}"",                    
+            ""cU_CONTACTPERSONMOBILE1"": ""{ projectmaster.CU_CONTACTPERSONMOBILE1}"",                    
+            ""cU_CONTACTPERSONEMAILID1"": ""{ projectmaster.CU_CONTACTPERSONEMAILID1}"",                    
+            ""cU_CONTACTPERSONDESIGINATION1"": ""{ projectmaster.CU_CONTACTPERSONDESIGINATION1}"",   
+              
+            ""cU_CONTACTPERSONNAME2"": ""{ projectmaster.CU_CONTACTPERSONNAME2}"",                    
+            ""cU_CONTACTPERSONMOBILE2"": ""{ projectmaster.CU_CONTACTPERSONMOBILE2}"",                    
+            ""cU_CONTACTPERSONEMAILID2"": ""{ projectmaster.CU_CONTACTPERSONEMAILID2}"",                    
+            ""cU_CONTACTPERSONDESIGINATION2"": ""{ projectmaster.CU_CONTACTPERSONDESIGINATION2}"",                    
+                        
+            ""cU_CONTACTPERSONNAME3"": ""{ projectmaster.CU_CONTACTPERSONNAME3}"",                    
+            ""cU_CONTACTPERSONMOBILE3"": ""{ projectmaster.CU_CONTACTPERSONMOBILE3}"",                    
+            ""cU_CONTACTPERSONEMAILID3"": ""{ projectmaster.CU_CONTACTPERSONEMAILID3}"",                    
+            ""cU_CONTACTPERSONDESIGINATION3"": ""{ projectmaster.CU_CONTACTPERSONDESIGINATION3}"",                    
+                          
             ""cU_CRECID"": ""{ Session["CompanyID"]}""                              
         }}";
 

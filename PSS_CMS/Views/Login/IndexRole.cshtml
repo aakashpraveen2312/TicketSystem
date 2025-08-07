@@ -28,7 +28,7 @@
         <div class="row">
             <div class="col">
                 <div class="card login-container position-relative d-flex justify-content-center align-items-center">
-                     @{
+                    @{
                         var message = TempData["SessionExpired"] as string;
                         if (!string.IsNullOrEmpty(message))
                         {
@@ -49,14 +49,14 @@
                     <!-- Header -->
                     <h4 class="text-center mb-4">TICKET SYSTEM</h4>
                     <!-- Form -->
-                    @using (Html.BeginForm("Index", "Login", FormMethod.Post, new { id = "form" }))
+                    @using (Html.BeginForm("IndexROle", "Login", FormMethod.Post, new { id = "form" }))
                     {
 
 
                         <div class="form-group row mb-3">
                             @Html.LabelFor(model => Model.U_EMAILID, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.U_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "1", type = "text", id = "L_USERNAME" , placeholder = "Email, Code or Mobile number", required = true } })
+                                @Html.EditorFor(model => model.U_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "1", type = "text", id = "L_USERNAME", placeholder = "Email, Code or Mobile number", required = true } })
                                 @Html.ValidationMessageFor(model => model.U_EMAILID, "", new { @class = "text-danger" })
                             </div>
 
@@ -65,27 +65,18 @@
 
                             @Html.LabelFor(model => Model.U_PASSWORD, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
                             <div class="col-md-12">
-                                @Html.EditorFor(model => model.U_PASSWORD, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", type = "password", id = "L_PASSWORD",placeholder="Password", required = true } })
+                                @Html.EditorFor(model => model.U_PASSWORD, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", type = "password", id = "L_PASSWORD", placeholder = "Password", required = true } })
                                 @Html.ValidationMessageFor(model => model.U_PASSWORD, "", new { @class = "text-danger" })
                             </div>
 
                         </div>
-                        <div class="form-group row mb-3">
-
-                            @Html.LabelFor(model => Model.U_DOMAIN, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
-                            <div class="col-md-12">
-                                @Html.EditorFor(model => model.U_DOMAIN, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", type = "text", id = "L_DOMAIN",placeholder="Domain",required=true } })
-                                @Html.ValidationMessageFor(model => model.U_DOMAIN, "", new { @class = "text-danger" })
-                            </div>
-
-                        </div>
+                      
 
                         <!-- Forgot Password -->
                 <div class="forgot-password d-flex justify-content-between">
-                    <a href="@Url.Action("IndexRole", "Login")" class="text-decoration-none">RoleBased Login</a>
+                    <a href="@Url.Action("Index", "Login")" class="text-decoration-none">Customer Login</a>
 
                     <a href="@Url.Action("Forgotpassword", "Forgotpassword")" class="text-decoration-none">Forgot Password?</a>
-
                 </div>
                         <!-- Login Button -->
                         <div class="d-flex justify-content-center mt-2 gap-3">
@@ -133,7 +124,7 @@
                 showLoadingScreen();
 
                 // Redirect after showing the message
-                window.location.href = '@Url.Action("Index", "Login")';
+                window.location.href = '@Url.Action("IndexROle", "Login")';
             }
         });
         </script>

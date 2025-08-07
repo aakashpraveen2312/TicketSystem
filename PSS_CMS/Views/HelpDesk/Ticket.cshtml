@@ -36,9 +36,11 @@
             max-width: 450px;
             height: 35px;
         }
-        select#CustomerDropdown{
+
+        select#CustomerDropdown {
             font-size: 15px;
         }
+
         input#termsCheckbox {
             width: 23px;
             height: 21px;
@@ -68,9 +70,8 @@
             </a>
 
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li><a class="dropdown-item" href="@Url.Action("FAQ", "Tickets")">FAQ</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="@Url.Action("UserDashboardCount", "UserDashboard")">DashBoard</a></li>
+                <li><a class="dropdown-item" href="@Url.Action("HDDashboard", "HelpDesk")">DashBoard</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -88,7 +89,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12 col-sm-12">
                 <ul class="breadcrumb mt-2 ">
-                    <li class="resticketraisebreadcrumb" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "Tickets")">TICKET HISTORY</a></li>
+                    <li class="resticketraisebreadcrumb" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "HelpDesk")">TICKET HISTORY</a></li>
 
                     <li class="resticketraisebreadcrumb" style="color: #2888bb;">NEW TICKETS</li>
 
@@ -99,7 +100,7 @@
         </div>
 
         @*New Ticket Form*@
-        @using (Html.BeginForm("Ticket", "Tickets", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Ticket", "HelpDesk", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
             <form>
@@ -204,7 +205,7 @@
                         <input type="checkbox" id="termsCheckbox" name="termsAndConditions" class="me-2" />
                         <label for="termsCheckbox" class="me-4 mt-2">I agree to paid service</label>
                         <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="9">Submit</button>
-                        <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","Tickets")'" tabindex="10">
+                        <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","HelpDesk")'" tabindex="10">
                             Cancel
                         </button>
                     </div>
@@ -216,9 +217,9 @@
 
         }
         <br />
-        
-  
-        <footer >
+
+
+        <footer>
             <div class="footer" style="background-color:white!important">
                 <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
@@ -383,11 +384,11 @@
                         },
                         didOpen: () => {
                             document.getElementById("confirmBtn").addEventListener("click", function () {
-                                window.location.href = '/Tickets/Ticket_History'; // Redirect to Ticket History
+                                window.location.href = '/HelpDesk/Ticket_History'; // Redirect to Ticket History
                             });
 
                             document.getElementById("cancelBtn").addEventListener("click", function () {
-                                window.location.href = '/Tickets/Ticket'; // Redirect to New Ticket
+                                window.location.href = '/HelpDesk/Ticket'; // Redirect to New Ticket
                             });
                         }
                     });
@@ -448,7 +449,7 @@
     <script>
     function loadMaterials(selectedRecId) {
         $.ajax({
-            url: '@Url.Action("ComboProductTicketNew", "Tickets")',
+            url: '@Url.Action("ComboProductTicketNew", "HelpDesk")',
             type: 'GET',
             data: { Recid: selectedRecId },
             success: function (response) {

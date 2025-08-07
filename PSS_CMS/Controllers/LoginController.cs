@@ -58,6 +58,116 @@ namespace PSS_CMS.Controllers
                     var Response = JsonConvert.DeserializeObject<APIResponseLogin>(responseContent);
 
                     string errormessage = Response.Message;
+                    string Warning = Response.Warning;
+                    string Status = Response.Status;
+                    Session["MaterialConsumptionFlag"] = Response.MaterialConsumption?.Replace(" ", "").Trim();
+
+                    Session["APIKEY"] = Response.APIkey;
+                    if (Status == "Y")
+                    {
+                        TempData["SuccessMessage"] = Warning;
+                        var data = Response.Data[0];
+                        string role = data.U_RCODE;
+
+                        // Common session assignments
+                        Session["DOMAIN"] = data.U_DOMAIN;
+                        Session["UserName"] = data.U_USERNAME;
+                        Session["UserRole"] = data.U_RCODE;
+                        Session["EmailId"] = data.U_EMAILID;
+                        Session["UserRECID"] = data.U_RECID;
+                        Session["CompanyID"] = data.U_CRECID;
+
+                        int CompanyID = data.U_CRECID;
+
+                        if (role == "User")
+                        {
+                            await AutoCloseTicket();
+                            //return RedirectToAction("Ticket_History", "Tickets");
+                            return RedirectToAction("UserDashboardCount", "UserDashboard");
+                        }
+                        if (role == "Admin" || role == "Manager")
+                        {
+                            await Info(CompanyID);
+                           return RedirectToAction("Dashboard", "DashBoard");
+                            //return RedirectToAction("RecentTicket", "RecentTickets");
+                        }
+                        if (role == "SA")
+                        {
+                            await Info(CompanyID);
+                            return RedirectToAction("SuperAdminCountDashboard", "Dashboard");
+                        }
+                        if (role == "Accountant")
+                        {
+                            await Info(CompanyID);
+                            return RedirectToAction("ContractDashboard", "Contract");
+                        }
+                        if (role == "HelpDesk")
+                        {                 
+                            //return RedirectToAction("HDDashboard", "HelpDesk");
+                            return RedirectToAction("Ticket_History", "HelpDesk");
+                        }
+                    }
+
+                    else
+                    {                      
+                        TempData["ErrorMessage"] = " Invalid User name or Password";
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+                TempData["ErrorMessage"] =" Invalid User name or Password";
+            }
+            return View();
+
+        }
+
+
+        public async Task<ActionResult> IndexRole()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+
+        public async Task<ActionResult> IndexRole(string U_EMAILID, string U_PASSWORD, string U_DOMAIN, Login model)
+        {
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            var LogInurl = ConfigurationManager.AppSettings["LOGIN"];
+            object content = "StrUserid=" + U_EMAILID + "&strPassword=" + U_PASSWORD + "&domain=" + U_DOMAIN;
+            string urll = LogInurl + "?" + content;
+
+            try
+            {
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(urll),
+                    Method = HttpMethod.Get,
+                    Headers = {
+                        { "X-Version", "1" }, // HERE IS HOW TO ADD HEADERS,
+                        { HttpRequestHeader.Authorization.ToString(), AuthKey },
+                        { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" },
+                        { HttpRequestHeader.ContentType.ToString(), "application/json" },  //use this content type if you want to send more than one content type
+                    },
+                };
+                HttpClientHandler handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
+                HttpClient client = new HttpClient(handler);
+
+                client.DefaultRequestHeaders.Add("Authorization", "Custom " + AuthKey);
+                // client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                var responseTask = client.SendAsync(request).GetAwaiter().GetResult();
+                if (responseTask.IsSuccessStatusCode)
+                {
+                    var responseContent = responseTask.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    var Response = JsonConvert.DeserializeObject<APIResponseLogin>(responseContent);
+
+                    string errormessage = Response.Message;
                     string Status = Response.Status;
                     Session["MaterialConsumptionFlag"] = Response.MaterialConsumption?.Replace(" ", "").Trim();
 
@@ -83,21 +193,31 @@ namespace PSS_CMS.Controllers
                             //return RedirectToAction("Ticket_History", "Tickets");
                             return RedirectToAction("UserDashboardCount", "UserDashboard");
                         }
-                        else if (role == "Admin" || role == "Manager")
+                        if (role == "Admin" || role == "Manager")
                         {
                             await Info(CompanyID);
-                           return RedirectToAction("Dashboard", "DashBoard");
+                            return RedirectToAction("Dashboard", "DashBoard");
                             //return RedirectToAction("RecentTicket", "RecentTickets");
                         }
-                        else if (role == "SA")
+                        if (role == "SA")
                         {
                             await Info(CompanyID);
                             return RedirectToAction("SuperAdminCountDashboard", "Dashboard");
                         }
+                        if (role == "Accountant")
+                        {
+                            await Info(CompanyID);
+                            return RedirectToAction("ContractDashboard", "Contract");
+                        }
+                        if (role == "HelpDesk")
+                        {
+                            //return RedirectToAction("HDDashboard", "HelpDesk");
+                            return RedirectToAction("Ticket_History", "HelpDesk");
+                        }
                     }
 
                     else
-                    {                      
+                    {
                         TempData["ErrorMessage"] = " Invalid User name or Password";
                     }
 
@@ -107,13 +227,11 @@ namespace PSS_CMS.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception occurred: {ex.Message}");
-                TempData["ErrorMessage"] =" Invalid User name or Password";
+                TempData["ErrorMessage"] = " Invalid User name or Password";
             }
             return View();
 
         }
-
-
 
 
         public async Task<ActionResult> Info(int? companyid)

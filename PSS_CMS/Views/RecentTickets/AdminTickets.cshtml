@@ -128,6 +128,16 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                 fileType = "jpg";
                                                 mimeType = "image/jpeg";
                                             }
+                                            else if (base64String.StartsWith("AAAAFGZ0eXB")) // MP4 file signature
+                                            {
+                                                fileType = "mp4";
+                                                mimeType = "video/mp4";
+                                            }
+                                            else if (base64String.StartsWith("AAAAGGZ0eXBt")) // MP4 file signature
+                                            {
+                                                fileType = "mp4";
+                                                mimeType = "video/mp4";
+                                            }
                                             else if (base64String.StartsWith("JVBER")) // PDF file signature
                                             {
                                                 fileType = "pdf";
@@ -270,6 +280,16 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                 {
                                                     fileType = "pdf";
                                                     mimeType = "application/pdf";
+                                                }
+                                                else if (base64String.StartsWith("AAAAFGZ0eXB")) // MP4 file signature
+                                                {
+                                                    fileType = "mp4";
+                                                    mimeType = "video/mp4";
+                                                }
+                                                else if (base64String.StartsWith("AAAAGGZ0eXBt")) // MP4 file signature
+                                                {
+                                                    fileType = "mp4";
+                                                    mimeType = "video/mp4";
                                                 }
                                                 else if (base64String.StartsWith("UEsDB")) // XLSX or DOCX file signature (ZIP format)
                                                 {

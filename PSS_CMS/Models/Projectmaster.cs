@@ -18,7 +18,7 @@ namespace PSS_CMS.Models
         public string CU_ADDRESS { get; set; }
         [DisplayName("Customer Name")]
         public string CU_NAME { get; set; }
-        [DisplayName("GST (If applicable)")]
+        [DisplayName("GST Number")]
         public string CU_GST { get; set; }
         [DisplayName("Email ID")]
         public string CU_EMAIL { get; set; }
@@ -59,6 +59,43 @@ namespace PSS_CMS.Models
         public string SelectedProduct { get; set; }
         public string P_NAME { get; set; }
         public int P_RECID { get; set; }
+
+        // PAN & TAN Numbers
+        [DisplayName("PAN Number")]
+        public string CU_PANNUMBER { get; set; }
+        [DisplayName("TAN Number")]
+        public string CU_TANNUMBER { get; set; }
+
+        // Contact Person 1
+        [DisplayName("Name")]
+        public string CU_CONTACTPERSONNAME1 { get; set; }
+        [DisplayName("Email")]
+        public string CU_CONTACTPERSONEMAILID1 { get; set; }
+        [DisplayName("Mobile")]
+        public string CU_CONTACTPERSONMOBILE1 { get; set; }
+        [DisplayName("Designation")]
+        public string CU_CONTACTPERSONDESIGINATION1 { get; set; }
+
+        // Contact Person 2
+        [DisplayName("Name")]
+        public string CU_CONTACTPERSONNAME2 { get; set; }
+        [DisplayName("Email")]
+        public string CU_CONTACTPERSONEMAILID2 { get; set; }
+        [DisplayName("Mobile")]
+        public string CU_CONTACTPERSONMOBILE2 { get; set; }
+        [DisplayName("Designation")]
+        public string CU_CONTACTPERSONDESIGINATION2 { get; set; }
+
+        // Contact Person 3
+        [DisplayName("Name")]
+        public string CU_CONTACTPERSONNAME3 { get; set; }
+        [DisplayName("Email")]
+        public string CU_CONTACTPERSONEMAILID3 { get; set; }
+        [DisplayName("Mobile")]
+        public string CU_CONTACTPERSONMOBILE3 { get; set; }
+        [DisplayName("Designation")]
+        public string CU_CONTACTPERSONDESIGINATION3 { get; set; }
+
     }
 
 
@@ -75,6 +112,6 @@ namespace PSS_CMS.Models
         public Projectmaster Data { get; set; }
     }
 
-  
+
 }
 

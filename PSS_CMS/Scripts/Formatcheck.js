@@ -3,7 +3,7 @@
     var filePath = fileInput.value;
     var errorMsg = document.getElementById("fileError");
     var submitBtn = document.getElementById("submitBtn");
-    var allowedExtensions = /(\.pdf|\.xlsx|\.jpeg|\.png|\.jpg|\.docx|\.csv)$/i;
+    var allowedExtensions = /(\.pdf|\.xlsx|\.jpeg|\.png|\.jpg|\.csv|\.mp4)$/i;
 
     if (filePath === "") {
         errorMsg.style.display = "none"; // Hide error message if no file is selected

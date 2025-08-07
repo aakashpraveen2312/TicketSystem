@@ -46,6 +46,7 @@ namespace PSS_CMS.Models
         public string U_USERCODE { get; set; }
         public string U_MOBILENO { get; set; }
         public string Message { get; set; }
+        public string Warning { get; set; }
         public string Status { get; set; }
         public string APIkey { get; set; }
         public string MaterialConsumption { get; set; }

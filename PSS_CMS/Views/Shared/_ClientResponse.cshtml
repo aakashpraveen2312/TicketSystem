@@ -22,8 +22,8 @@
         </div>
         <div class="col-md-12 mt-2">
             @Html.Label("myfile", "Attachments:")
-            <input type="file" id="myfile" name="myfile" accept=".pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv" onchange="validateFile()" />
-            <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .docx, .csv)</small>
+            <input type="file" id="myfile" name="myfile" accept=".pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv,.mp4" onchange="validateFile()" />
+            <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .docx, .csv,.mp4)</small>
         </div>
         <div class="col-md-12 mt-2 mb-3 d-flex justify-content-md-end justify-content-start">
             <button type="submit" id="submitBtn" class="btncolorsubmit me-3">Submit</button>
@@ -34,68 +34,244 @@
 
 }
 
+<!-- Rating Modal -->
+<div id="ratingModal" class="modal" style="display:none;">
+    <div class="modal-content shadow" style="max-width: 400px; margin: auto; padding: 20px; border-radius: 8px; background-color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+        <h4 class="mb-3 text-center fw-bold">Rate us!</h4>
+        <h4 class="mb-3 text-center fw-bold">How was your experince with us?</h4>
+        <div id="starRating" class="mb-3" style="font-size: 2rem; color: #ffc107;">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+        </div>
+        <div class="text-center">
+            <button class="btn btn-primary w-50" id="submitRatingBtn">Submit</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- Optional: simple modal overlay -->
+<style>
+    .modal {
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        display: flex; /* Enables flexbox centering */
+        align-items: center; /* Vertical center */
+        justify-content: center; /* Horizontal center */
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    #starRating {
+        text-align: center;
+    }
+
+    .star {
+        font-size: 30px;
+        cursor: pointer;
+        color: #ccc;
+        transition: color 0.3s, transform 0.2s;
+    }
+
+        .star:hover, .star.selected {
+            color: #ffb400;
+            transform: scale(1.2);
+            text-shadow: 0 0 5px #ffb400;
+        }
+</style>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="~/Scripts/Formatcheck.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/Scripts/Formatcheck.js"></script>
+
+<!-- Script for Form Submission and Rating Modal -->
 <script>
     $(document).ready(function () {
+        let selectedRating = 0;
+
+        // Handle form submission
         $("#ticketForm").submit(function (e) {
-            e.preventDefault(); // Prevent default form submission
+            e.preventDefault();
 
-            var formData = new FormData(this); // Get form data including files
-            var submitButton = $("#submitBtn"); // Target the submit button
+            var formData = new FormData(this);
+            var submitButton = $("#submitBtn");
 
-            // Change button text and disable it
             submitButton.prop("disabled", true).text("Submitting...");
 
+            // Show loading
+            Swal.fire({
+                title: "Submitting your ticket...",
+                text: "Please wait",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             $.ajax({
-                url: '@Url.Action("ClientResponseTicket", "Tickets")', // Controller action
+                url: '@Url.Action("ClientResponseTicket", "Tickets")',
                 type: "POST",
                 data: formData,
-                processData: false, // Required for FormData
-                contentType: false, // Required for FormData
+                processData: false,
+                contentType: false,
                 success: function (response) {
-                    let message = response.message; // Dynamic message
+                    Swal.close();
+
+                    let message = response.message;
 
                     if (response.status === "Y") {
+                        const statusValue = $("#statusDropdown").val();
+                        console.log("statusValue", statusValue);
                         Swal.fire({
                             title: "Success!",
                             text: message,
                             icon: "success",
-                            timer: 2000, // Auto close after 2 seconds
-                            showConfirmButton: false
-                        }).then(() => {
-                            window.location.href = '@Url.Action("Ticket_History", "Tickets")'; // Redirect after alert
+                            showCancelButton: statusValue === "Close", // Show Rate Us only if Closed
+                            confirmButtonText: "OK",
+                            cancelButtonText: "Rate Us"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '@Url.Action("Ticket_History", "Tickets")';
+                            } else if (result.dismiss === Swal.DismissReason.cancel && statusValue === "Close") {
+                                showRatingModal();
+                            }
                         });
                     } else {
                         Swal.fire({
                             title: "Error!",
                             text: message,
                             icon: "error",
-                            timer: 2000, // Auto close after 2 seconds
-                            showConfirmButton: false
+                            confirmButtonText: "OK"
                         });
-
-                        // Re-enable button if there's an error
                         submitButton.prop("disabled", false).text("Submit");
                     }
                 },
                 error: function () {
+                    Swal.close();
                     Swal.fire({
                         title: "Error!",
                         text: "Something went wrong. Please try again.",
                         icon: "error",
-                        timer: 2000, // Auto close after 2 seconds
-                        showConfirmButton: false
+                        confirmButtonText: "OK"
                     });
-
-                    // Re-enable button in case of error
                     submitButton.prop("disabled", false).text("Submit");
                 }
             });
         });
+
+        // Show rating modal
+        function showRatingModal() {
+            $("#ratingModal").fadeIn();
+        }
+
+        // Handle star rating selection
+        $(".star").click(function () {
+            selectedRating = $(this).data("value");
+
+            $(".star").each(function () {
+                let value = $(this).data("value");
+                $(this).toggleClass("selected", value <= selectedRating);
+            });
+        });
+
+        // Submit rating
+        $("#submitRatingBtn").click(function () {
+            if (selectedRating === 0) {
+                alert("Please select a rating.");
+                return;
+            }
+
+            // TODO: You can send this to server here
+             $.post('/Tickets/SaveRating', { rating: selectedRating });
+
+            $("#ratingModal").fadeOut();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Thanks for your feedback!',
+                confirmButtonText: 'Close'
+            }).then(() => {
+                window.location.href = '@Url.Action("Ticket_History", "Tickets")';
+            });
+        });
     });
 </script>
+@*<script>
+        $(document).ready(function () {
+            $("#ticketForm").submit(function (e) {
+                e.preventDefault();
 
+                var formData = new FormData(this);
+                var submitButton = $("#submitBtn");
 
+                submitButton.prop("disabled", true).text("Submitting...");
+
+                // Show SweetAlert loading spinner
+                Swal.fire({
+                    title: "Processing...",
+                    text: "Please wait while we submit your ticket.",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '@Url.Action("ClientResponseTicket", "Tickets")',
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        Swal.close(); // Close loading
+
+                        let message = response.message;
+
+                        if (response.status === "Y") {
+                            Swal.fire({
+                                title: "Success!",
+                                text: message,
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                window.location.href = '@Url.Action("Ticket_History", "Tickets")';
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: message,
+                                icon: "error",
+                                confirmButtonText: "OK"
+                            });
+                            submitButton.prop("disabled", false).text("Submit");
+                        }
+                    },
+                    error: function () {
+                        Swal.close(); // Close loading
+
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Something went wrong. Please try again.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+
+                        submitButton.prop("disabled", false).text("Submit");
+                    }
+                });
+            });
+        });
+    </script>*@
 

@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using PSS_CMS.Fillter;
-using PSS_CMS.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -11,25 +8,31 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
+using PSS_CMS.Models;
 
 namespace PSS_CMS.Controllers
 {
-    [ApiKeyAuthorize]
-    public class ProductMasterController : Controller
+    public class ContractInvoiceController : Controller
     {
-
-        public async Task<ActionResult> List(string searchPharse)
+        // GET: ContractInvoice
+        public async Task<ActionResult> List(int? id, string Name, string ContractAmount)
         {
-            //ProductMaster objproductmaster = new ProductMaster();
+            if (id != null && Name != null && ContractAmount != null)
+            {
+                Session["CT_RECID"] = id;
+                Session["CT_REFNO"] = Name;
+                Session["ContractAmount"] = ContractAmount;
+            }
 
-            string Weburl = ConfigurationManager.AppSettings["PRODUCTGET"];
+            string Weburl = ConfigurationManager.AppSettings["CONTRACTINVOICEGET"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
-            List<ProductMaster> productmasterlist = new List<ProductMaster>();
+            List<ContractInvoice> contractinvoicelist = new List<ContractInvoice>();
 
-            string strparams = "cmprecid=" + Session["CompanyID"] ;
+            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&Recid=" + Session["CT_RECID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -48,16 +51,8 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
-                            productmasterlist = rootObjects.Data;
-
-                            if (!string.IsNullOrEmpty(searchPharse))
-                            {
-                                productmasterlist = productmasterlist
-                                    .Where(r => r.P_NAME.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.P_SORTORDER.ToString().Contains(searchPharse.ToLower()))
-                                    .ToList();
-                            }
+                            var rootObjects = JsonConvert.DeserializeObject<ContractInvoiceRootObjects>(jsonString);
+                            contractinvoicelist = rootObjects.Data;
 
                         }
                         else
@@ -71,7 +66,7 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            return View(productmasterlist);
+            return View(contractinvoicelist);
         }
 
         public ActionResult Create()
@@ -80,36 +75,33 @@ namespace PSS_CMS.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(ProductMaster productmaster)
+        public async Task<ActionResult> Create(ContractInvoice contractInvoice, string CI_INVOICEAMOUNT)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    // If ModelState is invalid, return validation errors
-            //    var errors = ModelState.Values.SelectMany(v => v.Errors)
-            //                                   .Select(e => e.ErrorMessage)
-            //                                   .ToList();
-
-            //    return Json(new { success = false, message = string.Join(" ", errors) });
-            //}
             try
             {
-                var ProductmasterPostURL = ConfigurationManager.AppSettings["PRODUCTPOST"];
+                var ContractinvoicePostURL = ConfigurationManager.AppSettings["CONTRACTINVOICEPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""p_CODE"": ""{productmaster.P_CODE}"",           
-            ""p_NAME"": ""{productmaster.P_NAME}"",           
-            ""p_GRACEPERIOD"": ""{productmaster.P_GRACEPERIOD}"",           
-            ""p_SORTORDER"": ""{ productmaster.P_SORTORDER}"",                    
-            ""p_DISABLE"": ""{(productmaster.P_ProductDisable ? "Y" : "N")}"",                    
-            ""p_CRECID"": ""{Session["CompanyID"]}""           
+            ""ci_INVOICEDATE"": ""{contractInvoice.CI_INVOICEDATE}"",           
+            ""ci_INVOICENUMBER"": ""{contractInvoice.CI_INVOICENUMBER}"",           
+            ""ci_INVOICEAMOUNT"": ""{CI_INVOICEAMOUNT}"",                    
+            ""ci_PAYMENTRECEIVEDDATE"": ""{ contractInvoice.CI_PAYMENTRECEIVEDDATE}"",                    
+            ""ci_PAYMENTRECEIVEDAMOUNT"": ""{ contractInvoice.CI_PAYMENTRECEIVEDAMOUNT}"",                   
+            ""ci_PAYMENTDUEDATE"": ""{ contractInvoice.CI_PAYMENTDUEDATE}"",                    
+            ""ci_CTRECID"": ""{Session["CT_RECID"]}"",                    
+            ""ci_SORTORDER"": ""{(contractInvoice.CI_SORTORDER)}"",        
+            ""ci_CRECID"": ""{Session["CompanyID"]}"",   
+            ""ci_USERID"": ""{Session["UserRECID"]}""
+             
         }}";
+
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(ProductmasterPostURL),
+                    RequestUri = new Uri(ContractinvoicePostURL),
                     Method = HttpMethod.Post,
                     Headers =
             {
@@ -135,7 +127,7 @@ namespace PSS_CMS.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ProductMasterRootObject>(responseBody);
+                    var apiResponse = JsonConvert.DeserializeObject<ContractInvoiceObject>(responseBody);
 
                     if (apiResponse.Status == "Y")
                     {
@@ -162,19 +154,24 @@ namespace PSS_CMS.Controllers
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
 
-            return View(productmaster);
+            return View();
+
         }
 
-        public async Task<ActionResult> Edit(int? Recid, string name)
+
+        public async Task<ActionResult> Edit(int? id, int? CI_CRECID, string Name, int? CI_CTRECID)
         {
-            Session["ProductName"] = name;
-            Session["Productrecid"] = Recid;
-            string WEBURLGETBYID = ConfigurationManager.AppSettings["PRODUCTGETBYID"];
+            Session["CI_RECID"] = id;
+            Session["CI_CTRECID"] = CI_CTRECID;
+            Session["CI_CRECID"] = CI_CRECID;
+            Session["CI_INVOICENUMBER"] = Name;
+
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["CONTRACTINVOICEGETBYID"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            ProductMaster productmaster = null;
+            ContractInvoice contractInvoice = null;
 
-            string strparams = "recID=" + Recid + "&cmprecid=" + Session["CompanyID"];
+            string strparams = "Recid=" + id + "&companyId=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -192,8 +189,9 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var content = JsonConvert.DeserializeObject<ProductMasterRootObjects>(jsonString);
-                            productmaster = content.Data;
+                            var content = JsonConvert.DeserializeObject<ContractInvoiceObject>(jsonString);
+                            contractInvoice = content.Data;
+
                         }
                         else
                         {
@@ -209,42 +207,36 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
             }
-
-            return View(productmaster);
+            return View(contractInvoice);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(ProductMaster productmaster)
+        public async Task<ActionResult> Edit(ContractInvoice contractInvoice)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    // If ModelState is invalid, return validation errors
-            //    var errors = ModelState.Values.SelectMany(v => v.Errors)
-            //                                   .Select(e => e.ErrorMessage)
-            //                                   .ToList();
-
-            //    return Json(new { success = false, message = string.Join(" ", errors) });
-            //}
             try
             {
-                var ProducttmasterUpdateURL = ConfigurationManager.AppSettings["PRODUCTPUT"];
+                var UpdateURL = ConfigurationManager.AppSettings["CONTRACTINVOICEPUT"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""p_RECID"": ""{Session["Productrecid"]}"",           
-            ""p_CODE"": ""{productmaster.P_CODE}"",           
-            ""p_NAME"": ""{productmaster.P_NAME}"",   
-            ""p_GRACEPERIOD"": ""{productmaster.P_GRACEPERIOD}"",
-            ""p_SORTORDER"": ""{productmaster.P_SORTORDER}"",
-            ""p_DISABLE"": ""{(productmaster.P_ProductDisable ? "Y" : "N")}"",
-            ""p_CRECID"": ""{ Session["CompanyID"]}""                              
+            ""cI_RECID"": ""{Session["CI_RECID"]}"",           
+            ""cI_INVOICEDATE"": ""{contractInvoice.CI_INVOICEDATE}"",           
+            ""cI_INVOICENUMBER"": ""{contractInvoice.CI_INVOICENUMBER}"",
+            ""cI_INVOICEAMOUNT"": ""{contractInvoice.CI_INVOICEAMOUNT}"",
+            ""cI_PAYMENTRECEIVEDDATE"": ""{contractInvoice.CI_PAYMENTRECEIVEDDATE}"",
+            ""cI_PAYMENTRECEIVEDAMOUNT"": ""{contractInvoice.CI_PAYMENTRECEIVEDAMOUNT}"",
+            ""cI_CRECID"": ""{Session["CompanyID"]}"",
+            ""cI_CTRECID"": ""{Session["CI_CTRECID"]}"",
+            ""cI_USERID"": ""{Session["UserRECID"]}"",
+            ""cI_SORTORDER"": ""{contractInvoice.CI_SORTORDER}"",
+            ""cI_PAYMENTDUEDATE"": ""{contractInvoice.CI_PAYMENTDUEDATE}""                          
         }}";
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(ProducttmasterUpdateURL),
+                    RequestUri = new Uri(UpdateURL),
                     Method = HttpMethod.Put,
                     Headers =
             {
@@ -268,7 +260,7 @@ namespace PSS_CMS.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ProjectMasterObjects>(responseBody);
+                    var apiResponse = JsonConvert.DeserializeObject<ContractInvoiceObject>(responseBody);
 
                     if (apiResponse.Status == "Y")
                     {
@@ -290,14 +282,14 @@ namespace PSS_CMS.Controllers
             }
         }
 
-        public async Task<ActionResult> Delete(int? Recid)
-        {
-            string ProductmasterDeleteUrl = ConfigurationManager.AppSettings["PRODUCTDELETE"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
+        public async Task<ActionResult> Delete(int id)
 
-            string strparams = "RECID=" + Recid + "&cmprecid=" + Session["CompanyID"];
-            string finalurl = ProductmasterDeleteUrl + "?" + strparams;
+        {
+            string WEBURLDELETE = ConfigurationManager.AppSettings["CONTRACTINVOICEDELETE"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string strparams = "companyId=" + Session["CompanyID"] + "&RecordId=" + id + "&userrecid=" + Session["UserRECID"];
+            string finalurl = WEBURLDELETE + "?" + strparams;
+            string APIKey = Session["APIKEY"].ToString();
 
             try
             {
@@ -323,12 +315,12 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             string responseBody = await response.Content.ReadAsStringAsync();
-                            var apiResponse = JsonConvert.DeserializeObject<ProductMasterRootObject>(responseBody);
+                            var apiResponse = JsonConvert.DeserializeObject<ContractInvoiceObject>(responseBody);
 
                             if (apiResponse.Status == "Y")
                             {
 
-                                string redirectUrl = Url.Action("List", "ProductMaster", new { CompanyRecID = Session["CompanyID"] });
+                                string redirectUrl = Url.Action("List", "ContractInvoice", new { });
                                 return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
                             }
                             else if (apiResponse.Status == "U")
@@ -360,68 +352,7 @@ namespace PSS_CMS.Controllers
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
             return View();
+
         }
-
-        public async Task<ActionResult> View(string searchPharse,int? Recid,string prodname)
-        {
-            Session["Recid"] = Recid;
-            Session["prodname"] = prodname;
-            string Weburl = ConfigurationManager.AppSettings["VIEW"];
-
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-
-            List<User> userList = new List<User>();
-
-            string strparams = "productid="+ Recid + "&cmprecid=" + Session["CompanyID"];
-            string url = Weburl + "?" + strparams;
-
-            try
-            {
-                using (HttpClientHandler handler = new HttpClientHandler())
-                {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
-                    using (HttpClient client = new HttpClient(handler))
-                    {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        var response = await client.GetAsync(url);
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseUserObjects>(jsonString);
-                            userList = rootObjects.Data;
-
-                            if (!string.IsNullOrEmpty(searchPharse))
-                            {
-                                userList = userList
-                                    .Where(r => r.U_USERNAME.ToLower().Contains(searchPharse.ToLower()) ||
-                                   r.U_USERCODE.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-                                   r.U_EMAILID.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-                                   r.U_RCODE.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-                                   r.U_SORTORDER.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-                                   r.U_MOBILENO.ToString().ToLower().Contains(searchPharse.ToLower()))
-                                    .ToList();
-
-                            }
-
-                        }
-                        else
-                        {
-                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
-            }
-            return View(userList);
-        }
-
     }
 }

@@ -68,116 +68,111 @@ namespace PSS_CMS.Controllers
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
 
-            //// Fetch WTD and MTD chart data
-            //Dashborardchart wtdMtdData = await WTDANDMTDCHART();
-            //if (wtdMtdData != null)
-            //{
-            //    ViewBag.MonthTotalTickets = wtdMtdData.MonthWise?.MonthTotalTickets ?? 0;
-            //    ViewBag.MonthOpenTickets = wtdMtdData.MonthWise?.MonthOpenTickets ?? 0;
-            //    ViewBag.MonthResolvedTickets = wtdMtdData.MonthWise?.MonthResolvedTickets ?? 0;
-            //    ViewBag.MonthCloseTickets = wtdMtdData.MonthWise?.MonthCloseTickets ?? 0;
+            // Fetch WTD and MTD chart data
+            Dashborardchart wtdMtdData = await HDWTDANDMTDCHARTHD();
+            if (wtdMtdData != null)
+            {
+                ViewBag.MonthTotalTickets = wtdMtdData.MonthWise?.MonthTotalTickets ?? 0;
+                ViewBag.MonthCloseTickets = wtdMtdData.MonthWise?.MonthCloseTickets ?? 0;
 
-            //    ViewBag.WeekTotalTickets = wtdMtdData.WeekWise?.WeekTotalTickets ?? 0;
-            //    ViewBag.WeekOpenTickets = wtdMtdData.WeekWise?.WeekOpenTickets ?? 0;
-            //    ViewBag.WeekResolvedTickets = wtdMtdData.WeekWise?.WeekResolvedTickets ?? 0;
-            //    ViewBag.WeekCloseTickets = wtdMtdData.WeekWise?.WeekCloseTickets ?? 0;
-            //}
+                ViewBag.WeekTotalTickets = wtdMtdData.WeekWise?.WeekTotalTickets ?? 0;              
+                ViewBag.WeekCloseTickets = wtdMtdData.WeekWise?.WeekCloseTickets ?? 0;
+            }
 
             return View(dashboardData);
         }
 
-        //public async Task<Dashborardchart> HDWTDANDMTDCHART()
-        //{
-        //    string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDMTDandWTD"];
-        //    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-        //    string APIKey = Session["APIKEY"].ToString();
-        //    string strparams = "Userid=" + Session["UserRECID"] + "&type=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
-        //    string finalurl = WEBURLGET + "?" + strparams;
-        //    Dashborardchart wtdMtdData = null;
+        public async Task<Dashborardchart> HDWTDANDMTDCHARTHD()
+        {
+            string WEBURLGET = ConfigurationManager.AppSettings["HELPDESKWDMD"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "Userid=" + Session["UserRECID"] + "&type=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            Dashborardchart wtdMtdData = null;
 
-        //    try
-        //    {
-        //        using (HttpClientHandler handler = new HttpClientHandler())
-        //        {
-        //            handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-        //            using (HttpClient client = new HttpClient(handler))
-        //            {
-        //                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-        //                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        //                var response = await client.GetAsync(finalurl);
+                        var response = await client.GetAsync(finalurl);
 
-        //                if (response.IsSuccessStatusCode)
-        //                {
-        //                    var jsonString = await response.Content.ReadAsStringAsync();
-        //                    wtdMtdData = JsonConvert.DeserializeObject<Dashborardchart>(jsonString);
-        //                }
-        //                else
-        //                {
-        //                    Console.WriteLine("Error: " + response.ReasonPhrase);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Exception occurred: {ex.Message}");
-        //    }
-        //    await StackedBarChart();
-        //    return wtdMtdData;
-        //}
-        //public async Task<ActionResult> HDStackedBarChart()
-        //{
-        //    string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDSTACKEDBARCHART"];
-        //    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-        //    string APIKey = Session["APIKEY"].ToString();
-        //    string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];
-        //    string finalurl = WEBURLGET + "?" + strparams;
-        //    List<DashboardPriority> dashboardDataPriority = new List<DashboardPriority>();
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            wtdMtdData = JsonConvert.DeserializeObject<Dashborardchart>(jsonString);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            await HDStackedBarChart();
+            return wtdMtdData;
+        }
+        public async Task<ActionResult> HDStackedBarChart()
+        {
+            string WEBURLGET = ConfigurationManager.AppSettings["HELPDESKSTACKEDBAR"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            List<DashboardPriority> dashboardDataPriority = new List<DashboardPriority>();
 
-        //    try
-        //    {
-        //        using (HttpClientHandler handler = new HttpClientHandler())
-        //        {
-        //            handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-        //            using (HttpClient client = new HttpClient(handler))
-        //            {
-        //                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-        //                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        //                var response = await client.GetAsync(finalurl);
+                        var response = await client.GetAsync(finalurl);
 
-        //                if (response.IsSuccessStatusCode)
-        //                {
-        //                    var jsonString = await response.Content.ReadAsStringAsync();
-        //                    var rootObjects = JsonConvert.DeserializeObject<DashboardPriorityList>(jsonString);
-        //                    dashboardDataPriority = rootObjects.Data;
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<DashboardPriorityList>(jsonString);
+                            dashboardDataPriority = rootObjects.Data;
 
-        //                    ViewBag.Labels1 = JsonConvert.SerializeObject(new[] { "Critical", "Emergency", "Urgent", "Normal" });
-        //                    ViewBag.ClosedTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.ClosedTickets));
-        //                    ViewBag.ResolvedTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.ResolvedTickets));
-        //                    ViewBag.OpenTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.OpenTickets));
+                            ViewBag.Labels1 = JsonConvert.SerializeObject(new[] { "Critical", "Emergency", "Urgent", "Normal" });
+                            ViewBag.ClosedTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.ClosedTickets));                        
+                            ViewBag.TotalTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.TotalTickets));
 
 
-        //                }
-        //                else
-        //                {
-        //                    ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Exception occurred: {ex.Message}");
-        //    }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
 
-        //    return View(dashboardDataPriority);
-        //}
+            return View(dashboardDataPriority);
+        }
 
         [HttpGet]
         public async Task<ActionResult> Ticket()
@@ -549,7 +544,56 @@ namespace PSS_CMS.Controllers
 
             return View();
         }
+        public async Task<JsonResult> ComboProductTicketNew(string Recid)
+        {
+            var customerResult = new List<object>();
 
+            string webUrlGet = ConfigurationManager.AppSettings["CUSTOMERPRODUCTCOMBO"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+            string cmpRecId = Session["CompanyID"]?.ToString();
+            string strparams = "companyId=" + cmpRecId + "&productid=" + Recid;
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(jsonString);
+
+                            if (apiResponse?.Data != null)
+                            {
+                                customerResult = apiResponse.Data.Select(data => new
+                                {
+                                    Value = data.CU_RECID.ToString(),
+                                    Text = data.CU_NAME,
+                                    WarrantyUpto = data.CU_WARRANTYUPTO,
+                                    WarrantyFreeCalls = data.CU_WARRANTYFREECALLS
+                                }).ToList<object>();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(customerResult, JsonRequestBehavior.AllowGet);
+        }
         public async Task<ActionResult> ComboBoxTicketHistory()
         {
 

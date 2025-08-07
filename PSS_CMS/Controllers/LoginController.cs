@@ -58,17 +58,18 @@ namespace PSS_CMS.Controllers
                     var Response = JsonConvert.DeserializeObject<APIResponseLogin>(responseContent);
 
                     string errormessage = Response.Message;
-                    string Warning = Response.Warning;
+                    string Warning = Response.expiryWarning;
                     string Status = Response.Status;
+                    
                     Session["MaterialConsumptionFlag"] = Response.MaterialConsumption?.Replace(" ", "").Trim();
 
                     Session["APIKEY"] = Response.APIkey;
                     if (Status == "Y")
                     {
-                        TempData["SuccessMessage"] = Warning;
+                        TempData["SuccessMessage"] = errormessage;
                         var data = Response.Data[0];
                         string role = data.U_RCODE;
-
+                        string U_USERMANAGER = data.U_USERMANAGER;
                         // Common session assignments
                         Session["DOMAIN"] = data.U_DOMAIN;
                         Session["UserName"] = data.U_USERNAME;
@@ -78,6 +79,10 @@ namespace PSS_CMS.Controllers
                         Session["CompanyID"] = data.U_CRECID;
 
                         int CompanyID = data.U_CRECID;
+                        if (role == "User" && U_USERMANAGER == "Y")
+                        {
+                            return RedirectToAction("Dashboard", "UserManager");
+                        }
 
                         if (role == "User")
                         {
@@ -103,14 +108,14 @@ namespace PSS_CMS.Controllers
                         }
                         if (role == "HelpDesk")
                         {                 
-                            //return RedirectToAction("HDDashboard", "HelpDesk");
-                            return RedirectToAction("Ticket_History", "HelpDesk");
+                            return RedirectToAction("HDDashboard", "HelpDesk");
+                            //return RedirectToAction("Ticket_History", "HelpDesk");
                         }
                     }
 
                     else
                     {                      
-                        TempData["ErrorMessage"] = " Invalid User name or Password";
+                        TempData["ErrorMessage"] = Warning;
                     }
 
                 }
@@ -167,7 +172,7 @@ namespace PSS_CMS.Controllers
                     var responseContent = responseTask.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     var Response = JsonConvert.DeserializeObject<APIResponseLogin>(responseContent);
 
-                    string errormessage = Response.Message;
+                    string errormessage = Response.expiryWarning;
                     string Status = Response.Status;
                     Session["MaterialConsumptionFlag"] = Response.MaterialConsumption?.Replace(" ", "").Trim();
 
@@ -176,7 +181,7 @@ namespace PSS_CMS.Controllers
                     {
                         var data = Response.Data[0];
                         string role = data.U_RCODE;
-
+                        string U_USERMANAGER = data.U_USERMANAGER;
                         // Common session assignments
                         Session["DOMAIN"] = data.U_DOMAIN;
                         Session["UserName"] = data.U_USERNAME;
@@ -186,6 +191,10 @@ namespace PSS_CMS.Controllers
                         Session["CompanyID"] = data.U_CRECID;
 
                         int CompanyID = data.U_CRECID;
+                        if (role == "User" && U_USERMANAGER == "Y")
+                        {
+                            return RedirectToAction("Dashboard", "UserManager");
+                        }
 
                         if (role == "User")
                         {
@@ -211,8 +220,8 @@ namespace PSS_CMS.Controllers
                         }
                         if (role == "HelpDesk")
                         {
-                            //return RedirectToAction("HDDashboard", "HelpDesk");
-                            return RedirectToAction("Ticket_History", "HelpDesk");
+                            return RedirectToAction("HDDashboard", "HelpDesk");
+                            //return RedirectToAction("Ticket_History", "HelpDesk");
                         }
                     }
 

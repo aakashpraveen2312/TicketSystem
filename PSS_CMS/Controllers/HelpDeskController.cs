@@ -759,7 +759,7 @@ namespace PSS_CMS.Controllers
                 // Handle File Upload
                 string base64Image = ProcessFileUpload(Request.Files);
 
-                    var apiUrl = ConfigurationManager.AppSettings["UpdateComboresponse"];
+                    var apiUrl = ConfigurationManager.AppSettings["UpdateComboresponseHD"];
                     string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                     string APIKey = Session["APIKEY"].ToString();
 

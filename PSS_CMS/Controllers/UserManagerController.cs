@@ -1,28 +1,37 @@
-﻿using Newtonsoft.Json;
+﻿using CaptchaMvc.HtmlHelpers;
+using ClosedXML.Excel;
+using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+
 
 namespace PSS_CMS.Controllers
 {
     public class UserManagerController : Controller
     {
         // GET: CustomerManager
-        public async Task<ActionResult> Dashboard()
+        // GET: Tickets changes by aakash
+        [HttpGet]
+        public async Task<ActionResult> Ticket()
         {
-            string WEBURLGET = ConfigurationManager.AppSettings["CUSTOMERMANAGERCOUNTDASHBOARD"];
+            var viewModel = new Tickets();
+            string Weburl = ConfigurationManager.AppSettings["COMBOBOXTICKETTYPE"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];
-            string finalurl = WEBURLGET + "?" + strparams;
-            DashboardUser dashboardData = null;
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string finalurl = Weburl + "?" + strparams;
 
             try
             {
@@ -37,19 +46,257 @@ namespace PSS_CMS.Controllers
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseTicketsResponseTypes>(jsonString);
+                            var ticketTypes = rootObjects?.Data ?? new List<TicketComboTypes>();
+
+                            viewModel.TicketCombo.TicketTypes = ticketTypes.Select(item => new SelectListItem
+                            {
+                                Value = item.TT_TICKETTYPE,
+                                Text = item.TT_TICKETTYPE
+                            }).ToList();
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, $"Error: {response.ReasonPhrase}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Exception occurred: {ex.Message}");
+            }
+
+            // Pass the view model to the next method
+            await ComboBoxProductNewticket(viewModel);
+
+            return View(viewModel);
+        }
+
+        private string GetImageMimeType(string base64Image)
+        {
+            if (base64Image.Contains("data:image/jpeg;base64,"))
+                return "image/jpeg";
+            if (base64Image.Contains("data:image/png;base64,"))
+                return "image/png";
+            if (base64Image.Contains("data:image/gif;base64,"))
+                return "image/gif";
+            if (base64Image.Contains("data:image/bmp;base64,"))
+                return "image/bmp";
+            // Default to JPEG if not found
+            return "image/jpeg";
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Ticket(Tickets tickets, TicketComboTypes types, HttpPostedFileBase myfile)
+        {
+            var OTP = tickets.TC_OTP;
+
+            try
+            {
+                // Declare fileBytes and base64Image once, before the if block
+                byte[] fileBytes = null;
+                string base64Image = null;
+
+                // Check if files are uploaded
+                if (Request.Files.Count > 0)
+                {
+                    var file = Request.Files[0]; // Get the first file from the request
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        // If file exists, read and convert it to base64
+                        fileBytes = new byte[file.ContentLength];
+                        file.InputStream.Read(fileBytes, 0, file.ContentLength);
+                        base64Image = Convert.ToBase64String(fileBytes);
+
+                        // Assign the base64 image to the model property
+                        tickets.TC_REQUEST_ATTPREFIX = base64Image;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "No file uploaded.");
+                    }
+
+                }
+                // Define your API URL and keys
+                var NewTicketPostURL = ConfigurationManager.AppSettings["NewTicketurl"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{           
+            ""tC_URECID"": ""{Session["UserRECID"]}"",           
+            ""tC_CRECID"": ""{ Session["CompanyID"]}"",          
+            ""tC_PRECID"": ""{tickets.SelectedProjectType}"",        
+            ""tC_CURECID"": ""{tickets.SelectedCustomer}"",        
+            ""tC_TICKETDATE"": ""{tickets.TC_Dates}"",        
+            ""tC_SUBJECT"": ""{tickets.TC_SUBJECT}"",        
+            ""tC_OTP"": ""{"6757"}"",
+            ""tC_COMMENTS"": ""{HttpUtility.JavaScriptStringEncode(tickets.TC_COMMENTS)}"",
+            ""tC_REQUEST_ATTPREFIX"": ""{base64Image}"",  
+            ""tC_REQUEST_DATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",          
+            ""tC_STATUS"": ""{"S"}"",
+            ""tC_PRIORITYTYPE"": ""{tickets.TC_PRIORITYTYPE}"",
+            ""tC_TICKETTYPE"": ""{tickets.SelectedTicketType}"",
+            ""tC_USERNAME"": ""{Session["UserName"]}"",
+            ""tC_REFERENCETRECID"": ""{0}""
+        }}";
+
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(NewTicketPostURL),
+                    Method = HttpMethod.Post,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                if (this.IsCaptchaValid("Captcha is not valid"))
+                {
+                    var response = await client.SendAsync(request);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<ApiResponseTicketsResponse>(responseBody);
+
+                        if (apiResponse.Status == "Y")
+                        {
+                            return Json(new { status = "Form submmited successfully" });
+                        }
+                        else if (apiResponse.Status == "U" || apiResponse.Status == "N")
+                        {
+                            return Json(new { apiResponse.Message });
+                        }
+                        else
+                        {
+                            return Json(new { status = "Error Occured" });
+                        }
+                    }
+                    else
+                    {
+                        return Json(new { status = "error", message = "Error: " + response.ReasonPhrase });
+                    }
+                }
+                else
+                {
+                    return Json(new { status = "error", message = "Captcha is not valid." });
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return View("Ticket");
+        }
+
+        public async Task<ActionResult> Ticket_History(string userid, string userrole, string searchPharse, string status, string projectType, string ticketType, string StartDate, string EndDate)
+        {
+            Tickethistory objRecents = new Tickethistory();
+
+            string Weburl = ConfigurationManager.AppSettings["USERMANAGERGET"];
+
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            List<Tickethistory> RecentTicketListall = new List<Tickethistory>();
+
+            string strparams = "USERID=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(url);
 
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            dashboardData = JsonConvert.DeserializeObject<DashboardUser>(jsonString);
+                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseTicketsHistoryResponse>(jsonString);
+                            RecentTicketListall = rootObjects.Data;
 
-                            var totalTickets = dashboardData.TotalTickets;
-                            var closedTickets = dashboardData.CloseTickets;
-                            var closedPercentage = (closedTickets / (double)totalTickets) * 100;
 
-                            ViewBag.ClosedPercentage = closedPercentage;
-                            ViewBag.TotalTickets = totalTickets;
-                            ViewBag.ClosedTickets = closedTickets;
+                            if (
+                                 string.IsNullOrWhiteSpace(ticketType) &&
+                                 string.IsNullOrWhiteSpace(status) &&
+                                 string.IsNullOrWhiteSpace(projectType) &&
+                                 string.IsNullOrWhiteSpace(StartDate) &&
+                                 string.IsNullOrWhiteSpace(EndDate) &&
+                                 string.IsNullOrWhiteSpace(searchPharse))
+                            {
+                                // Exclude Closed tickets on the first load if no filters are applied
+                                RecentTicketListall = RecentTicketListall.Where(t => t.TC_STATUS != "C").ToList();
+                            }
+
+                            if (!string.IsNullOrEmpty(ticketType))
+                            {
+                                RecentTicketListall = RecentTicketListall.Where(t => t.TC_TICKETTYPE == ticketType).ToList();
+                            }
+
+
+                            if (!string.IsNullOrEmpty(status))
+                            {
+                                RecentTicketListall = RecentTicketListall.Where(t => t.TC_STATUS == status).ToList();
+                            }
+                            //if (!string.IsNullOrEmpty(projectType))
+                            //{
+                            //    RecentTicketListall = RecentTicketListall.Where(t => t.P_RECID == projectType).ToList();
+                            //}
+                            if (!string.IsNullOrEmpty(projectType))
+                            {
+                                RecentTicketListall = RecentTicketListall.Where(t => t.P_RECID.ToString() == projectType).ToList();
+                            }
+
+                            if (!string.IsNullOrEmpty(StartDate) && !string.IsNullOrEmpty(EndDate))
+                            {
+                                //DateTime fromDate = DateTime.Parse(StartDate);//parse it is used to convert the string to datetime object
+                                //DateTime toDate = DateTime.Parse(EndDate);
+
+
+                                RecentTicketListall = RecentTicketListall
+          .Where(t => string.Compare(t.TC_TICKETDATE, StartDate) >= 0 &&
+                      string.Compare(t.TC_TICKETDATE, EndDate) <= 0)
+          .ToList();
+                            }
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                RecentTicketListall = RecentTicketListall
+                                    .Where(r => r.P_RECID.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_SUBJECT.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.AdminNameDisplay.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_PRIORITYTYPE.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_STATUS.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_TICKETTYPE.ToLower().Contains(searchPharse.ToLower()) ||
+                                                r.TC_TICKETDATES.ToLower().Contains(searchPharse.ToLower()))
+                                    .ToList();
+                            }
+
                         }
                         else
                         {
@@ -60,34 +307,182 @@ namespace PSS_CMS.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception occurred: {ex.Message}");
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
 
-            // Fetch WTD and MTD chart data
-            DashboardUser wtdMtdData = await WTDANDMTDCHARTUSER();
-            if (wtdMtdData != null)
-            {
-                ViewBag.MonthTotalTickets = wtdMtdData.MonthWise?.MonthTotalTickets ?? 0;
-                ViewBag.MonthOpenTickets = wtdMtdData.MonthWise?.MonthOpenTickets ?? 0;
-                ViewBag.MonthResolvedTickets = wtdMtdData.MonthWise?.MonthResolvedTickets ?? 0;
-                ViewBag.MonthCloseTickets = wtdMtdData.MonthWise?.MonthCloseTickets ?? 0;
-
-                ViewBag.WeekTotalTickets = wtdMtdData.WeekWise?.WeekTotalTickets ?? 0;
-                ViewBag.WeekOpenTickets = wtdMtdData.WeekWise?.WeekOpenTickets ?? 0;
-                ViewBag.WeekResolvedTickets = wtdMtdData.WeekWise?.WeekResolvedTickets ?? 0;
-                ViewBag.WeekCloseTickets = wtdMtdData.WeekWise?.WeekCloseTickets ?? 0;
-            }
-
-            return View(dashboardData);
+            await ComboBoxTicketHistory();
+            await ComboBoxTicketHistoryProduct();
+            return View(RecentTicketListall);
         }
-        public async Task<DashboardUser> WTDANDMTDCHARTUSER()
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ClientResponseTicket(Reviewtickets tickets, HttpPostedFileBase myfile, string statusparam)
         {
-            string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDMTDandWTDCUSTOMERMANAGER"];
+            var combox = tickets.Combo == "Re-open" ? "O" :
+                         (tickets.Combo == "Close" ? "C" : "S");
+
+            try
+            {
+                // Handle File Upload
+                string base64Image = ProcessFileUpload(Request.Files);
+
+                if (combox == "O")
+                {
+                    var apiUrl = ConfigurationManager.AppSettings["ClientResponse"];
+                    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                    string APIKey = Session["APIKEY"].ToString();
+
+                    var content = JsonConvert.SerializeObject(new
+                    {
+                        tC_URECID = Session["UserRECID"],
+                        tC_CRECID = Session["CompanyID"],
+                        tC_PRECID = Session["ProjectID"],
+                        tC_TICKETDATE = DateTime.Now.ToString("yyyy-MM-dd"),
+                        tC_SUBJECT = Session["Subject"],
+                        tC_OTP = "6757",
+                        tC_COMMENTS = HttpUtility.JavaScriptStringEncode(tickets.TC_COMMENTS),
+                        tC_REQUEST_ATTPREFIX = base64Image,
+                        tC_REQUEST_DATETIME = DateTime.Now.ToString("yyyy-MM-dd"),
+                        tC_STATUS = combox,
+                        tC_PRIORITYTYPE = Session["TC_PRIORITYTYPE"],
+                        tC_TICKETTYPE = Session["TC_TICKETTYPE"],
+                        tC_USERNAME = Session["REOPENUSERNAME"],
+                        tC_REFERENCETRECID = Session["ReferenceRecID"]
+                    });
+                    // Set up HTTP client with custom validation (for SSL certificates)
+                    var handler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                    };
+
+                    var client = new HttpClient(handler);
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    var apiResponse = await SendApiRequest(apiUrl, content, HttpMethod.Post, APIKey, AuthKey);
+
+
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { status = "Y", message = "Ticket reopened successfully!" });
+                    }
+
+                    else
+                    {
+                        return Json(new { status = "N", message = apiResponse.Message });
+                    }
+
+                }
+                else
+                {
+                    var apiUrl = ConfigurationManager.AppSettings["UpdateComboresponse"];
+                    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                    string APIKey = Session["APIKEY"].ToString();
+
+
+                    var content = JsonConvert.SerializeObject(new
+                    {
+                        tC_RECID = Session["RECORDID"],
+                        tC_CRECID = Session["CompanyID"],
+                        tC_USERNAME = Session["REOPENUSERNAME"],
+                        tC_STATUS = combox
+                    });
+                    // Set up HTTP client with custom validation (for SSL certificates)
+                    var handler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                    };
+
+                    var client = new HttpClient(handler);
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    var apiResponse = await SendApiRequest(apiUrl, content, HttpMethod.Put, APIKey, AuthKey);
+
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { status = "Y", message = "Ticket closed successfully!" });
+                    }
+
+                    else
+                    {
+                        return Json(new { status = "N", message = apiResponse.Message });
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = "Error", message = "Exception occurred: " + ex.Message });
+            }
+        }
+
+        // Helper method to process file uploads
+        private string ProcessFileUpload(HttpFileCollectionBase files)
+        {
+            if (files.Count > 0)
+            {
+                var file = files[0];
+                if (file != null && file.ContentLength > 0)
+                {
+                    using (var binaryReader = new BinaryReader(file.InputStream))
+                    {
+                        byte[] fileBytes = binaryReader.ReadBytes(file.ContentLength);
+                        return Convert.ToBase64String(fileBytes);
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Helper method to send API requests
+        private async Task<ApiResponseTicketsResponse> SendApiRequest(string url, string content, HttpMethod method, string apiKey, string authKey)
+        {
+            using (var client = new HttpClient(new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            }))
+            {
+                var request = new HttpRequestMessage(method, new Uri(url))
+                {
+                    Content = new StringContent(content, Encoding.UTF8, "application/json")
+                };
+
+                // ✅ Add headers
+                request.Headers.Add("ApiKey", apiKey);
+                request.Headers.Add("Authorization", authKey);
+                request.Headers.Add("X-Version", "1");
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var response = await client.SendAsync(request);
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<ApiResponseTicketsResponse>(responseBody);
+            }
+        }
+
+
+        public async Task<ActionResult> ReviewTickets(string recid2, string status, string REOPENUSERNAME, string projectid)
+        {
+            IEnumerable<Ticket> ticketList = await GetTickets(recid2, status, REOPENUSERNAME, projectid); // Your logic to get a list of tickets
+            return View(ticketList); // Pass the collection to the view
+        }
+
+        public async Task<IEnumerable<Ticket>> GetTickets(string recid2, string status, String REOPENUSERNAME, string projectid)
+        {
+            Session["ProjectID"] = projectid;
+            Session["RECORDID"] = recid2;
+            Session["Status"] = status;
+            Session["REOPENUSERNAME"] = REOPENUSERNAME;
+
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["AdminGetSingleURL"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];
-            string finalurl = WEBURLGET + "?" + strparams;
-            DashboardUser wtdMtdData = null;
+            List<Ticket> ticketList = new List<Ticket>();
+
+            string strparams = "USERID=" + Session["UserRECID"] + "&StrRecid=" + recid2 + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
             {
@@ -106,72 +501,94 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            wtdMtdData = JsonConvert.DeserializeObject<DashboardUser>(jsonString);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Error: " + response.ReasonPhrase);
+                            var content = JsonConvert.DeserializeObject<TicketModel>(jsonString);
+
+                            ticketList = content.Data;
+                            Session["ReferenceRecID"] = content.Data[0].TC_RECID;
+                            Session["Subject"] = content.Data[0].TC_SUBJECT;
+                            Session["TC_PRIORITYTYPE"] = content.Data[0].TC_PRIORITYTYPE;
+                            Session["TC_TICKETTYPE"] = content.Data[0].TC_TICKETTYPE;
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception occurred: {ex.Message}");
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            await StackedBarChartUser();
-            return wtdMtdData;
-        }
-        public async Task<ActionResult> StackedBarChartUser()
-        {
-            string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDSTACKEDBARCHARTCUSTOMERMANAGER"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-            string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];
-            string finalurl = WEBURLGET + "?" + strparams;
-            List<DashboardPriority> dashboardDataPriority = new List<DashboardPriority>();
 
+            return ticketList;
+        }
+
+        //User can cloe their ticket click the refresh icon
+        public async Task<ActionResult> DeleteUpdateTicket(Reviewtickets tickets, HttpPostedFileBase myfile, string statusparam, string recid2, String userclosedname)
+        {
             try
             {
-                using (HttpClientHandler handler = new HttpClientHandler())
+                Session["RECORDID"] = recid2;
+                Session["USERCLOSEDNAME"] = userclosedname;
+
+                var UpdateTicketPostURL = ConfigurationManager.AppSettings["UpdateComboresponse"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                // Construct the JSON content for the API request
+                var content = $@"{{  
+            ""tC_RECID"": ""{Session["RECORDID"] }"",
+            ""tC_USERNAME"": ""{Session["USERCLOSEDNAME"] }"",
+            ""tC_STATUS"": ""{"C"}"",
+            ""tC_CRECID"": ""{Session["CompanyID"]}""
+        }}";
+
+                // Create the HTTP request
+                var request = new HttpRequestMessage
                 {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    RequestUri = new Uri(UpdateTicketPostURL),
+                    Method = HttpMethod.Put,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
 
-                    using (HttpClient client = new HttpClient(handler))
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                // Send the request and await the response
+                var response = await client.SendAsync(request);
+                // Check if the response is successful
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponseTicketsResponse>(responseBody);
+
+                    // Return the appropriate result based on the API response
+                    if (apiResponse.Status == "Y")
                     {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        var response = await client.GetAsync(finalurl);
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<DashboardPriorityList>(jsonString);
-                            dashboardDataPriority = rootObjects.Data;
-
-                            ViewBag.Labels1 = JsonConvert.SerializeObject(new[] { "Critical", "Emergency", "Urgent", "Normal" });
-                            ViewBag.ClosedTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.ClosedTickets));
-                            ViewBag.ResolvedTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.ResolvedTickets));
-                            ViewBag.OpenTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.OpenTickets));
-
-
-                        }
-                        else
-                        {
-                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
-                        }
+                        return Json(new { success = true, message = "Ticket closed successfully." });
+                    }
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
+                    {
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
                 }
+
+                return Json(new { success = false, message = "Error occurred while closing the ticket." });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception occurred: {ex.Message}");
+                return Json(new { success = false, message = "Exception: " + ex.Message });
             }
 
-            return View(dashboardDataPriority);
         }
+
         public async Task<ActionResult> ComboBoxTicketHistory()
         {
 
@@ -257,8 +674,8 @@ namespace PSS_CMS.Controllers
                             {
                                 Product = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.CU_RECID.ToString(), // or the appropriate value field
-                                    Text = t.CU_NAME // or the appropriate text field
+                                    Value = t.P_RECID.ToString(), // or the appropriate value field
+                                    Text = t.P_NAME // or the appropriate text field
                                 }).ToList();
                             }
                         }
@@ -275,6 +692,8 @@ namespace PSS_CMS.Controllers
 
             return View();
         }
+
+        //new Ticket combo project type
         public async Task ComboBoxProductNewticket(Tickets viewModel)
         {
             string webUrlGet = ConfigurationManager.AppSettings["COMBOFORPRODUCTSELECTED"];
@@ -304,8 +723,8 @@ namespace PSS_CMS.Controllers
 
                             viewModel.TicketCombo2.TicketTypes2 = ticketTypes2.Select(item => new SelectListItem
                             {
-                                Value = item.CU_RECID.ToString(),
-                                Text = item.CU_NAME
+                                Value = item.P_RECID.ToString(),
+                                Text = item.P_NAME
                             }).ToList();
                         }
                     }
@@ -315,6 +734,454 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, $"Exception occurred: {ex.Message}");
             }
+        }
+
+        public async Task<JsonResult> ComboProductTicketNew(string Recid)
+        {
+            var customerResult = new List<object>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["CUSTOMERPRODUCTCOMBO"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+            string cmpRecId = Session["CompanyID"]?.ToString();
+            string strparams = "companyId=" + cmpRecId + "&productid=" + Recid;
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(jsonString);
+
+                            if (apiResponse?.Data != null)
+                            {
+                                customerResult = apiResponse.Data.Select(data => new
+                                {
+                                    Value = data.CU_RECID.ToString(),
+                                    Text = data.CU_NAME,
+                                    WarrantyUpto = data.CU_WARRANTYUPTO,
+                                    WarrantyFreeCalls = data.CU_WARRANTYFREECALLS
+                                }).ToList<object>();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(customerResult, JsonRequestBehavior.AllowGet);
+        }
+
+        public async Task<ActionResult> FAQ(string searchPharse, int? projectID)
+
+        {
+            if (searchPharse == "")
+            {
+                // Clear the session if the input is an empty string
+                Session["searchPharse"] = null;
+                searchPharse = null;
+            }
+            else if (!string.IsNullOrWhiteSpace(searchPharse))
+            {
+                // Store valid search input
+                Session["searchPharse"] = searchPharse;
+            }
+            else if (Session["searchPharse"] != null)
+            {
+                // Reuse previous value from session
+                searchPharse = Session["searchPharse"].ToString();
+            }
+            string Weburl = ConfigurationManager.AppSettings["FAQGET"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            List<Faq> FAQList = new List<Faq>();
+
+
+            string strparams = "productid=" + projectID + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = Weburl + "?" + strparams;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<RootObjectFAQ>(jsonString);
+                            FAQList = rootObjects.Data;
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                FAQList = FAQList.Where(r => r.F_QUESTION.ToLower().Contains(searchPharse.ToLower()) ||
+                                r.F_ANSWER.ToLower().Contains(searchPharse.ToLower())).ToList();
+                            }
+                        }
+
+                        else
+                        {
+                            // Handle the error response here
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., logging)
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+            await FAQComboProduct();
+            return View(FAQList);
+        }
+
+        //FAQ project type combo
+        public async Task<ActionResult> FAQComboProduct()
+        {
+
+            List<SelectListItem> Product = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<TicketTypeModel>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                Product = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.P_RECID.ToString(), // or the appropriate value field
+                                    Text = t.P_NAME // or the appropriate text field
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            // Assuming you are passing ticketTypes to the view
+            ViewBag.Product = Product;
+
+            return View();
+        }
+
+        public async Task<ActionResult> ExcelUserDownload()
+        {
+            string Weburl = ConfigurationManager.AppSettings["ExcelClientTicketURL"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+
+            string strparams = "TC_USERID=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+
+                            return File(fileBytes,
+                                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                        Session["UserRole"] + "-Tickets" + ".xlsx");
+                        }
+                        else
+                        {
+                            return Content("API Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception occurred: " + ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SaveRating(int? rating)
+        {
+            var apiUrl = ConfigurationManager.AppSettings["UpdateRatings"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            var content = JsonConvert.SerializeObject(new
+            {
+                tC_RECID = Session["RECORDID"],
+                tC_CRECID = Session["CompanyID"],
+                tC_RATINGS = rating
+            });
+            // Set up HTTP client with custom validation (for SSL certificates)
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            };
+
+            var client = new HttpClient(handler);
+            client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+            client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+            var apiResponse = await SendApiRequest(apiUrl, content, HttpMethod.Put, APIKey, AuthKey);
+            return View();
+        }
+
+        public async Task<ActionResult> TimelineChart(int? recid3)
+        {
+            int recid = recid3 ?? 0;
+            string webUrlGet = ConfigurationManager.AppSettings["TIMELINECHART"];
+
+            string APIKey = Session["APIKEY"].ToString();
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string strparams = "recid=" + recid3 + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = webUrlGet + "?" + strparams;
+
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        HttpResponseMessage response = await client.GetAsync(finalurl);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            TempData["ErrorMessage"] = $"API Error: {response.StatusCode} - {response.ReasonPhrase}";
+                            return View("Error");
+                        }
+
+                        var jsonString = await response.Content.ReadAsStringAsync();
+                        TimelineResponse timelineData = JsonConvert.DeserializeObject<TimelineResponse>(jsonString);
+
+                        return View(timelineData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Exception occurred: {ex.Message}";
+                return View("Error");
+            }
+        }
+
+
+        public async Task<ActionResult> UserDashboardCount()
+        {
+            string WEBURLGET = ConfigurationManager.AppSettings["USERMANAGERCOUNTDASHBOARD"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            DashboardUser dashboardData = null;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            dashboardData = JsonConvert.DeserializeObject<DashboardUser>(jsonString);
+
+                            var totalTickets = dashboardData.TotalTickets;
+                            var closedTickets = dashboardData.CloseTickets;
+                            var closedPercentage = (closedTickets / (double)totalTickets) * 100;
+
+                            ViewBag.ClosedPercentage = closedPercentage;
+                            ViewBag.TotalTickets = totalTickets;
+                            ViewBag.ClosedTickets = closedTickets;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+
+            //Fetch WTD and MTD chart data
+            DashboardUser wtdMtdData = await WTDANDMTDCHARTUSER();
+            if (wtdMtdData != null)
+            {
+                ViewBag.MonthTotalTickets = wtdMtdData.MonthWise?.MonthTotalTickets ?? 0;
+                ViewBag.MonthOpenTickets = wtdMtdData.MonthWise?.MonthOpenTickets ?? 0;
+                ViewBag.MonthResolvedTickets = wtdMtdData.MonthWise?.MonthResolvedTickets ?? 0;
+                ViewBag.MonthCloseTickets = wtdMtdData.MonthWise?.MonthCloseTickets ?? 0;
+
+                ViewBag.WeekTotalTickets = wtdMtdData.WeekWise?.WeekTotalTickets ?? 0;
+                ViewBag.WeekOpenTickets = wtdMtdData.WeekWise?.WeekOpenTickets ?? 0;
+                ViewBag.WeekResolvedTickets = wtdMtdData.WeekWise?.WeekResolvedTickets ?? 0;
+                ViewBag.WeekCloseTickets = wtdMtdData.WeekWise?.WeekCloseTickets ?? 0;
+            }
+
+            return View(dashboardData);
+        }
+        public async Task<DashboardUser> WTDANDMTDCHARTUSER()
+        {
+            string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDMTDandWTDUSERMANAGER"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            DashboardUser wtdMtdData = null;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            wtdMtdData = JsonConvert.DeserializeObject<DashboardUser>(jsonString);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            await StackedBarChartUser();
+            return wtdMtdData;
+        }
+        public async Task<ActionResult> StackedBarChartUser()
+        {
+            string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDSTACKEDBARCHARTUSERMANAGER"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            List<DashboardPriority> dashboardDataPriority = new List<DashboardPriority>();
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<DashboardPriorityList>(jsonString);
+                            dashboardDataPriority = rootObjects.Data;
+
+                            ViewBag.Labels1 = JsonConvert.SerializeObject(new[] { "Critical", "Emergency", "Urgent", "Normal" });
+                            ViewBag.ClosedTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.ClosedTickets));
+                            ViewBag.ResolvedTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.ResolvedTickets));
+                            ViewBag.OpenTickets1 = JsonConvert.SerializeObject(dashboardDataPriority.Select(d => d.OpenTickets));
+
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+
+            return View(dashboardDataPriority);
         }
 
 

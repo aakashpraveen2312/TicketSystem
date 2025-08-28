@@ -591,6 +591,12 @@
     <Content Include="Views\Shared\_HelpDeskResponse.cshtml" />
     <Content Include="Views\HelpDesk\HDDashboard.cshtml" />
     <Content Include="Views\UserManager\Dashboard.cshtml" />
+    <Content Include="Views\UserManager\Ticket.cshtml" />
+    <Content Include="Views\UserManager\Ticket_History.cshtml" />
+    <Content Include="Views\UserManager\ReviewTickets.cshtml" />
+    <Content Include="Views\Shared\_UserManagerResponse.cshtml" />
+    <Content Include="Views\UserManager\TimelineChart.cshtml" />
+    <Content Include="Views\UserManager\UserDashboardCount.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

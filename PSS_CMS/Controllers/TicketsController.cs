@@ -951,6 +951,33 @@ namespace PSS_CMS.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult> SaveRating(int? rating)
+        {
+            var apiUrl = ConfigurationManager.AppSettings["UpdateRatings"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            var content = JsonConvert.SerializeObject(new
+            {
+                tC_RECID = Session["RECORDID"],
+                tC_CRECID = Session["CompanyID"],
+                tC_RATINGS = rating
+            });
+            // Set up HTTP client with custom validation (for SSL certificates)
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            };
+
+            var client = new HttpClient(handler);
+            client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+            client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+            var apiResponse = await SendApiRequest(apiUrl, content, HttpMethod.Put, APIKey, AuthKey);
+            return View();
+        }
+
 
     }
 }

@@ -81,7 +81,7 @@ namespace PSS_CMS.Controllers
                         int CompanyID = data.U_CRECID;
                         if (role == "User" && U_USERMANAGER == "Y")
                         {
-                            return RedirectToAction("Dashboard", "UserManager");
+                            return RedirectToAction("UserDashboardCount", "UserManager");
                         }
 
                         if (role == "User")
@@ -193,7 +193,7 @@ namespace PSS_CMS.Controllers
                         int CompanyID = data.U_CRECID;
                         if (role == "User" && U_USERMANAGER == "Y")
                         {
-                            return RedirectToAction("Dashboard", "UserManager");
+                            return RedirectToAction("UserDashboardCount", "UserManager");
                         }
 
                         if (role == "User")

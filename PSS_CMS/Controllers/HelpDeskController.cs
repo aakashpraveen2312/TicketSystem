@@ -121,12 +121,12 @@ namespace PSS_CMS.Controllers
             {
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
-            await HDStackedBarChart();
+            await HDStackedBarChart();   
             return wtdMtdData;
         }
         public async Task<ActionResult> HDStackedBarChart()
         {
-            string WEBURLGET = ConfigurationManager.AppSettings["HELPDESKSTACKEDBAR"];
+             string WEBURLGET = ConfigurationManager.AppSettings["HELPDESKSTACKEDBAR"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];
@@ -223,6 +223,7 @@ namespace PSS_CMS.Controllers
 
             // Pass the view model to the next method
             await ComboBoxProductNewticket(viewModel);
+            await ComboUserSelection();
 
             return View(viewModel);
         }
@@ -278,11 +279,11 @@ namespace PSS_CMS.Controllers
             ""tC_STATUS"": ""{"S"}"",
             ""tC_PRIORITYTYPE"": ""{tickets.TC_PRIORITYTYPE}"",
             ""tC_TICKETTYPE"": ""{tickets.SelectedTicketType}"",
-            ""tC_USERNAME"": ""{Session["UserName"]}"",
+            ""tC_USERNAME"": ""{tickets.SelectedUser}"",
             ""tC_REFERENCETRECID"": ""{0}""
         }}";
 
-                // Create the HTTP request
+                // Create the HTTP request 
                 var request = new HttpRequestMessage
                 {
                     RequestUri = new Uri(NewTicketPostURL),
@@ -799,6 +800,58 @@ namespace PSS_CMS.Controllers
             {
                 return Json(new { status = "Error", message = "Exception occurred: " + ex.Message });
             }
+        }
+
+
+        public async Task<ActionResult> ComboUserSelection()
+
+        {
+            List<SelectListItem> User = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["GETUSERSALL"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseUserObjects>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                User = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.U_USERNAME,
+                                    Text = t.U_USERNAME,
+                                }).ToList();
+                            }
+                        }  
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            // Assuming you are passing ticketTypes to the view
+            ViewBag.User = User;
+
+            return View();
         }
 
     }

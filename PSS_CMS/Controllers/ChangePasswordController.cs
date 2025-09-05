@@ -84,5 +84,10 @@ namespace PSS_CMS.Controllers
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
         }
+
+        public ActionResult UserChangePassword()
+        {
+            return View();
+        }
     }
 }

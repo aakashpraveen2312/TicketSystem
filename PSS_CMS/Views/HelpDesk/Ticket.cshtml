@@ -32,12 +32,12 @@
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
-        input#dateTextbox, select#SelectedProjectType, input#sub, input#warranty, input#warrantyfreecalls, select#SelectedTicketType, select#TC_PRIORITYTYPE, input#date, select#CustomerDropdown {
+        input#dateTextbox, select#SelectedProjectType, select.form-select.textboxcolors, input#sub, input#warranty, input#warrantyfreecalls, select#SelectedTicketType, select#TC_PRIORITYTYPE, input#date, select#CustomerDropdown {
             max-width: 450px;
             height: 35px;
         }
 
-        select#CustomerDropdown {
+        select#CustomerDropdown, select.form-select.textboxcolors {
             font-size: 15px;
         }
 
@@ -103,117 +103,164 @@
         @using (Html.BeginForm("Ticket", "HelpDesk", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
-            <form>
-                <div class="row">
-                    <div class="col-md-6 col-sm-12">
-                        @Html.LabelFor(model => model.TC_Date, "Date", new { @class = "pb-2 " })
-                        @Html.TextBoxFor(model => model.TC_Date, new { @class = "form-control", id = "date", type = "datetime-local", required = "required", tabindex = "1" })
-                    </div>
+    <form>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                @Html.LabelFor(model => model.TC_Date, "Date", new { @class = "pb-2 " })
+                @Html.TextBoxFor(model => model.TC_Date, new { @class = "form-control", id = "date", type = "datetime-local", required = "required", tabindex = "1" })
+            </div>
 
-                    <div class="col-md-6 col-sm-12 ptypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+            <div class="col-md-6 col-sm-12 ptypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
 
-                        <!-- First Dropdown for Project Types -->
-                        @if (Model.TicketCombo2.TicketTypes2 != null)
+                <!-- First Dropdown for Project Types -->
+                @if (Model.TicketCombo2.TicketTypes2 != null)
+                {
+                    <!-- Show dropdown with "Select Project" placeholder if count > 1 -->
+                    @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
+                    @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "Select Product", new { @class = "form-select", required = "required", onchange = "loadMaterials(this.value)", tabindex = "2" })
+                }
+
+                else
+                {
+                    <!-- Show dropdown without placeholder if count == 1 -->
+                    @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
+                    @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "No Product's are available", new { @class = "form-select", required = "required" })
+                }
+
+            </div>
+        </div>
+
+
+        <div class="row mt-3">
+            <div class="col-md-6 col-sm-12">
+                @Html.LabelFor(model => model.TC_SUBJECT, "Subject", new { @class = "pb-2" })
+                @Html.TextBoxFor(model => model.TC_SUBJECT, new
+                {
+                    @class = "form-control minicheck1",
+                    id = "sub",
+                    required = "required",
+                    tabindex = "3",
+                    style = "background-color: #dceef5;"
+                })
+            </div>
+            <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+                @Html.LabelFor(model => model.TC_CUSTOMER, "Customer", new { @class = "pb-2" })
+                @Html.DropDownList("SelectedCustomer",
+                new List<SelectListItem> {
+                new SelectListItem { Text = "No Product is selected", Value = "", Selected = true }
+                },
+                 new { @class = "form-select textboxcolors", id = "CustomerDropdown", required = "required" })
+
+            </div>
+
+
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-sm-12 mt-2">
+
+                <!-- Third Dropdown for Priority Types -->
+                @Html.LabelFor(model => model.TC_PRIORITYTYPE, "Priority type", new { @class = "pb-2 " })
+                @Html.DropDownListFor(model => model.TC_PRIORITYTYPE,
+             new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
+             "Select priority type",
+             new { @class = "form-select prioritystyle", required = "required", tabindex = "4" })
+            </div>
+            <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+                @Html.LabelFor(model => model.TC_WARRANTYUPTO, "Warranty Upto", new { @class = "pb-2" })
+                @Html.TextBoxFor(model => model.TC_WARRANTYUPTO, new { @class = "form-control", id = "warranty", @readonly = "readonly", tabindex = "5" })
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6 col-sm-12">
+                @Html.LabelFor(model => model.SelectedTicketType, "Ticket type", new { @class = "pb-2" })
+                @Html.DropDownListFor(model => model.SelectedTicketType, Model.TicketCombo.TicketTypes, "Select Ticket Type", new { @class = "form-select", required = "required", tabindex = "6" })
+
+            </div>
+            <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+                @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, "Warranty Free Calls", new { @class = "pb-2" })
+                @Html.TextBoxFor(model => model.CU_WARRANTYFREECALLS, new { @class = "form-control", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6 col-sm-12">
+                @Html.LabelFor(model => model.SelectedUser, "Users", new { @class = "pb-2 " })
+                @if (ViewBag.User != null)
+                {
+                    var ProductList = ViewBag.User as IEnumerable<SelectListItem>;
+
+                    if (ProductList != null && ProductList.Any())
+                    {
+                        var modifiedProductList = new List<SelectListItem>(ProductList);
+
+                        if (ProductList.Count() > 1)
                         {
-                            <!-- Show dropdown with "Select Project" placeholder if count > 1 -->
-                            @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
-                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "Select Product", new { @class = "form-select", required = "required", onchange = "loadMaterials(this.value)", tabindex = "2" })
-                        }
+                            // Add "--Select Project--" option only if more than one project is available
+                            modifiedProductList.Insert(0, new SelectListItem { Text = "--Select User--", Value = "" });
 
-                        else
+                            @Html.DropDownList("SelectedUser",
+                                                         modifiedProductList,
+                                                         new { @class = "form-select textboxcolors", id = "", required = "required" }) }
+                        else if (ProductList.Count() == 1)
                         {
-                            <!-- Show dropdown without placeholder if count == 1 -->
-                            @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
-                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "No Product's are available", new { @class = "form-select", required = "required" })
-                        }
+                            // If only one project is available, preselect it
+                            @Html.DropDownList("SelectedUser",
+                                                         modifiedProductList,
+                                                         new { @class = "form-select textboxcolors", id = "", required = "required" }) }
+                    }
+                    else
+                    {
+                        var modifiedProductList = new List<SelectListItem>(ProductList);
+                        // Add "--Select Project--" option only if more than one project is available
+                        modifiedProductList.Insert(0, new SelectListItem { Text = "No User's are available", Value = "" });
 
-                    </div>
-                </div>
+                        @Html.DropDownList("SelectedUser",
+                                                     modifiedProductList,
+                                                     new { @class = "form-select textboxcolors", id = "" }) }
+                }
+                else
+                {
+                    <p>No User's are available</p>}
+            </div>
 
+        </div>
 
-                <div class="row mt-3">
-                    <div class="col-md-6 col-sm-12">
-                        @Html.LabelFor(model => model.TC_SUBJECT, "Subject", new { @class = "pb-2" })
-                        @Html.TextBoxFor(model => model.TC_SUBJECT, new
-                        {
-                            @class = "form-control minicheck1",
-                            id = "sub",
-                            required = "required",
-                            tabindex = "3",
-                            style = "background-color: #dceef5;"
-                        })
-                    </div>
-                    <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
-                        @Html.LabelFor(model => model.TC_CUSTOMER, "Customer", new { @class = "pb-2" })
-                        @Html.DropDownList("SelectedCustomer",
-                        new List<SelectListItem> {
-                        new SelectListItem { Text = "No Product is selected", Value = "", Selected = true }
-                        },
-                         new { @class = "form-select textboxcolors", id = "CustomerDropdown", required = "required" })
+        <div class="row mt-2">
+            <div class="col-md-12 col-sm-12">
+                @Html.LabelFor(model => model.TC_COMMENTS, "User Comments", new { @class = "pb-2" })
+                @Html.TextAreaFor(model => model.TC_COMMENTS, new { @class = "form-control custom-textarea  ", style = "background-color: #dceef5;", placeholder = "Please enter your comments here....", rows = "10", cols = "70", required = "required", tabindex = "8", })
 
-                    </div>
-                </div>
+            </div>
 
-                <div class="row">
-                    <div class="col-md-6 col-sm-12 mt-2">
+            <div class="col-md-12 col-sm-12 mt-2">
+                @Html.Label("myfile", "Attachments:")
+                <input type="file" id="myfile" name="myfile" tabindex="6"
+                       accept=".pdf, .xlsx, .jpeg, .png, .jpg, .csv,.mp4" onchange="validateFile()" />
+                <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .csv,.mp4)</small>
+            </div>
 
-                        <!-- Third Dropdown for Priority Types -->
-                        @Html.LabelFor(model => model.TC_PRIORITYTYPE, "Priority type", new { @class = "pb-2 " })
-                        @Html.DropDownListFor(model => model.TC_PRIORITYTYPE,
-                     new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
-                     "Select priority type",
-                     new { @class = "form-select prioritystyle", required = "required", tabindex = "4" })
-                    </div>
-                    <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
-                        @Html.LabelFor(model => model.TC_WARRANTYUPTO, "Warranty Upto", new { @class = "pb-2" })
-                        @Html.TextBoxFor(model => model.TC_WARRANTYUPTO, new { @class = "form-control", id = "warranty", @readonly = "readonly", tabindex = "5" })
-                    </div>
-                </div>
-
-                <div class="row mt-3">
-                    <div class="col-md-6 col-sm-12">
-                        @Html.LabelFor(model => model.SelectedTicketType, "Ticket type", new { @class = "pb-2" })
-                        @Html.DropDownListFor(model => model.SelectedTicketType, Model.TicketCombo.TicketTypes, "Select Ticket Type", new { @class = "form-select", required = "required", tabindex = "6" })
-
-                    </div>
-                    <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
-                        @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, "Warranty Free Calls", new { @class = "pb-2" })
-                        @Html.TextBoxFor(model => model.CU_WARRANTYFREECALLS, new { @class = "form-control", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-md-12 col-sm-12">
-                        @Html.LabelFor(model => model.TC_COMMENTS, "User Comments", new { @class = "pb-2" })
-                        @Html.TextAreaFor(model => model.TC_COMMENTS, new { @class = "form-control custom-textarea  ", style = "background-color: #dceef5;", placeholder = "Please enter your comments here....", rows = "10", cols = "70", required = "required", tabindex = "8", })
-
-                    </div>
-
-                    <div class="col-md-12 col-sm-12 mt-2">
-                        @Html.Label("myfile", "Attachments:")
-                        <input type="file" id="myfile" name="myfile" tabindex="6"
-                               accept=".pdf, .xlsx, .jpeg, .png, .jpg, .csv,.mp4" onchange="validateFile()" />
-                        <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .csv,.mp4)</small>
-                    </div>
-
-                    <div class="col-md-12 mt-2">
-                        @Html.MathCaptcha()
+            <div class="col-md-12 mt-2">
+                @Html.MathCaptcha()
 
 
-                    </div>
+            </div>
 
-                    <div class="col-md-12 mt-2 mb-3 d-flex justify-content-lg-end justify-content-md-end justify-content-start">
-                        <input type="checkbox" id="termsCheckbox" name="termsAndConditions" class="me-2" />
-                        <label for="termsCheckbox" class="me-4 mt-2">I agree to paid service</label>
-                        <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="9">Submit</button>
-                        <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","HelpDesk")'" tabindex="10">
-                            Cancel
-                        </button>
-                    </div>
+            <div class="col-md-12 mt-2 mb-3 d-flex justify-content-lg-end justify-content-md-end justify-content-start">
+                <input type="checkbox" id="termsCheckbox" name="termsAndConditions" class="me-2" />
+                <label for="termsCheckbox" class="me-4 mt-2">I agree to paid service</label>
+                <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="9">Submit</button>
+                <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","HelpDesk")'" tabindex="10">
+                    Cancel
+                </button>
+            </div>
 
 
-                </div>
+        </div>
 
-            </form>
+    </form>
 
         }
         <br />

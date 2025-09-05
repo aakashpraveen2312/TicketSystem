@@ -598,6 +598,7 @@
     <Content Include="Views\Shared\_UserManagerResponse.cshtml" />
     <Content Include="Views\UserManager\TimelineChart.cshtml" />
     <Content Include="Views\UserManager\UserDashboardCount.cshtml" />
+    <Content Include="Views\ChangePassword\UserChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -16,14 +16,14 @@ namespace PSS_CMS.Models
         public int tM_RECID { get; set; }
 
         [DisplayName("Billable")]
-        public bool IsDisable
+        public bool tM_BILLABLE
         {
-            get => tM_BILLABLE == "Y";
-            set => tM_BILLABLE = value ? "Y" : "N";
+            get => tM_BILLABLED == "Y";
+            set => tM_BILLABLED = value ? "Y" : "N";
         }
         [JsonProperty("tM_BILLABLED")]
 
-        private string tM_BILLABLE { get; set; }
+        private string tM_BILLABLED { get; set; }
         public string tM_DISABLE { get; set; }
 
 

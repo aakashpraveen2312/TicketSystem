@@ -79,6 +79,26 @@ namespace PSS_CMS.Controllers
                         Session["CompanyID"] = data.U_CRECID;
 
                         int CompanyID = data.U_CRECID;
+                        if (role == "User" && data.U_PASSWORD == null)
+                        {
+                            return RedirectToAction("UserChangePassword", "ChangePassword");
+                        }
+                        if (role == "Admin" && data.U_PASSWORD == null)
+                        {
+                            return RedirectToAction("UserChangePassword", "ChangePassword");
+                        }
+                        if (role == "Manager" && data.U_PASSWORD == null)
+                        {
+                            return RedirectToAction("UserChangePassword", "ChangePassword");
+                        }
+                        if (role == "Accountant" && data.U_PASSWORD == null)
+                        {
+                            return RedirectToAction("UserChangePassword", "ChangePassword");
+                        }
+                        if (role == "HelpDesk" && data.U_PASSWORD == null)
+                        {
+                            return RedirectToAction("UserChangePassword", "ChangePassword");
+                        }
                         if (role == "User" && U_USERMANAGER == "Y")
                         {
                             return RedirectToAction("UserDashboardCount", "UserManager");
@@ -191,6 +211,26 @@ namespace PSS_CMS.Controllers
                         Session["CompanyID"] = data.U_CRECID;
 
                         int CompanyID = data.U_CRECID;
+                        if (role == "User" && data.U_PASSWORD == null)
+                        {
+                            return RedirectToAction("UserChangePassword", "ChangePassword");
+                        }
+                        if (role == "Admin" && data.U_PASSWORD == null)
+                        {
+                            return RedirectToAction("UserChangePassword", "ChangePassword");
+                        }
+                        if (role == "Manager" && data.U_PASSWORD == null)
+                        {
+                            return RedirectToAction("UserChangePassword", "ChangePassword");
+                        }
+                        if (role == "Accountant" && data.U_PASSWORD == null)
+                        {
+                            return RedirectToAction("UserChangePassword", "ChangePassword");
+                        }
+                        if (role == "HelpDesk" && data.U_PASSWORD == null)
+                        {
+                            return RedirectToAction("UserChangePassword", "ChangePassword");
+                        }
                         if (role == "User" && U_USERMANAGER == "Y")
                         {
                             return RedirectToAction("UserDashboardCount", "UserManager");

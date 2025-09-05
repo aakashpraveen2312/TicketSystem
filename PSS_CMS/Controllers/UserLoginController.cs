@@ -39,7 +39,6 @@ namespace PSS_CMS.Controllers
                 var content = new
                 {
                     u_USERNAME = objUser.U_USERNAME,
-                    u_PASSWORD = objUser.U_PASSWORD,
                     u_RCODE = Session["R_CODE"],
                     u_SORTORDER = objUser.U_SORTORDER,
                     u_EMAILID = objUser.U_EMAILID,
@@ -51,6 +50,7 @@ namespace PSS_CMS.Controllers
                     u_DISABLE = objUser.U_UserDisable ? "Y" : "N",
                     u_UserManager = objUser.U_UserManager ? "Y" : "N"
                 };
+
 
                 var request = new HttpRequestMessage
                 {
@@ -270,7 +270,7 @@ namespace PSS_CMS.Controllers
                     ""u_USERCODE"":""{UserEdit.U_USERCODE }"",
                     ""u_MOBILENO"":""{ UserEdit.U_MOBILENO}"",
                     ""u_LOCATION"":""{ UserEdit.U_LOCATION}"",
-                    ""u_UserManager"":""{ UserEdit.U_UserManager}"",
+                    ""u_UserManager"":""{ (UserEdit.U_UserManager ? "Y" : "N")}"",
                     ""u_DOMAIN"":""{Session["DOMAIN"]}""
                      }}";
                 //""BIN_SPRECID"": ""{ objbins.BIN_SPRECID}"",

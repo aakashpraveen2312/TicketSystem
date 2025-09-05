@@ -117,7 +117,7 @@ namespace PSS_CMS.Controllers
             ""tM_MCRECID"": ""{0}"",                    
             ""tM_MRECID"": ""{materialcategory.SelectedMaterial}"",                    
             ""tM_SORTORDER"": ""{materialcategory.tM_SORTORDER}"",                    
-            ""tM_BILLABLE"": ""{(materialcategory.IsDisable ? "Y" : "N")}"" ,               
+            ""tM_BILLABLE"": ""{(materialcategory.tM_BILLABLE ? "Y" : "N")}"" ,               
             ""tM_DISABLE"": ""{"N"}""                
         }}";
 
@@ -252,7 +252,7 @@ namespace PSS_CMS.Controllers
             ""tM_MCRECID"": ""{0}"",                    
             ""tM_MRECID"": ""{materialcategory.M_RECID}"",                    
             ""tM_SORTORDER"": ""{materialcategory.tM_SORTORDER}"",                    
-            ""tM_BILLABLE"": ""{(materialcategory.IsDisable ? "Y" : "N")}"" ,               
+            ""tM_BILLABLE"": ""{(materialcategory.tM_BILLABLE ? "Y" : "N")}"" ,               
             ""tM_DISABLE"": ""{"N"}""                
         }}";
                 // if any error came kindly replace before

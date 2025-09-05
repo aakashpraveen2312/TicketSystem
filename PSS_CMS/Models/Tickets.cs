@@ -8,6 +8,7 @@ namespace PSS_CMS.Models
 {
     public class Tickets : TicketComboTypes
     {
+        public string SelectedUser { get; set; }
         public int TC_RECID { get; set; }       
         public int TC_URECID { get; set; }       
         public int TC_CRECID { get; set; }       

@@ -75,7 +75,12 @@
            {
                columns.Add(c => c.MC_CODE).Titled("Code").SetWidth("170PX");
                columns.Add(c => c.MC_DESCRIPTION).Titled("Description");
-               columns.Add(c => c.MC_DATETIME).Titled("Date and Time").SetWidth("200px");
+               columns.Add(c => c.MC_DATETIME)
+                   .Titled("Date")
+                   .SetWidth("200px")
+                   .RenderValueAs(c => DateTime.TryParse(c.MC_DATETIME, out var date)
+                       ? date.ToString("dd/MM/yyyy")
+                       : c.MC_DATETIME);
                columns.Add(c => c.MC_SORTORDER).Titled("Sort").Css("text-right").SetWidth("50PX");
                columns.Add().Titled("Action").SetWidth("150PX")
               .Encoded(false)

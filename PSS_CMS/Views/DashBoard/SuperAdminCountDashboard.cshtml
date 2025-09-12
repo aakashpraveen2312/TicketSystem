@@ -94,172 +94,193 @@
 
 
             <!-- Count Cards -->
-            @{ // MANAGER COUNT
-                            var TotalManagerCount = new[]
-                                {
-        new { Title = (Model!=null && Model.Managerdescription !=null) ? (string)Model.Managerdescription : "", Count = (Model != null && Model.TotalManagerCount != null) ? (int)Model.TotalManagerCount : 0, Color = "primary" }
+
+
+            @{ 
+
+                var colors = new[]
+    {
+    "#fbe7c6", //yellow
+"#b4f8c8", //Mint 
+"#a0e7e5", //Tiffany Blue
+"#ffaebc", //Hot Pink
+"#bbe7fe", //Baby blue
+"#d3b5e5", //Lilac
+"#d1e2c4", //Sage Green
+"#eff1db", //Cream
+"#c6d8d5", //Celadon
+"#999da0", //Pewter
+"#d0b49f", //Tan
+"#f3f3e7" //Ivory
     };
 
 
-                            // ADMIN COUNT
-                            var TotalAdminCount = new[]
-                            {
-  new { Title = (Model!=null && Model.Admindescription !=null) ? (string)Model.Admindescription : "", Count = (Model != null && Model.TotalAdminCount != null) ? (int)Model.TotalAdminCount : 0, Color = "danger" }
+
+                // MANAGER COUNT
+                var TotalManagerCount = new[]
+                                    {
+        new { Title = "Manager", 
+          Count = (Model != null && Model.TotalManagerCount != null) ? (int)Model.TotalManagerCount : 0,
+            Color = colors[0] }
+    };
+
+
+                // ADMIN COUNT
+                var TotalAdminCount = new[]
+                {
+  new { Title ="Admin", Count = (Model != null && Model.TotalAdminCount != null) ? (int)Model.TotalAdminCount : 0, Color = colors[1] }
                 };
 
-                            // USER COUNT
-                            var TotalUserCount = new[]
-                            {
- new { Title = (Model!=null && Model.Userdescription !=null) ? (string)Model.Userdescription : "", Count = (Model != null && Model.TotalUserCount != null) ? (int)Model.TotalUserCount : 0, Color = "warning" }                };
+                // USER COUNT
+                var TotalUserCount = new[]
+                {
+ new { Title = User, Count = (Model != null && Model.TotalUserCount != null) ? (int)Model.TotalUserCount : 0, Color = colors[2] }                };
 
 
-                            // LOCATION COUNT
-                            var TotalCompanyLocationCount = new[]
-                            {
- new { Title = "Location", Count = (Model != null && Model.TotalCompanyLocationCount != null) ? (int)Model.TotalCompanyLocationCount : 0, Color = "info" }                };
+                // LOCATION COUNT
+                var TotalCompanyLocationCount = new[]
+                {
+ new { Title = "Location", Count = (Model != null && Model.TotalCompanyLocationCount != null) ? (int)Model.TotalCompanyLocationCount : 0, Color =colors[3] }                };
 
-                            // PRODUCT COUNT
-                            var TotalProductCount = new[]
-                            {
- new { Title = "Product", Count = (Model != null && Model.TotalProductCount != null) ? (int)Model.TotalProductCount : 0, Color = "success" }                };
+                // PRODUCT COUNT
+                var TotalProductCount = new[]
+                {
+ new { Title = "Product", Count = (Model != null && Model.TotalProductCount != null) ? (int)Model.TotalProductCount : 0, Color = colors[4] }                };
 
-                            // CUSTOMER COUNT
-                            var TotalCustomerCount = new[]
-                            {
- new { Title = "Customer", Count = (Model != null && Model.TotalCustomerCount != null) ? (int)Model.TotalCustomerCount : 0, Color = "secondary" }                };
+                // CUSTOMER COUNT
+                var TotalCustomerCount = new[]
+                {
+ new { Title = "Customer", Count = (Model != null && Model.TotalCustomerCount != null) ? (int)Model.TotalCustomerCount : 0, Color = colors[5] }                };
 
-                            //Changes
+                //Changes
 
-                            // Helpdesk Count
-                            var TotalHelpdeskCount = new[]
-                            {
- new { Title = "HelpDesk", Count = (Model != null && Model.TotalHelpdeskCount != null) ? (int)Model.TotalHelpdeskCount : 0, Color = "success" }                };
-
-
-                            // Accountant Count
-                            var TotalAccountantCount = new[]
-                            {
- new { Title = "Accountant", Count = (Model != null && Model.TotalAccountantCount != null) ? (int)Model.TotalAccountantCount : 0, Color = "info" }                };
+                // Helpdesk Count
+                var TotalHelpdeskCount = new[]
+                {
+ new { Title = "HelpDesk", Count = (Model != null && Model.TotalHelpdeskCount != null) ? (int)Model.TotalHelpdeskCount : 0, Color = colors[6] }                };
 
 
-                            // Total Ticket Count
-                            var TotalTicketCount = new[]
-                            {
- new { Title = "Total Ticket", Count = (Model != null && Model.TotalTicketCount != null) ? (int)Model.TotalTicketCount : 0, Color = "secondary" }                };
+                // Accountant Count
+                var TotalAccountantCount = new[]
+                {
+ new { Title = "Accountant", Count = (Model != null && Model.TotalAccountantCount != null) ? (int)Model.TotalAccountantCount : 0, Color = colors[7] }                };
 
 
-                            // Total Closed Ticket Count
-                            var TotalClosedTicketCount = new[]
-                            {
- new { Title = "Total Closed Ticekt", Count = (Model != null && Model.TotalClosedTicketCount != null) ? (int)Model.TotalClosedTicketCount : 0, Color = "danger" }                }; }
+                // Total Ticket Count
+                var TotalTicketCount = new[]
+                {
+ new { Title = "Total Ticket", Count = (Model != null && Model.TotalTicketCount != null) ? (int)Model.TotalTicketCount : 0, Color = colors[8] }                };
+
+
+                // Total Closed Ticket Count
+                var TotalClosedTicketCount = new[]
+                {
+ new { Title = "Total Closed Ticket", Count = (Model != null && Model.TotalClosedTicketCount != null) ? (int)Model.TotalClosedTicketCount : 0, Color = colors[9] }                }; }
 
 
             <div class="row mt-3">
 
                 @foreach (var stat in TotalCompanyLocationCount)
                 {
-    <div class="col-md-6">
-        <div class="card text-white bg-@stat.Color mb-3">
-            <div class="card-body">
-                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("Info","CompanyInfo",new { })'">@stat.Title - (@stat.Count)</h5>
+                    <div class="col-md-6">
+                        <div class="card text-white mb-3" style="background-color:@stat.Color;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("Info", "CompanyInfo", new { })'">
+                                    @stat.Title - (@stat.Count)
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @foreach (var stat in TotalAdminCount)
+                {
+                    <div class="col-md-6">
+                        <div class="card text-white mb-3" style="background-color:@stat.Color;">
+                            <div class="card-body">
+                                <h5 class="card-title">@stat.Title - (@stat.Count)</h5>
+                            </div>
+                        </div>
+                    </div>
+                }
 
-            </div>
-        </div>
-    </div>}
+                @foreach (var stat in TotalUserCount)
+                {
+                    <div class="col-md-6">
+                        <div class="card text-white mb-3" style="background-color:@stat.Color;">
+                            <div class="card-body">
+                                <h5 class="card-title">@stat.Title - (@stat.Count)</h5>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+           
 
                 @foreach (var stat in TotalProductCount)
                 {
-    <div class="col-md-6">
-        <div class="card text-white bg-@stat.Color mb-3">
-            <div class="card-body">
-                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("List","ProductMaster",new { })'">@stat.Title - (@stat.Count)</h5>
-            </div>
-        </div>
-    </div>}
-
-                @foreach (var stat in TotalManagerCount)
-                {
-    <div class="col-md-6">
-        <div class="card text-white bg-@stat.Color mb-3">
-            <div class="card-body">
-                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("List","UserLogin",new { Role="Manager",R_CODE="Manager"})'">@stat.Title - (@stat.Count)</h5>
-            </div>
-        </div>
-    </div>}
-
-                @foreach (var stat in TotalAdminCount)
-                {
-    <div class="col-md-6">
-        <div class="card text-white bg-@stat.Color mb-3">
-            <div class="card-body">
-
-                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("List","UserLogin",new { Role="Admin",R_CODE="Admin"})'">@stat.Title - (@stat.Count)</h5>
-            </div>
-        </div>
-    </div>}
-                @foreach (var stat in TotalUserCount)
-                {
-    <div class="col-md-6">
-        <div class="card text-white bg-@stat.Color mb-3">
-            <div class="card-body">
-                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("List","UserLogin",new { Role="User",R_CODE="User"})'">@stat.Title - (@stat.Count)</h5>
-            </div>
-        </div>
-    </div>}
-
-
+                    <div class="col-md-6">
+                        <div class="card text-white mb-3" style="background-color:@stat.Color;">
+                            <div class="card-body">
+                                <h5 class="card-title">@stat.Title - (@stat.Count)</h5>
+                            </div>
+                        </div>
+                    </div>
+                }
 
                 @foreach (var stat in TotalCustomerCount)
                 {
-    <div class="col-md-6">
-        <div class="card text-white bg-@stat.Color mb-3">
-            <div class="card-body">
-                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("List","ProjectMaster",new {})'">@stat.Title - (@stat.Count)</h5>
-            </div>
-        </div>
-    </div>}
-
+                    <div class="col-md-6">
+                        <div class="card text-white mb-3" style="background-color:@stat.Color;">
+                            <div class="card-body">
+                                <h5 class="card-title">@stat.Title - (@stat.Count)</h5>
+                            </div>
+                        </div>
+                    </div>
+                }
 
                 @foreach (var stat in TotalHelpdeskCount)
                 {
-    <div class="col-md-6">
-        <div class="card text-white bg-@stat.Color mb-3">
-            <div class="card-body">
-                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("List","UserLogin",new { Role="User",R_CODE="User"})'">@stat.Title - (@stat.Count)</h5>
-            </div>
-        </div>
-    </div>            }
+                    <div class="col-md-6">
+                        <div class="card text-white mb-3" style="background-color:@stat.Color;">
+                            <div class="card-body">
+                                <h5 class="card-title">@stat.Title - (@stat.Count)</h5>
+                            </div>
+                        </div>
+                    </div>
+                }
 
                 @foreach (var stat in TotalAccountantCount)
                 {
-    <div class="col-md-6">
-        <div class="card text-white bg-@stat.Color mb-3">
-            <div class="card-body">
-                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("List","UserLogin",new { Role="User",R_CODE="User"})'">@stat.Title - (@stat.Count)</h5>
-            </div>
-        </div>
-    </div>            }
+                    <div class="col-md-6">
+                        <div class="card text-white mb-3" style="background-color:@stat.Color;">
+                            <div class="card-body">
+                                <h5 class="card-title">@stat.Title - (@stat.Count)</h5>
+                            </div>
+                        </div>
+                    </div>
+                }
 
                 @foreach (var stat in TotalTicketCount)
                 {
-    <div class="col-md-6">
-        <div class="card text-white bg-@stat.Color mb-3">
-            <div class="card-body">
-                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("List","UserLogin",new { Role="User",R_CODE="User"})'">@stat.Title - (@stat.Count)</h5>
-            </div>
-        </div>
-    </div>            }
+                    <div class="col-md-6">
+                        <div class="card text-white mb-3" style="background-color:@stat.Color;">
+                            <div class="card-body">
+                                <h5 class="card-title">@stat.Title - (@stat.Count)</h5>
+                            </div>
+                        </div>
+                    </div>
+                }
 
                 @foreach (var stat in TotalClosedTicketCount)
                 {
-    <div class="col-md-6">
-        <div class="card text-white bg-@stat.Color mb-3">
-            <div class="card-body">
-                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("List","UserLogin",new { Role="User",R_CODE="User"})'">@stat.Title - (@stat.Count)</h5>
-            </div>
-        </div>
-    </div>            }
-
+                    <div class="col-md-6">
+                        <div class="card text-white mb-3" style="background-color:@stat.Color;">
+                            <div class="card-body">
+                                <h5 class="card-title">@stat.Title - (@stat.Count)</h5>
+                            </div>
+                        </div>
+                    </div>
+                }
 
 
 

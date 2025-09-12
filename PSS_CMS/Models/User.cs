@@ -28,6 +28,8 @@ namespace PSS_CMS.Models
       
         [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com)$", ErrorMessage = "Email must be a valid .com address")]
         [DisplayName("Email ID")]
+        [Required(ErrorMessage = "Email ID is required.")]
+
         public string U_EMAILID { get; set; }
 
         public int? U_CRECID { get; set; }
@@ -35,11 +37,15 @@ namespace PSS_CMS.Models
       
         [StringLength(10, ErrorMessage = "Code can't be longer than 10 characters")]
         [DisplayName("Code")]
+        [Required(ErrorMessage = "User Code is required.")]
+        
         public string U_USERCODE { get; set; }
 
        
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Mobile number must be exactly 10 digits")]
         [DisplayName("Mobile Number")]
+        [Required(ErrorMessage = "Mobile Number is required.")]
+
         public string U_MOBILENO { get; set; }
         public string U_DOMAIN { get; set; }
 

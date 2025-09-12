@@ -29,85 +29,91 @@ namespace PSS_CMS.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(User objUser)
         {
-            
-                try
+            if (ModelState.IsValid)
             {
-                var Regurl = ConfigurationManager.AppSettings["POSTUSERS"];
-                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-                string APIKey = Session["APIKEY"].ToString();
-
-                var content = new
+                try
                 {
-                    u_USERNAME = objUser.U_USERNAME,
-                    u_RCODE = Session["R_CODE"],
-                    u_SORTORDER = objUser.U_SORTORDER,
-                    u_EMAILID = objUser.U_EMAILID,
-                    u_CRECID = Session["CompanyID"],
-                    u_USERCODE = objUser.U_USERCODE,
-                    u_MOBILENO = objUser.U_MOBILENO,
-                    u_DOMAIN = Session["DOMAIN"],
-                    u_LOCATION = objUser.SelectedRole,
-                    u_DISABLE = objUser.U_UserDisable ? "Y" : "N",
-                    u_UserManager = objUser.U_UserManager ? "Y" : "N"
-                };
+                    var Regurl = ConfigurationManager.AppSettings["POSTUSERS"];
+                    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                    string APIKey = Session["APIKEY"].ToString();
 
-
-                var request = new HttpRequestMessage
-                {
-                    RequestUri = new Uri(Regurl),
-                    Method = HttpMethod.Post,
-                    Content = new StringContent(JsonConvert.SerializeObject(content), System.Text.Encoding.UTF8, "application/json")
-                };
-
-                request.Headers.Add("X-Version", "1");
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
-
-                using (var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true })
-                using (var client = new HttpClient(handler) { })
-                {
-                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-
-                    var response = await client.SendAsync(request);
-
-                    if (response.IsSuccessStatusCode)
+                    var content = new
                     {
+                        u_USERNAME = objUser.U_USERNAME,
+                        u_RCODE = Session["R_CODE"],
+                        u_SORTORDER = objUser.U_SORTORDER,
+                        u_EMAILID = objUser.U_EMAILID,
+                        u_CRECID = Session["CompanyID"],
+                        u_USERCODE = objUser.U_USERCODE,
+                        u_MOBILENO = objUser.U_MOBILENO,
+                        u_DOMAIN = Session["DOMAIN"],
+                        u_LOCATION = objUser.SelectedRole,
+                        u_DISABLE = objUser.U_UserDisable ? "Y" : "N",
+                        u_UserManager = objUser.U_UserManager ? "Y" : "N"
+                    };
 
-                        var responseBody = await response.Content.ReadAsStringAsync();
 
+                    var request = new HttpRequestMessage
+                    {
+                        RequestUri = new Uri(Regurl),
+                        Method = HttpMethod.Post,
+                        Content = new StringContent(JsonConvert.SerializeObject(content), System.Text.Encoding.UTF8, "application/json")
+                    };
 
-                        var apiResponse = JsonConvert.DeserializeObject<ApiResponseUserObject>(responseBody);
-                        string message = apiResponse.Message;
+                    request.Headers.Add("X-Version", "1");
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
 
-                        if (apiResponse.Status == "Y")
+                    using (var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true })
+                    using (var client = new HttpClient(handler) { })
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                        var response = await client.SendAsync(request);
+
+                        if (response.IsSuccessStatusCode)
                         {
-                            return Json(new { success = true, message = apiResponse.Message });
-                        }
-                        else if (apiResponse.Status == "U" || apiResponse.Status == "N")
-                        {
-                            return Json(new { success = false, message = apiResponse.Message });
+
+                            var responseBody = await response.Content.ReadAsStringAsync();
+
+
+                            var apiResponse = JsonConvert.DeserializeObject<ApiResponseUserObject>(responseBody);
+                            string message = apiResponse.Message;
+
+                            if (apiResponse.Status == "Y")
+                            {
+                                return Json(new { success = true, message = apiResponse.Message });
+                            }
+                            else if (apiResponse.Status == "U" || apiResponse.Status == "N")
+                            {
+                                return Json(new { success = false, message = apiResponse.Message });
+                            }
+                            else
+                            {
+                                return Json(new { success = false, message = "An unexpected status was returned." });
+                            }
                         }
                         else
                         {
-                            return Json(new { success = false, message = "An unexpected status was returned." });
+                            return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
                         }
-                    }
-                    else
-                    {
-                        return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
-                    }
 
+                    }
                 }
-            }
 
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                }
+                return View(objUser);
             }
-        
-            return View(objUser);
-        
+            
+            return Json(new
+            {
+                success = false,
+                message = "User Code, Name,Email ID, and Mobile Number are mandatory."
+            });
         }
 
 

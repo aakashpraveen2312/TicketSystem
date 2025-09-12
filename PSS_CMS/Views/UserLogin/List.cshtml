@@ -26,6 +26,7 @@
     <link href="~/Content/Responsive.css" rel="stylesheet" />
     <link href="~/Content/Colors.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
+ 
 </head>
 
 <body>
@@ -75,7 +76,7 @@
                columns.Add(c => c.U_USERCODE).Titled("Code").SetWidth("100px");
                columns.Add(c => c.U_USERNAME).Titled("Name").SetWidth("150px");
                columns.Add(c => c.U_EMAILID).Titled("Email ID");
-               columns.Add(c => c.U_MOBILENO).Titled("Mobile Number").Css("text-right");
+               columns.Add(c => c.U_MOBILENO).Titled("Mobile Number");
                columns.Add(c => c.U_RCODE).Titled("Role").SetWidth("70px");
                columns.Add(c => c.U_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
 
@@ -134,42 +135,38 @@
                 <div class="footer">
                     <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
-                        <div class="flex-item">
+                        <div class="flex-item mt-1">
                             <div class="d-flex justify-content-center footerb">
-                                <img class="mt-1" src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
-                                -Create
-                            </div>
+                                <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
+                            </div>&nbsp;-Create
                         </div>
 
-                        <div class="flex-item">
+                        <div class="flex-item mt-1">
                             <div class="d-flex justify-content-center footerb">
-                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
-                                -Edit
+                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
                             </div>
+                            &nbsp;- Edit
                         </div>
 
-
-                        <div class="flex-item">
+                        <div class="flex-item  mt-1">
                             <div class="d-flex justify-content-center footerb">
-                                <i class='bx bxs-trash bx-sm red mt-1'></i>
-                                -Delete
+                                <i class='bx bxs-trash bx-sm red'> </i>
                             </div>
+                            &nbsp;- Delete
                         </div>
 
-
-
-                        <div class="flex-item">
+                        <div class="flex-item  mt-1">
                             <div class="d-flex justify-content-center footerb">
-                                <i style="color:#337ab7" class='bx bxl-product-hunt bx-sm mt-1'></i>
-                                -Product Mapping
+                                <i style="color:#337ab7" class='bx bxl-product-hunt bx-sm'> </i>
                             </div>
+                            &nbsp;- Product Mapping
                         </div>
 
-                        <div class="flex-item">
+                        <div class="flex-item  mt-1">
                             <div class="d-flex justify-content-center footerb">
-                                <i style="color:#337ab7" class='bx bx-info-circle bx-sm mt-1'></i>
-                                -UserAdmin Mapping
+                                <i style="color:#337ab7" class='bx bx-info-circle bx-sm '> </i>
                             </div>
+                            &nbsp;- UserAdmin Mapping
                         </div>
 
                     </div>

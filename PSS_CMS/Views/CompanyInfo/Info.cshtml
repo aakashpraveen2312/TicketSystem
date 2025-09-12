@@ -142,7 +142,7 @@
                         @Html.LabelFor(model => model.C_PHONE, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.C_PHONE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.C_PHONE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
                     </div>
                 </div>
@@ -221,9 +221,9 @@
                 {
                     @Html.Grid(locations).Columns(columns =>
                {
-                   columns.Add(c => c.L_CODE).Titled("Code").SetWidth("100px");
-                   columns.Add(c => c.L_NAME).Titled("Location").SetWidth("350px");
-                   columns.Add(c => c.L_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
+                   columns.Add(c => c.L_CODE).Titled("Code");
+                   columns.Add(c => c.L_NAME).Titled("Location");
+                   columns.Add(c => c.L_SORTORDER).Titled("Sort");
                }).WithPaging(10).Sortable(false)
                 }
                 else

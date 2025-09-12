@@ -143,7 +143,11 @@ namespace PSS_CMS.Controllers
                     }
                     else if (apiResponse.Status == "U" || apiResponse.Status == "N")
                     {
-                        return Json(new { success = false, message = apiResponse.Message });
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Code, Product Name, and Grace Period are mandatory."
+                        });
                     }
                     else
                     {
@@ -161,6 +165,7 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
+
 
             return View(productmaster);
         }

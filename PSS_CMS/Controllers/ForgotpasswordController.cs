@@ -26,7 +26,7 @@ namespace PSS_CMS.Controllers
             {
                 var ForgototpURL = ConfigurationManager.AppSettings["FORGOTOTP"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-                string APIKey = "TPcyUBB1wQIRcPzMBqsZdYDivxPiUjCBWdOFSLt6Dhj";
+                string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
                   
@@ -74,7 +74,7 @@ namespace PSS_CMS.Controllers
                 }
                 else
                 {
-                    return Json(new { success = false, message = "Error: Something went wrong." });
+                    return Json(new { success = false, message = "Please Enter the Email." });
                 }
             }
             catch (Exception ex)
@@ -150,5 +150,7 @@ namespace PSS_CMS.Controllers
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
         }
+   
+    
     }
 }

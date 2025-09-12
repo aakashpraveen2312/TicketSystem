@@ -21,7 +21,7 @@ namespace PSS_CMS.Models
         public string TC_TICKETTYPE { get; set; }
         public string TC_USERNAME { get; set; }
         public string TC_ADMINNAME { get; set; }
-        public string AdminNameDisplay => string.IsNullOrEmpty(TC_ADMINNAME) ? "Fresh Ticket" : TC_ADMINNAME;
+        public string AdminNameDisplay => string.IsNullOrEmpty(TC_ADMINNAME) ? "Unassigned" : TC_ADMINNAME;
 
         public string TC_TICKETDATES
         {

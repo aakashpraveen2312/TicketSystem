@@ -71,7 +71,7 @@
 
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="@Url.Action("HDDashboard", "HelpDesk")">DashBoard</a></li>
+                <li><a class="dropdown-item" href="@Url.Action("HDDashboard", "HelpDesk")">Dashboard</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -161,10 +161,10 @@
             <div class="col-md-6 col-sm-12 mt-2">
 
                 <!-- Third Dropdown for Priority Types -->
-                @Html.LabelFor(model => model.TC_PRIORITYTYPE, "Priority type", new { @class = "pb-2 " })
+                @Html.LabelFor(model => model.TC_PRIORITYTYPE, "Priority Type", new { @class = "pb-2 " })
                 @Html.DropDownListFor(model => model.TC_PRIORITYTYPE,
              new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
-             "Select priority type",
+             "Select Priority Type",
              new { @class = "form-select prioritystyle", required = "required", tabindex = "4" })
             </div>
             <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
@@ -175,17 +175,17 @@
 
         <div class="row mt-3">
             <div class="col-md-6 col-sm-12">
-                @Html.LabelFor(model => model.SelectedTicketType, "Ticket type", new { @class = "pb-2" })
+                @Html.LabelFor(model => model.SelectedTicketType, "Ticket Type", new { @class = "pb-2" })
                 @Html.DropDownListFor(model => model.SelectedTicketType, Model.TicketCombo.TicketTypes, "Select Ticket Type", new { @class = "form-select", required = "required", tabindex = "6" })
 
             </div>
             <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
                 @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, "Warranty Free Calls", new { @class = "pb-2" })
-                @Html.TextBoxFor(model => model.CU_WARRANTYFREECALLS, new { @class = "form-control", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
+                @Html.TextBoxFor(model => model.CU_WARRANTYFREECALLS, new { @class = "form-control text-right", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
             </div>
         </div>
 
-        <div class="row mt-3">
+        @*<div class="row mt-3">
             <div class="col-md-6 col-sm-12">
                 @Html.LabelFor(model => model.SelectedUser, "Users", new { @class = "pb-2 " })
                 @if (ViewBag.User != null)
@@ -226,7 +226,7 @@
                     <p>No User's are available</p>}
             </div>
 
-        </div>
+        </div>*@
 
         <div class="row mt-2">
             <div class="col-md-12 col-sm-12">

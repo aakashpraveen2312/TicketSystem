@@ -219,8 +219,8 @@
                columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time");
                columns.Add(c => c.P_NAME).Titled("Product");
                columns.Add(c => c.TC_COMMENTS).Titled("Comments");
-               columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority");
-               columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type");
+               columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority Type");
+               columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket Type");
                columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status");
                columns.Add().Titled("Action")
               .Encoded(false)
@@ -269,7 +269,7 @@
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No Ticket's are available</b>
+                    <b>No tickets are available</b>
                 </div>}
               <footer>
             <div class="footer">

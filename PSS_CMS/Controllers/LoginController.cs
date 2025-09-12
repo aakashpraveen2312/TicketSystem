@@ -48,7 +48,7 @@ namespace PSS_CMS.Controllers
                 handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
                 HttpClient client = new HttpClient(handler);
 
-                client.DefaultRequestHeaders.Add("Authorization", "Custom " + AuthKey);
+                client.DefaultRequestHeaders.Add("Authorization", "Custom" + AuthKey);
                 // client.DefaultRequestHeaders.Add("Authorization", AuthKey);
 
                   var responseTask = client.SendAsync(request).GetAwaiter().GetResult();
@@ -183,7 +183,7 @@ namespace PSS_CMS.Controllers
                 handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
                 HttpClient client = new HttpClient(handler);
 
-                client.DefaultRequestHeaders.Add("Authorization", "Custom " + AuthKey);
+                client.DefaultRequestHeaders.Add("Authorization", "Custom" + AuthKey);
                 // client.DefaultRequestHeaders.Add("Authorization", AuthKey);
 
                 var responseTask = client.SendAsync(request).GetAwaiter().GetResult();

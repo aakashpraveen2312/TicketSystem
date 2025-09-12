@@ -15,9 +15,9 @@ using PSS_CMS.Models;
 namespace PSS_CMS.Controllers
 {
     [ApiKeyAuthorize]
-    public class ProjectMasterController : Controller
+    public class AccountantCustomerInvoiceController : Controller
     {
-        // GET: ProjectMaster
+        // GET: AccountantCustomerInvoice
         public async Task<ActionResult> List(string searchPharse)
         {
             Projectmaster objprojectmaster = new Projectmaster();
@@ -371,7 +371,7 @@ namespace PSS_CMS.Controllers
                             if (apiResponse.Status == "Y")
                             {
 
-                                string redirectUrl = Url.Action("List", "ProjectMaster", new { });
+                                string redirectUrl = Url.Action("List", "AccountantCustomerInvoice", new { });
                                 return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
                             }
                             else if (apiResponse.Status == "U")
@@ -438,7 +438,7 @@ namespace PSS_CMS.Controllers
                                 Product = rootObjects.Data.Select(t => new SelectListItem
                                 {
                                     Value = t.P_RECID.ToString(), // or the appropriate value field
-                                    Text = t.P_NAME,                                 
+                                    Text = t.P_NAME,
                                 }).ToList();
                             }
                         }
@@ -623,7 +623,6 @@ namespace PSS_CMS.Controllers
 
             ViewBag.User = userList; // ✅ Now it's a List, not a SelectList
         }
-
 
     }
 }

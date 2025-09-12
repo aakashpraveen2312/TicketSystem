@@ -81,7 +81,7 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li><a class="dropdown-item" href="@Url.Action("FAQ", "Tickets")">FAQ</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="@Url.Action("UserDashboardCount", "UserDashboard")">DashBoard</a></li>
+                <li><a class="dropdown-item" href="@Url.Action("UserDashboardCount", "UserDashboard")">Dashboard</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -194,7 +194,7 @@
                columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time").SetWidth("150px");
                columns.Add(c => c.P_NAME).Titled("Product").SetWidth("150px;");
                columns.Add(c => c.TC_SUBJECT).Titled("Subject");
-               columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("120px");
+               columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket Type").SetWidth("120px");
                columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status").SetWidth("120px");
                columns.Add().Titled("Action")
                    .Encoded(false)
@@ -238,7 +238,7 @@
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No Ticket's are available</b>
+                    <b>No tickets are available</b>
                 </div>}
 
 

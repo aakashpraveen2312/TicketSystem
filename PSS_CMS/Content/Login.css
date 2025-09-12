@@ -32,9 +32,11 @@ h2 {
 }
 
 .btn-login {
-    background-color: #004e92;
+    /* background-color: #004e92;*/
+    background-color: #6ed3d0;
     color: whitesmoke;
-    border: #004e92;
+    /*border: #004e92;*/
+    border: #6ed3d0;
     width: 50%;
     padding: 5px;
     border-radius: 5px;

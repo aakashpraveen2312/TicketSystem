@@ -771,7 +771,8 @@ namespace PSS_CMS.Controllers
                                     Value = data.CU_RECID.ToString(),
                                     Text = data.CU_NAME,
                                     WarrantyUpto = data.CU_WARRANTYUPTO,
-                                    WarrantyFreeCalls = data.CU_WARRANTYFREECALLS
+                                    ProductUpto = data.LatestPaymentDueDate,
+                                    WarrantyFreeCalls = data.CU_WARRANTYFREECALLS,                                  
                                 }).ToList<object>();
                             }
                         }

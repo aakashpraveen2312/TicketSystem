@@ -279,7 +279,7 @@ namespace PSS_CMS.Controllers
             ""tC_STATUS"": ""{"S"}"",
             ""tC_PRIORITYTYPE"": ""{tickets.TC_PRIORITYTYPE}"",
             ""tC_TICKETTYPE"": ""{tickets.SelectedTicketType}"",
-            ""tC_USERNAME"": ""{tickets.SelectedUser}"",
+            ""tC_USERNAME"": ""{Session["UserName"]}"",
             ""tC_REFERENCETRECID"": ""{0}""
         }}";
 

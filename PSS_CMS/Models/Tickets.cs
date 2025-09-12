@@ -25,7 +25,8 @@ namespace PSS_CMS.Models
         public string TC_USERID { get; set; }
         public string TC_WARRANTYUPTO { get; set; }
         public string CU_WARRANTYUPTO { get; set; }
-       
+        public string LatestPaymentDueDate { get; set; }
+
         public string TC_COMPANYID { get; set; }
         public string TC_PROJECTID { get; set; }
         public string TC_Date { get; set; }
@@ -101,6 +102,7 @@ namespace PSS_CMS.Models
         public int CU_RECID { get; set; }
         public string TT_CODE { get; set; }
         public string TT_DISABLE { get; set; }
+       
 
     }
 

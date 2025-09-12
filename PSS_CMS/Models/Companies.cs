@@ -23,7 +23,7 @@ namespace PSS_CMS.Models
         public string SerialNumber { get; set; }
 
 
-        [DisplayName("App UserName")]
+        [DisplayName("App Username")]
         [Required(ErrorMessage = "Please tell us how we should address you.")]
         public string C_APPUSERNAME { get; set; }
 

@@ -12,15 +12,15 @@ namespace PSS_CMS.Models
         public string U_USERNAME { get; set; }
 
         [DisplayName("Password")]
-        [Required]
+        [Required(ErrorMessage = "Please enter the Password")]
         public string U_PASSWORD { get; set; }
 
         [DisplayName("Domain")]
-        [Required]
+        [Required(ErrorMessage = "Please enter the Domain")]
         public string U_DOMAIN { get; set; }
 
         [DisplayName("User ID")]
-        [Required]
+        [Required(ErrorMessage = "Please enter the User ID")]
         public string U_EMAILID { get; set; }
         public string U_RCODE { get; set; }
         public string U_DISABLE { get; set; }

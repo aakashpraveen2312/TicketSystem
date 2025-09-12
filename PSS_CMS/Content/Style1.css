@@ -236,7 +236,7 @@ input.submitbuttons, button#savebutton {
     border: #f0a72d;
     border-radius: 5px;
 }
-input#IsDisabled, input#U_UserDisable, input#P_ProductDisable, input#IsDisable {
+input#IsDisabled, input#U_UserDisable, input#P_ProductDisable, input#IsDisable, input#U_UserManager {
     width: 23px;
     height: 21px;
 }

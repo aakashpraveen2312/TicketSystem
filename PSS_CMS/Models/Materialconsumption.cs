@@ -14,16 +14,18 @@ namespace PSS_CMS.Models
         public int tM_MCRECID { get; set; }
         public int tM_MRECID { get; set; }
         public int tM_RECID { get; set; }
-
+        [JsonIgnore]
         [DisplayName("Billable")]
         public bool tM_BILLABLE
         {
             get => tM_BILLABLED == "Y";
             set => tM_BILLABLED = value ? "Y" : "N";
         }
-        [JsonProperty("tM_BILLABLED")]
 
+        [JsonProperty("TM_BILLABLE")]
         private string tM_BILLABLED { get; set; }
+
+
         public string tM_DISABLE { get; set; }
 
 

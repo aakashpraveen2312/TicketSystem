@@ -1,11 +1,17 @@
 ﻿@model PSS_CMS.Models.Projectmaster
-@using GridMvc.Html
+@{
+    Layout = null;
+}
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
+    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
+    <title>BEYONDEXS - TICKET SYSTEM</title>
     <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
     <link href="~/Content/ClientSide.css" rel="stylesheet" />
     <link href="~/Content/Style1.css" rel="stylesheet" />
@@ -17,10 +23,11 @@
     @*Bootstrap Icons and Boxicons*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <script src="~/Scripts/Script.js"></script>
+
+    <script src="~/Scripts/Sidebarscript.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
     <link href="~/Content/Colors.css" rel="stylesheet" />
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
     <style>
         select#SelectedRole, select.form-select.textboxcolors {
             font-size: 13px;
@@ -106,11 +113,76 @@
                 display: block;
             }
     </style>
-
 </head>
-
 <body>
+    @*Sidebar*@
+    <nav class="sidebar close">
+        <header>
+            <div class="text logo-text" style="display:inline-block">
 
+                <a href="@Url.Action("ContractDashboard", "Contract")">
+
+
+                    @if (Session["Logo"] != null)
+                    {
+                        <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
+                    }
+
+                </a>
+
+
+            </div>
+
+            <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
+
+        </header>
+        <div class="menu-bar">
+            <div class="menu">
+                <ul class="menu-links" style="margin-left:20px">
+                    <!-- ACCOUNTS ADMIN -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/software-engineer.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 10px;" />
+                        <img src="~/assets/img/software-engineer.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 10px;" />
+                        <span class="text nav-text" style="margin-left:15px">ACCOUNTS ADMIN</span>
+                    </li>
+                    <!-- Customer Accounts -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("CustomerList", "Contract")">
+                            <i class='bx bxs-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">User Accounts</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                            <i class='bi bi-bag-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
+                        </a>
+                    </li>
+                    <!-- Settings Section -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
+                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 5px;" />
+                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
+                    </li>
+
+                    @*Change Password*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ChangePassword", "ChangePassword")">
+                            <i class='bx bxs-key' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                        </a>
+                    </li>
+                    <!-- Logout -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
+                            <i class='bx bx-log-out' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
@@ -122,25 +194,24 @@
             </div>
 
         </nav>
+
+
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
                     <li>CUSTOMER</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProjectMaster")">LIST</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProjectMaster")">@Session["Name"].ToString().ToUpper()</a></li>
-                    <li>EDIT</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "AccountantCustomerInvoice")">LIST</a></li>
+                    <li>CREATE</li>
                 </ul>
             </div>
         </div>
-
-
         <div class="tabs">
             <div class="tab-buttons">
                 <button class="active" onclick="showTab(0)">Main</button>
                 <button onclick="showTab(1)">Satutary</button>
                 <button onclick="showTab(2)">Contacts</button>
             </div>
-            @using (Html.BeginForm("Edit", "ProductMaster", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Create", "AccountantCustomerInvoice", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
             {
 
                 <div class="tab-content active">
@@ -177,20 +248,12 @@
                                 {
                                     var modifiedProductList = new List<SelectListItem>(ProductList);
 
-                                    if (ProductList.Count() > 1)
-                                    {
-                                        // Add "--Select Project--" option only if more than one project is available
-                                        modifiedProductList.Insert(0, new SelectListItem { Text = "--Select Product--", Value = "" });
+                                    // Add "--Select Project--" option only if more than one project is available
+                                    modifiedProductList.Insert(0, new SelectListItem { Text = "-- Select Product --", Value = "" });
 
-                                        @Html.DropDownList("SelectedProduct",
-                                                                         modifiedProductList,
-                                                                         new { @class = "form-select textboxcolors", id = "", required = "required" }) }
-                                    else if (ProductList.Count() == 1)
-                                    {
-                                        // If only one project is available, preselect it
-                                        @Html.DropDownList("SelectedProduct",
-                                                                         modifiedProductList,
-                                                                         new { @class = "form-select textboxcolors", id = "", required = "required" }) }
+                                    @Html.DropDownList("SelectedProduct",
+                                                                 modifiedProductList,
+                                                                 new { @class = "form-select textboxcolors", id = "" })
                                 }
                                 else
                                 {
@@ -199,8 +262,8 @@
                                     modifiedProductList.Insert(0, new SelectListItem { Text = "No Product's are available", Value = "" });
 
                                     @Html.DropDownList("SelectedProduct",
-                                                                     modifiedProductList,
-                                                                     new { @class = "form-select textboxcolors", id = "" }) }
+                                                                 modifiedProductList,
+                                                                 new { @class = "form-select textboxcolors", id = "" }) }
                             }
                             else
                             {
@@ -212,40 +275,39 @@
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
                             @Html.LabelFor(model => model.CU_NAME, new { @class = "labels" })
+                            @Html.HiddenFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_NAME" } })
+
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
-                            <select id="UserDropdown" name="CU_NAME" class="form-select textboxcolors">
+                            <select id="UserDropdown" class="form-select textboxcolors">
                                 <option value="">-- Select User --</option>
-                                @foreach (var user in (List<PSS_CMS.Models.UserDropdownItem>)ViewBag.User)
+                                @foreach (var user in ViewBag.User as List<PSS_CMS.Models.UserDropdownItem>)
                                 {
                                     <option value="@user.Value"
-                                            data-email="@user.Email"
                                             data-username="@user.Text"
-                                            data-mobile="@user.Mobile"
-                                            @(Model.CU_NAME == user.Text ? "selected" : "")>
+                                            data-email="@user.Email"
+                                            data-mobile="@user.Mobile">
                                         @user.Text
                                     </option>
                                 }
                             </select>
-
-
                         </div>
                     </div>
-
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
                             @Html.LabelFor(model => model.CU_EMAIL, new { @class = "labels" })
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.EditorFor(model => model.CU_EMAIL, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            @Html.EditorFor(model => model.CU_EMAIL, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_EMAIL" } })
                         </div>
                     </div>
+
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
                             @Html.LabelFor(model => model.CU_MOBILENO, new { @class = "labels" })
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.EditorFor(model => model.CU_MOBILENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            @Html.EditorFor(model => model.CU_MOBILENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_MOBILENO" } })
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -280,7 +342,7 @@
                     <div class="mb-3 d-flex justify-content-end">
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
                         <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { CompanyRecID = Session["CompanyID"] })'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new { CompanyRecID = Session["CompanyID"] })'" />
                     </div>
 
                 </div>
@@ -314,6 +376,7 @@
                     </div>
 
 
+
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
                             @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, new { @class = "labels" })
@@ -326,11 +389,10 @@
                     <div class="mb-3 d-flex justify-content-end">
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
                         <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { CompanyRecID = Session["CompanyID"] })'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new { CompanyRecID = Session["CompanyID"] })'" />
 
 
                     </div>
-
                 </div>
                 <div class="tab-content">
                     <div class="row">
@@ -397,17 +459,13 @@
                             </div>
                             <div class="mb-3 d-flex justify-content-end">
                                 <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { CompanyRecID = Session["CompanyID"] })'" />
+                                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new { CompanyRecID = Session["CompanyID"] })'" />
                             </div>
 
                         </div>
                     </div>
                 </div>}
         </div>
-
-
-
-
         <footer>
             <div class="footer">
                 <div class="flex-container" style="padding-top:5px;padding-left:5px">
@@ -447,7 +505,6 @@
         </div>
     </div>
     <div id="preloader2"></div>
-
     <script>
         function showTab(index) {
             const contents = document.querySelectorAll('.tab-content');
@@ -468,12 +525,9 @@
             }
         }
     </script>
-
-
-
-
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
+
     <script>
         document.getElementById("UserDropdown").addEventListener("change", function () {
             var selected = this.options[this.selectedIndex];
@@ -487,9 +541,9 @@
         });
 
     </script>
-    <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @*Logout Pronptbox script*@
     <script>
     document.getElementById("logoutLink").addEventListener("click", function () {
         Swal.fire({
@@ -508,12 +562,14 @@
         });
     });
     </script>
+
     @*Toastr for created succesfully*@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     $(document).ready(function () {
-        $("#editform").submit(function (event) {
+        $("#createform").submit(function (event) {
             event.preventDefault();
 
             var submitBtn = $("#savebutton");
@@ -525,7 +581,7 @@
             $("body").css("pointer-events", "none");
 
             $.ajax({
-                url: '@Url.Action("Edit", "ProjectMaster")',
+                url: '@Url.Action("Create", "AccountantCustomerInvoice")',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -536,20 +592,24 @@
                             title: "Success!",
                             text: response.message,
                             icon: "success",
-                            confirmButtonText: "Ok",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
+                            showCancelButton: true,
+                            confirmButtonText: "Continue",
+                            cancelButtonText: "Back to List",
+                            allowOutsideClick: false, // Prevent closing by clicking outside
+                            allowEscapeKey: false, // Prevent closing using Esc key
                             customClass: {
                                 confirmButton: "swal-btn-continue",
+                                cancelButton: "swal-btn-back"
                             },
                             didOpen: () => {
+                                // Allow interaction inside the alert only
                                 $(".swal2-container").css("pointer-events", "auto");
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = '@Url.Action("List", "ProjectMaster")';
+                                location.reload();
                             } else {
-                                 window.location.href = '@Url.Action("Create", "ProjectMaster")';
+                                window.location.href = '@Url.Action("List", "AccountantCustomerInvoice")';
                             }
                         });
                     } else {
@@ -578,12 +638,10 @@
 
         function resetButton() {
             $("#savebutton").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto");
+            $("body").css("pointer-events", "auto"); // Re-enable page interaction
         }
     });
     </script>
-
 </body>
+
 </html>
-
-

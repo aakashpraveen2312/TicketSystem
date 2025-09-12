@@ -120,27 +120,29 @@
                 @Html.LabelFor(model => model.U_MOBILENO, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.U_MOBILENO, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                @Html.EditorFor(model => model.U_MOBILENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
             </div>
         </div>
-        <div class="row mb-3">
-            @if (userRole == "USER")
-            {
+        @if (userRole == "USER")
+        {
+            <div class="row mb-3">
+
                 <div class="col-lg-2 col-md-2 col-sm-12">
                     @Html.LabelFor(model => model.U_LOCATION, new { @class = "labels" })
                 </div>
-            }
-            <div class="col-lg-3 col-md-3 col-sm-12">
 
-                @if (userRole == "USER")
-                {
-                    if (ViewBag.Location != null)
+                <div class="col-lg-3 col-md-3 col-sm-12">
+
+
+                    @if (ViewBag.Location != null)
                     {
-                        var RoleList = ViewBag.Location as IEnumerable<SelectListItem>;
+                        var RoleList = ViewBag.Location as IEnumerable<SelectListItem>
+                            ;
 
                         if (RoleList != null && RoleList.Any())
                         {
-                            var modifiedRoleList = new List<SelectListItem>(RoleList);
+                            var modifiedRoleList = new List<SelectListItem>
+                                (RoleList);
 
                             if (RoleList.Count() > 1)
                             {
@@ -148,69 +150,72 @@
                             }
 
                             @Html.DropDownList("SelectedRole",
-                                               modifiedRoleList,
-                                               new { @class = "form-select textboxcolors", required = "required" })
+                                            modifiedRoleList,
+                                            new { @class = "form-select textboxcolors", required = "required" })
                         }
                         else
                         {
-                            var modifiedRoleList = new List<SelectListItem>();
+                            var modifiedRoleList = new List<SelectListItem>
+                                ();
                             modifiedRoleList.Insert(0, new SelectListItem { Text = "No location's are available", Value = "" });
 
-                            @Html.DropDownList("SelectedRole",
-                                               modifiedRoleList,
-                                               new { @class = "form-select textboxcolors" })
+                                @Html.DropDownList("SelectedRole",
+                                            modifiedRoleList,
+                                            new { @class = "form-select textboxcolors" })
                         }
                     }
                     else
                     {
-                        <p>No location's are available</p>
+                                <p>No location's are available</p>
                     }
-                }
-                else
-                {
-                    // For Admin or Manager, send value = 0 (can be stored in a hidden field)
-                    <input type="hidden" name="SelectedRole" value="0" />
-                }
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.U_SORTORDER, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.U_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
-            </div>
-        </div>
-        @if (userRole == "USER")
-        {
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.U_UserManager, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.CheckBoxFor(model => model.U_UserManager, new { @class = "form-check-input" })
+                               
                 </div>
             </div>
         }
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.U_UserDisable, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.CheckBoxFor(model => model.U_UserDisable, new { @class = "form-check-input" })
-            </div>
-        </div>
-        <div class="row ">
-            <div class="col-lg-2">
+        else
+        {
+          // For Admin or Manager, send value = 0 (can be stored in a hidden field)
+          <input type = "hidden" name = "SelectedRole" value = "0" />
+          }
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.U_SORTORDER, new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.U_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
+                </div>
             </div>
-            <div class="col-lg-3 d-flex justify-content-end">
-                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
-                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'" />
+            @if (userRole == "USER")
+            {
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.U_UserManager, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.CheckBoxFor(model => model.U_UserManager, new { @class = "form-check-input" })
+                    </div>
+                </div>
+            }
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.U_UserDisable, new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.CheckBoxFor(model => model.U_UserDisable, new { @class = "form-check-input" })
+                </div>
+            </div>
+            <div class="row ">
+                <div class="col-lg-2">
+
+                </div>
+                <div class="col-lg-3 d-flex justify-content-end">
+                    <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
+                    <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'" />
+                </div>
             </div>
         </div>
-    </div>
         }
 
         <footer>

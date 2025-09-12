@@ -7,7 +7,18 @@
     <title>BEYONDEXS - TICKET SYSTEM</title>
     <script src="~/Scripts/Inactivitylogout.js"></script>
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .swal-toast-center {
+            width: 400px !important;
+            max-width: 90% !important;
+        }
 
+        .swal-toast-popup {
+            padding: 20px !important;
+            font-size: 1.2rem !important;
+        }
+    </style>
 </head>
 <body onload="hideLoadingScreen()">
     <div id="loadingScreen">
@@ -56,28 +67,28 @@
                 <ul class="menu-links" style="margin-left:20px">
                     <!-- Configuration Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/closefolder.png" class="settingsIcon" style="width:25px;height:25px;" />
-                        <img src="~/assets/img/open.png" class="openIcon" style="display:none;width:25px;height:25px;" />
+                        <img src="~/assets/img/book.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 10px;" />
+                        <img src="~/assets/img/book.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 10px;" />
                         <span class="text nav-text" style="margin-left:15px">KNOWLEDGE BASED </span>
                     </li>
                     <!-- User Group -->
                     <li class="nav-link">
                         <a href="@Url.Action("FAQADMIN", "RecentTickets")">
-                            <i class='bx bxs-file' style="font-size:20px"></i>
+                            <i class='bx  bx-message-circle-question-mark' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">FAQ</span>
                         </a>
                     </li>
                     <!-- App User -->
                     <li class="nav-link">
                         <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
-                            <i class='bx bxs-file' style="font-size:20px"></i>
+                            <i class='bx bx-newspaper' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">White Paper</span>
                         </a>
                     </li>
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/closefolder.png" class="settingsIcon" style="width:25px;height:25px;" />
-                        <img src="~/assets/img/open.png" class="openIcon" style="display:none;width:25px;height:25px;" />
+                        <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
+                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 5px;" />
                         <span class="text nav-text" style="margin-left:15px">SECURITY</span>
                     </li>
                     <!-- Change Password -->
@@ -116,8 +127,8 @@
 
                     <li class="nav-link">
                         <a href="@Url.Action("Info", "CompanyInfo")">
-                            <i class='bi bi-buildings-fill' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Company Info</span>
+                            <i class='bx bx-buildings' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Company Onboard</span>
                         </a>
                     </li>
 

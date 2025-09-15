@@ -37,8 +37,8 @@
 
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -80,12 +80,12 @@
                columns.Add(c => c.M_UOM).Titled("UOM");
                columns.Add(c => c.M_TYPE).Titled("Type");
                columns.Add(c => c.M_QUANTITY).Titled("Qty").Css("text-right");
-               columns.Add(c => c.M_PRICE).Titled("Price");
+               columns.Add(c => c.M_PRICE).Titled("Price").Css("text-right");
                columns.Add(c => c.M_DISCOUNT).Titled("Discount (%)").Css("text-right");
                columns.Add(c => c.M_CGST).Titled("CGST (%)").Css("text-right");
                columns.Add(c => c.M_SGST).Titled("SGST (%)").Css("text-right");
-               columns.Add(c => c.M_TOTALAMOUNT).Titled("Total Amount").Format("{0:F2}");
-               columns.Add(c => c.M_NETAMOUNT).Titled("Net Amount").Format("{0:F2}");
+               columns.Add(c => c.M_TOTALAMOUNT).Titled("Total Amount").Format("{0:F2}").Css("text-right");
+               columns.Add(c => c.M_NETAMOUNT).Titled("Net Amount").Format("{0:F2}").Css("text-right");
                columns.Add(c => c.M_SORTORDER).Titled("Sort").SetWidth("50PX").Css("text-right");
                columns.Add().Titled("Action").SetWidth("150PX")
               .Encoded(false)

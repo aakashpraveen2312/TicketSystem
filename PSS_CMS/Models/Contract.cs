@@ -64,6 +64,8 @@ namespace PSS_CMS.Models
         public int TotalContractAmount { get; set; }
         public int TotalPaidAmount { get; set; }
         public int PendingAmount { get; set; }
+        public int ExpiredCustomerWarrantyCount { get; set; }
+        public int ExpiredProductWarrantyCount { get; set; }
         public decimal PaidAmount { get; set; }
         public decimal UnpaidAmount { get; set; }
         public string CustomerName { get; set; }

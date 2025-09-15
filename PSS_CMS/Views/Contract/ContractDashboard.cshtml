@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <title>BEYONDEXS - TICKET SYSTEM</title>
+    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
 
     <script src="~/Scripts/Sidebarscript.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
@@ -39,29 +39,32 @@
     <!-- JustGage (only if used) -->
     <script src="https://cdn.jsdelivr.net/npm/raphael@2.1.4/raphael-min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/justgage@1.3.0/justgage.min.js"></script>
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 
-        .card {
-            border: none;
-            border-radius: 0.75rem;
-        }
-
-            .card h5 {
-                color: #6c757d;
+        <style>
+            body {
+                background-color: #f8f9fa;
             }
 
-        .dashboard-title {
-            margin-bottom: 30px;
-        }
+            .card {
+                border: none;
+                border-radius: 0.75rem;
+            }
 
-        canvas {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
+                .card h5 {
+                    color: #6c757d;
+                }
+
+            .dashboard-title {
+                margin-bottom: 30px;
+            }
+
+            canvas {
+                max-width: 100%;
+                height: auto;
+            }
+        </style>
 </head>
 
 <body>
@@ -118,7 +121,7 @@
 
                     @*Change Password*@
                     <li class="nav-link">
-                        <a href="@Url.Action("ChangePassword", "ChangePassword")">
+                        <a href="@Url.Action("ChangePassword", "Contract")">
                             <i class='bx bxs-key' style="font-size:24px"></i>
                             <span class="text nav-text" style="margin-left:15px">Change Password</span>
                         </a>
@@ -136,8 +139,8 @@
     </nav>
     <div class="content" style=" overflow-x: hidden!important;margin-left:83px;">
         <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -186,18 +189,16 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-
-        <div class="row mt-4 mb-4">
-            <div class="col-md-12">
-                <div class="card shadow p-4 bg-white">
-                    <h5 class="text-center mb-4">Company Paid Vs Unpaid </h5>
-                    <canvas id="accoutantChart" height="350"></canvas>
+            <div class="row mt-4 mb-4">
+                <div class="col-md-6">
+                    <div class="card shadow p-4 bg-white">
+                        <h5 class="text-center mb-4">Company Paid Vs Unpaid </h5>
+                        <canvas id="accoutantChart" height="350"></canvas>
+                    </div>
                 </div>
-            </div>
-            @*Prioritytype bar chart script*@
-            <script>
+                @*Prioritytype bar chart script*@
+                <script>
     const labels = @Html.Raw(ViewBag.CustomerNames); //It came in the array format
 
     const data = {
@@ -239,9 +240,57 @@
     };
 
                     new Chart(document.getElementById('accoutantChart'), config);
-            </script>
+                </script>
 
+
+                <div class="col-md-6">
+                    <div class="card shadow p-4 bg-white">
+                        <h5 class="text-center mb-4">Yet to Invoice</h5>
+
+                        @if ((ViewBag.ExpiredCustomerWarrantyCount == null || ViewBag.ExpiredCustomerWarrantyCount == 0)
+                          && (ViewBag.ExpiredProductWarrantyCount == null || ViewBag.ExpiredProductWarrantyCount == 0))
+                        {
+                            <p class="text-center text-muted">No pending invoices</p>
+                        }
+                        else
+                        {
+                    <canvas id="invoiceChart" style="width:100%;max-width:600px;height:100%;max-height:350px"></canvas>
+                            //Yet to invoice chart script
+                    <script>
+                        const xValues = ["Customer", "Product"];
+                        const yValues = [ @Html.Raw(ViewBag.ExpiredCustomerWarrantyCount ?? "0"),
+                                @Html.Raw(ViewBag.ExpiredProductWarrantyCount ?? "0")];
+                        const barColors = [
+                            "#FFBE00",
+                            "#008959"
+                        ];
+
+                        new Chart("invoiceChart", {
+                            type: "pie",
+                            data: {
+                                labels: xValues,
+                                datasets: [{
+                                    backgroundColor: barColors,
+                                    data: yValues
+                                }]
+                            },
+                            options: {
+                                title: {
+                                    display: true,
+                                    text: "Yet to Invoice"
+                                }
+                            }
+                        });
+                    </script>
+                        }
+                    </div>
+                </div>
+
+            </div>
         </div>
+
+
+       
 
     </div>
 

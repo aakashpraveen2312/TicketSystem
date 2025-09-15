@@ -9,6 +9,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
+    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
+    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
     <link href="~/Content/Style.css" rel="stylesheet" />
     <link href="~/Content/ClientSide.css" rel="stylesheet" />
     <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
@@ -49,13 +53,13 @@
             width: auto;
             line-height: normal;
         }
+
         .daterangepicker .drp-buttons .btn {
-            margin-left: 4px!important;
+            margin-left: 4px !important;
             font-size: 12px;
             font-weight: bold;
             padding: 4px 8px;
         }
-      
     </style>
 
 </head>
@@ -66,11 +70,11 @@
     </div>
     <nav class="nav d-flex">
         <div class="p-2 flex-grow-1">
-            <h3 style="margin-top:10px" class="heading ms-3">TICKET SYSTEM</h3>
+            <h3 style="margin-top:10px" class="heading ms-3">SERVICE MANAGEMENT</h3>
         </div>
 
         <div class="p-2" style="margin-right:10px">
-            <h4 class="heading">@Session["UserName"].ToString().ToUpper()</h4>
+            <h4 class="heading">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4>
         </div>
 
         <div class="p-2 me-3 dropdown">
@@ -233,14 +237,9 @@
 
 
 
-           }).WithPaging(10).Sortable(false)
+           }).WithPaging(10).Sortable(false).EmptyText("No ticket records are available for display at this time")
             }
-            else
-            {
-                <div class="alert alert-warning text-center">
-                    <b>No tickets are available</b>
-                </div>}
-
+           
 
             <footer>
                 <div class="footer">

@@ -12,7 +12,7 @@
 
     <link href="~/assets/img/bexlogo_wob.png" rel="icon">
     <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
-    <title>BEYONDEXS - TICKET SYSTEM</title>
+    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
     <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
     <link href="~/Content/ClientSide.css" rel="stylesheet" />
     <link href="~/Content/Style1.css" rel="stylesheet" />
@@ -95,7 +95,7 @@
 
                     @*Change Password*@
                     <li class="nav-link">
-                        <a href="@Url.Action("ChangePassword", "ChangePassword")">
+                        <a href="@Url.Action("ChangePassword", "Contract")">
                             <i class='bx bxs-key' style="font-size:24px"></i>
                             <span class="text nav-text" style="margin-left:15px">Change Password</span>
                         </a>
@@ -113,8 +113,8 @@
     </nav>
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>

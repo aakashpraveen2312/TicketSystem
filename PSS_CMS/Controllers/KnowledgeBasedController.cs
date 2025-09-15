@@ -112,7 +112,7 @@ namespace PSS_CMS.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+
         public async Task<ActionResult> WhitepaperPost(WhitePaper whitepaper, HttpPostedFileBase myfile)
         {
             try
@@ -156,7 +156,7 @@ namespace PSS_CMS.Controllers
             ""wP_SORTORDER"": ""{"1"}"",                              
             ""wP_CURECID"": ""{0}"",                              
             ""wP_CRECID"": ""{ Session["CompanyID"]}"",                              
-            ""wP_PRECID"": ""{ whitepaper.SelectedProjectType2}"",                              
+            ""wP_PRECID"": ""{(string.IsNullOrEmpty(whitepaper.SelectedProjectType2) ? "0" : whitepaper.SelectedProjectType2)}"",                              
             ""wP_URECID"": ""{ Session["UserRECID"]}"",                              
             ""wP_DISABLE"": ""{"N"}""           
         }}";
@@ -194,6 +194,10 @@ namespace PSS_CMS.Controllers
                     if (apiResponse.Status == "Y")
                     {
                         return Json(new { success = true, message = "Whitepaper created successfully!" });
+                    }
+                    else if (apiResponse.Status == "N")
+                    {
+                        return Json(new { success = false, message = apiResponse.Message});
                     }
                     else
                     {

@@ -13,7 +13,7 @@ namespace PSS_CMS.Models
         public int TC_URECID { get; set; }       
         public int TC_CRECID { get; set; }       
         public int TC_PRECID { get; set; }       
-        public int CU_WARRANTYFREECALLS { get; set; }
+        public int? CU_WARRANTYFREECALLS { get; set; }
 
         public bool IsDisabled
         {

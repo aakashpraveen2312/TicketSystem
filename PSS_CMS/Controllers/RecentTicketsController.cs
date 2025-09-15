@@ -555,7 +555,7 @@ namespace PSS_CMS.Controllers
             ""f_SORTORDER"": ""{"1"}"",                              
             ""f_CRECID"": ""{Session["CompanyID"]}"",                              
             ""f_URECID"": ""{Session["UserRECID"]}"",                              
-            ""f_PRECID"": ""{faq.SelectedProjectType1}"",                              
+            ""f_PRECID"": ""{(string.IsNullOrEmpty(faq.SelectedProjectType1) ? "0" : faq.SelectedProjectType1)}"",                              
             ""f_CURECID"": ""{0}"",                              
             ""f_DISABLE"": ""{"N"}""               
         }}";
@@ -594,9 +594,9 @@ namespace PSS_CMS.Controllers
                     {
                         return Json(new { success = true, message = "FAQ created successfully!" });
                     }
-                    else
+                    else if(apiResponse.Status == "N")
                     {
-                        return Json(new { success = false, message = "Failed to create FAQ." });
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
                 }
                 else
@@ -609,7 +609,7 @@ namespace PSS_CMS.Controllers
                 return Json(new { success = false, message = "Exception occurred: " + ex.Message });
             }
 
-
+            return View();
         }
 
         //Admintickets FAQ Ticket type combo

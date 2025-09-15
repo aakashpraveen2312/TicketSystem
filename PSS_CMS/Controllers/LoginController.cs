@@ -78,6 +78,18 @@ namespace PSS_CMS.Controllers
                         Session["UserRECID"] = data.U_RECID;
                         Session["CompanyID"] = data.U_CRECID;
 
+                        var roleCode = data.U_RCODE;
+                        string roleName;
+
+                        if (roleCode == "SA")
+                            roleName = "Super Admin";
+                        else if (roleCode == "HelpDesk")
+                            roleName = "Help Desk";
+                        else if (roleCode == "Admin")
+                            roleName = "Technical Support";
+                        else
+                            roleName = roleCode;
+                        Session["Role"] = roleName;
                         int CompanyID = data.U_CRECID;
                         if (role == "User" && data.U_PASSWORD == null)
                         {
@@ -210,6 +222,18 @@ namespace PSS_CMS.Controllers
                         Session["UserRECID"] = data.U_RECID;
                         Session["CompanyID"] = data.U_CRECID;
 
+                        var roleCode = data.U_RCODE;
+                        string roleName;
+
+                        if (roleCode == "SA")
+                            roleName = "Super Admin";
+                        else if (roleCode == "HelpDesk")
+                            roleName = "Help Desk";
+                        else if (roleCode == "Admin")
+                            roleName = "Technical Support";
+                        else
+                            roleName = roleCode;
+                        Session["Role"] = roleName;
                         int CompanyID = data.U_CRECID;
                         if (role == "User" && data.U_PASSWORD == null)
                         {

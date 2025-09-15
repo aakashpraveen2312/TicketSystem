@@ -65,8 +65,8 @@
 
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -145,7 +145,7 @@
                 @Html.LabelFor(model => model.M_PRICE, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_PRICE", oninput = "Netamount()" } })
+                @Html.EditorFor(model => model.M_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", step = "0.01",autocomplete = "off", id = "M_PRICE", oninput = "Netamount()",placeholder="0.00" } })
 
             </div>
             <div class="col-lg-2 col-md-2 col-sm-12">
@@ -406,7 +406,7 @@
             var discount = document.getElementById("M_DISCOUNT").value;
 
             var TotalAmount = (price * quantity) * (1 - discount/100)
-            document.getElementById("M_TOTALAMOUNT").value = TotalAmount;
+            document.getElementById("M_TOTALAMOUNT").value = TotalAmount.toFixed(2);
 
             /*SGST and CGST*/
 
@@ -419,7 +419,7 @@
             /* Net Amount*/
 
             var NetAmount = TotalAmount + SGSTamount + CGSTamount
-            Totalnetamount = parseFloat(NetAmount).toFixed(3);
+            Totalnetamount = parseFloat(NetAmount).toFixed(2);
             document.getElementById("M_NETAMOUNT").value = Totalnetamount;
         }
     </script>

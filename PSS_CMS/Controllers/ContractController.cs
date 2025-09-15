@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class ContractController : Controller
     {
         public async Task<ActionResult> ContractDashboard()
@@ -59,7 +61,7 @@ namespace PSS_CMS.Controllers
             {
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
-            await StackedBarChartCustomer();
+            await StackedBarChartCustomer();           
             return View(contract);
         }
 
@@ -107,7 +109,7 @@ namespace PSS_CMS.Controllers
             {
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
-
+            await YettoInvoiceDashboard();
             return View(dashboardData);
         }
 
@@ -530,6 +532,121 @@ namespace PSS_CMS.Controllers
             }
             return View();
 
+        }
+
+        public async Task<ActionResult> YettoInvoiceDashboard()
+        {
+
+            string WEBURLGET = ConfigurationManager.AppSettings["YETTOINVOICE"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "CompanyRecID=" + Session["CompanyID"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            Contract contract = null;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            contract = JsonConvert.DeserializeObject<Contract>(jsonString);
+
+                            ViewBag.ExpiredCustomerWarrantyCount = contract.ExpiredCustomerWarrantyCount;
+                            ViewBag.ExpiredProductWarrantyCount = contract.ExpiredProductWarrantyCount;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }          
+            return View(contract);
+        }
+
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<ActionResult> ChangePassword(Changepassword changepassword)
+        {
+            try
+            {
+                var ChnagepasswordURL = ConfigurationManager.AppSettings["CHANGEPASSWORD"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{           
+            ""userId"": ""{Session["UserRECID"]}"",           
+            ""newpassword"": ""{changepassword.U_NewPassword}"",  
+ ""confirmpassword"": ""{changepassword.U_Changepassword}"",     
+            ""compRecordID"": ""{ Session["CompanyID"]}""                              
+        }}";
+
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(ChnagepasswordURL),
+                    Method = HttpMethod.Put,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                // Send the request and await the response
+                var response = await client.SendAsync(request);
+                // Check if the response is successful
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<UserGroupObjects>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { success = true, message = apiResponse.Message });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = apiResponse.Message });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Error: Something went wrong." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Exception: " + ex.Message });
+            }
         }
     }
 }

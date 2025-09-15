@@ -33,6 +33,7 @@ namespace PSS_CMS.Controllers
                 var content = $@"{{           
             ""userId"": ""{Session["UserRECID"]}"",           
             ""newpassword"": ""{changepassword.U_NewPassword}"",                                 
+            ""confirmpassword"": ""{changepassword.U_Changepassword}"",                                 
             ""compRecordID"": ""{ Session["CompanyID"]}""                              
         }}";
 

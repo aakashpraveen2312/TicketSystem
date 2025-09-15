@@ -98,6 +98,21 @@ return input.Replace("\\\"", "\"")        // Double quotes
         select#projectTypeFilter2 {
             margin-top: 7px;
         }
+        .whitepaper .heading {
+            margin: 0 0 10px;
+            color: #754599;
+            word-wrap: break-word; /* For old browsers */
+            overflow-wrap: break-word; /* Modern standard */
+            white-space: normal; /* Ensure text wraps */
+        }
+        .whitepaper .description {
+            margin: 0 0 10px;
+            color: #754599;
+            word-wrap: break-word; /* For old browsers */
+            overflow-wrap: break-word; /* Modern standard */
+            white-space: normal; /* Ensure text wraps */
+        }
+
     </style>
 
 
@@ -108,10 +123,10 @@ return input.Replace("\\\"", "\"")        // Double quotes
     <div class="content">
 
         <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
 
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
 
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -183,7 +198,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
 
                                 @*<p>@Html.Raw(DecodeJavaScriptString(@whitepaper.WP_Description))</p>*@
-                                <p>@whitepaper.WP_Description</p>
+                                <p class="description">@whitepaper.WP_Description</p>
 
                                 @if (!string.IsNullOrEmpty(whitepaper.WP_ATTACHEMENT))
                                 {
@@ -300,7 +315,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                 else
                 {
                     <div class="alert alert-warning text-center">
-                        <b>No Whitepaper's are available</b>
+                        <b>No whitepapers are available</b>
                     </div>}
             </div>
         </div>

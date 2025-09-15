@@ -96,10 +96,10 @@
     <div class="content">
 
         <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
 
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
 
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -144,7 +144,7 @@
                                     @Html.DropDownList("SelectedProjectType1",
                                                        modifiedProjectTypeList,
                                                        "Select Product",
-                                                       new { @class = "form-select ", id = "projectTypeFilter1", required = "required" })
+                                                       new { @class = "form-select ", id = "projectTypeFilter1" })
                                 }
                                 else
                                 {
@@ -168,14 +168,14 @@
                     <div class="row ms-2">
                         <div class="col-md-5">
                             @Html.LabelFor(model => model.F_QUESTION, "Question:", new { @class = "pb-2" })
-                            @Html.TextBoxFor(model => model.F_QUESTION, new { @class = "form-control minicheck1", id = "", tabindex = "1", required = "required" })
+                            @Html.TextBoxFor(model => model.F_QUESTION, new { @class = "form-control minicheck1", id = "", tabindex = "1" })
                         </div>
 
                     </div>
                     <div class="row mt-2 ms-2">
                         <div class="col-md-12">
                             @Html.LabelFor(model => model.F_ANSWER, "Answer", new { @class = "pb-2" })
-                            @Html.TextAreaFor(model => model.F_ANSWER, new { @class = "form-control custom-textarea minicheck1", placeholder = "Please enter your answers here....", rows = "10", required = "required", tabindex = "5" })
+                            @Html.TextAreaFor(model => model.F_ANSWER, new { @class = "form-control custom-textarea minicheck1", placeholder = "Please enter your answers here....", rows = "10", tabindex = "5" })
                         </div>
                     </div>
                     <div class="row mt-2 ms-2">

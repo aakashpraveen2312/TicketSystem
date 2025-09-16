@@ -41,7 +41,7 @@
 
                                 </div>
                                 <div class="col-md-12 col-sm-12">
-                                    @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", required = "required" } })
+                                    @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = ""} })
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -50,7 +50,7 @@
 
                                 </div>
                                 <div class="col-md-12 col-sm-12">
-                                    @Html.EditorFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", required = "required" } })
+                                    @Html.EditorFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = ""} })
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -59,7 +59,7 @@
 
                                 </div>
                                 <div class="col-md-12 col-sm-12">
-                                    @Html.EditorFor(model => model.otp, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", required = "required" } })
+                                    @Html.EditorFor(model => model.otp, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = ""} })
                                 </div>
                             </div>
 
@@ -128,9 +128,20 @@
             event.preventDefault();
 
             var submitBtn = $("#savebutton");
-            submitBtn.prop("disabled", true).text("Submitting...");
+            submitBtn.prop("disabled", true);
 
             var formData = new FormData(this);
+
+            // 🔹 Show SweetAlert loading dialog
+            Swal.fire({
+                title: "Processing...",
+                html: "Please wait while we save your changes.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading(); // show spinner
+                }
+            });
 
             // Disable page interaction
             $("body").css("pointer-events", "none");

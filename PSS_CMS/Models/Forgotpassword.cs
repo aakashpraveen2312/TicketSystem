@@ -9,7 +9,7 @@ namespace PSS_CMS.Models
 {
     public class Forgotpassword
     {
-        [DisplayName("User Name")]
+        [DisplayName("Email")]
         public string Username { get; set; }
         [DisplayName("Email")]
         [Required(ErrorMessage = "Please enter the Email")]
@@ -20,6 +20,11 @@ namespace PSS_CMS.Models
         public string newPassword { get; set; }
         [DisplayName("Otp")]
         public string otp { get; set; }
+        public ForgotPasswordData Data { get; set; }
 
+    }
+    public class ForgotPasswordData
+    {
+        public string Message { get; set; }
     }
 }

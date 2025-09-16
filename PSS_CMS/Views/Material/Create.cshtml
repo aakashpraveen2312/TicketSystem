@@ -66,7 +66,7 @@
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -89,158 +89,158 @@
         {
 
 
-    <div class="create ms-4 me-2 mt-3">
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_CODE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+            <div class="create ms-4 me-2 mt-3">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_CODE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_NAME, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_NAME, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
 
-            </div>
-        </div>
+                    </div>
+                </div>
 
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_TYPE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.DropDownListFor(model => model.M_TYPE, new SelectList(new List<string>
-                {
-                    "Material",
-                    "Service"
-                }), "-- Select Type --", new { @class = "select textboxcolors", autocomplete = "off" })
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_TYPE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.DropDownListFor(model => model.M_TYPE, new SelectList(new List<string>
+                        {
+                            "Material",
+                            "Service"
+                        }), "-- Select Type --", new { @class = "select textboxcolors", autocomplete = "off" })
 
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_UOM, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.DropDownListFor(model => model.M_UOM, new SelectList(new List<string>
-                {
-                    "pieces",
-                    "kilograms",
-                    "grams",
-                    "litre",
-                    "milli litre",
-                    "meter",
-                    "centimeter",
-                    "milli meter",
-                    "box",
-                    "packet",
-                    "set"
-                }), "-- Select UOM --", new { @class = "select textboxcolors", autocomplete = "off" })
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_UOM, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.DropDownListFor(model => model.M_UOM, new SelectList(new List<string>
+                        {
+                            "pieces",
+                            "kilograms",
+                            "grams",
+                            "litre",
+                            "milli litre",
+                            "meter",
+                            "centimeter",
+                            "milli meter",
+                            "box",
+                            "packet",
+                            "set"
+                        }), "-- Select UOM --", new { @class = "select textboxcolors", autocomplete = "off" })
 
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_PRICE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", step = "0.01",autocomplete = "off", id = "M_PRICE", oninput = "Netamount()",placeholder="0.00" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_PRICE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @*@Html.EditorFor(model => model.M_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", step = "0.01",autocomplete = "off", id = "M_PRICE", oninput = "Netamount()",placeholder="0.00" } })*@
+                        @Html.EditorFor(model => model.M_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_PRICE", oninput = "formatPrice(this)", placeholder = "0.00" } })
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_QUANTITY, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_QUANTITY", oninput = "Netamount()" } })
 
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_QUANTITY, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_QUANTITY", oninput = "Netamount()" } })
+                    </div>
+                </div>
 
-            </div>
-        </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_DISCOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_DISCOUNT", oninput = "Netamount()" } })
 
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_DISCOUNT, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_DISCOUNT", oninput = "Netamount()" } })
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_TOTALAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_TOTALAMOUNT", @readonly = "readonly", oninput = "Netamount()", placeholder = "0.00" } })
 
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_TOTALAMOUNT, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_TOTALAMOUNT", @readonly = "readonly", oninput = "Netamount()" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_SGST, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_SGST", oninput = "Netamount()" } })
 
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_SGST, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_SGST", oninput = "Netamount()" } })
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_CGST, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_CGST", oninput = "Netamount()" } })
 
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_CGST, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_CGST", oninput = "Netamount()" } })
+                    </div>
+                </div>
 
-            </div>
-        </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_NETAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_NETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_NETAMOUNT", @readonly = "readonly", placeholder = "0.00" } })
 
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_NETAMOUNT, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_NETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "M_NETAMOUNT", @readonly = "readonly" } })
+                    </div>
 
-            </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.M_SORTORDER, new { @class = "labels" })
 
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.M_SORTORDER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.M_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                    </div>
+                </div>
 
-            </div>
-        </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
 
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
 
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
+                    </div>
 
-            </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.IsDisabled, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input" })
+                    </div>
+                </div>
 
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.IsDisabled, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input" })
-            </div>
-        </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2">
 
-        <div class="row mb-3">
-            <div class="col-lg-2">
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
 
-            </div>
-            <div class="col-lg-3 d-flex justify-content-end">
+                    </div>
+                    <div class="col-lg-2">
 
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "Material", new { })'" />
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-2">
-
-            </div>
-            <div class="col-lg-3 d-flex justify-content-end">
-                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "Material", new { })'" />
-            </div>
-        </div>
-    </div>
             <!-- Validation Errors below the form fields -->
             <div>
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -328,9 +328,20 @@
             event.preventDefault();
 
             var submitBtn = $("#savebutton");
-            submitBtn.prop("disabled", true).text("Submitting...");
+            submitBtn.prop("disabled", true);
 
             var formData = new FormData(this);
+
+            // 🔹 Show SweetAlert loading dialog
+            Swal.fire({
+                title: "Processing...",
+                html: "Please wait while we save your changes.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading(); // show spinner
+                }
+            });
 
             // Disable page interaction
             $("body").css("pointer-events", "none");
@@ -405,7 +416,7 @@
             var quantity = document.getElementById("M_QUANTITY").value;
             var discount = document.getElementById("M_DISCOUNT").value;
 
-            var TotalAmount = (price * quantity) * (1 - discount/100)
+            var TotalAmount = (price * quantity) * (1 - discount / 100)
             document.getElementById("M_TOTALAMOUNT").value = TotalAmount.toFixed(2);
 
             /*SGST and CGST*/
@@ -424,6 +435,33 @@
         }
     </script>
 
+    <!-- Decimal filed for price -->
+    <script>
+        function formatPrice(input) {
+            // Remove non-digit characters
+            let digits = input.value.replace(/\D/g, '');
+
+            if (digits.length === 0) {
+                input.value = "0.00";
+                return;
+            }
+
+            // If only 1 digit → treat as cents (0.0X)
+            if (digits.length === 1) {
+                input.value = "0.0" + digits;
+            }
+            // If only 2 digits → treat as cents (0.XX)
+            else if (digits.length === 2) {
+                input.value = "0." + digits;
+            }
+            // Otherwise → split into integer + decimal
+            else {
+                let integerPart = digits.slice(0, -2);
+                let decimalPart = digits.slice(-2);
+                input.value = parseInt(integerPart, 10) + "." + decimalPart;
+            }
+        }
+    </script>
 
 </body>
 </html>

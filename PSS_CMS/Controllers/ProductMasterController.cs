@@ -146,7 +146,7 @@ namespace PSS_CMS.Controllers
                         return Json(new
                         {
                             success = false,
-                            message = "Code, Product Name, and Grace Period are mandatory."
+                            message = apiResponse.Message
                         });
                     }
                     else
@@ -279,7 +279,7 @@ namespace PSS_CMS.Controllers
                     {
                         return Json(new { success = true, message = apiResponse.Message });
                     }
-                    else
+                    else if((apiResponse.Status == "N")|| (apiResponse.Status == "U"))
                     {
                         return Json(new { success = false, message = apiResponse.Message });
                     }
@@ -293,6 +293,7 @@ namespace PSS_CMS.Controllers
             {
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
+            return View();
         }
 
         public async Task<ActionResult> Delete(int? Recid)

@@ -99,7 +99,7 @@
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
 
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
 
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -186,7 +186,7 @@
                             <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .docx, .csv)</small>
                         </div>
 
-                        <div class="col-md-12 mt-2 mb-3 d-flex justify-content-md-end justify-content-start">
+                        <div class="col-md-12 mt-2 mb-5 d-flex justify-content-md-end justify-content-start">
 
                             <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="7">Submit</button>
                             <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("FAQADMIN","RecentTickets")'" tabindex="8">
@@ -261,9 +261,20 @@
             event.preventDefault();
 
             var submitBtn = $("#submitBtn");
-            submitBtn.prop("disabled", true).text("Submitting...");
+            submitBtn.prop("disabled", true);
 
             var formData = new FormData(this);
+
+            // 🔹 Show SweetAlert loading dialog
+            Swal.fire({
+                title: "Processing...",
+                html: "Please wait while we save your changes.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading(); // show spinner
+                }
+            });
 
             // Disable page interaction
             $("body").css("pointer-events", "none");

@@ -26,7 +26,7 @@ namespace PSS_CMS.Controllers
             {
                 var ForgototpURL = ConfigurationManager.AppSettings["FORGOTOTP"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-                string APIKey = Session["APIKEY"].ToString();
+                //string APIKey = "TPcyUBB1wQIRcPzMBqsZdYDivxPiUjCBWdOFSLt6Dhj";
 
                 var content = $@"{{           
                   
@@ -53,7 +53,7 @@ namespace PSS_CMS.Controllers
                     ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
                 };
                 var client = new HttpClient(handler);
-                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                //client.DefaultRequestHeaders.Add("ApiKey", APIKey);
                 client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                 // Send the request and await the response
                 var response = await client.SendAsync(request);
@@ -67,7 +67,7 @@ namespace PSS_CMS.Controllers
                     {
                         return Json(new { success = true, message = apiResponse.Message });
                     }
-                    else
+                    else if(apiResponse.Status == "N")
                     {
                         return Json(new { success = false, message = apiResponse.Message });
                     }
@@ -81,7 +81,9 @@ namespace PSS_CMS.Controllers
             {
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
+            return View();
         }
+
 
         public ActionResult FortgotOTPVerify()
         {
@@ -94,11 +96,11 @@ namespace PSS_CMS.Controllers
             {
                 var ForgototpVerifyURL = ConfigurationManager.AppSettings["FORGOTOTPVERIFY"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-                string APIKey = "TPcyUBB1wQIRcPzMBqsZdYDivxPiUjCBWdOFSLt6Dhj";
+                //string APIKey = "TPcyUBB1wQIRcPzMBqsZdYDivxPiUjCBWdOFSLt6Dhj";
 
                 var content = $@"{{                            
             ""newPassword"": ""{forgotpassword.newPassword}"",      
-            ""userName"": ""{forgotpassword.Username}"",       
+            ""Email"": ""{forgotpassword.Username}"",       
             ""otp"": ""{forgotpassword.otp}""                                 
         }}";
 
@@ -121,7 +123,7 @@ namespace PSS_CMS.Controllers
                     ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
                 };
                 var client = new HttpClient(handler);
-                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                //client.DefaultRequestHeaders.Add("ApiKey", APIKey);
                 client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                 // Send the request and await the response
                 var response = await client.SendAsync(request);
@@ -133,11 +135,11 @@ namespace PSS_CMS.Controllers
 
                     if (apiResponse.Status == "Y")
                     {
-                        return Json(new { success = true, message = apiResponse.Message });
+                        return Json(new { success = true, message = apiResponse.Data?.Message });
                     }
-                    else
+                    else if (apiResponse.Status == "N")
                     {
-                        return Json(new { success = false, message = apiResponse.Message });
+                        return Json(new { success = false, message = apiResponse.Data?.Message });
                     }
                 }
                 else
@@ -149,6 +151,7 @@ namespace PSS_CMS.Controllers
             {
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
+            return View();
         }
    
     

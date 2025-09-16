@@ -33,7 +33,7 @@
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                     <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
@@ -92,26 +92,27 @@
                 <div class="alert alert-warning text-center">
                     <b>No Usergroup's' are available</b>
                 </div>}
-            <footer>
-                <div class="footer">
-                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
+        <footer>
+            <div class="footer">
+                <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
-                        <div class="flex-item">
-                            <div class="d-flex justify-content-center footerb">
-                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm mt-1'></i>
-                                -Edit
-                            </div>
+                    <div class="flex-item mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
                         </div>
-                        <div class="flex-item">
-                            <div class="d-flex justify-content-center footerb">
-                                <i style="color:#337ab7" class='bx bx-user bx-sm mt-1'></i>
-                                -User
-                            </div>
-                        </div>
-
+                        &nbsp;- Edit
                     </div>
+
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bx bx-user bx-sm mb-1'></i>
+                        </div>
+                        &nbsp;- User
+                    </div>
+
                 </div>
-            </footer>
+            </div>
+        </footer>
         </div>
 
 

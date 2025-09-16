@@ -68,7 +68,7 @@
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
 
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
 
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -101,17 +101,16 @@
                 var colors = new[]
     {
     "#fbe7c6", //yellow
-"#b4f8c8", //Mint 
-"#a0e7e5", //Tiffany Blue
-"#ffaebc", //Hot Pink
-"#bbe7fe", //Baby blue
-"#d3b5e5", //Lilac
-"#d1e2c4", //Sage Green
-"#eff1db", //Cream
-"#c6d8d5", //Celadon
-"#999da0", //Pewter
-"#d0b49f", //Tan
-"#f3f3e7" //Ivory
+"#68b170", //Mint 
+"#c7f989", //Tiffany Blue
+"#d75655", //Hot Pink
+"#89f9f9", //Baby blue
+"#d079f9", //Lilac
+"#85aeb9", //Sage Green
+"#79f9e6", //Cream
+"#f272dc", //Celadon
+"#6d8274" //Pewter
+
     };
 
 
@@ -157,7 +156,7 @@
                 // Helpdesk Count
                 var TotalHelpdeskCount = new[]
                 {
- new { Title = "HelpDesk", Count = (Model != null && Model.TotalHelpdeskCount != null) ? (int)Model.TotalHelpdeskCount : 0, Color = colors[6] }                };
+ new { Title = "Help Desk", Count = (Model != null && Model.TotalHelpdeskCount != null) ? (int)Model.TotalHelpdeskCount : 0, Color = colors[6] }                };
 
 
                 // Accountant Count

@@ -83,6 +83,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
         select#projectTypeFilter2 {
             font-size: 15px;
+            font-weight: bold;
         }
     </style>
 
@@ -96,7 +97,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
 
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
 
             <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
                 <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -128,7 +129,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
                     <div class="row ms-2">
                         <div class="col-md-5">
-                            @Html.LabelFor(model => model.WP_TITLE, "Title:", new { @class = "pb-2" })
+                            @Html.LabelFor(model => model.WP_TITLE, "Tittle:", new { @class = "pb-2" })
                             @*@Html.TextBoxFor(model => model.WP_TITLE, new { @class = "form-control", id = "", tabindex = "1", required = "required", value = Html.Raw(DecodeJavaScriptString(Model.TC_COMMENTS)) })*@
 
                             @*@Html.TextBoxFor(model => model.WP_TITLE, new{@class = "form-control",id = "",tabindex = "1",required = "required",value = DecodeJavaScriptString(Model.WP_TITLE) // Directly pass the decoded value*@
@@ -353,13 +354,22 @@ return input.Replace("\\\"", "\"")        // Double quotes
     $(document).ready(function () {
         $("#myForm").submit(function (e) {
             e.preventDefault(); // Prevent default form submission
-
-            var formData = new FormData(this);
             var submitBtn = $("#submitBtn");
 
-            // Change button text and disable it
-            submitBtn.text("Submitting...").prop("disabled", true);
+            submitBtn.prop("disabled", true);
 
+            var formData = new FormData(this);
+
+            // 🔹 Show SweetAlert loading dialog
+            Swal.fire({
+                title: "Processing...",
+                html: "Please wait while we save your changes.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading(); // show spinner
+                }
+            });
             $.ajax({
                 url: '@Url.Action("Edit", "KnowledgeBased")', // Update with your controller/action
                 type: 'POST',

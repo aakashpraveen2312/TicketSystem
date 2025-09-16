@@ -64,7 +64,7 @@
         </div>
 
         <div class="p-2" style="margin-right:10px">
-            <h4 class="heading">@Session["UserName"].ToString().ToUpper()-@Session["Role"]</h4>
+            <h4 class="heading">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4>
         </div>
 
         <div class="p-2 me-3 dropdown">
@@ -383,7 +383,16 @@
             // Disable submit button to prevent duplicate submissions
             var submitButton = form.querySelector("button[type='submit']");
             submitButton.disabled = true;
-            submitButton.innerHTML = "Submitting..."; // Change text to 'Submitting...'
+            // 🔹 Show SweetAlert loading dialog
+            Swal.fire({
+                title: "Processing...",
+                html: "Please wait while we save your changes.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading(); // show spinner
+                }
+            });
 
             fetch(form.action, {
                 method: form.method,

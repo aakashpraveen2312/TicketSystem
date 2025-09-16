@@ -181,9 +181,20 @@
             event.preventDefault();
 
             var submitBtn = $("#submitbtn");
-            submitBtn.prop("disabled", true).text("Submitting...");
+            submitBtn.prop("disabled", true);
 
             var formData = new FormData(this);
+
+            // 🔹 Show SweetAlert loading dialog
+            Swal.fire({
+                title: "Processing...",
+                html: "Please wait while we save your changes.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading(); // show spinner
+                }
+            });
 
             // Disable page interaction
             $("body").css("pointer-events", "none");

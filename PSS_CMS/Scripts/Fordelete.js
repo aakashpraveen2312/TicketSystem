@@ -1,5 +1,4 @@
-﻿
-function confirmDelete(element) {
+﻿function confirmDelete(element) {
     Swal.fire({
         title: '<span style="font-size: 20px;">Are you sure you want to delete?</span>',
         icon: 'warning',
@@ -20,16 +19,13 @@ function confirmDelete(element) {
                 success: function (response) {
                     if (response.status === 'success') {
                         Swal.fire({
-                            toast: true,
-                            position: 'center',
-                            icon: 'success',
-                            title: response.message,
+                            title: '<span style="font-size: 18px;">Delete</span>',
+                            html: '<span style="font-size: 15px;">Record deleted successfully</span>',
+                            icon: "info",
+                            allowOutsideClick: false,
                             showConfirmButton: false,
                             timer: 3000,
-                            customClass: {
-                                container: 'swal-toast-center',
-                                 popup: 'swal-toast-popup'
-                            }
+                            allowEscapeKey: false
                         }).then(() => {
                             window.location.href = response.redirectUrl;
                         });
@@ -40,7 +36,7 @@ function confirmDelete(element) {
                             icon: 'error',
                             title: 'Error: ' + response.message,
                             showConfirmButton: false,
-                            timer: 4000,
+                            timer: 3000,
                             customClass: {
                                 container: 'swal-toast-center'
                             }
@@ -66,6 +62,3 @@ function confirmDelete(element) {
 
     return false; // Prevent default link action
 }
-
-
-

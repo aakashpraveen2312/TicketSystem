@@ -86,59 +86,59 @@
         {
 
 
-    <div class="create ms-4 me-2 mt-3">
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.P_CODE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.P_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.P_NAME, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.P_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.P_GRACEPERIOD, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.P_GRACEPERIOD, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-            </div>
-        </div>
+            <div class="create ms-4 me-2 mt-3">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.P_CODE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.P_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.P_NAME, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.P_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.P_GRACEPERIOD, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.P_GRACEPERIOD, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                    </div>
+                </div>
 
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.P_SORTORDER, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.P_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.P_SORTORDER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.P_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.P_ProductDisable, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.CheckBoxFor(model => model.P_ProductDisable, new { @class = "form-check-input" })
-            </div>
-        </div>
-        <div class="row ">
-            <div class="col-lg-2">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.P_ProductDisable, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.CheckBoxFor(model => model.P_ProductDisable, new { @class = "form-check-input" })
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-2">
 
-            </div>
-            <div class="col-lg-3 d-flex justify-content-end">
-                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProductMaster", new {CompanyRecID = Session["CompanyID"] })'" />
-            </div>
-        </div>
-    </div>}
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProductMaster", new {CompanyRecID = Session["CompanyID"] })'" />
+                    </div>
+                </div>
+            </div>}
         <footer>
             <div class="footer">
                 <div class="flex-container" style="padding-top:5px;padding-left:5px">
@@ -220,20 +220,6 @@
 
             var formData = new FormData(this);
 
-            // 🔹 Show SweetAlert loading dialog
-            Swal.fire({
-                title: "Processing...",
-                html: "Please wait while we save your changes.",
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading(); // show spinner
-                }
-            });
-
-            // Disable page interaction
-            $("body").css("pointer-events", "none");
-
             $.ajax({
                 url: '@Url.Action("Create", "ProductMaster")',
                 type: 'POST',
@@ -242,35 +228,46 @@
                 contentType: false,
                 success: function (response) {
                     if (response.success) {
+                        // 🔹 First show processing bar
                         Swal.fire({
-                            title: "Success!",
-                            text: response.message,
-                            icon: "success",
-                            showCancelButton: true,
-                            confirmButtonText: "Continue",
-                            cancelButtonText: "Back to List",
-                            allowOutsideClick: false, // Prevent closing by clicking outside
-                            allowEscapeKey: false, // Prevent closing using Esc key
-                            customClass: {
-                                confirmButton: "swal-btn-continue",
-                                cancelButton: "swal-btn-back"
-                            },
+                            title: "Processing...",
+                            html: "Please wait while we save your changes.",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
                             didOpen: () => {
-                                // Allow interaction inside the alert only
-                                $(".swal2-container").css("pointer-events", "auto");
-                            }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            } else {
-                                window.location.href = '@Url.Action("List", "ProductMaster",new { CompanyRecID = Session["CompanyID"] })';
+                                Swal.showLoading();
                             }
                         });
+
+                        // ⏳ After small delay, show success popup
+                        setTimeout(function () {
+                            Swal.fire({
+                                title: "Success!",
+                                text: response.message,
+                                icon: "success",
+                                showCancelButton: true,
+                                confirmButtonText: "Continue",
+                                cancelButtonText: "Back to List",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                customClass: {
+                                    confirmButton: "swal-btn-continue",
+                                    cancelButton: "swal-btn-back"
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                } else {
+                                    window.location.href = '@Url.Action("List", "ProductMaster",new { CompanyRecID = Session["CompanyID"] })';
+                                }
+                            });
+                        }, 1000); // 1 second delay for "Processing"
                     } else {
+                        // ❌ No processing bar for error
                         Swal.fire({
-                            title: "Error!",
+                            title: "Message",
                             text: response.message,
-                            icon: "error",
+                            icon: "info",
                             allowOutsideClick: false,
                             allowEscapeKey: false
                         });
@@ -278,6 +275,7 @@
                     }
                 },
                 error: function () {
+                    // ❌ Directly show error
                     Swal.fire({
                         title: "Error!",
                         text: "An unexpected error occurred.",
@@ -292,10 +290,10 @@
 
         function resetButton() {
             $("#savebutton").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto"); // Re-enable page interaction
         }
     });
     </script>
+
 
 </body>
 </html>

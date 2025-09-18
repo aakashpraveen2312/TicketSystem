@@ -238,13 +238,9 @@
 
 
 
-           }).WithPaging(10).Sortable(false)
+           }).WithPaging(10).Sortable(false).EmptyText("No ticket records are available for display at this time")
             }
-            else
-            {
-                <div class="alert alert-warning text-center">
-                    <b>No Ticket's are available</b>
-                </div>}
+           
 
 
             <footer>
@@ -480,9 +476,9 @@
                         });
                     } else {
                         Swal.fire({
-                            title: "Error!",
+                            title: "Message",
                             text: response.message,
-                            icon: "error",
+                            icon: "info",
                             showConfirmButton: false,
                             timer: 2000
                         });

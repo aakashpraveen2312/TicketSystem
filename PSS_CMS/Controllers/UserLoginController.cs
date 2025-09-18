@@ -29,8 +29,7 @@ namespace PSS_CMS.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(User objUser)
         {
-            if (ModelState.IsValid)
-            {
+           
                 try
                 {
                     var Regurl = ConfigurationManager.AppSettings["POSTUSERS"];
@@ -39,13 +38,13 @@ namespace PSS_CMS.Controllers
 
                     var content = new
                     {
-                        u_USERNAME = objUser.U_USERNAME,
+                        u_USERNAME = objUser.U_USERNAME ?? "",
                         u_RCODE = Session["R_CODE"],
-                        u_SORTORDER = objUser.U_SORTORDER,
-                        u_EMAILID = objUser.U_EMAILID,
+                        u_SORTORDER = objUser.U_SORTORDER ?? "0",
+                        u_EMAILID = objUser.U_EMAILID ?? "",
                         u_CRECID = Session["CompanyID"],
-                        u_USERCODE = objUser.U_USERCODE,
-                        u_MOBILENO = objUser.U_MOBILENO,
+                        u_USERCODE = objUser.U_USERCODE ?? "",
+                        u_MOBILENO = objUser.U_MOBILENO ?? "",
                         u_DOMAIN = Session["DOMAIN"],
                         u_LOCATION = objUser.SelectedRole,
                         u_DISABLE = objUser.U_UserDisable ? "Y" : "N",
@@ -107,7 +106,7 @@ namespace PSS_CMS.Controllers
                     ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
                 }
                 return View(objUser);
-            }
+            
             
             return Json(new
             {
@@ -253,7 +252,6 @@ namespace PSS_CMS.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(User UserEdit)
         {
           
@@ -268,7 +266,7 @@ namespace PSS_CMS.Controllers
 
                     ""u_RECID"": ""{(int)Session["RECID"]}"",
                     ""u_USERNAME"": ""{UserEdit.U_USERNAME}"",                
-                    ""u_RCODE"": ""{UserEdit.U_RCODE}"",                  
+                    ""u_RCODE"": ""{Session["R_CODE"]}"",                  
                     ""u_SORTORDER"": ""{UserEdit.U_SORTORDER}"",                  
                     ""u_DISABLE"":""{(UserEdit.U_UserDisable ? "Y" : "N")}"",
                     ""u_EMAILID"":""{UserEdit.U_EMAILID}"",

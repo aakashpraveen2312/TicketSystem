@@ -406,9 +406,9 @@
                 // Check if the response status is error (e.g., captcha validation failure)
                 if (data.status === "error") {
                     Swal.fire({
-                        title: "Error",
+                        title: "Message",
                         text: data.message,
-                        icon: "error",
+                        icon: "info",
                         confirmButtonText: "OK",
                         customClass: {
                             popup: 'swal-wide',

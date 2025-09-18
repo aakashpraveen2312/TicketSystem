@@ -264,7 +264,7 @@
                 return MvcHtmlString.Create($"{assigntoLinkHtml}{lineItemLinkHtml}{MCLinkHtml}{PDFLinkHtml}{ServiceLinkHtml}");
             });
 
-           }).WithPaging(10).Sortable(false).EmptyText("No ticket records are available for display at this time") 
+           }).WithPaging(10).Sortable(false).EmptyText("No ticket records are available to display at this time") 
             }
            
               <footer>
@@ -494,8 +494,8 @@
                     console.log("url", response.url)
                 } else {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Failed',
+                        icon: 'info',
+                        title: 'Message',
                         text: response.message
                     });
                 }

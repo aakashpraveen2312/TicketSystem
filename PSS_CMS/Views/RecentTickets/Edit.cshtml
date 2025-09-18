@@ -340,16 +340,7 @@
 
             var formData = new FormData(this);
 
-            // 🔹 Show SweetAlert loading dialog
-            Swal.fire({
-                title: "Processing...",
-                html: "Please wait while we save your changes.",
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading(); // show spinner
-                }
-            });
+          
 
             $.ajax({
                 url: '@Url.Action("Edit", "RecentTickets")', // Update with your controller/action
@@ -359,6 +350,19 @@
                 processData: false,
                 success: function (response) {
                     if (response.success) {
+                        // 🔹 First show processing bar
+                        Swal.fire({
+                            title: "Processing...",
+                            html: "Please wait while we save your changes.",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // ⏳ After small delay, show success popup
+                        setTimeout(function () {
                         Swal.fire({
                             title: "Success!",
                             text: "FAQ edited successfully.",
@@ -371,11 +375,12 @@
                                 window.location.href = '@Url.Action("FAQADMIN", "RecentTickets")'; // Redirect on success
                             }
                         });
+                        }, 1000); // 1 second delay for "Processing"
                     } else {
                         Swal.fire({
-                            title: "Error!",
+                            title: "Message",
                             text: response.message || "Something went wrong.",
-                            icon: "error",
+                            icon: "info",
                             confirmButtonText: "OK",
                             allowOutsideClick: false,
                             allowEscapeKey: false

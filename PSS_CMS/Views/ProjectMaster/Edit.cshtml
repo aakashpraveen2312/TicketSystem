@@ -521,17 +521,6 @@
 
             var formData = new FormData(this);
 
-            // 🔹 Show SweetAlert loading dialog
-            Swal.fire({
-                title: "Processing...",
-                html: "Please wait while we save your changes.",
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading(); // show spinner
-                }
-            });
-
             // Disable page interaction
             $("body").css("pointer-events", "none");
 
@@ -543,6 +532,19 @@
                 contentType: false,
                 success: function (response) {
                     if (response.success) {
+                        // 🔹 First show processing bar
+                        Swal.fire({
+                            title: "Processing...",
+                            html: "Please wait while we save your changes.",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // ⏳ After small delay, show success popup
+                        setTimeout(function () {
                         Swal.fire({
                             title: "Success!",
                             text: response.message,
@@ -563,11 +565,12 @@
                                  window.location.href = '@Url.Action("Create", "ProjectMaster")';
                             }
                         });
+                    }, 1000); // 1 second delay for "Processing"
                     } else {
                         Swal.fire({
-                            title: "Error!",
+                            title: "Message",
                             text: response.message,
-                            icon: "error",
+                            icon: "info",
                             allowOutsideClick: false,
                             allowEscapeKey: false
                         });

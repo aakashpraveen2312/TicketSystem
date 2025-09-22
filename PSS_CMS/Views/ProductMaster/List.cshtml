@@ -73,7 +73,7 @@
                 @Html.Grid(Model).Columns(columns =>
            {
                columns.Add(c => c.P_CODE).Titled("Code");
-               columns.Add(c => c.P_NAME).Titled("Product Name");
+               columns.Add(c => c.P_NAME).Titled("Product Names");
                columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("100px").Css("text-right");
                columns.Add().Titled("Action").SetWidth("100px")
               .Encoded(false)

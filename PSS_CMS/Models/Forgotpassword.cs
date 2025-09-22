@@ -18,7 +18,7 @@ namespace PSS_CMS.Models
         public string Status { get; set; }
         [DisplayName("New Password")]
         public string newPassword { get; set; }
-        [DisplayName("Otp")]
+        [DisplayName("OTP")]
         public string otp { get; set; }
         public ForgotPasswordData Data { get; set; }
 

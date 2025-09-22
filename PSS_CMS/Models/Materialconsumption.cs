@@ -37,13 +37,13 @@ namespace PSS_CMS.Models
         public decimal tM_PRICE { get; set; }
         [DisplayName("Quantity")]
         public int tM_QUANTITY { get; set; }
-        [DisplayName("Discount")]
+        [DisplayName("Discount (%)")]
         public int tM_DISCOUNT { get; set; }
         [DisplayName("Total Amount")]
         public decimal tM_TOTALAMOUNT { get; set; }
-        [DisplayName("CGST")]
+        [DisplayName("CGST (%)")]
         public int tM_CGST { get; set; }
-        [DisplayName("SGST")]
+        [DisplayName("SGST (%)")]
         public int tM_SGST { get; set; }
         [DisplayName("Net Amount")]
 

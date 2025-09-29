@@ -87,6 +87,20 @@
 
             </div>
         </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.LT_RECID, htmlAttributes: new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.DropDownListFor(model => model.U_LOCATIONTYPERECID,
+       (SelectList)ViewBag.LocationTypeList,
+       "-- Select Location Type --",
+       new { @class = "form-control textboxcolors" })
+                @Html.ValidationMessageFor(model => model.LT_RECID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
         <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.U_EMAILID, new { @class = "labels" })

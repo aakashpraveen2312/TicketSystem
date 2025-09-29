@@ -51,7 +51,7 @@
     </div>
 
     <div class="container my-3">
-        <h3 class="text-center spanheadingGST fw-semibold" id="formname">Prospective Customer Registration Form <span id="mainspan">(TICKET SYSTEM)</span></h3>
+        <h3 class="text-center spanheadingGST fw-semibold" id="formname">Prospective Customer Registration Form <span id="mainspan">(Service Management)</span></h3>
         <div class="card mt-3">
             @using (Html.BeginForm("Index", "CompanyRegistration", FormMethod.Post, new { id = "regform", enctype = "multipart/form-data" }))
             {
@@ -155,10 +155,17 @@
                             </div>
                         </div>
                         @Html.LabelFor(model => model.IsDisabled, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4 d-flex align-items-center">
-                            <div class="">
-                                @Html.CheckBoxFor(model => model.IsDisabled, new { htmlAttributes = new { @class = "form-control",tabindex = "12"} })
-                               
+                        <div class="col-md-4">
+                            <div class="d-flex flex-column">
+                                @Html.DropDownListFor(
+                                    model => model.IsDisabled,
+                                    new List<SelectListItem>
+                                    {
+                                        new SelectListItem { Text = "IT-Industries", Value = "false" },
+                                        new SelectListItem { Text = "Non IT-Industries", Value = "true" }
+                                    },
+                                    new { @class = "form-control", tabindex = "12" }
+                                )
                             </div>
                         </div>
                     </div>

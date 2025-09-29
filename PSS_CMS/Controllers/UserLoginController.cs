@@ -4,6 +4,7 @@ using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
@@ -19,10 +20,45 @@ namespace PSS_CMS.Controllers
     public class UserLoginController : Controller
     {
 
+
+        private void PopulateLocationTypeList(int? selectedId = null)
+        {
+            List<LocationType> locationTypes = new List<LocationType>();
+            string connectionString = ConfigurationManager.ConnectionStrings["Mystring"].ConnectionString;
+
+            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            {
+                string cmdText = "SELECT LT_RECID, LT_NAME FROM LOCATIONTYPE WHERE LT_RECID = 1";
+
+                using (SqlCommand cmd = new SqlCommand(cmdText, sqlcon))
+                {
+
+                    using (SqlDataAdapter sqlda = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        sqlda.Fill(dt);
+
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            locationTypes.Add(new LocationType
+                            {
+                                LT_RECID = Convert.ToInt32(row["LT_RECID"]),
+                                LT_NAME = row["LT_NAME"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+
+            ViewBag.LocationTypeList = new SelectList(locationTypes, "LT_RECID", "LT_NAME", selectedId);
+        }
+
         // GET: UserLogin
         public async Task<ActionResult> Create()
         {
             await ComboLocationSelection();//we cannot call the combo gteby id here we need to pass the model class here its showing error cauz it already have post method
+            PopulateLocationTypeList(); 
+           
             return View();
         }
 
@@ -41,6 +77,7 @@ namespace PSS_CMS.Controllers
                         u_USERNAME = objUser.U_USERNAME ?? "",
                         u_RCODE = Session["R_CODE"],
                         u_SORTORDER = objUser.U_SORTORDER ?? "0",
+                        U_LOCATIONTYPERECID = objUser.LT_RECID,
                         u_EMAILID = objUser.U_EMAILID ?? "",
                         u_CRECID = Session["CompanyID"],
                         u_USERCODE = objUser.U_USERCODE ?? "",
@@ -234,7 +271,7 @@ namespace PSS_CMS.Controllers
                             var content = JsonConvert.DeserializeObject<ApiResponseUserObject>(jsonString);
 
                             user = content.Data;
-
+                            PopulateLocationTypeList(user?.U_LOCATIONTYPERECID);
                         }
                         else
                         {
@@ -485,6 +522,25 @@ namespace PSS_CMS.Controllers
             return View(); 
         }
 
+        private async Task ComboLocationSelectionGetbyID(int? selectedValue = null)
+        {
+            List<LocationType> locationTypes = new List<LocationType>();
 
+            // Call your API to get the location type list (or fetch from DB)
+            // Example:
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync("PopulateLocationTypeList");
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    locationTypes = JsonConvert.DeserializeObject<List<LocationType>>(jsonString);
+                }
+            }
+
+            ViewBag.LocationTypeList = new SelectList(locationTypes, "LT_RECID", "LT_NAME", selectedValue);
+        }
+    
+    
     }
 }

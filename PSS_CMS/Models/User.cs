@@ -33,6 +33,11 @@ namespace PSS_CMS.Models
         public string U_EMAILID { get; set; }
 
         public int? U_CRECID { get; set; }
+        public int? U_LOCATIONTYPERECID { get; set; }
+
+        [DisplayName("Location Type")]
+
+        public int? LT_RECID { get; set; }
 
       
         [StringLength(10, ErrorMessage = "Code can't be longer than 10 characters")]

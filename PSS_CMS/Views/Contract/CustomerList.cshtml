@@ -129,7 +129,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER</li>
+                    <li>USER ACCOUNTS</li>
                     <li>LIST</li>
                 </ul>
             </div>
@@ -148,7 +148,7 @@
                 @Html.Grid(Model).Columns(columns =>
            {
                columns.Add(c => c.P_CODE).Titled("Code");
-               columns.Add(c => c.P_NAME).Titled("Customer Name");
+               columns.Add(c => c.P_NAME).Titled("Product Name");
                columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("100px").Css("text-right");
                columns.Add().Titled("Action").SetWidth("100px")
               .Encoded(false)

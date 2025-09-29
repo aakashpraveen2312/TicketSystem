@@ -124,7 +124,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER</li>
+                    <li>USER ACCOUNTS</li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">LIST(@Session["name"])</a></li>
                     <li>CONTRACT LIST</li>
                 </ul>
@@ -156,7 +156,6 @@
                columns.Add(c => c.CT_TOTALPAIDAMOUNT).Titled("Total Paid Amount").Css("text-right");
                columns.Add(c => c.CT_CONTRACTCREATEDBY).Titled("Contract Created By");
                columns.Add(c => c.CT_CONTRACTAPPROVEDBY).Titled("Contract Approved By");
-               columns.Add(c => c.CT_ANYREFERENCE).Titled("Any Reference");
                columns.Add(c => c.CT_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
 
                columns.Add().Titled("Action").SetWidth("150px")

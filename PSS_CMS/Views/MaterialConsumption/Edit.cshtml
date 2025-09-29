@@ -107,17 +107,18 @@
         <div class="row mb-3">
 
             <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_PRICE, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+            </div>
+
+            <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_QUANTITY, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
                 @Html.EditorFor(model => model.tM_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
-
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_PRICE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
             </div>
         </div>
@@ -125,13 +126,7 @@
 
         <div class="row mb-3">
 
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_DISCOUNT, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
-
-            </div>
+            
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_SGST, new { @class = "labels" })
             </div>
@@ -139,15 +134,22 @@
                 @Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
             </div>
-        </div>
-
-        <div class="row mb-3">
-
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_CGST, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
                 @Html.EditorFor(model => model.tM_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+            </div>
+        </div>
+         
+        <div class="row mb-3">
+
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_DISCOUNT, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
 
             </div>
             <div class="col-lg-2 col-md-2 col-sm-12">
@@ -169,6 +171,16 @@
 
             </div>
             <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.tM_TYPE, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.tM_TYPE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+            </div>
+           
+        </div>
+        <div class="row mb-3">
+
+            <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_SORTORDER, new { @class = "labels" })
 
             </div>
@@ -176,16 +188,7 @@
                 @Html.EditorFor(model => model.tM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
             </div>
-        </div>
-        <div class="row mb-3">
 
-
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_TYPE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_TYPE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-            </div>
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.tM_BILLABLE, new { @class = "labels" })
             </div>

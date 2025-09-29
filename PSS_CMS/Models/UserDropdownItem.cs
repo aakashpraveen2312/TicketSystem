@@ -11,6 +11,7 @@ namespace PSS_CMS.Models
         public string Text { get; set; }
         public string Email { get; set; }
         public string Mobile { get; set; }
+        public int? Recid { get; set; }
     }
 
 }

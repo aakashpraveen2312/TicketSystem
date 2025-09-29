@@ -148,12 +148,15 @@
                         })
                     </div>
                     <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
-                        @Html.LabelFor(model => model.TC_CUSTOMER, "Customer", new { @class = "pb-2" })
+                        @*@Html.LabelFor(model => model.TC_CUSTOMER, "Customer", new { @class = "pb-2" })*@
                         @Html.DropDownList("SelectedCustomer",
                         new List<SelectListItem> {
                         new SelectListItem { Text = "No Product is selected", Value = "", Selected = true }
                         },
-                         new { @class = "form-select textboxcolors", id = "CustomerDropdown", required = "required" })
+                         new { @class = "form-select textboxcolors  d-none", id = "CustomerDropdown", required = "required" })
+
+                        @Html.LabelFor(model => model.LatestPaymentDueDate, "Product Warranty Upto", new { @class = "pb-2" })
+                        @Html.TextBoxFor(model => model.LatestPaymentDueDate, new { @class = "form-control", id = "latestwarranty", @readonly = "readonly", tabindex = "5" })
 
                     </div>
                 </div>
@@ -185,12 +188,12 @@
                         @Html.TextBoxFor(model => model.CU_WARRANTYFREECALLS, new { @class = "form-control text-right", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
                     </div>
                 </div>
-                <div class="row mt-2">
-                    <div class="col-md-6 col-sm-12">
-                        @Html.LabelFor(model => model.LatestPaymentDueDate, "Product Warranty Upto", new { @class = "pb-2" })
-                        @Html.TextBoxFor(model => model.LatestPaymentDueDate, new { @class = "form-control", id = "latestwarranty", @readonly = "readonly", tabindex = "5" })
-                    </div>
-                </div>
+                @*<div class="row mt-2">
+                        <div class="col-md-6 col-sm-12">
+                            @Html.LabelFor(model => model.LatestPaymentDueDate, "Product Warranty Upto", new { @class = "pb-2" })
+                            @Html.TextBoxFor(model => model.LatestPaymentDueDate, new { @class = "form-control", id = "latestwarranty", @readonly = "readonly", tabindex = "5" })
+                        </div>
+                    </div>*@
                 <div class="row mt-2">
                     <div class="col-md-12 col-sm-12">
                         @Html.LabelFor(model => model.TC_COMMENTS, "User Comments", new { @class = "pb-2" })
@@ -387,12 +390,12 @@
                     Swal.fire({
                         title: "",
                         html: `
-                                                                                        <p style="font-size: 15px;"><b>Ticket raised successfully.<br/>Admin will reach you soon</b></p>
-                                                                                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
-                                                                                            <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
-                                                                                            <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
-                                                                                        </div>
-                                                                                    `,
+                                                                                            <p style="font-size: 15px;"><b>Ticket raised successfully.<br/>Admin will reach you soon</b></p>
+                                                                                            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+                                                                                                <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
+                                                                                                <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
+                                                                                            </div>
+                                                                                        `,
                         showConfirmButton: false,
                         showCancelButton: false,
                         allowOutsideClick: false,
@@ -488,10 +491,7 @@
                 }
 
                 if (response.length > 0) {
-                    $('#CustomerDropdown').append($('<option>', {
-                        value: '',
-                        text: '--Select Customer--'
-                    }));
+
 
                     $.each(response, function (i, item) {
                         $('#CustomerDropdown').append($('<option>', {
@@ -523,115 +523,151 @@
     </script>
 
     @*If i chnage the customer it fills the waranty upto and warranty calls input box*@
-    <script>
-        $(document).on('change', '#CustomerDropdown', function () {
-            const selectedOption = $(this).find('option:selected');
-            const warrantyUpto = selectedOption.data('warranty');
-            const latestwarrantyUpto = selectedOption.data('latestwarranty');
-            const warrantyFreeCalls = selectedOption.data('warrantyfreecalls');
-
-            if (warrantyUpto) {
-                const date = new Date(warrantyUpto);
-                const formattedDate = ("0" + date.getDate()).slice(-2) + "-" +
-                    ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
-                    date.getFullYear();
-                const latestwarrantydate = new Date(latestwarrantyUpto);
-                const formattedlatestDate = ("0" + latestwarrantydate.getDate()).slice(-2) + "-" +
-                    ("0" + (latestwarrantydate.getMonth() + 1)).slice(-2) + "-" +
-                    latestwarrantydate.getFullYear();
-                console.log("formattedlatestDate", formattedlatestDate);
-                $('#warranty').val(formattedDate);
-                $('#latestwarranty').val(formattedlatestDate);
-                $('#warrantyfreecalls').val(warrantyFreeCalls);
-            } else {
-                $('#warranty').val('');
-                $('#latestwarranty').val('');
-            }
-        });
-    </script>
-
-    @*Check for warranty upto*@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function () {
+function loadMaterials(selectedRecId) {
+    $.ajax({
+        url: '@Url.Action("ComboProductTicketNew", "Tickets")',
+        type: 'GET',
+        data: { Recid: selectedRecId },
+        success: function (response) {
+            $('#CustomerDropdown').empty();
+            $('#warranty').val('');
+            $('#latestwarranty').val('');
+            $('#warrantyfreecalls').val('');
+            $('#termsCheckbox').prop('checked', false).prop('disabled', true);
 
-            // Handle dropdown change
-            $(document).on('change', '#CustomerDropdown', function () {
-                const selectedOption = $(this).find('option:selected');
-                const warrantyUpto = selectedOption.data('warranty');
-                const latestWarrantyUpto = selectedOption.data('latestwarranty');
-                const warrantyFreeCalls = selectedOption.data('warrantyfreecalls');
+            if (response.error) {
+                Swal.fire('Error', response.error, 'error');
+                return;
+            }
 
-                if (warrantyUpto) {
-                    const date = new Date(warrantyUpto);
+            if (response.length > 0) {
+                const item = response[0]; // first (or only) customer
+
+                $('#CustomerDropdown').append($('<option>', {
+                    value: item.Value,
+                    text: item.Text,
+                    selected: true
+                }));
+
+                if (item.WarrantyUpto) {
+                    const date = new Date(item.WarrantyUpto);
                     const formattedDate = ("0" + date.getDate()).slice(-2) + "-" +
                         ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
                         date.getFullYear();
                     $('#warranty').val(formattedDate);
-                    $('#warrantyfreecalls').val(warrantyFreeCalls);
-
-                    if (latestWarrantyUpto) {
-                        const latestDate = new Date(latestWarrantyUpto);
-                        const formattedLatestDate = ("0" + latestDate.getDate()).slice(-2) + "-" +
-                            ("0" + (latestDate.getMonth() + 1)).slice(-2) + "-" +
-                            latestDate.getFullYear();
-                        $('#latestwarranty').val(formattedLatestDate);
-                    }
-                } else {
-                    $('#warranty').val('');
-                    $('#latestwarranty').val('');
-                    $('#termsCheckbox').prop('checked', false).prop('disabled', true);
-                }
-            });
-
-            // Handle submit button click
-            $('#submitBtn').on('click', function (e) {
-                const warrantyDateStr = $('#warranty').val();   // Customer Warranty (DD-MM-YYYY)
-                const latestWarrantyDateStr = $('#latestwarranty').val(); // Product Warranty (DD-MM-YYYY)
-                const isCheckboxChecked = $('#termsCheckbox').is(':checked');
-
-                const currentDate = new Date();
-                currentDate.setHours(0, 0, 0, 0);
-
-                let warrantyDate = null;
-                let latestWarrantyDate = null;
-
-                if (warrantyDateStr) {
-                    const parts = warrantyDateStr.split('-');
-                    warrantyDate = new Date(parts[2], parts[1] - 1, parts[0]);
                 }
 
-                if (latestWarrantyDateStr) {
-                    const parts = latestWarrantyDateStr.split('-');
-                    latestWarrantyDate = new Date(parts[2], parts[1] - 1, parts[0]);
+                if (item.ProductUpto) {
+                    const latestDate = new Date(item.ProductUpto);
+                    const formattedLatest = ("0" + latestDate.getDate()).slice(-2) + "-" +
+                        ("0" + (latestDate.getMonth() + 1)).slice(-2) + "-" +
+                        latestDate.getFullYear();
+                    $('#latestwarranty').val(formattedLatest);
                 }
 
-                // Check customer warranty expired
-                if (warrantyDate && warrantyDate < currentDate && !isCheckboxChecked) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Warranty Expired',
-                        text: 'Your customer warranty has expired. Please check paid as service.',
-                        confirmButtonColor: '#d33'
-                    });
-                    return;
+                $('#warrantyfreecalls').val(item.WarrantyFreeCalls);
+
+                // ✅ Call to update checkbox state based on loaded data
+                updateCheckboxState();
+            }
+        },
+        error: function () {
+            Swal.fire('Error', 'Failed to load customers.', 'error');
+        }
+    });
+}
+
+        function updateCheckboxState() {
+            const warrantyDateStr = $('#warranty').val();
+            const latestWarrantyDateStr = $('#latestwarranty').val();
+
+            const currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0);
+
+            let warrantyDate = null;
+            let latestWarrantyDate = null;
+
+            if (warrantyDateStr) {
+                const parts = warrantyDateStr.split('-');
+                warrantyDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            }
+
+            if (latestWarrantyDateStr) {
+                const parts = latestWarrantyDateStr.split('-');
+                latestWarrantyDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            }
+
+            const customerExpired = warrantyDate && warrantyDate < currentDate;
+            const productExpired = latestWarrantyDate && latestWarrantyDate < currentDate;
+
+            // Enable checkbox only if any warranty is expired
+            if (customerExpired || productExpired) {
+                $('#termsCheckbox').prop('disabled', false).prop('checked', false);
+            } else {
+                $('#termsCheckbox').prop('disabled', true).prop('checked', false);
+            }
+        }
+
+        $('#submitBtn').on('click', function (e) {
+            const warrantyDateStr = $('#warranty').val();
+            const latestWarrantyDateStr = $('#latestwarranty').val();
+            const isCheckboxChecked = $('#termsCheckbox').is(':checked');
+
+            const currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0);
+
+            let warrantyDate = null;
+            let latestWarrantyDate = null;
+
+            if (warrantyDateStr) {
+                const parts = warrantyDateStr.split('-');
+                warrantyDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            }
+
+            if (latestWarrantyDateStr) {
+                const parts = latestWarrantyDateStr.split('-');
+                latestWarrantyDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            }
+
+            const customerExpired = warrantyDate && warrantyDate < currentDate;
+            const productExpired = latestWarrantyDate && latestWarrantyDate < currentDate;
+
+            // Case 1: Both valid → allow directly
+            if (!customerExpired && !productExpired) return;
+
+            // Case 2: Expired but checkbox not checked → show specific error
+            if ((customerExpired || productExpired) && !isCheckboxChecked) {
+                e.preventDefault();
+
+                let message = '';
+                if (customerExpired && productExpired) {
+                    message = 'Both customer and product warranties have expired. Please confirm by checking "Paid as Service".';
+                } else if (customerExpired) {
+                    message = 'Customer warranty has expired. Please confirm by checking "Paid as Service".';
+                } else if (productExpired) {
+                    message = 'Product warranty has expired. Please confirm by checking "Paid as Service".';
                 }
 
-                // Check product warranty expired
-                if (latestWarrantyDate && latestWarrantyDate < currentDate && !isCheckboxChecked) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Warranty Expired',
-                        text: 'Your product warranty has expired. Please check paid as service.',
-                        confirmButtonColor: '#d33'
-                    });
-                    return;
-                }
-            });
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Warranty Expired',
+                    text: message,
+                    confirmButtonColor: '#d33'
+                });
+                return;
+            }
         });
+
+        // 🔄 Ensure checkbox state updates after data load
+        $(document).ready(function () {
+            updateCheckboxState();
+        });
+
+
     </script>
+
 
 
 

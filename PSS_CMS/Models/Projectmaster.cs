@@ -12,6 +12,7 @@ namespace PSS_CMS.Models
     public class Projectmaster
     {
         public int CU_RECID { get; set; }
+        public int CU_URECID { get; set; }
         [DisplayName("Store Reference Code")]
         public string CU_CODE { get; set; }
         [DisplayName("Address")]
@@ -57,6 +58,8 @@ namespace PSS_CMS.Models
 
         private string CU_DISABLED { get; set; }
         public string SelectedProduct { get; set; }
+        public int SelectedLocation { get; set; }
+        public int SelectedLocationRef { get; set; }
         public string P_NAME { get; set; }
         public int P_RECID { get; set; }
 
@@ -95,6 +98,18 @@ namespace PSS_CMS.Models
         public string CU_CONTACTPERSONMOBILE3 { get; set; }
         [DisplayName("Designation")]
         public string CU_CONTACTPERSONDESIGINATION3 { get; set; }
+        [DisplayName("Location Type")]
+        public int LT_RECID { get; set; }
+        [DisplayName("Location Ref")]
+        public int SP_RECID { get; set; }
+
+        [DisplayName("Location Type")]
+        public int CU_LTRECID { get; set; }
+        [DisplayName("Location Ref")]
+        public int CU_SPRECID { get; set; }
+       
+        public string LT_NAME { get; set; }
+        public string SP_NAME { get; set; }
 
     }
 

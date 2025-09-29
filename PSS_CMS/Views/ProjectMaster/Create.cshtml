@@ -136,263 +136,349 @@
         <div class="tabs">
             <div class="tab-buttons">
                 <button class="active" onclick="showTab(0)">Main</button>
-                <button onclick="showTab(1)">Satutary</button>
+                <button onclick="showTab(1)">Statutory</button>
                 <button onclick="showTab(2)">Contacts</button>
             </div>
             @using (Html.BeginForm("Create", "ProductMaster", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
             {
 
-        <div class="tab-content active">
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_CODE, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                </div>
-            </div>
+                <div class="tab-content active">
 
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_INVOICENO, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_INVOICENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                </div>
-            </div>
-
-
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_PRECID, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @if (ViewBag.Product != null)
-                    {
-                        var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
-
-                        if (ProductList != null && ProductList.Any())
-                        {
-                            var modifiedProductList = new List<SelectListItem>(ProductList);
-
-                            // Add "--Select Project--" option only if more than one project is available
-                            modifiedProductList.Insert(0, new SelectListItem { Text = "-- Select Product --", Value = "" });
-
-                            @Html.DropDownList("SelectedProduct",
-                                                         modifiedProductList,
-                                                         new { @class = "form-select textboxcolors", id = "" })
-                        }
-                        else
-                        {
-                            var modifiedProductList = new List<SelectListItem>(ProductList);
-                            // Add "--Select Project--" option only if more than one project is available
-                            modifiedProductList.Insert(0, new SelectListItem { Text = "No Product's are available", Value = "" });
-
-                            @Html.DropDownList("SelectedProduct",
-                                                         modifiedProductList,
-                                                         new { @class = "form-select textboxcolors", id = "" }) }
-                    }
-                    else
-                    {
-                        <p>No product's are available</p>}
-                </div>
-            </div>
-
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_NAME, new { @class = "labels" })
-                    @Html.HiddenFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_NAME" } })
-
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    <select id="UserDropdown" class="form-select textboxcolors">
-                        <option value="">-- Select Customer --</option>
-                        @foreach (var user in ViewBag.User as List<PSS_CMS.Models.UserDropdownItem>)
-                        {
-                            <option value="@user.Value"
-                                    data-username="@user.Text"
-                                    data-email="@user.Email"
-                                    data-mobile="@user.Mobile">
-                                @user.Text
-                            </option>
-                        }
-                    </select>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_EMAIL, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_EMAIL, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_EMAIL" } })
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_MOBILENO, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_MOBILENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_MOBILENO" } })
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_WARRANTYUPTO, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_WARRANTYUPTO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "", type = "date" } })
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_ADDRESS, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                </div>
-            </div>
-
-
-
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_SORTORDER, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-
-                </div>
-            </div>
-            <div class="mb-3 d-flex justify-content-end">
-                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
-                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { CompanyRecID = Session["CompanyID"] })'" />
-            </div>
-
-        </div>
-        <div class="tab-content">
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_GST, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_GST, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_PANNUMBER, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_PANNUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_TANNUMBER, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_TANNUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                </div>
-            </div>
-           
-
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_WARRANTYFREECALLS, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-
-                </div>
-            </div>
-            <div class="mb-3 d-flex justify-content-end">
-                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
-                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { CompanyRecID = Session["CompanyID"] })'" />
-
-
-            </div>
-            </div>
-            <div class="tab-content">
-                <div class="row">
-                    <!-- Contact Person 1 -->
-                    <div class="col-lg-4 col-md-4 col-sm-12">
-                        <h5 class="bg-secondary text-white p-3 fw-bold">Contact Person 1</h5>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONNAME1, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONNAME1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.LT_RECID, new { @class = "labels" })
                         </div>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONEMAILID1, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONEMAILID1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                        </div>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE1, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                        </div>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION1, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @if (ViewBag.LocationType != null)
+                            {
+                                var LocationList = ViewBag.LocationType as IEnumerable<SelectListItem>;
+
+                                if (LocationList != null && LocationList.Any())
+                                {
+                                    var modifiedLocationList = new List<SelectListItem>(LocationList);
+
+                                    // Add "--Select Project--" option only if more than one project is available
+                                    modifiedLocationList.Insert(0, new SelectListItem { Text = "-- Select Location Type --", Value = "" });
+
+                                    @Html.DropDownList("SelectedLocation",
+                                                                 modifiedLocationList,
+                                                                 new { @class = "form-select textboxcolors", id = "SelectedLocation" })
+                                }
+                                else
+                                {
+                                    var modifiedLocationList = new List<SelectListItem>(LocationList);
+                                    // Add "--Select Project--" option only if more than one project is available
+                                    modifiedLocationList.Insert(0, new SelectListItem { Text = "No Location's are available", Value = "" });
+
+                                    @Html.DropDownList("SelectedLocation",
+                                                                 modifiedLocationList,
+                                                                 new { @class = "form-select textboxcolors", id = "" }) }
+                            }
+                            else
+                            {
+                                <p>No location's are available</p>}
                         </div>
                     </div>
 
-                    <!-- Contact Person 2 -->
-                    <div class="col-lg-4 col-md-4 col-sm-12">
-                        <h5 class="bg-secondary text-white p-3 fw-bold">Contact Person 2</h5>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONNAME2, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONNAME2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.SP_RECID, new { @class = "labels" })
                         </div>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONEMAILID2, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONEMAILID2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                        </div>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE2, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                        </div>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION2, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+
+                            @{
+                                var LocationRefList = ViewBag.LocationRef as IEnumerable<SelectListItem>;
+                            }
+
+                            @if (LocationRefList != null && LocationRefList.Any())
+                            {
+                                var modifiedLocationRefList = new List<SelectListItem>(LocationRefList);
+
+                                // Add default option
+                                modifiedLocationRefList.Insert(0, new SelectListItem
+                                {
+                                    Text = "-- Select Location Ref --",
+                                    Value = ""
+                                });
+
+                                @Html.DropDownList("SelectedLocationRef",
+                                    modifiedLocationRefList,
+                                    new { @class = "form-select textboxcolors", id = "LocationRefDropdown" })
+                            }
+                            else
+                            {
+                                var modifiedLocationRefList = new List<SelectListItem>();
+
+                                // Add "no data" option
+                                modifiedLocationRefList.Insert(0, new SelectListItem
+                                {
+                                    Text = "No Location Ref available",
+                                    Value = ""
+                                });
+
+                                @Html.DropDownList("SelectedLocationRef",
+                                    modifiedLocationRefList,
+                                    new { @class = "form-select textboxcolors", id = "LocationRefDropdown" })
+                            }
+
+
                         </div>
                     </div>
 
-                    <!-- Contact Person 3 -->
-                    <div class="col-lg-4 col-md-4 col-sm-12">
-                        <h5 class="bg-secondary text-white p-3 fw-bold">Contact Person 3</h5>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONNAME3, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONNAME3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_CODE, new { @class = "labels" })
                         </div>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONEMAILID3, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONEMAILID3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
                         </div>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE3, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_INVOICENO, new { @class = "labels" })
                         </div>
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION3, new { @class = "labels" })
-                            @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_INVOICENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
                         </div>
-                        <div class="mb-3 d-flex justify-content-end">
-                            <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                            <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { CompanyRecID = Session["CompanyID"] })'" />
+                    </div>
+
+
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_PRECID, new { @class = "labels" })
                         </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @if (ViewBag.Product != null)
+                            {
+                                var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
+
+                                if (ProductList != null && ProductList.Any())
+                                {
+                                    var modifiedProductList = new List<SelectListItem>(ProductList);
+
+                                    // Add "--Select Project--" option only if more than one project is available
+                                    modifiedProductList.Insert(0, new SelectListItem { Text = "-- Select Product --", Value = "" });
+
+                                    @Html.DropDownList("SelectedProduct",
+                                                                 modifiedProductList,
+                                                                 new { @class = "form-select textboxcolors", id = "" })
+                                }
+                                else
+                                {
+                                    var modifiedProductList = new List<SelectListItem>(ProductList);
+                                    // Add "--Select Project--" option only if more than one project is available
+                                    modifiedProductList.Insert(0, new SelectListItem { Text = "No Product's are available", Value = "" });
+
+                                    @Html.DropDownList("SelectedProduct",
+                                                                 modifiedProductList,
+                                                                 new { @class = "form-select textboxcolors", id = "" }) }
+                            }
+                            else
+                            {
+                                <p>No product's are available</p>}
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_NAME, new { @class = "labels" })
+                            @Html.HiddenFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_NAME" } })
+
+                            @Html.HiddenFor(model => model.CU_URECID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_URECID" } })
+
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            <select id="UserDropdown" class="form-select textboxcolors">
+                                <option value="">-- Select Customer --</option>
+                                @foreach (var user in ViewBag.User as List<PSS_CMS.Models.UserDropdownItem>)
+                                {
+                                    <option value="@user.Value"
+                                            data-username="@user.Text"
+                                            data-email="@user.Email"
+                                            data-recid="@user.Recid"
+                                            data-mobile="@user.Mobile">
+                                        @user.Text
+                                    </option>
+
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_EMAIL, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_EMAIL, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_EMAIL" } })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_MOBILENO, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_MOBILENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_MOBILENO" } })
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_WARRANTYUPTO, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_WARRANTYUPTO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "", type = "date" } })
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_ADDRESS, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_SORTORDER, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+
+                        </div>
+                    </div>
+                    <div class="mb-3 d-flex justify-content-end">
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                        <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { CompanyRecID = Session["CompanyID"] })'" />
+                    </div>
+
+                </div>
+                <div class="tab-content">
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_GST, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_GST, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_PANNUMBER, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_PANNUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_TANNUMBER, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_TANNUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+
+                        </div>
+                    </div>
+
+
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_WARRANTYFREECALLS, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+
+                        </div>
+                    </div>
+                    <div class="mb-3 d-flex justify-content-end">
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                        <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { CompanyRecID = Session["CompanyID"] })'" />
+
 
                     </div>
                 </div>
-            </div>}
+                <div class="tab-content">
+                    <div class="row">
+                        <!-- Contact Person 1 -->
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <h5 class="bg-secondary text-white p-3 fw-bold">Contact Person 1</h5>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONNAME1, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONNAME1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONEMAILID1, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONEMAILID1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE1, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION1, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                        </div>
+
+                        <!-- Contact Person 2 -->
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <h5 class="bg-secondary text-white p-3 fw-bold">Contact Person 2</h5>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONNAME2, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONNAME2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONEMAILID2, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONEMAILID2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE2, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION2, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                        </div>
+
+                        <!-- Contact Person 3 -->
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <h5 class="bg-secondary text-white p-3 fw-bold">Contact Person 3</h5>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONNAME3, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONNAME3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONEMAILID3, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONEMAILID3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE3, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION3, new { @class = "labels" })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3 d-flex justify-content-end">
+                                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ProjectMaster", new { CompanyRecID = Session["CompanyID"] })'" />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>}
         </div>
 
 
@@ -474,10 +560,12 @@
             var selected = this.options[this.selectedIndex];
             var email = selected.getAttribute("data-email") || "";
             var name = selected.getAttribute("data-username") || "";
+            var recid = selected.getAttribute("data-recid") || "";
             var mobile = selected.getAttribute("data-mobile") || "";
-
+            console.log("recid", recid);
             document.getElementById("CU_EMAIL").value = email;
             document.getElementById("CU_NAME").value = name;
+            document.getElementById("CU_URECID").value = recid;
             document.getElementById("CU_MOBILENO").value = mobile;
         });
 
@@ -518,7 +606,7 @@
 
             var formData = new FormData(this);
 
-           
+
 
             // Disable page interaction
             $("body").css("pointer-events", "none");
@@ -597,6 +685,39 @@
             $("#savebutton").prop("disabled", false).text("Submit");
             $("body").css("pointer-events", "auto"); // Re-enable page interaction
         }
+    });
+    </script>
+
+    @*Based on location Type fill the value in the locationref dropdown*@
+    <script>
+    $(document).ready(function () {
+        $("#SelectedLocation").change(function () {
+            var locationId = $(this).val();
+
+            if (locationId) {
+                $.ajax({
+                    url: '@Url.Action("LocationRef", "ProjectMaster")',
+                    type: 'GET',
+                    data: { locationid: locationId },
+                    success: function (result) {
+                        var $dropdown = $("#LocationRefDropdown");
+                        $dropdown.empty(); // clear old options
+
+                        if (result && result.length > 0) {
+                            $dropdown.append($("<option>").val("").text("-- Select Location Ref --"));
+                            $.each(result, function (i, item) {
+                                $dropdown.append($("<option>").val(item.Value).text(item.Text));
+                            });
+                        } else {
+                            $dropdown.append($("<option>").val("").text("No Location ref Available"));
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error fetching Location Ref: " + error);
+                    }
+                });
+            }
+        });
     });
     </script>
 

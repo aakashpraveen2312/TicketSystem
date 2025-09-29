@@ -739,11 +739,11 @@ namespace PSS_CMS.Controllers
         {
             var customerResult = new List<object>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["CUSTOMERPRODUCTCOMBO"];
+            string webUrlGet = ConfigurationManager.AppSettings["CUSTOMERPRODUCTCOMBOFORUSER"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"]?.ToString();
             string cmpRecId = Session["CompanyID"]?.ToString();
-            string strparams = "companyId=" + cmpRecId + "&productid=" + Recid;
+            string strparams = "companyId=" + cmpRecId + "&productid=" + Recid + "&userrecid="+ Session["UserRECID"];
             string url = webUrlGet + "?" + strparams;
 
             try
@@ -762,18 +762,20 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(jsonString);
+                            var apiResponse = JsonConvert.DeserializeObject<ApiResponseObject>(jsonString);
 
                             if (apiResponse?.Data != null)
                             {
-                                customerResult = apiResponse.Data.Select(data => new
-                                {
-                                    Value = data.CU_RECID.ToString(),
-                                    Text = data.CU_NAME,
-                                    WarrantyUpto = data.CU_WARRANTYUPTO,
-                                    ProductUpto = data.LatestPaymentDueDate,
-                                    WarrantyFreeCalls = data.CU_WARRANTYFREECALLS,                                  
-                                }).ToList<object>();
+                                customerResult = new List<object>
+    {
+        new {
+            Value = apiResponse.Data.CU_RECID.ToString(),
+            Text = apiResponse.Data.CU_NAME,
+            WarrantyUpto = apiResponse.Data.CU_WARRANTYUPTO,
+            ProductUpto = apiResponse.Data.LatestPaymentDueDate,
+            WarrantyFreeCalls = apiResponse.Data.CU_WARRANTYFREECALLS
+        }
+    };
                             }
                         }
                     }

@@ -120,4 +120,10 @@ namespace PSS_CMS.Models
         public List<Tickets> Data { get; set; }
     }
 
+    public class ApiResponseObject
+    {
+        public string Status { get; set; }
+        public string Message { get; set; }
+        public Tickets Data { get; set; }
+    }
 }

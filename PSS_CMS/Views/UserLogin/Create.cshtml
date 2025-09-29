@@ -76,6 +76,9 @@
         @using (Html.BeginForm("Create", "UserLogin", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
         {
     <div class="create ms-4 me-2 mt-3">
+
+
+
         <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.U_USERCODE, new { @class = "labels" })
@@ -84,6 +87,9 @@
                 @Html.EditorFor(model => model.U_USERCODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
             </div>
         </div>
+
+
+
         <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.U_USERNAME, new { @class = "labels" })
@@ -93,6 +99,23 @@
 
             </div>
         </div>
+        
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.LT_RECID, htmlAttributes: new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.DropDownList("LT_RECID",
+                              (SelectList)ViewBag.LocationTypeList,
+                              "-- Select Location Type --",
+                              new { @class = "form-control textboxcolors" })
+                @Html.ValidationMessageFor(model => model.LT_RECID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+
         <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.U_EMAILID, new { @class = "labels" })
@@ -157,63 +180,63 @@
                                 ();
                             modifiedRoleList.Insert(0, new SelectListItem { Text = "No location's are available", Value = "" });
 
-                                @Html.DropDownList("SelectedRole",
-                                            modifiedRoleList,
-                                            new { @class = "form-select textboxcolors" })
+                            @Html.DropDownList("SelectedRole",
+                                        modifiedRoleList,
+                                        new { @class = "form-select textboxcolors" })
                         }
                     }
                     else
                     {
-                                <p>No location's are available</p>
+                        <p>No location's are available</p>
                     }
 
-                               
+
                 </div>
             </div>
         }
         else
         {
-          // For Admin or Manager, send value = 0 (can be stored in a hidden field)
-          <input type = "hidden" name = "SelectedRole" value = "0" />
-          }
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.U_SORTORDER, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.EditorFor(model => model.U_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-
-                </div>
+            // For Admin or Manager, send value = 0 (can be stored in a hidden field)
+            <input type="hidden" name="SelectedRole" value="0" />
+        }
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.U_SORTORDER, new { @class = "labels" })
             </div>
-            @if (userRole == "USER")
-            {
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.U_UserManager, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.CheckBoxFor(model => model.U_UserManager, new { @class = "form-check-input" })
-                    </div>
-                </div>
-            }
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.U_UserDisable, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.CheckBoxFor(model => model.U_UserDisable, new { @class = "form-check-input" })
-                </div>
-            </div>
-            <div class="row ">
-                <div class="col-lg-2">
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.U_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
-                </div>
-                <div class="col-lg-3 d-flex justify-content-end">
-                    <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
-                    <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'" />
-                </div>
             </div>
         </div>
+        @if (userRole == "USER")
+        {
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.U_UserManager, new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.CheckBoxFor(model => model.U_UserManager, new { @class = "form-check-input" })
+                </div>
+            </div>
+        }
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.U_UserDisable, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.CheckBoxFor(model => model.U_UserDisable, new { @class = "form-check-input" })
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-lg-2">
+
+            </div>
+            <div class="col-lg-3 d-flex justify-content-end">
+                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
+                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'" />
+            </div>
+        </div>
+    </div>
         }
 
         <footer>

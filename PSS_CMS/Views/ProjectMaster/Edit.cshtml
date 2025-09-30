@@ -164,7 +164,7 @@
                         <div class="col-lg-5 col-md-5 col-sm-12">
                             @Html.DropDownListFor(model => model.CU_SPRECID,
      (IEnumerable<SelectListItem>)ViewBag.LocationRef,
-     "-- Select Location Ref --",
+     "-- Select Location Reference --",
      new { @class = "form-select textboxcolors", id = "LocationRefDropdown", data_selected = Model.CU_SPRECID })
 
 
@@ -646,7 +646,7 @@
                         $dropdown.empty();
 
                         if (result && result.length > 0) {
-                            $dropdown.append($("<option>").val("").text("-- Select Location Ref --"));
+                            $dropdown.append($("<option>").val("").text("-- Select Location Reference --"));
                             $.each(result, function (i, item) {
                                 var $opt = $("<option>").val(item.Value).text(item.Text);
                                 if (preselectedId && item.Value.toString() === preselectedId.toString()) {
@@ -655,7 +655,7 @@
                                 $dropdown.append($opt);
                             });
                         } else {
-                            $dropdown.append($("<option>").val("").text("No Location Ref Available"));
+                            $dropdown.append($("<option>").val("").text("No Location Reference Available"));
                         }
                     },
                     error: function (xhr, status, error) {
@@ -665,7 +665,7 @@
             } else {
                 // Clear if no location selected
                 $("#LocationRefDropdown").empty()
-                    .append($("<option>").val("").text("-- Select Location Ref --"));
+                    .append($("<option>").val("").text("-- Select Location Reference --"));
             }
         }
 

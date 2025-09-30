@@ -129,7 +129,7 @@ namespace PSS_CMS.Models
         public string Status { get; set; }
         public string Message { get; set; }
 
-        [DisplayName("Material")]
+        [DisplayName("Industry Type")]
         public bool IsDisabled
         {
             get => M_CONSUMPTION == "Y";

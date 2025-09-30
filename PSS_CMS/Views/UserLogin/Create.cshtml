@@ -99,20 +99,21 @@
 
             </div>
         </div>
-        
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.LT_RECID, htmlAttributes: new { @class = "labels" })
+        @if (userRole != "USER")
+        {
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.LT_RECID, htmlAttributes: new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.DropDownList("LT_RECID",
+                               (SelectList)ViewBag.LocationTypeList,
+                               "-- Select Location Type --",
+                               new { @class = "form-control textboxcolors" })
+                    @Html.ValidationMessageFor(model => model.LT_RECID, "", new { @class = "text-danger" })
+                </div>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.DropDownList("LT_RECID",
-                              (SelectList)ViewBag.LocationTypeList,
-                              "-- Select Location Type --",
-                              new { @class = "form-control textboxcolors" })
-                @Html.ValidationMessageFor(model => model.LT_RECID, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
+        }
 
 
 

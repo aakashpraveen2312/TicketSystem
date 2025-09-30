@@ -197,7 +197,7 @@
                                 // Add default option
                                 modifiedLocationRefList.Insert(0, new SelectListItem
                                 {
-                                    Text = "-- Select Location Ref --",
+                                    Text = "-- Select Location Reference --",
                                     Value = ""
                                 });
 
@@ -212,7 +212,7 @@
                                 // Add "no data" option
                                 modifiedLocationRefList.Insert(0, new SelectListItem
                                 {
-                                    Text = "No Location Ref available",
+                                    Text = "No Location Reference available",
                                     Value = ""
                                 });
 
@@ -704,12 +704,12 @@
                         $dropdown.empty(); // clear old options
 
                         if (result && result.length > 0) {
-                            $dropdown.append($("<option>").val("").text("-- Select Location Ref --"));
+                            $dropdown.append($("<option>").val("").text("-- Select Location Reference --"));
                             $.each(result, function (i, item) {
                                 $dropdown.append($("<option>").val(item.Value).text(item.Text));
                             });
                         } else {
-                            $dropdown.append($("<option>").val("").text("No Location ref Available"));
+                            $dropdown.append($("<option>").val("").text("No Location reference Available"));
                         }
                     },
                     error: function (xhr, status, error) {

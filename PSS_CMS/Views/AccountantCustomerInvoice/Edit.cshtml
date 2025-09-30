@@ -218,6 +218,34 @@
             {
 
                 <div class="tab-content active">
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_LTRECID, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.DropDownListFor(model => model.CU_LTRECID,
+                                                  (IEnumerable<SelectListItem>)ViewBag.LocationType,
+                                                  "-- Select Location Type --",
+                                                  new { @class = "form-select textboxcolors", id = "SelectedLocation" })
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_SPRECID, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.DropDownListFor(model => model.CU_SPRECID,
+        (IEnumerable<SelectListItem>)ViewBag.LocationRef,
+        "-- Select Location Reference --",
+        new { @class = "form-select textboxcolors", id = "LocationRefDropdown", data_selected = Model.CU_SPRECID })
+
+
+                        </div>
+                    </div>
+
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
                             @Html.LabelFor(model => model.CU_CODE, new { @class = "labels" })
@@ -591,7 +619,7 @@
             submitBtn.prop("disabled", true);
 
             var formData = new FormData(this);
-       
+
             // Disable page interaction
             $("body").css("pointer-events", "none");
 
@@ -667,6 +695,60 @@
         }
     });
     </script>
+    @*Based on location Type fill the value in the locationref dropdown*@
+    <script>
+    $(document).ready(function () {
+
+        // 🔹 Common function to load LocationRef
+        function loadLocationRef(locationId, preselectedId = null) {
+            if (locationId) {
+                $.ajax({
+                    url: '@Url.Action("LocationRef", "AccountantCustomerInvoice")',
+                    type: 'GET',
+                    data: { locationid: locationId },
+                    success: function (result) {
+                        var $dropdown = $("#LocationRefDropdown");
+                        $dropdown.empty();
+
+                        if (result && result.length > 0) {
+                            $dropdown.append($("<option>").val("").text("-- Select Location Reference --"));
+                            $.each(result, function (i, item) {
+                                var $opt = $("<option>").val(item.Value).text(item.Text);
+                                if (preselectedId && item.Value.toString() === preselectedId.toString()) {
+                                    $opt.prop("selected", true);
+                                }
+                                $dropdown.append($opt);
+                            });
+                        } else {
+                            $dropdown.append($("<option>").val("").text("No Location Reference Available"));
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error fetching Location Ref: " + error);
+                    }
+                });
+            } else {
+                // Clear if no location selected
+                $("#LocationRefDropdown").empty()
+                    .append($("<option>").val("").text("-- Select Location Reference --"));
+            }
+        }
+
+        // 🔹 On change event
+        $("#SelectedLocation").change(function () {
+            var locationId = $(this).val();
+            loadLocationRef(locationId); // call helper
+        });
+
+        // 🔹 On load (for edit mode with preselected value)
+        var initialLocationId = $("#SelectedLocation").val();
+        var preselectedRefId = $("#LocationRefDropdown").data("selected"); // Razor sets this
+        if (initialLocationId) {
+            loadLocationRef(initialLocationId, preselectedRefId);
+        }
+    });
+    </script>
+
 </body>
 </html>
 

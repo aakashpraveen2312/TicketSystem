@@ -100,12 +100,12 @@ namespace PSS_CMS.Models
         public string CU_CONTACTPERSONDESIGINATION3 { get; set; }
         [DisplayName("Location Type")]
         public int LT_RECID { get; set; }
-        [DisplayName("Location Ref")]
+        [DisplayName("Location Reference")]
         public int SP_RECID { get; set; }
 
         [DisplayName("Location Type")]
         public int CU_LTRECID { get; set; }
-        [DisplayName("Location Ref")]
+        [DisplayName("Location Reference")]
         public int CU_SPRECID { get; set; }
        
         public string LT_NAME { get; set; }

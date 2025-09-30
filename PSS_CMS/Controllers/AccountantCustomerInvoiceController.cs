@@ -83,6 +83,7 @@ namespace PSS_CMS.Controllers
         {
             await ComboProductSelection();
             await ComboUser();
+            await LocationType();
             return View();
         }
         [HttpPost]
@@ -98,8 +99,11 @@ namespace PSS_CMS.Controllers
             ""cU_CODE"": ""{projectmaster.CU_CODE}"",           
             ""cU_NAME"": ""{projectmaster.CU_NAME}"",           
             ""cU_EMAIL"": ""{ projectmaster.CU_EMAIL}"",                    
-            ""CU_PRECID"": ""{ projectmaster.SelectedProduct}"",                    
+            ""cU_PRECID"": ""{(string.IsNullOrWhiteSpace(projectmaster.SelectedProduct) ? "0" : projectmaster.SelectedProduct)}"",                
+            ""cU_SPRECID"": ""{ projectmaster.SelectedLocationRef}"",                    
+            ""cU_LTRECID"": ""{ projectmaster.SelectedLocation}"",                    
             ""cU_MOBILENO"": ""{ projectmaster.CU_MOBILENO}"",                    
+            ""cU_URECID"": ""{ projectmaster.CU_URECID}"",                    
             ""cU_INVOICENO"": ""{ projectmaster.CU_INVOICENO}"",                    
             ""cU_WARRANTYUPTO"": ""{ projectmaster.CU_WARRANTYUPTO}"",                    
             ""cU_WARRANTYFREECALLS"": ""{ projectmaster.CU_WARRANTYFREECALLS}"",                    
@@ -236,6 +240,8 @@ namespace PSS_CMS.Controllers
             }
             await ComboProductSelectionEdit(projectmaster.CU_PRECID);
             await ComboUserEdit(projectmaster.CU_NAME);
+            ViewBag.LocationType = await LocationTypeEdit(projectmaster.CU_LTRECID);
+            ViewBag.LocationRef = await LocationRefEdit(projectmaster.CU_LTRECID, projectmaster.CU_SPRECID);
             return View(projectmaster);
         }
         [HttpPost]
@@ -253,7 +259,10 @@ namespace PSS_CMS.Controllers
             ""cU_NAME"": ""{projectmaster.CU_NAME}"",
             ""cU_EMAIL"": ""{projectmaster.CU_EMAIL}"",
             ""cU_MOBILENO"": ""{projectmaster.CU_MOBILENO}"",
-            ""cU_PRECID"": ""{projectmaster.SelectedProduct}"",
+            ""cU_URECID"": ""{ projectmaster.CU_URECID}"", 
+            ""cU_PRECID"": ""{projectmaster.SelectedProduct}"",                
+            ""cU_SPRECID"": ""{ projectmaster.CU_SPRECID}"",                    
+            ""cU_LTRECID"": ""{ projectmaster.CU_LTRECID}"",    
             ""cU_INVOICENO"": ""{projectmaster.CU_INVOICENO}"",
             ""cU_WARRANTYUPTO"": ""{projectmaster.CU_WARRANTYUPTO}"",
             ""cU_WARRANTYFREECALLS"": ""{projectmaster.CU_WARRANTYFREECALLS}"",
@@ -261,7 +270,7 @@ namespace PSS_CMS.Controllers
             ""cU_ADDRESS"": ""{ projectmaster.CU_ADDRESS}"",                    
             ""cU_GST"": ""{ projectmaster.CU_GST}"",     
             ""cU_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",  
-  ""cU_PANNUMBER"": ""{ projectmaster.CU_PANNUMBER}"",                    
+            ""cU_PANNUMBER"": ""{ projectmaster.CU_PANNUMBER}"",                    
             ""cU_TANNUMBER"": ""{ projectmaster.CU_TANNUMBER}"",                    
             ""cU_CONTACTPERSONNAME1"": ""{ projectmaster.CU_CONTACTPERSONNAME1}"",                    
             ""cU_CONTACTPERSONMOBILE1"": ""{ projectmaster.CU_CONTACTPERSONMOBILE1}"",                    
@@ -622,6 +631,207 @@ namespace PSS_CMS.Controllers
             }
 
             ViewBag.User = userList; // ✅ Now it's a List, not a SelectList
+        }
+
+        public async Task<ActionResult> LocationType()
+
+        {
+            List<SelectListItem> LocationType = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["LOCATIONTYPE"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                LocationType = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.LT_RECID.ToString(), // or the appropriate value field
+                                    Text = t.LT_NAME,
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            // Assuming you are passing ticketTypes to the view
+            ViewBag.LocationType = LocationType;
+
+            return View();
+        }
+
+        public async Task<List<SelectListItem>> LocationTypeEdit(int selectedLocationid)
+        {
+            List<SelectListItem> LocationType = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["LOCATIONTYPE"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                LocationType = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.LT_RECID.ToString(),
+                                    Text = t.LT_NAME,
+                                    Selected = (t.LT_RECID == selectedLocationid)
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return LocationType;
+        }
+
+
+
+        public async Task<JsonResult> LocationRef(int? locationid)
+        {
+            List<SelectListItem> LocationRef = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["LOCATIONREF"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&locationTypeId=" + locationid;
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                LocationRef = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.SP_RECID.ToString(),
+                                    Text = t.SP_NAME
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+            // 🔹 Return JSON (not View)
+            return Json(LocationRef, JsonRequestBehavior.AllowGet);
+        }
+
+        // 🔹 Method to fetch and build LocationRef list
+        public async Task<List<SelectListItem>> LocationRefEdit(int? locationid, int selectedstoragepointid)
+        {
+            List<SelectListItem> LocationRef = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["LOCATIONREF"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&locationTypeId=" + locationid;
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                LocationRef = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.SP_RECID.ToString(),
+                                    Text = t.SP_NAME,
+                                    Selected = (t.SP_RECID == selectedstoragepointid)
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // optional logging
+            }
+
+            return LocationRef;
         }
 
     }

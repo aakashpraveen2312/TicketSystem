@@ -1,0 +1,31 @@
+﻿@model PSS_CMS.Models.ServiceInvoice
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        @Html.LabelFor(m => m.InvoiceID)
+        @Html.TextBoxFor(m => m.InvoiceID, new { @class = "form-control" })
+    </div>
+    <div class="col-md-4">
+        @Html.LabelFor(m => m.InvoiceDate)
+        @Html.TextBoxFor(m => m.InvoiceDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+    </div>
+    <div class="col-md-4">
+        @Html.LabelFor(m => m.TicketRaisedDate)
+        @Html.TextBoxFor(m => m.TicketRaisedDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">@Html.LabelFor(m => m.CustomerName) @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control" })</div>
+    <div class="col-md-6">@Html.LabelFor(m => m.Location) @Html.TextBoxFor(m => m.Location, new { @class = "form-control" })</div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">@Html.LabelFor(m => m.GSTIN) @Html.TextBoxFor(m => m.GSTIN, new { @class = "form-control" })</div>
+    <div class="col-md-6">@Html.LabelFor(m => m.Comments) @Html.TextBoxFor(m => m.Comments, new { @class = "form-control" })</div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">@Html.LabelFor(m => m.ProductName) @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control" })</div>
+    <div class="col-md-6">@Html.LabelFor(m => m.WarrantyUpto) @Html.TextBoxFor(m => m.WarrantyUpto, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })</div>
+</div>

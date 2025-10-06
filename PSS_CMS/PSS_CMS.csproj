@@ -316,6 +316,7 @@
     <Compile Include="Controllers\CompanyRegistrationController.cs" />
     <Compile Include="Controllers\ChangePasswordController.cs" />
     <Compile Include="Controllers\ContractInvoiceController.cs" />
+    <Compile Include="Controllers\ServiceInvoiceController.cs" />
     <Compile Include="Controllers\UserManagerController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\ForgotpasswordController.cs" />
@@ -361,11 +362,13 @@
     <Compile Include="Models\Materialcategory.cs" />
     <Compile Include="Models\Materialconsumption.cs" />
     <Compile Include="Models\MaterialProductmap.cs" />
+    <Compile Include="Models\PaymentUpdate.cs" />
     <Compile Include="Models\PDFDetails.cs" />
     <Compile Include="Models\ProductMaster.cs" />
     <Compile Include="Models\Projectmaster.cs" />
     <Compile Include="Models\Recenttickets.cs" />
     <Compile Include="Models\Reviewtickets.cs" />
+    <Compile Include="Models\ServiceInvoice.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\Tickethistory.cs" />
     <Compile Include="Models\Tickets.cs" />
@@ -609,6 +612,10 @@
     <Content Include="Views\AccountantCustomerInvoice\Create.cshtml" />
     <Content Include="Views\AccountantCustomerInvoice\Edit.cshtml" />
     <Content Include="Views\Contract\ChangePassword.cshtml" />
+    <Content Include="Views\ServiceInvoice\Index.cshtml" />
+    <Content Include="Views\ServiceInvoice\UpdatePayment.cshtml" />
+    <Content Include="Views\ServiceInvoice\GeneratePDF.cshtml" />
+    <Content Include="Views\Shared\_InvoiceInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,8 +1,9 @@
-﻿@model IEnumerable<PSS_CMS.Models.ProductMaster>
+﻿@model IEnumerable<PSS_CMS.Models.ServiceInvoice>
 @using GridMvc.Html
-@{ 
+@{
     Layout = null;
 }
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,10 +11,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
+
     <link href="~/assets/img/bexlogo_wob.png" rel="icon">
     <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
     <title>BEYONDEXS - SERVICE MANAGEMENT</title>
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
     <link href="~/Content/ClientSide.css" rel="stylesheet" />
     <link href="~/Content/Style1.css" rel="stylesheet" />
     <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
@@ -21,7 +22,7 @@
     <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
     <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
     @*Bootstrap Icons and Boxicons and Fontawesome link*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
@@ -29,39 +30,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
 
     <script src="~/Scripts/Sidebarscript.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/Colors.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <style>
-        i.bi.bi-eye.\-.fill {
-            font-size: 17px;
-        }
-    </style>
+    <!-- Favicons -->
+    <link href="~/assets/img/PSSlogo.png" rel="icon">
+    <link href="~/assets/img/PSSlogo.png" rel="apple-touch-icon">
 </head>
 
 <body>
-
     @*Sidebar*@
     <nav class="sidebar close">
         <header>
             <div class="text logo-text" style="display:inline-block">
-               
-                    <a href="@Url.Action("ContractDashboard", "Contract")">
+
+                <a href="@Url.Action("ContractDashboard", "Contract")">
 
 
-                        @if (Session["Logo"] != null)
-                        {
-                            <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
-                        }
+                    @if (Session["Logo"] != null)
+                    {
+                        <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
+                    }
 
-                    </a>
-                
+                </a>
+
 
             </div>
-          
+
             <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
 
         </header>
@@ -81,6 +78,7 @@
                             <span class="text nav-text" style="margin-left:15px">User Accounts</span>
                         </a>
                     </li>
+
                     <li class="nav-link">
                         <a href="@Url.Action("List", "AccountantCustomerInvoice")">
                             <i class='bi bi-bag-check' style="font-size:20px"></i>
@@ -119,8 +117,8 @@
             </div>
         </div>
     </nav>
-
-
+  
+    
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
@@ -136,15 +134,17 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER ACCOUNTS</li>
+                    <li>SERVICE INVOICE</li>
                     <li>LIST</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "ProductMaster", FormMethod.Get, new { id = "searchForm" }))
+                @using (Html.BeginForm("List", "AccountantCustomerInvoice", FormMethod.Get, new { id = "searchForm" }))
                 {
-                    <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />}
-               
+                    <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
+                }
+
+            
             </div>
 
         </div>
@@ -154,69 +154,87 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.P_CODE).Titled("Code");
-               columns.Add(c => c.P_NAME).Titled("Product Name");
-               columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("100px").Css("text-right");
-               columns.Add().Titled("Action").SetWidth("100px")
-              .Encoded(false)
-               .Sanitized(false)
-            .RenderValueAs(o =>
-            {
+               columns.Add(c => c.InvoiceID).Titled("Invoice ID");
+               columns.Add(c => c.InvoiceDate).Titled("Invoice Date");
+               columns.Add(c => c.TC_REQUEST_DATETIME).Titled("Ticket Raised Date");
+               columns.Add(c => c.TC_REFERENCENO).Titled("Ticket Ref No");
+               columns.Add(c => c.TC_USERNAME).Titled("Customer ID");
+               columns.Add(c => c.TotalNetAmount).Titled("Amount");
+               columns.Add(c => c.TotalCGST).Titled("GST").Css("text-right");
+               columns.Add(c => c.TotalSGST).Titled("SGST").Css("text-right");
+               columns.Add(c => c.Status)
+       .Titled("Status")
+       .Encoded(false)    // optional if you return HTML (badges)
+       .Sanitized(false)  // optional
+       .RenderValueAs(o =>
+       {
+           switch ((o.Status ?? "").ToUpper())
+           {
+               case "YG": return "Yet to Generate";
+               case "IG": return "Invoice Generated";
+               case "PU": return "Updated Payment";
+               default: return o.Status ?? "";
+           }
+       });
 
-                var Contracturl = Url.Action("ContractList", "Contract", new { Recid = o.P_RECID, name = o.P_NAME }, null);
-                var ContracticonHtml = "<i class='bx  bx-list-ul'></i>";
-                var ContractlinkHtml = $"<a href='{Contracturl}' data-toggle='tooltip' data-placement='top' title='Contract List'>{ContracticonHtml}</a>";
+               columns.Add().Titled("Action")
+    .Encoded(false)
+    .Sanitized(false)
+    .RenderValueAs(o =>
+    {
+        string linkHtml = string.Empty;
 
-                var extraSpaces2 = "&nbsp;&nbsp;&nbsp;";
-                return MvcHtmlString.Create($"{ContractlinkHtml}");
-            });
+        if (o.Status == "YG")
+        {
+            // Generate PDF icon
+            var editUrl = Url.Action("GeneratePDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID });
+            var editIconHtml = "<i class='bi bi-file-earmark-pdf fs-4 text-danger'></i>";
+            linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Generate PDF'>{editIconHtml}</a>";
+        }
+        else if (o.Status == "PDF Generated")
+        {
+            // Update Payment icon
+            var editUrl = Url.Action("UpdatePayment", "ServiceInvoice", new { ticketRecID = o.TC_RECID });
+            var editIconHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
+            linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Update Payment'>{editIconHtml}</a>";
+        }
+        else
+        {
+            // Optional fallback if Status has other values
+            //linkHtml = "<span class='text-muted'>N/A</span>";
+              // Generate PDF icon
+            var editUrl = Url.Action("GeneratePDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID });
+            var editIconHtml = "<i class='bi bi-file-earmark-pdf fs-4 text-danger'></i>";
+            linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Generate PDF'>{editIconHtml}</a>";
+        }
 
-           }).WithPaging(10).Sortable(false) }
+        return MvcHtmlString.Create(linkHtml);
+    });
+
+
+           }).WithPaging(10).Sortable(false)
+            }
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No Customer's are available</b>
+                    <b>No Customers are available</b>
                 </div>}
+            <footer>
+                <div class="footer">
+                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </div>
+                            &nbsp;- Generate PDF
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
 
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
-
-                    <div class="flex-item mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
-                        </div>&nbsp;- Create
-                    </div>
-
-                    <div class="flex-item mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
-                        </div>
-                        &nbsp;- Edit
-                    </div>
-
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bx bxs-trash bx-sm red'> </i>
-                        </div>
-                        &nbsp;- Delete
-                    </div>
-
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bx  bx-list-ul'></i>
-                        </div>
-                        &nbsp;- Contract List
-                    </div>
-
-                </div>
-            </div>
-        </footer>
-
     </div>
-
 
     <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
         <div class="offcanvas-header">
@@ -234,29 +252,7 @@
     <div id="preloader2"></div>
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
-
-
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
-            }
-        });
-    });
-    </script>
-
     <script src="~/Scripts/Fordelete.js"></script>
 </body>
 </html>

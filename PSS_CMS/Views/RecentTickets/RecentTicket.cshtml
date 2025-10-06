@@ -238,7 +238,7 @@
                 if ((Session["MaterialConsumptionFlag"]?.ToString() == "Y") && (o.TC_STATUS != "C"))
                 {
                     var MCUrl = Url.Action("List", "MaterialConsumption", new {TC_RECID=o.TC_RECID,Type="Material",P_RECID=o.P_RECID});
-                    MCLinkHtml = $"<a href='{MCUrl}' data-toggle='tooltip' data-placement='top' title='Materials'><i class='bx bx-cart-alt'></i></a>&nbsp;";
+                    MCLinkHtml = $"<a href='{MCUrl}' data-toggle='tooltip' data-placement='top' title='Job card Items”'><i class='bx bx-cart-alt'></i></a>&nbsp;";
 
                     var ServiceUrl = Url.Action("List", "MaterialConsumption", new { TC_RECID = o.TC_RECID, Type = "Service", P_RECID = o.P_RECID });
                     ServiceLinkHtml = $"<a href='{ServiceUrl}' data-toggle='tooltip' data-placement='top' title='Services'><i class='bi bi-card-checklist'></i></a>";
@@ -302,7 +302,7 @@
                     <div class="flex-item">
                         <div class="d-flex justify-content-center footerb">
                             <i style="color:#337ab7" class='bx bx-cart-alt'></i>
-                            ~ Materials
+                            ~ Job card Items
                         </div>
                     </div>
 

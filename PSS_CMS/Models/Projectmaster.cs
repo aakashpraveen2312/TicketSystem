@@ -13,7 +13,7 @@ namespace PSS_CMS.Models
     {
         public int CU_RECID { get; set; }
         public int CU_URECID { get; set; }
-        [DisplayName("Store Reference Code")]
+        [DisplayName("Job Card Reference")]
         public string CU_CODE { get; set; }
         [DisplayName("Address")]
         public string CU_ADDRESS { get; set; }

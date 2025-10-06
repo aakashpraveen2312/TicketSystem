@@ -215,8 +215,9 @@
                     </div>
 
                     <div class="col-md-12 mt-2 mb-3 d-flex justify-content-lg-end justify-content-md-end justify-content-start">
-                        <input type="checkbox" id="termsCheckbox" name="termsAndConditions" class="me-2" />
-                        <label for="termsCheckbox" class="me-4 mt-2">I agree to paid service</label>
+                        @Html.CheckBoxFor(model => model.paidservice, new { @class = "me-2", id = "termsCheckbox" })
+                        <label for="termsCheckbox" class="me-4 mt-2">I agree to proceed with this service as a paid request</label>
+
                         <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="9">Submit</button>
                         <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","Tickets")'" tabindex="10">
                             Cancel

@@ -140,6 +140,7 @@ namespace PSS_CMS.Controllers
             ""tC_STATUS"": ""{"S"}"",
             ""tC_PRIORITYTYPE"": ""{tickets.TC_PRIORITYTYPE}"",
             ""tC_TICKETTYPE"": ""{tickets.SelectedTicketType}"",
+            ""tC_PAIDSERVICE"": ""{(tickets.paidservice ? "Y" : "N")}"",           
             ""tC_USERNAME"": ""{Session["UserName"]}"",
             ""tC_REFERENCETRECID"": ""{0}""
         }}";
@@ -385,7 +386,8 @@ namespace PSS_CMS.Controllers
                         tC_RECID = Session["RECORDID"],
                         tC_CRECID = Session["CompanyID"],
                         tC_USERNAME = Session["REOPENUSERNAME"],
-                        tC_STATUS = combox
+                        tC_STATUS = combox,
+                        tC_SISTATUS="YG"
                     });
                     // Set up HTTP client with custom validation (for SSL certificates)
                     var handler = new HttpClientHandler

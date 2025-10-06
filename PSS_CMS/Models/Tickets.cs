@@ -22,6 +22,14 @@ namespace PSS_CMS.Models
         }
         private string CU_DISABLEDCHCEK { get; set; }
 
+
+        public bool paidservice
+        {
+            get => TC_PAIDSERVICE == "Y";
+            set => TC_PAIDSERVICE = value ? "Y" : "N";
+        }
+        private string TC_PAIDSERVICE { get; set; }
+
         public string TC_USERID { get; set; }
         public string TC_WARRANTYUPTO { get; set; }
         public string CU_WARRANTYUPTO { get; set; }

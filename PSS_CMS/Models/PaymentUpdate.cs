@@ -8,21 +8,32 @@ namespace PSS_CMS.Models
 {
     public class PaymentUpdate
     {
+        public int TC_RECID { get; set; }
+
 
         [DisplayName("Invoice No")]
-
-        public int InvoiceID { get; set; }
+        public string TC_InvoiceNumber { get; set; }
+        
+    
         [DisplayName("Ref No")]
+        public string TC_ReferenceNo { get; set; }
 
-        public string RefNo { get; set; }
         [DisplayName("Mode Of Payment")]
+        public string TC_ModeOfPayment { get; set; }
 
-        public string Mode { get; set; }
-        [DisplayName("Date")]
+        [DisplayName("Date Of Payment")]
+        public DateTime TC_DateOfPayment { get; set; }
 
-        public DateTime Date { get; set; }
         [DisplayName("Amount")]
+        public decimal TC_TotalAmount { get; set; }
 
-        public decimal Amount { get; set; }
+    }
+    public class PaymentUpdateRootObject
+    {
+        public string Message { get; set; }
+        public string Status { get; set; }
+        public PaymentUpdate Data { get; set; }
+    
+
     }
 }

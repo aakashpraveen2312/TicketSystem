@@ -136,63 +136,68 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>SERVICE INVOICE</li>
-                    <li>LIST</li>
+                    <li>UPDATE PAYMENT</li>
+                    <li>UPDATE</li>
                 </ul>
             </div>
 
 
         </div>
-        <div class="container mt-1">
+        <div class="container mt-3">
 
-            @using (Html.BeginForm("SaveInvoice", "Invoices", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+            @using (Html.BeginForm("UpdatePayment", "ServiceInvoice", FormMethod.Post))
             {
-                @Html.HiddenFor(m => m.InvoiceID)
 
-                <div class="mb-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.RefNo, new { @class = "form-label" })
-                            @Html.TextBoxFor(m => m.RefNo, new { @class = "form-control half-width", placeholder = "Enter Ref No" })
-                            @Html.ValidationMessageFor(m => m.RefNo, "", new { @class = "text-danger" })
-                        </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.TC_ReferenceNo, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.TC_ReferenceNo, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.Mode, new { @class = "form-label" })
-                            @Html.TextBoxFor(m => m.Mode, new { @class = "form-control", placeholder = "Enter Mode" })
-                            @Html.ValidationMessageFor(m => m.Mode, "", new { @class = "text-danger" })
-                        </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.TC_InvoiceNumber, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.TC_InvoiceNumber, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.Date, new { @class = "form-label" })
-                            @Html.TextBoxFor(m => m.Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                            @Html.ValidationMessageFor(m => m.Date, "", new { @class = "text-danger" })
-                        </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.TC_ModeOfPayment, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.TC_ModeOfPayment, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.Amount, new { @class = "form-label" })
-                            @Html.TextBoxFor(m => m.Amount, new { @class = "form-control", type = "number", step = "0.01", placeholder = "Enter Amount" })
-                            @Html.ValidationMessageFor(m => m.Amount, "", new { @class = "text-danger" })
-                        </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.TC_DateOfPayment, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.TC_DateOfPayment, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.TC_TotalAmount, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.TC_TotalAmount, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
                     </div>
                 </div>
 
 
                 <div class="row">
-                    <div class="col-md-6 d-flex justify-content-end">
-                        <input type="submit" value="Update" class="submitbuttons me-3" tabindex="" />
+                    <div class="col-md-5 d-flex justify-content-end ms-1">
+                        <input type="submit" class="submitbuttons me-3" tabindex="" />
                         <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "UpdatePayment")'" />
 
                     </div>
@@ -218,8 +223,105 @@
     <div id="preloader2"></div>
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Bootstrap 5 JS (optional, only needed for UI components like tooltips) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+$(document).ready(function () {
+    // Intercept form submission
+    $("form").on("submit", function (event) {
+        event.preventDefault();
+
+        var submitBtn = $(this).find("input[type='submit']");
+        submitBtn.prop("disabled", true);
+
+        var form = $(this);
+        var formData = new FormData(this);
+
+        // Disable page interaction
+        $("body").css("pointer-events", "none");
+
+        $.ajax({
+            url: form.attr("action"),
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+
+                    // 🔹 Step 1: Show "Processing..." dialog
+                    Swal.fire({
+                        title: "Processing...",
+                        html: "Please wait while we update your payment details.",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // 🔹 Step 2: After a small delay, show success dialog
+                    setTimeout(function () {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            showCancelButton: true,
+                            confirmButtonText: "Back to List",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            customClass: {
+                                confirmButton: "swal-btn-continue",
+                            },
+                            didOpen: () => {
+                                $(".swal2-container").css("pointer-events", "auto");
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '@Url.Action("Index", "ServiceInvoice")';
+                            } else {
+                                window.location.href = '@Url.Action("UpdatePayment", "ServiceInvoice")';
+                            }
+                        });
+                    }, 1000); // 1 second delay
+
+                } else {
+                    // ℹ️ Info alert for validation or backend message
+                    Swal.fire({
+                        title: "Message",
+                        text: response.message,
+                        icon: "info",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    resetForm();
+                }
+            },
+            error: function () {
+                // ❌ Error alert
+                Swal.fire({
+                    title: "Error!",
+                    text: "An unexpected error occurred while updating payment.",
+                    icon: "error",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                });
+                resetForm();
+            }
+        });
+    });
+
+    function resetForm() {
+        $("input[type='submit']").prop("disabled", false);
+        $("body").css("pointer-events", "auto");
+    }
+});
+    </script>
+
+
+
+
 </body>
 </html>

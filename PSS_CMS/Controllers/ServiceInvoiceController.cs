@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -14,6 +16,7 @@ using System.Web.Mvc;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class ServiceInvoiceController : Controller
     {
         // GET: ServiceInvoice
@@ -245,18 +248,177 @@ namespace PSS_CMS.Controllers
             }
         }
 
-
-
-
-        public ActionResult UpdatePayment(PaymentUpdate model)
+        [HttpGet]
+        public async Task<ActionResult> UpdatePayment(int? TC_Recid)
         {
-            return View();
-        }
-        
-        //public ActionResult GeneratePDF(PaymentUpdate model)
-        //{
-        //    return View();
-        //}
+            Session["tC_RECID"] = TC_Recid;
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["GETPAYMENT"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            PaymentUpdate paymentupdate = null;
 
+            string strparams = "TC_Recid=" + TC_Recid + "&TC_CRECID=" + Session["CompanyID"];
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var content = JsonConvert.DeserializeObject<PaymentUpdateRootObject>(jsonString);
+                            paymentupdate = content.Data;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }
+         
+            return View(paymentupdate);
+        }
+
+          [HttpGet]
+        public async Task<ActionResult> UpdatePaymentView(int? TC_Recid)
+        {
+            Session["tC_RECID"] = TC_Recid;
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["GETPAYMENT"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            PaymentUpdate paymentupdate = null;
+
+            string strparams = "TC_Recid=" + TC_Recid + "&TC_CRECID=" + Session["CompanyID"];
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var content = JsonConvert.DeserializeObject<PaymentUpdateRootObject>(jsonString);
+                            paymentupdate = content.Data;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }
+         
+            return View(paymentupdate);
+        }
+
+
+
+        [HttpPost]
+        public async Task<ActionResult> UpdatePayment(PaymentUpdate paymentupdate)
+        {
+            try
+            {
+                var UpdatePaymentURL = ConfigurationManager.AppSettings["UPDATEPAYMENT"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{
+    ""TC_CRECID"": ""{Session["CompanyID"]}"",
+    ""TC_RECID"": ""{Session["tC_RECID"]}"",
+    ""TC_InvoiceNumber"": ""{paymentupdate.TC_InvoiceNumber}"",
+    ""TC_ReferenceNo"": ""{paymentupdate.TC_ReferenceNo}"",
+    ""TC_ModeOfPayment"": ""{paymentupdate.TC_ModeOfPayment}"",
+    ""TC_DateOfPayment"": ""{paymentupdate.TC_DateOfPayment:yyyy-MM-ddTHH:mm:ss}"",
+    ""TC_TotalAmount"": ""{paymentupdate.TC_TotalAmount}"",
+    ""TC_SISTATUS"": ""PU""
+}}";
+
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(UpdatePaymentURL),
+                    Method = HttpMethod.Put,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                // Send the request and await the response
+                var response = await client.SendAsync(request);
+                // Check if the response is successful
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<PaymentUpdateRootObject>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { success = true, message = apiResponse.Message });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = apiResponse.Message });
+                    }
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Code, Name, Invoice Number, Email,Warranty Upto and Mobile Number fields are mandatory."
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Exception: " + ex.Message });
+            }
+        }
+
+      
     }
 }

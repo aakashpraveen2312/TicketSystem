@@ -10,6 +10,8 @@ namespace PSS_CMS.Models
     public class ServiceInvoice
     {
         public int InvoiceID { get; set; }
+        public string TC_INVOICENUMBER { get; set; }
+        public string TC_SISTATUS { get; set; }
         public DateTime? InvoiceDate { get; set; }
 
         public string TicketRef { get; set; }
@@ -61,6 +63,7 @@ namespace PSS_CMS.Models
         [DisplayName("Ticket Rasied Date")]
 
         public DateTime? TC_REQUEST_DATETIME { get; set; }
+        public DateTime? TC_INVOICEDATE { get; set; }
         public string TC_RESPONSE_ATTPREFIX { get; set; }
         public int TC_RESPONSE_URECID { get; set; }
         public DateTime? TC_RESPONSE_DATETIME { get; set; }
@@ -101,6 +104,7 @@ namespace PSS_CMS.Models
         public string Message { get; set; }
         public string Status { get; set; }
         public List<ServiceInvoice> Data { get; set; }
+        public ServiceInvoice Datass { get; set; }
         public ServiceInvoiceData Datas { get; set; }
 
     }

@@ -8,14 +8,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+   
+    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
+    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
+    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
+    @*Bootstrap Icons and Boxicons and Fontawesome link*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
+    <script src="~/Scripts/Sidebarscript.js"></script>
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/Colors.css" rel="stylesheet" />
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <!-- Favicons -->
+    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
+    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
     <style>
-        input.submitbuttons, button#savebutton {
+        input.submitbutton {
             background-color: #6ed3d0;
             width: 75px;
             padding: 5px;
@@ -24,7 +45,7 @@
             border-radius: 5px;
         }
 
-        .cancelbuttons {
+        .cancelbutton {
             background-color: #f0a72d;
             width: 75px;
             padding: 5px;
@@ -32,231 +53,352 @@
             border: #f0a72d;
             border-radius: 5px;
         }
+
+        .breadcrumb {
+            padding: 8px 15px;
+            margin-bottom: 20px;
+            list-style: none;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+        .tab-content.mt-3 {
+            background-color: white;
+            padding: 20px;
+        }
+        ul#invoiceTabs {
+            padding:4px;
+        }
+        
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <h2 class="mb-3">SERVICE INVOICE</h2>
 
-        @using (Html.BeginForm("DownaloadPDF", "ServiceInvoice", FormMethod.Post))
-        {
-            <ul class="nav nav-tabs" id="invoiceTabs" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="info-tab" data-bs-toggle="tab" href="#info" role="tab">Invoice Info</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="materials-tab" data-bs-toggle="tab" href="#materials" role="tab">Materials</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="totals-tab" data-bs-toggle="tab" href="#totals" role="tab">Totals</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="bank-tab" data-bs-toggle="tab" href="#bank" role="tab">Bank Details</a>
-                </li>
-            </ul>
+    @*Sidebar*@
+    <nav class="sidebar close">
+        <header>
+            <div class="text logo-text" style="display:inline-block">
 
-            <div class="tab-content mt-3">
-                <!-- Invoice Info -->
-                <div class="tab-pane fade show active" id="info" role="tabpanel">
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().InvoiceNumber)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().InvoiceNumber, new { @class = "form-control" })
+                <a href="@Url.Action("ContractDashboard", "Contract")">
+
+
+                    @if (Session["Logo"] != null)
+                    {
+                        <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
+                    }
+
+                </a>
+
+
+            </div>
+
+            <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
+
+        </header>
+        <div class="menu-bar">
+            <div class="menu">
+                <ul class="menu-links" style="margin-left:20px">
+                    <!-- ACCOUNTS ADMIN -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/software-engineer.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 10px;" />
+                        <img src="~/assets/img/software-engineer.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 10px;" />
+                        <span class="text nav-text" style="margin-left:15px">ACCOUNTS ADMIN</span>
+                    </li>
+                    <!-- Customer Accounts -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("CustomerList", "Contract")">
+                            <i class='bx bxs-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">User Accounts</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                            <i class='bi bi-bag-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="@Url.Action("Index", "ServiceInvoice")">
+                            <i class='bi bi-bag-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
+                        </a>
+                    </li>
+                    <!-- Settings Section -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
+                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 5px;" />
+                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
+                    </li>
+
+                    @*Change Password*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ChangePassword", "Contract")">
+                            <i class='bx bxs-key' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                        </a>
+                    </li>
+                    <!-- Logout -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
+                            <i class='bx bx-log-out' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="content" style=" overflow-x: hidden!important;">
+        <nav class="nav d-flex">
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
+            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+
+                </a>
+            </div>
+
+        </nav>
+        <div class="row mb-3" style="margin-top:10px">
+            <div class="col-lg-9">
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    <li>SERVICE INVOICE</li>
+
+                </ul>
+            </div>
+            <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
+                @using (Html.BeginForm("#", "#", FormMethod.Get, new { id = "searchForm" }))
+                {
+                    <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
+                }
+
+
+            </div>
+
+        </div>
+        <div class="container ms-3">
+            @using (Html.BeginForm("DownaloadPDF", "ServiceInvoice", FormMethod.Post))
+            {
+                <ul class="nav nav-tabs" id="invoiceTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="info-tab" data-bs-toggle="tab" href="#info" role="tab">Invoice Info</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="materials-tab" data-bs-toggle="tab" href="#materials" role="tab">Materials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="totals-tab" data-bs-toggle="tab" href="#totals" role="tab">Totals</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="bank-tab" data-bs-toggle="tab" href="#bank" role="tab">Bank Details</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-3">
+                    <!-- Invoice Info -->
+                    <div class="tab-pane fade show active" id="info" role="tabpanel">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().InvoiceNumber)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().InvoiceNumber, new { @class = "form-control textboxcolors" })
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().InvoiceDate)
+                                @Html.TextBox("InvoiceDate",
+                                    string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.InvoiceDate)
+                                        ? ""
+                                        : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().InvoiceDate).ToString("dd/MM/yyyy"),
+                                    new { @class = "form-control textboxcolors" })
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().TicketRaisedDate)
+                                @Html.TextBox(
+                                    "TicketRaisedDate",
+                                    string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.TicketRaisedDate)
+                                        ? ""
+                                        : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().TicketRaisedDate).ToString("dd/MM/yyyy"),
+                                    new { @class = "form-control textboxcolors" }
+                                )
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().InvoiceDate)
-                            @Html.TextBox("InvoiceDate",
-                                string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.InvoiceDate)
-                                    ? ""
-                                    : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().InvoiceDate).ToString("dd/MM/yyyy"),
-                                new { @class = "form-control" })
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().CustomerName)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerName, new { @class = "form-control textboxcolors" })
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress, new { @class = "form-control textboxcolors" })
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().TicketRaisedDate)
-                            @Html.TextBox(
-                                "TicketRaisedDate",
-                                string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.TicketRaisedDate)
-                                    ? ""
-                                    : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().TicketRaisedDate).ToString("dd/MM/yyyy"),
-                                new { @class = "form-control" }
-                            )
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().GST)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().GST, new { @class = "form-control textboxcolors" })
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().Comments)
+                                @Html.TextAreaFor(m => m.BillableMaterials.FirstOrDefault().Comments, new { @class = "form-control textboxcolors" })
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().ProductName)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().ProductName, new { @class = "form-control textboxcolors" })
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().WarrantyUpto)
+                                @Html.TextBox(
+                                                           "TicketRaisedDate",
+                                                           string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.WarrantyUpto)
+                                                               ? ""
+                                                               : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().WarrantyUpto).ToString("dd/MM/yyyy"),
+                                                           new { @class = "form-control textboxcolors" }
+                                                       )
+                            </div>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().CustomerName)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerName, new { @class = "form-control" })
-                        </div>
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress, new { @class = "form-control" })
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().GST)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().GST, new { @class = "form-control" })
-                        </div>
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().Comments)
-                            @Html.TextAreaFor(m => m.BillableMaterials.FirstOrDefault().Comments, new { @class = "form-control" })
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().ProductName)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().ProductName, new { @class = "form-control" })
-                        </div>
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().WarrantyUpto)
-                            @Html.TextBox(
-                                                       "TicketRaisedDate",
-                                                       string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.WarrantyUpto)
-                                                           ? ""
-                                                           : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().WarrantyUpto).ToString("dd/MM/yyyy"),
-                                                       new { @class = "form-control" }
-                                                   )
-                        </div>
-                    </div>
-                </div>
-                <!-- Materials -->
-                <div class="tab-pane fade" id="materials" role="tabpanel">
-                    <h4>Billable Materials</h4>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Material Name</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>CGST</th>
-                                <th>SGST</th>
-                                <th>Amount</th>
-                                <th>Discount</th>
-                                <th>Net Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.BillableMaterials)
-                            {
+                    <!-- Materials -->
+                    <div class="tab-pane fade" id="materials" role="tabpanel">
+                        <h4>Billable Materials</h4>
+                        <table class="table table-bordered table-striped">
+                            <thead>
                                 <tr>
-                                    <td>@item.MaterialName</td>
-                                    <td>@item.Quantity</td>
-                                    <td>@item.Price</td>
-                                    <td>@item.CGST</td>
-                                    <td>@item.SGST</td>
-                                    <td>@item.Amount</td>
-                                    <td>@item.Discount</td>
-                                    <td>@item.NetAmount</td>
+                                    <th>Material Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>CGST</th>
+                                    <th>SGST</th>
+                                    <th>Amount</th>
+                                    <th>Discount</th>
+                                    <th>Net Amount</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.BillableMaterials)
+                                {
+                                    <tr>
+                                        <td>@item.MaterialName</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.Price</td>
+                                        <td>@item.CGST</td>
+                                        <td>@item.SGST</td>
+                                        <td>@item.Amount</td>
+                                        <td>@item.Discount</td>
+                                        <td>@item.NetAmount</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
 
-                    <h4>Non-Billable Materials</h4>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Material Name</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>Net Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.NonBillableMaterials)
-                            {
+                        <h4>Non-Billable Materials</h4>
+                        <table class="table table-bordered table-striped">
+                            <thead>
                                 <tr>
-                                    <td>@item.MaterialName</td>
-                                    <td>@item.Quantity</td>
-                                    <td>@item.Price</td>
-                                    <td>@item.NetAmount</td>
+                                    <th>Material Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Net Amount</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Totals -->
-                <div class="tab-pane fade" id="totals" role="tabpanel">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            @Html.Label("Total")
-                            <input type="text" class="form-control" value="@Model.BillableMaterials.Sum(x => x.Amount)" readonly />
-                        </div>
-                        <div class="col-md-6">
-                            @Html.Label("Net Amount")
-                            <input type="text" class="form-control" value="@Model.BillableMaterials.Sum(x => x.NetAmount)" readonly />
-                        </div>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.NonBillableMaterials)
+                                {
+                                    <tr>
+                                        <td>@item.MaterialName</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.Price</td>
+                                        <td>@item.NetAmount</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
-                </div>
 
-                <!-- Bank Details -->
-                <div class="tab-pane fade" id="bank" role="tabpanel">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().BankName)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankName, new { @class = "form-control" })
-                        </div>
-
-
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().BankLocation)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankLocation, new { @class = "form-control" })
+                    <!-- Totals -->
+                    <div class="tab-pane fade" id="totals" role="tabpanel">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                @Html.Label("Total")
+                                <input type="text" class="form-control integerboxcolors text-right" value="@Model.BillableMaterials.Sum(x => x.Amount)" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                @Html.Label("Net Amount")
+                                <input type="text" class="form-control integerboxcolors text-right" value="@Model.BillableMaterials.Sum(x => x.NetAmount)" readonly />
+                            </div>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <!-- Bank Details -->
+                    <div class="tab-pane fade" id="bank" role="tabpanel">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().BankName)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankName, new { @class = "form-control textboxcolors" })
+                            </div>
 
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().AccountNumber)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().AccountNumber, new { @class = "form-control" })
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().BankLocation)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankLocation, new { @class = "form-control textboxcolors" })
+                            </div>
                         </div>
 
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().AccountType)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().AccountType, new { @class = "form-control" })
+                        <div class="row mb-3">
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().AccountNumber)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().AccountNumber, new { @class = "form-control textboxcolors" })
+                            </div>
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().AccountType)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().AccountType, new { @class = "form-control textboxcolors" })
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().IFSCCode)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().IFSCCode, new { @class = "form-control textboxcolors" })
+                            </div>
+
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().BankAddress)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankAddress, new { @class = "form-control textboxcolors" })
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                        </div>
+
+
+                        <div class="col-md-8 d-flex justify-content-end">
+                            <input type="submit" value="Generate PDF" class="submitbutton me-2" tabindex="" />
+                            <input type="button" value="Cancel" class="cancelbutton" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "ServiceInvoice")'" />
+
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().IFSCCode)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().IFSCCode, new { @class = "form-control" })
-                        </div>
-
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().BankAddress)
-                            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankAddress, new { @class = "form-control" })
-                        </div>
-
-                    </div>
                 </div>
 
 
-            </div>
 
 
 
-            <div class="row">
-                <div class="col-md-4">
-                </div> 
-                
-                
-                <div class="col-md-8 d-flex justify-content-end">
-                    <input type="submit" value="Generate PDF" class="submitbuttons me-2" tabindex="" />
-                    <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "ServiceInvoice")'" />
+                <div class="mt-3">
 
                 </div>
-            </div>
-
-            <div class="mt-3">
-
-            </div>
-        }
+            }
+        </div>
     </div>
- 
 
+    <script src="~/Scripts/Logoutjs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

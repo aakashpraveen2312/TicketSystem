@@ -644,11 +644,11 @@ function loadMaterials(selectedRecId) {
 
                 let message = '';
                 if (customerExpired && productExpired) {
-                    message = 'Both customer and product warranties have expired. Please confirm by checking "Paid as Service".';
+                    message = 'Both customer and product warranties have expired. Please confirm by checking "I agree to proceed with this service as a paid request".';
                 } else if (customerExpired) {
-                    message = 'Customer warranty has expired. Please confirm by checking "Paid as Service".';
+                    message = 'Customer warranty has expired. Please confirm by checking "I agree to proceed with this service as a paid request".';
                 } else if (productExpired) {
-                    message = 'Product warranty has expired. Please confirm by checking "Paid as Service".';
+                    message = 'Product warranty has expired. Please confirm by checking "I agree to proceed with this service as a paid request".';
                 }
 
                 Swal.fire({

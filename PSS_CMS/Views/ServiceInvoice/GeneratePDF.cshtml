@@ -120,7 +120,7 @@
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
-                            <i class='bi bi-bag-check' style="font-size:20px"></i>
+                            <i class='bi bi-list-columns-reverse' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
                         </a>
                     </li>
@@ -165,6 +165,8 @@
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
                     <li>SERVICE INVOICE</li>
+                    <li class="resadmintic" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Index", "ServiceInvoice")">LIST</a></li>
+                    <li>INVOICE DRAFT</li>
 
                 </ul>
             </div>
@@ -202,7 +204,7 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().InvoiceNumber)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().InvoiceNumber, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().InvoiceNumber, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
                             <div class="col-md-4">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().InvoiceDate)
@@ -210,7 +212,7 @@
                                     string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.InvoiceDate)
                                         ? ""
                                         : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().InvoiceDate).ToString("dd/MM/yyyy"),
-                                    new { @class = "form-control textboxcolors" })
+                                    new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
                             <div class="col-md-4">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().TicketRaisedDate)
@@ -219,34 +221,34 @@
                                     string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.TicketRaisedDate)
                                         ? ""
                                         : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().TicketRaisedDate).ToString("dd/MM/yyyy"),
-                                    new { @class = "form-control textboxcolors" }
+                                    new { @class = "form-control textboxcolors", @readonly = "readonly" }
                                 )
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().CustomerName)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerName, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerName, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().GST)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().GST, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().GST, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().Comments)
-                                @Html.TextAreaFor(m => m.BillableMaterials.FirstOrDefault().Comments, new { @class = "form-control textboxcolors" })
+                                @Html.TextAreaFor(m => m.BillableMaterials.FirstOrDefault().Comments, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().ProductName)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().ProductName, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().ProductName, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().WarrantyUpto)
@@ -255,7 +257,7 @@
                                                            string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.WarrantyUpto)
                                                                ? ""
                                                                : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().WarrantyUpto).ToString("dd/MM/yyyy"),
-                                                           new { @class = "form-control textboxcolors" }
+                                                           new { @class = "form-control textboxcolors", @readonly = "readonly" }
                                                        )
                             </div>
                         </div>
@@ -269,26 +271,30 @@
                                     <th>Material Name</th>
                                     <th>Quantity</th>
                                     <th>Price</th>
-                                    <th>CGST</th>
-                                    <th>SGST</th>
+
+
+                                    <th>Discount(%)</th>
                                     <th>Amount</th>
-                                    <th>Discount</th>
+                                    <th>CGST(%)</th>
+                                    <th>SGST(%)</th>
                                     <th>Net Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in Model.BillableMaterials)
                                 {
-                                    <tr>
-                                        <td>@item.MaterialName</td>
-                                        <td>@item.Quantity</td>
-                                        <td>@item.Price</td>
-                                        <td>@item.CGST</td>
-                                        <td>@item.SGST</td>
-                                        <td>@item.Amount</td>
-                                        <td>@item.Discount</td>
-                                        <td>@item.NetAmount</td>
-                                    </tr>
+                                <tr>
+                                    <td>@item.MaterialName</td>
+                                    <td style="text-align:right;">@item.Quantity</td>
+                                    <td style="text-align:right;">@String.Format("{0:F2}", item.Price)</td>
+                                    <td style="text-align:right;">@String.Format("{0:F2}", item.Discount)</td>
+                                    <td style="text-align:right;">@String.Format("{0:F2}", item.Amount)</td>
+
+                                    <td style="text-align:right;">@String.Format("{0:F2}", item.CGST)</td>
+                                    <td style="text-align:right;">@String.Format("{0:F2}", item.SGST)</td>
+                                    <td style="text-align:right;">@String.Format("{0:F2}", item.NetAmount)</td>
+
+                                </tr>
                                 }
                             </tbody>
                         </table>
@@ -308,9 +314,9 @@
                                 {
                                     <tr>
                                         <td>@item.MaterialName</td>
-                                        <td>@item.Quantity</td>
-                                        <td>@item.Price</td>
-                                        <td>@item.NetAmount</td>
+                                        <td style="text-align:right;">@item.Quantity</td>
+                                        <td style="text-align:right;">@String.Format("{0:F2}", item.Price)</td>
+                                        <td style="text-align:right;">@String.Format("{0:F2}", item.NetAmount)</td>
                                     </tr>
                                 }
                             </tbody>
@@ -322,27 +328,34 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 @Html.Label("Total")
-                                <input type="text" class="form-control integerboxcolors text-right" value="@Model.BillableMaterials.Sum(x => x.Amount)" readonly />
+                                <input type="text"
+                                       class="form-control integerboxcolors text-right"
+                                       value="@String.Format("{0:F2}", Model.BillableMaterials.Sum(x => x.Amount))"
+                                       readonly />
                             </div>
                             <div class="col-md-6">
                                 @Html.Label("Net Amount")
-                                <input type="text" class="form-control integerboxcolors text-right" value="@Model.BillableMaterials.Sum(x => x.NetAmount)" readonly />
+                                <input type="text"
+                                       class="form-control integerboxcolors text-right"
+                                       value="@String.Format("{0:F2}", Model.BillableMaterials.Sum(x => x.NetAmount))"
+                                       readonly />
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Bank Details -->
                     <div class="tab-pane fade" id="bank" role="tabpanel">
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().BankName)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankName, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankName, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
 
 
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().BankLocation)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankLocation, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankLocation, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
                         </div>
 
@@ -350,12 +363,12 @@
 
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().AccountNumber)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().AccountNumber, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().AccountNumber, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
 
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().AccountType)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().AccountType, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().AccountType, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
                         </div>
 
@@ -363,12 +376,12 @@
 
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().IFSCCode)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().IFSCCode, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().IFSCCode, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
 
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().BankAddress)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankAddress, new { @class = "form-control textboxcolors" })
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().BankAddress, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
 
                         </div>
@@ -395,7 +408,21 @@
 
                 </div>
             }
+            <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+                    <h4>Are you sure you want to log out?</h4>
+                </div>
+                <div class="offcanvas-footer d-flex justify-content-center">
+                    <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+                    <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+                </div>
+            </div>
         </div>
+       
     </div>
 
     <script src="~/Scripts/Logoutjs.js"></script>

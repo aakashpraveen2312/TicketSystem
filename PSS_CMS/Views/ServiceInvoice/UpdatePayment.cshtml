@@ -89,7 +89,7 @@
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
-                            <i class='bi bi-bag-check' style="font-size:20px"></i>
+                            <i class='bi bi-list-columns-reverse' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
                         </a>
                     </li>
@@ -136,8 +136,9 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    <li>SERVICE INVOICE</li>
+                    <li class="resadmintic" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Index", "ServiceInvoice")">LIST</a></li>
                     <li>UPDATE PAYMENT</li>
-                    <li>UPDATE</li>
                 </ul>
             </div>
 
@@ -153,7 +154,7 @@
                         @Html.LabelFor(model => model.TC_ReferenceNo, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_ReferenceNo, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.TC_ReferenceNo, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",@readonly="readonly" } })
                     </div>
                 </div>
 
@@ -162,7 +163,7 @@
                         @Html.LabelFor(model => model.TC_InvoiceNumber, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_InvoiceNumber, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.TC_InvoiceNumber, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
                     </div>
                 </div>
 
@@ -181,7 +182,7 @@
                         @Html.LabelFor(model => model.TC_DateOfPayment, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_DateOfPayment, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.TC_DateOfPayment, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",type="date" } })
                     </div>
                 </div>
 
@@ -198,7 +199,7 @@
                 <div class="row">
                     <div class="col-md-5 d-flex justify-content-end ms-1">
                         <input type="submit" class="submitbuttons me-3" tabindex="" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "UpdatePayment")'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "ServiceInvoice")'" />
 
                     </div>
                 </div>

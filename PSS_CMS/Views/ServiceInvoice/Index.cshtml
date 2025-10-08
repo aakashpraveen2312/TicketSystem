@@ -88,7 +88,7 @@
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
-                            <i class='bi bi-bag-check' style="font-size:20px"></i>
+                            <i class='bi bi-list-columns-reverse' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
                         </a>
                     </li>
@@ -155,13 +155,13 @@
                 @Html.Grid(Model).Columns(columns =>
            {
                columns.Add(c => c.TC_INVOICENUMBER).Titled("Invoice No");
-               columns.Add(c => c.TC_INVOICEDATE).Titled("Invoice Date");
-               columns.Add(c => c.TC_REQUEST_DATETIME).Titled("Ticket Raised Date");
-               columns.Add(c => c.TC_REFERENCENO).Titled("Ticket Ref No");
+               columns.Add(c => c.TC_INVOICEDATES).Titled("Invoice Date");
+               columns.Add(c => c.TC_REQUEST_DATETIMES).Titled("Ticket Raised Date");
+               columns.Add(c => c.TC_REFERENCENO).Titled("Ticket Reference No");
                columns.Add(c => c.TC_USERNAME).Titled("Customer Name");
-               columns.Add(c => c.TotalCGST).Titled("GST").Css("text-right");
-               columns.Add(c => c.TotalSGST).Titled("SGST").Css("text-right");
-               columns.Add(c => c.TotalNetAmount).Titled("Amount").Format("{0:N2}");
+               columns.Add(c => c.TotalCGST).Titled("CGST(%)").Css("text-right");
+               columns.Add(c => c.TotalSGST).Titled("SGST(%)").Css("text-right");
+               columns.Add(c => c.TotalNetAmount).Titled("Amount").Css("text-right").Format("{0:N2}");
                columns.Add(c => c.TC_SISTATUS)
        .Titled("Status")
        .Encoded(false)    // optional if you return HTML (badges)

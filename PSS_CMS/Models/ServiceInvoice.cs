@@ -63,7 +63,29 @@ namespace PSS_CMS.Models
         [DisplayName("Ticket Rasied Date")]
 
         public DateTime? TC_REQUEST_DATETIME { get; set; }
+        public string TC_REQUEST_DATETIMES
+        {
+            get
+            {
+                if (TC_REQUEST_DATETIME.HasValue)
+                {
+                    return TC_REQUEST_DATETIME.Value.ToString("dd-MM-yyyy");
+                }
+                return string.Empty; // Return empty string if null
+            }
+        }
         public DateTime? TC_INVOICEDATE { get; set; }
+        public string TC_INVOICEDATES
+        {
+            get
+            {
+                if (TC_INVOICEDATE.HasValue)
+                {
+                    return TC_INVOICEDATE.Value.ToString("dd-MM-yyyy");
+                }
+                return string.Empty; // Return empty string if null
+            }
+        }
         public string TC_RESPONSE_ATTPREFIX { get; set; }
         public int TC_RESPONSE_URECID { get; set; }
         public DateTime? TC_RESPONSE_DATETIME { get; set; }

@@ -563,6 +563,7 @@ namespace PSS_CMS.Controllers
                                     Value = t.U_RECID.ToString(),
                                     Text = t.U_USERNAME,
                                     Email = t.U_EMAILID,
+                                    Recid = t.U_RECID,
                                     Mobile = t.U_MOBILENO
                                 }).ToList();
                             }

@@ -77,7 +77,14 @@
                columns.Add(c => c.U_USERNAME).Titled("Name").SetWidth("150px");
                columns.Add(c => c.U_EMAILID).Titled("Email ID");
                columns.Add(c => c.U_MOBILENO).Titled("Mobile Number");
-               columns.Add(c => c.U_RCODE).Titled("Role").SetWidth("70px");
+               columns.Add(c => c.U_RCODE)
+            .Titled("Role")
+            .SetWidth("100px")
+            .RenderValueAs(c =>
+                c.U_RCODE == "HelpDesk" ? "Help Desk" :
+                c.U_RCODE == "SA" ? "Super Admin" :
+                c.U_RCODE // show original text for others
+            );
                columns.Add(c => c.U_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
 
                if (Session["R_CODE"] == null || Session["R_CODE"].ToString().ToLower() != "sa")

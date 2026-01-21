@@ -329,6 +329,7 @@
                                 {
                                     <option value="@user.Value"
                                             data-email="@user.Email"
+                                            data-recid="@user.Recid"
                                             data-username="@user.Text"
                                             data-mobile="@user.Mobile"
                                             @(Model.CU_NAME == user.Text ? "selected" : "")>
@@ -336,6 +337,7 @@
                                     </option>
                                 }
                             </select>
+                            @Html.HiddenFor(model => model.CU_URECID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_URECID" } })
 
 
                         </div>
@@ -586,10 +588,12 @@
             var email = selected.getAttribute("data-email") || "";
             var name = selected.getAttribute("data-username") || "";
             var mobile = selected.getAttribute("data-mobile") || "";
+            var recid = selected.getAttribute("data-recid") || "";
 
             document.getElementById("CU_EMAIL").value = email;
             document.getElementById("CU_NAME").value = name;
             document.getElementById("CU_MOBILENO").value = mobile;
+            document.getElementById("CU_URECID").value = recid;
         });
 
     </script>

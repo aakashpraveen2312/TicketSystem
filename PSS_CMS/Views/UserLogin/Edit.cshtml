@@ -135,7 +135,7 @@
                         @Html.DropDownListFor(model => model.U_LOCATION,
                                            ViewBag.Location as IEnumerable<SelectListItem>,
                                            "--Select Location--",
-                                           new { @class = "form-select textboxcolors", required = "required" })
+                                           new { @class = "form-select textboxcolors" })
                     }
                     else
                     {
@@ -314,9 +314,9 @@
                         }, 1000); // 1 second delay for "Processing"
                     } else {
                         Swal.fire({
-                            title: "Error!",
+                            title: "Message",
                             text: response.message,
-                            icon: "error",
+                            icon: "info",
                             allowOutsideClick: false,
                             allowEscapeKey: false
                         });

@@ -245,7 +245,7 @@
                 }
 
                 string PDFLinkHtml = "";
-                if (o.TC_STATUS == "C")
+                if ((o.TC_STATUS == "C") && (Session["MaterialConsumptionFlag"]?.ToString() == "Y"))
                 {
                     var PDFUrl = Url.Action("DownloadPDF", "PDF", new {TRECID=o.TC_RECID });
                     PDFLinkHtml = $"<a href='#' class='download-pdf' data-id='{o.TC_RECID}' data-toggle='tooltip' title='PDF'><i class='bx bxs-file-pdf red'></i></a>&nbsp;";

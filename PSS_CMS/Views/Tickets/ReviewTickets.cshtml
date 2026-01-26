@@ -369,7 +369,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
 
 
                                     // If it's an image, show the preview
-                                    if (mimeType.StartsWith("image/"))
+                                    <!--if (mimeType.StartsWith("image/"))
                                     {
                                         <div class="row">
                                             <div class="col-7">
@@ -382,10 +382,10 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                             <div class="col-2">
                                                 <button style="margin:20px" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalpreview_@ticket.TC_RECID">
                                                     Preview
-                                                </button>
+                                                </button>-->
 
                                                 <!-- Modal for Image Preview -->
-                                                <div class="modal fade" id="modalpreview_@ticket.TC_RECID" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <!--<div class="modal fade" id="modalpreview_@ticket.TC_RECID" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="custom modal-content imagewidth">
                                                             <div class="modal-body">
@@ -401,9 +401,9 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                 </div>
                                             </div>
                                         </div>
-                                    }
-                                    else
-                                    {
+                                    }-->
+                                   // else
+                                    //{
                                         // If it's a PDF, XLSX, or TXT, show the Download button
                                         <div class="row">
                                             <div class="col-2">
@@ -414,7 +414,7 @@ return input.Replace("\\\"", "\"")        // Double quotes
                                                 </a>
                                             </div>
                                         </div>
-                                    }
+                                    //}
                                 }
 
 

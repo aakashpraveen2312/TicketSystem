@@ -16,6 +16,9 @@ namespace PSS_CMS.Models
     {
 
         public string L_AdminDeligate { get; set; }
+        public string U_ASSIGNEDUSERNAME { get; set; }
+        public string TC_PICKFLAG { get; set; }
+        public string TC_ASSIGNFLAG { get; set; }
         public int TC_RECID { get; set; }
         public string TC_USERID { get; set; }
         public string TC_COMPANYID { get; set; }
@@ -48,6 +51,7 @@ namespace PSS_CMS.Models
         public string TC_STATUS { get; set; }
         public string TC_TICKETTYPE { get; set; }
         public string TC_PRIORITYTYPE { get; set; }
+     
 
         public string TC_STATUS_DISPLAY
         {
@@ -60,7 +64,9 @@ namespace PSS_CMS.Models
                     case "R":
                         return "Resolved";
                     case "C":
-                        return "Closed";
+                        return "Closed";   
+                    case "Q":
+                        return "Query";
 
                     default:
                         return "Re-Opened";

@@ -97,7 +97,7 @@
                 // Open Tickets
                 var openTicketStats = new[]
                 {
-  new { Title = "Open Tickets", Count = (Model != null && Model.OpenTickets != null) ? (int)Model.OpenTickets : 0,
+  new { Title = "Open & New Tickets", Count = (Model != null && Model.OpenTickets != null) ? (int)Model.OpenTickets : 0,
       OpenDate = (Model != null && Model.OpenDate != null) ? (int)Model.OpenDate : 0,
       OpenLastMonth = (Model != null && Model.OpenLastMonth != null) ? (int)Model.OpenLastMonth : 0,
       OpenLastweek = (Model != null && Model.OpenLastweek != null) ? (int)Model.OpenLastweek : 0,
@@ -137,7 +137,7 @@
                     <div class="col-md-3">
                         <div class="card text-white bg-@stat.Color mb-3">
                             <div class="card-body">
-                                
+
                                 <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenTickets"})'">@stat.Title - (@stat.Count)</h5>
 
                                 <div class="row text-center">
@@ -175,7 +175,7 @@
                 {
                     <div class="col-md-3">
                         <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body"> 
+                            <div class="card-body">
                                 <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="CloseTickets"})'">@stat.Title</h5>
                                 <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="CloseTickets"})'">@stat.Count</h3>
                             </div>
@@ -188,18 +188,18 @@
 
 
             @*Month to Date Chart*@
-        <div class="row">
+            <div class="row">
 
-            @*Week to Date Chart*@
-            <div class="col-md-4">
-                <h5 class="d-flex flex-column align-items-center headingscolor">
-                    Week to Date
-                    <span class="small">(Last 7 days including today)</span>
-                </h5>
-                <canvas id="ticketBarChartWTD"></canvas>
-            </div>
-            @*Week to Date Chart*@
-            <script>
+                @*Week to Date Chart*@
+                <div class="col-md-4">
+                    <h5 class="d-flex flex-column align-items-center headingscolor">
+                        Week to Date
+                        <span class="small">(Last 7 days including today)</span>
+                    </h5>
+                    <canvas id="ticketBarChartWTD"></canvas>
+                </div>
+                @*Week to Date Chart*@
+                <script>
     var ctxBarWTD = document.getElementById('ticketBarChartWTD').getContext('2d');
     new Chart(ctxBarWTD, {
         type: 'bar',
@@ -226,21 +226,21 @@
             }
         }
     });
-            </script>
+                </script>
 
 
-            <div class="col-md-4">
+                <div class="col-md-4">
 
-                <h5 class="d-flex flex-column align-items-center headingscolor">
-                    Month to Date
-                    <span class="small">(Last 27 days including today)</span>
-                </h5>
+                    <h5 class="d-flex flex-column align-items-center headingscolor">
+                        Month to Date
+                        <span class="small">(Last 27 days including today)</span>
+                    </h5>
 
 
-                <canvas id="ticketBarChartMTD"></canvas>
-            </div>
-            @*Month to Date Chart*@
-            <script>
+                    <canvas id="ticketBarChartMTD"></canvas>
+                </div>
+                @*Month to Date Chart*@
+                <script>
     // Month to Date Chart
     var ctxBarMTD = document.getElementById('ticketBarChartMTD').getContext('2d');
     new Chart(ctxBarMTD, {
@@ -260,14 +260,14 @@
             }
         }
     });
-            </script>
+                </script>
 
-            <div class="col-md-4">
-                <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Overall Tickets</h5>
-                <canvas id="ticketBarChart"></canvas>
-            </div>
-            @*Over all ticket bar chart script*@
-            <script>
+                <div class="col-md-4">
+                    <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Overall Tickets</h5>
+                    <canvas id="ticketBarChart"></canvas>
+                </div>
+                @*Over all ticket bar chart script*@
+                <script>
     document.addEventListener("DOMContentLoaded", function () {
         var ctxBar = document.getElementById('ticketBarChart').getContext('2d');
 
@@ -306,19 +306,67 @@
             }
         });
     });
-            </script>
-        </div>
-
-
-
-        <div class="row">
-
-            <div class="col-md-6">
-                <h5 class="d-flex justify-content-center headingscolor">Priority vise Stacked Tickets</h5>
-                <canvas id="ticketChart"></canvas>
+                </script>
             </div>
-            @*Prioritytype bar chart script*@
-        <script>
+
+            @if (Session["UserRole"].ToString() == "Manager")
+            {
+                @*Picked and Unpicked Ticket*@
+                <div class="row mt-3 d-flex justify-content-center">
+
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success  mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;">Assigned Tickets</h5>
+                                <h3 class="card-text" style="cursor:pointer;">@ViewBag.totalAssignedCount</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-danger  mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;">UnAssigned Tickets</h5>
+                                <h3 class="card-text" style="cursor:pointer;">@ViewBag.totalUnAssignedCount</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Session["UserRole"].ToString() == "Admin")
+            {
+                @*Picked and Unpicked Ticket*@
+                <div class="row mt-3 d-flex justify-content-center">
+
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success  mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;">Picked Tickets</h5>
+                                <h3 class="card-text" style="cursor:pointer;">@ViewBag.totalPickedTicketCount</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-danger  mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="cursor:pointer;">Unpicked Tickets</h5>
+                                <h3 class="card-text" style="cursor:pointer;">@ViewBag.totalUnpickedTicketCount</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+            @*Priority Wise*@
+            <div class="row">
+
+                <div class="col-md-6">
+                    <h5 class="d-flex justify-content-center headingscolor">Priority vise Stacked Tickets</h5>
+                    <canvas id="ticketChart"></canvas>
+                </div>
+                @*Prioritytype bar chart script*@
+                <script>
     const labels = @Html.Raw(ViewBag.Labels1); // ["Critical", "Emergency", "High", "Medium", "Low"]
 
     const data = {
@@ -364,21 +412,21 @@
     };
 
     new Chart(document.getElementById('ticketChart'), config);
-        </script>
+                </script>
 
 
 
 
-            @* Speedometer Container *@
-            <div class="col-md-6 ">
+                @* Speedometer Container *@
+                <div class="col-md-6 ">
 
-                <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Percentage of Closed Tickets</h5>
-                <div class="d-flex justify-content-center">
-                    <div class="" id="speedometer" style="max-width: 600px; max-height: 300px; height: 300px; width: 470px "></div>
+                    <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Percentage of Closed Tickets</h5>
+                    <div class="d-flex justify-content-center">
+                        <div class="" id="speedometer" style="max-width: 600px; max-height: 300px; height: 300px; width: 470px "></div>
+                    </div>
                 </div>
-            </div>
-            @*Script for Speedometer graph values*@
-            <script>
+                @*Script for Speedometer graph values*@
+                <script>
     const closedPercentage = Math.round(@((ViewBag.ClosedPercentage ?? 0))); // Default to 0 if null
     const totalTickets = @((ViewBag.TotalTickets ?? 0)); // Default to 0 if null
     const closedTickets = @((ViewBag.ClosedTickets ?? 0)); // Default to 0 if null
@@ -461,10 +509,10 @@
                         console.log("closedPercentage",closedPercentage);
         updateSpeedometer(closedPercentage);
     }
-            </script>
+                </script>
 
 
-        </div>
+            </div>
 
 
         </div>

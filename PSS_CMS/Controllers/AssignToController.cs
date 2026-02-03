@@ -42,7 +42,8 @@ namespace PSS_CMS.Controllers
                 ""tC_ASSIGNTOURECID"": ""{assignTo.SelectedAdmin}"",                                     
                 ""tC_COMMENTS"": ""{assignTo.A_COMMENTS}"",                                     
                 ""tC_CRECID"": ""{Session["CompanyID"]}"",                                     
-                ""tC_RECID"": ""{Session["RECORDID"]}""           
+                ""tC_RECID"": ""{Session["RECORDID"]}"" ,          
+                ""tC_ASSIGNFLAG"": ""{"Y"}""          
             }}";
 
                 // Create the HTTP request
@@ -148,5 +149,76 @@ namespace PSS_CMS.Controllers
 
             return View();
         }
+
+
+        public async Task<ActionResult> PickTicket(Reviewtickets tickets, string recid2)
+        {
+            try
+            {
+                Session["RECORDID"] = recid2;
+              
+
+                var UpdateTicketPostURL = ConfigurationManager.AppSettings["PICKTICKET"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                // Construct the JSON content for the API request
+                var content = $@"{{           
+                                             
+                ""tC_CRECID"": ""{Session["CompanyID"]}"",                                     
+                ""tC_RECID"": ""{Session["RECORDID"]}"" ,          
+                ""tC_PICKFLAG"": ""{"Y"}""          
+            }}";
+
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(UpdateTicketPostURL),
+                    Method = HttpMethod.Put,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                // Send the request and await the response
+                var response = await client.SendAsync(request);
+                // Check if the response is successful
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponseTicketsResponse>(responseBody);
+
+                    // Return the appropriate result based on the API response
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { success = true, message = "Ticket picked successfully." });
+                    }
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
+                    {
+                        return Json(new { success = false, message = apiResponse.Message });
+                    }
+                }
+
+                return Json(new { success = false, message = "Error occurred while closing the ticket." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Exception: " + ex.Message });
+            }
+
+        }
+
+
     }
 }

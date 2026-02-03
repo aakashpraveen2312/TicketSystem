@@ -90,5 +90,10 @@ namespace PSS_CMS.Controllers
         {
             return View();
         }
+
+        public ActionResult HelpdeskChangePassword()
+        {
+            return View();
+        }
     }
 }

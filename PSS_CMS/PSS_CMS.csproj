@@ -617,6 +617,7 @@
     <Content Include="Views\ServiceInvoice\GeneratePDF.cshtml" />
     <Content Include="Views\Shared\_InvoiceInfo.cshtml" />
     <Content Include="Views\ServiceInvoice\UpdatePaymentView.cshtml" />
+    <Content Include="Views\ChangePassword\HelpdeskChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

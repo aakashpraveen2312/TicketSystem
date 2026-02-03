@@ -87,6 +87,8 @@
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="@Url.Action("UserDashboardCount", "UserDashboard")">Dashboard</a></li>
                 <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="@Url.Action("UserChangePassword", "ChangePassword")">Change Password</a></li>
+                <li><hr class="dropdown-divider"></li>
                 <li>
                     <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
                         Logout    <i class='bx bx-log-out' style="font-size:24px !important;color:red !important;"></i>
@@ -177,7 +179,10 @@
                             <a href="@Url.Action("ExcelUserDownload", "Tickets")" class="me-2" title="Export as Excel" style="text-decoration:none;">
                                 <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
                             </a>
-
+                            <a href="@Url.Action("UserTicketsPdfDownload", "Tickets")">
+                                <i class="bi bi-file-earmark-pdf-fill"
+                                   style="font-size:20px; color:#d9534f;"></i>
+                            </a>
                         </div>
                     </div>
 

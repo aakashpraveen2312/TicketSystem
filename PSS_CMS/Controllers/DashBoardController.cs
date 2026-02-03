@@ -17,7 +17,21 @@ namespace PSS_CMS.Controllers
     {
         public async Task<ActionResult> Dashboard()
         {
-            string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDGET"];
+            string WEBURLGET = "";
+            if (Session["UserRole"].ToString() == "Admin")
+            {
+                WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDGETADMIN"];
+            }
+            else if (Session["UserRole"].ToString() == "Manager")
+            {
+                WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDGETMANAGER"];
+            }
+            else
+            {
+                WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDGET"];
+            }
+             
+             
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "Userid=" + Session["UserRECID"] + "&type="+ Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
@@ -45,11 +59,19 @@ namespace PSS_CMS.Controllers
 
                             var totalTickets = dashboardData.TotalTickets;
                             var closedTickets = dashboardData.CloseTickets;
+                            var totalAssignedCount = dashboardData.AssignedTickets;
+                            var totalUnAssignedCount = dashboardData.UnAssignedTickets;
+                            var PickedTicket = dashboardData.PickedTicket;
+                            var UnpickedTicket = dashboardData.UnpickedTicket;
                             var closedPercentage = (closedTickets / (double)totalTickets) * 100;
 
                             ViewBag.ClosedPercentage = closedPercentage;
                             ViewBag.TotalTickets = totalTickets;
                             ViewBag.ClosedTickets = closedTickets;
+                            ViewBag.totalAssignedCount = totalAssignedCount;
+                            ViewBag.totalUnAssignedCount = totalUnAssignedCount;
+                            ViewBag.totalPickedTicketCount = PickedTicket;
+                            ViewBag.totalUnpickedTicketCount = UnpickedTicket;
                         }
                         else
                         {
@@ -83,7 +105,21 @@ namespace PSS_CMS.Controllers
 
         public async Task<Dashborardchart> WTDANDMTDCHART()
         {
-            string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDMTDandWTD"];
+            string WEBURLGET = "";
+            if (Session["UserRole"].ToString() == "Admin")
+            {
+                WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDMTDandWTDADMIN"];
+            }
+            else if (Session["UserRole"].ToString() == "Manager")
+            {
+                WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDMTDandWTDMANAGER"];
+            }
+            else
+            {
+                WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDMTDandWTD"];
+            }
+
+           
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "Userid=" + Session["UserRECID"] + "&type=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
@@ -276,7 +312,25 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> StackedBarChart()
         {
-            string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDSTACKEDBARCHART"];
+            string WEBURLGET = "";
+            if (Session["UserRole"].ToString()=="Manager")
+            {
+                WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDSTACKEDBARCHARTMANAGER"];
+
+            }
+            else if (Session["UserRole"].ToString() == "Admin")
+            {
+                WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDSTACKEDBARCHARTADMIN"];
+            }
+           
+            else
+            {
+          
+                WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDSTACKEDBARCHART"];
+
+            }
+
+
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "Userid=" + Session["UserRECID"] + "&cmprecid=" + Session["CompanyID"];

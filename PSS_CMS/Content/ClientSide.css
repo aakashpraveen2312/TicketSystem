@@ -93,6 +93,14 @@ i.bx.bx-line-chart{
     border: #6ed3d0;
     border-radius: 5px;
 }
+.btncolorquery {
+    background-color: cornflowerblue;
+    width: 75px;
+    padding: 5px;
+    color: #fff;
+    border: #6ed3d0;
+    border-radius: 5px;
+}
 
 .btncolorcancel {
     background-color: #f0a72d;

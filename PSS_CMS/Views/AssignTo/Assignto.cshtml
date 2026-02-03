@@ -136,14 +136,14 @@
                         }
                     </div>
                     <div class="col-md-4">
-                        @Html.LabelFor(model => model.A_EXPECTEDDATEANDTIME, "Expected Date", new { @class = " " })
+                        @Html.LabelFor(model => model.A_EXPECTEDDATEANDTIME, "Expected Completed Date", new { @class = " " })
                         @Html.TextBoxFor(model => model.A_EXPECTEDDATEANDTIME, new { @class = "form-control", id = "expecteddate", type = "datetime-local", required = "required", tabindex = "1" })
 
                     </div>
                 </div>
                 <div class="row ms-3 me-3 mt-3">
                     <div class="col-md-12 col-sm-12">
-                        @Html.LabelFor(model => model.A_COMMENTS, "User Comments", new { @class = "" })
+                        @Html.LabelFor(model => model.A_COMMENTS, "Comments", new { @class = "" })
                         @Html.TextAreaFor(model => model.A_COMMENTS, new
  {
      @class = "form-control custom-textarea",

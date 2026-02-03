@@ -52,6 +52,7 @@ namespace PSS_CMS.Models
         public int CI_SORTORDER { get; set; }
         [DisplayName("Payment Due Date")]
         public string CI_PAYMENTDUEDATE { get; set; }
+        public string WARRANTY_STATUS { get; set; }
 
         public string Paymentduedate
         {

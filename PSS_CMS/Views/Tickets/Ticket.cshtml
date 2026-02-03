@@ -48,6 +48,9 @@
             width: 23px;
             height: 21px;
         }
+        .label-gray {
+            color: #9e9e9e;
+        }
     </style>
 </head>
 
@@ -76,6 +79,8 @@
                 <li><a class="dropdown-item" href="@Url.Action("FAQ", "Tickets")">FAQ</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="@Url.Action("UserDashboardCount", "UserDashboard")">Dashboard</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="@Url.Action("UserChangePassword", "ChangePassword")">Change Password</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -216,7 +221,7 @@
 
                     <div class="col-md-12 mt-2 mb-3 d-flex justify-content-lg-end justify-content-md-end justify-content-start">
                         @Html.CheckBoxFor(model => model.paidservice, new { @class = "me-2", id = "termsCheckbox" })
-                        <label for="termsCheckbox" class="me-4 mt-2">I agree to proceed with this service as a paid request</label>
+                        <label for="termsCheckbox" id="termsLabel" class="me-4 mt-2">I agree to proceed with this service as a paid request</label>
 
                         <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="9">Submit</button>
                         <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","Tickets")'" tabindex="10">
@@ -583,6 +588,7 @@ function loadMaterials(selectedRecId) {
         function updateCheckboxState() {
             const warrantyDateStr = $('#warranty').val();
             const latestWarrantyDateStr = $('#latestwarranty').val();
+            const warrantyFreeCalls = parseInt($('#warrantyfreecalls').val(), 10) || 0;
 
             const currentDate = new Date();
             currentDate.setHours(0, 0, 0, 0);
@@ -603,11 +609,18 @@ function loadMaterials(selectedRecId) {
             const customerExpired = warrantyDate && warrantyDate < currentDate;
             const productExpired = latestWarrantyDate && latestWarrantyDate < currentDate;
 
+            // 🚫 Free calls exhausted → checkbox MUST be disabled
+            if (warrantyFreeCalls === 0) {
+                $('#termsCheckbox').prop('checked', false).prop('disabled', true);
+                return;
+            }
             // Enable checkbox only if any warranty is expired
             if (customerExpired || productExpired) {
                 $('#termsCheckbox').prop('disabled', false).prop('checked', false);
+                $('#termsLabel').removeClass('label-gray');
             } else {
                 $('#termsCheckbox').prop('disabled', true).prop('checked', false);
+                $('#termsLabel').addClass('label-gray');
             }
         }
 
@@ -615,12 +628,24 @@ function loadMaterials(selectedRecId) {
             const warrantyDateStr = $('#warranty').val();
             const latestWarrantyDateStr = $('#latestwarranty').val();
             const isCheckboxChecked = $('#termsCheckbox').is(':checked');
+            const warrantyFreeCalls = parseInt($('#warrantyfreecalls').val(), 10) || 0;
 
             const currentDate = new Date();
             currentDate.setHours(0, 0, 0, 0);
 
             let warrantyDate = null;
             let latestWarrantyDate = null;
+
+            // 🚫 Free calls exhausted → block immediately
+            if (warrantyFreeCalls === 0) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Free Calls Exhausted',
+                    text: 'You have already used all free service calls. Please contact the help desk to renew your plan.'
+                });
+                return;
+            }
 
             if (warrantyDateStr) {
                 const parts = warrantyDateStr.split('-');

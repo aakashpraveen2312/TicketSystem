@@ -48,6 +48,9 @@
             width: 23px;
             height: 21px;
         }
+        .label-gray {
+            color: #9e9e9e;
+        }
     </style>
 </head>
 
@@ -75,6 +78,8 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="@Url.Action("HDDashboard", "HelpDesk")">Dashboard</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="@Url.Action("HelpdeskChangePassword", "ChangePassword")">Change Password</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
@@ -106,164 +111,164 @@
         @using (Html.BeginForm("Ticket", "HelpDesk", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
-    <form>
-        <div class="row">
-            <div class="col-md-6 col-sm-12">
-                @Html.LabelFor(model => model.TC_Date, "Date", new { @class = "pb-2 " })
-                @Html.TextBoxFor(model => model.TC_Date, new { @class = "form-control", id = "date", type = "datetime-local", required = "required", tabindex = "1" })
-            </div>
+            <form>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        @Html.LabelFor(model => model.TC_Date, "Date", new { @class = "pb-2 " })
+                        @Html.TextBoxFor(model => model.TC_Date, new { @class = "form-control", id = "date", type = "datetime-local", required = "required", tabindex = "1" })
+                    </div>
 
-            <div class="col-md-6 col-sm-12 ptypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+                    <div class="col-md-6 col-sm-12 ptypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
 
-                <!-- First Dropdown for Project Types -->
-                @if (Model.TicketCombo2.TicketTypes2 != null)
-                {
-                    <!-- Show dropdown with "Select Project" placeholder if count > 1 -->
-                    @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
-                    @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "Select Product", new { @class = "form-select", required = "required", onchange = "loadMaterials(this.value)", tabindex = "2" })
-                }
-
-                else
-                {
-                    <!-- Show dropdown without placeholder if count == 1 -->
-                    @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
-                    @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "No Product's are available", new { @class = "form-select", required = "required" })
-                }
-
-            </div>
-        </div>
-
-
-        <div class="row mt-3">
-            <div class="col-md-6 col-sm-12">
-                @Html.LabelFor(model => model.TC_SUBJECT, "Subject", new { @class = "pb-2" })
-                @Html.TextBoxFor(model => model.TC_SUBJECT, new
-                {
-                    @class = "form-control minicheck1",
-                    id = "sub",
-                    required = "required",
-                    tabindex = "3",
-                    style = "background-color: #dceef5;"
-                })
-            </div>
-            <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
-                @Html.LabelFor(model => model.TC_CUSTOMER, "Customer", new { @class = "pb-2" })
-                @Html.DropDownList("SelectedCustomer",
-                new List<SelectListItem> {
-                new SelectListItem { Text = "No Product is selected", Value = "", Selected = true }
-                },
-                 new { @class = "form-select textboxcolors", id = "CustomerDropdown", required = "required" })
-
-            </div>
-
-
-
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 col-sm-12 mt-2">
-
-                <!-- Third Dropdown for Priority Types -->
-                @Html.LabelFor(model => model.TC_PRIORITYTYPE, "Priority Type", new { @class = "pb-2 " })
-                @Html.DropDownListFor(model => model.TC_PRIORITYTYPE,
-             new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
-             "Select Priority Type",
-             new { @class = "form-select prioritystyle", required = "required", tabindex = "4" })
-            </div>
-            <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
-                @Html.LabelFor(model => model.TC_WARRANTYUPTO, "Warranty Upto", new { @class = "pb-2" })
-                @Html.TextBoxFor(model => model.TC_WARRANTYUPTO, new { @class = "form-control", id = "warranty", @readonly = "readonly", tabindex = "5" })
-            </div>
-        </div>
-
-        <div class="row mt-3">
-            <div class="col-md-6 col-sm-12">
-                @Html.LabelFor(model => model.SelectedTicketType, "Ticket Type", new { @class = "pb-2" })
-                @Html.DropDownListFor(model => model.SelectedTicketType, Model.TicketCombo.TicketTypes, "Select Ticket Type", new { @class = "form-select", required = "required", tabindex = "6" })
-
-            </div>
-            <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
-                @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, "Warranty Free Calls", new { @class = "pb-2" })
-                @Html.TextBoxFor(model => model.CU_WARRANTYFREECALLS, new { @class = "form-control text-right", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
-            </div>
-        </div>
-
-        @*<div class="row mt-3">
-            <div class="col-md-6 col-sm-12">
-                @Html.LabelFor(model => model.SelectedUser, "Users", new { @class = "pb-2 " })
-                @if (ViewBag.User != null)
-                {
-                    var ProductList = ViewBag.User as IEnumerable<SelectListItem>;
-
-                    if (ProductList != null && ProductList.Any())
-                    {
-                        var modifiedProductList = new List<SelectListItem>(ProductList);
-
-                        if (ProductList.Count() > 1)
+                        <!-- First Dropdown for Project Types -->
+                        @if (Model.TicketCombo2.TicketTypes2 != null)
                         {
-                            // Add "--Select Project--" option only if more than one project is available
-                            modifiedProductList.Insert(0, new SelectListItem { Text = "--Select User--", Value = "" });
+                            <!-- Show dropdown with "Select Project" placeholder if count > 1 -->
+                            @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
+                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "Select Product", new { @class = "form-select", required = "required", onchange = "loadMaterials(this.value)", tabindex = "2" })
+                        }
 
-                            @Html.DropDownList("SelectedUser",
-                                                         modifiedProductList,
-                                                         new { @class = "form-select textboxcolors", id = "", required = "required" }) }
-                        else if (ProductList.Count() == 1)
+                        else
                         {
-                            // If only one project is available, preselect it
-                            @Html.DropDownList("SelectedUser",
-                                                         modifiedProductList,
-                                                         new { @class = "form-select textboxcolors", id = "", required = "required" }) }
-                    }
-                    else
-                    {
-                        var modifiedProductList = new List<SelectListItem>(ProductList);
-                        // Add "--Select Project--" option only if more than one project is available
-                        modifiedProductList.Insert(0, new SelectListItem { Text = "No User's are available", Value = "" });
+                            <!-- Show dropdown without placeholder if count == 1 -->
+                            @Html.LabelFor(model => model.SelectedProjectType, "Product", new { @class = "pb-2 " })
+                            @Html.DropDownListFor(model => model.SelectedProjectType, Model.TicketCombo2.TicketTypes2, "No Product's are available", new { @class = "form-select", required = "required" })
+                        }
 
-                        @Html.DropDownList("SelectedUser",
-                                                     modifiedProductList,
-                                                     new { @class = "form-select textboxcolors", id = "" }) }
-                }
-                else
-                {
-                    <p>No User's are available</p>}
-            </div>
-
-        </div>*@
-
-        <div class="row mt-2">
-            <div class="col-md-12 col-sm-12">
-                @Html.LabelFor(model => model.TC_COMMENTS, "User Comments", new { @class = "pb-2" })
-                @Html.TextAreaFor(model => model.TC_COMMENTS, new { @class = "form-control custom-textarea  ", style = "background-color: #dceef5;", placeholder = "Please enter your comments here....", rows = "10", cols = "70", required = "required", tabindex = "8", })
-
-            </div>
-
-            <div class="col-md-12 col-sm-12 mt-2">
-                @Html.Label("myfile", "Attachments:")
-                <input type="file" id="myfile" name="myfile" tabindex="6"
-                       accept=".pdf, .xlsx, .jpeg, .png, .jpg, .csv,.mp4" onchange="validateFile()" />
-                <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .csv,.mp4)</small>
-            </div>
-
-            <div class="col-md-12 mt-2">
-                @Html.MathCaptcha()
+                    </div>
+                </div>
 
 
-            </div>
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-12">
+                        @Html.LabelFor(model => model.TC_SUBJECT, "Subject", new { @class = "pb-2" })
+                        @Html.TextBoxFor(model => model.TC_SUBJECT, new
+                        {
+                            @class = "form-control minicheck1",
+                            id = "sub",
+                            required = "required",
+                            tabindex = "3",
+                            style = "background-color: #dceef5;"
+                        })
+                    </div>
+                    <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+                        @Html.LabelFor(model => model.TC_CUSTOMER, "Customer", new { @class = "pb-2" })
+                        @Html.DropDownList("SelectedCustomer",
+                        new List<SelectListItem> {
+                        new SelectListItem { Text = "No Product is selected", Value = "", Selected = true }
+                        },
+                         new { @class = "form-select textboxcolors", id = "CustomerDropdown", required = "required" })
 
-            <div class="col-md-12 mt-2 mb-3 d-flex justify-content-lg-end justify-content-md-end justify-content-start">
-                <input type="checkbox" id="termsCheckbox" name="termsAndConditions" class="me-2" />
-                <label for="termsCheckbox" class="me-4 mt-2">I agree to paid service</label>
-                <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="9">Submit</button>
-                <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","HelpDesk")'" tabindex="10">
-                    Cancel
-                </button>
-            </div>
+                    </div>
 
 
-        </div>
 
-    </form>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 mt-2">
+
+                        <!-- Third Dropdown for Priority Types -->
+                        @Html.LabelFor(model => model.TC_PRIORITYTYPE, "Priority Type", new { @class = "pb-2 " })
+                        @Html.DropDownListFor(model => model.TC_PRIORITYTYPE,
+                     new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
+                     "Select Priority Type",
+                     new { @class = "form-select prioritystyle", required = "required", tabindex = "4" })
+                    </div>
+                    <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+                        @Html.LabelFor(model => model.TC_WARRANTYUPTO, "Warranty Upto", new { @class = "pb-2" })
+                        @Html.TextBoxFor(model => model.TC_WARRANTYUPTO, new { @class = "form-control", id = "warranty", @readonly = "readonly", tabindex = "5" })
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-12">
+                        @Html.LabelFor(model => model.SelectedTicketType, "Ticket Type", new { @class = "pb-2" })
+                        @Html.DropDownListFor(model => model.SelectedTicketType, Model.TicketCombo.TicketTypes, "Select Ticket Type", new { @class = "form-select", required = "required", tabindex = "6" })
+
+                    </div>
+                    <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+                        @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, "Warranty Free Calls", new { @class = "pb-2" })
+                        @Html.TextBoxFor(model => model.CU_WARRANTYFREECALLS, new { @class = "form-control text-right", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
+                    </div>
+                </div>
+
+                @*<div class="row mt-3">
+                        <div class="col-md-6 col-sm-12">
+                            @Html.LabelFor(model => model.SelectedUser, "Users", new { @class = "pb-2 " })
+                            @if (ViewBag.User != null)
+                            {
+                                var ProductList = ViewBag.User as IEnumerable<SelectListItem>;
+
+                                if (ProductList != null && ProductList.Any())
+                                {
+                                    var modifiedProductList = new List<SelectListItem>(ProductList);
+
+                                    if (ProductList.Count() > 1)
+                                    {
+                                        // Add "--Select Project--" option only if more than one project is available
+                                        modifiedProductList.Insert(0, new SelectListItem { Text = "--Select User--", Value = "" });
+
+                                        @Html.DropDownList("SelectedUser",
+                                                                     modifiedProductList,
+                                                                     new { @class = "form-select textboxcolors", id = "", required = "required" }) }
+                                    else if (ProductList.Count() == 1)
+                                    {
+                                        // If only one project is available, preselect it
+                                        @Html.DropDownList("SelectedUser",
+                                                                     modifiedProductList,
+                                                                     new { @class = "form-select textboxcolors", id = "", required = "required" }) }
+                                }
+                                else
+                                {
+                                    var modifiedProductList = new List<SelectListItem>(ProductList);
+                                    // Add "--Select Project--" option only if more than one project is available
+                                    modifiedProductList.Insert(0, new SelectListItem { Text = "No User's are available", Value = "" });
+
+                                    @Html.DropDownList("SelectedUser",
+                                                                 modifiedProductList,
+                                                                 new { @class = "form-select textboxcolors", id = "" }) }
+                            }
+                            else
+                            {
+                                <p>No User's are available</p>}
+                        </div>
+
+                    </div>*@
+
+                <div class="row mt-2">
+                    <div class="col-md-12 col-sm-12">
+                        @Html.LabelFor(model => model.TC_COMMENTS, "User Comments", new { @class = "pb-2" })
+                        @Html.TextAreaFor(model => model.TC_COMMENTS, new { @class = "form-control custom-textarea  ", style = "background-color: #dceef5;", placeholder = "Please enter your comments here....", rows = "10", cols = "70", required = "required", tabindex = "8", })
+
+                    </div>
+
+                    <div class="col-md-12 col-sm-12 mt-2">
+                        @Html.Label("myfile", "Attachments:")
+                        <input type="file" id="myfile" name="myfile" tabindex="6"
+                               accept=".pdf, .xlsx, .jpeg, .png, .jpg, .csv,.mp4" onchange="validateFile()" />
+                        <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .csv,.mp4)</small>
+                    </div>
+
+                    <div class="col-md-12 mt-2">
+                        @Html.MathCaptcha()
+
+
+                    </div>
+
+                    <div class="col-md-12 mt-2 mb-3 d-flex justify-content-lg-end justify-content-md-end justify-content-start">
+                        @Html.CheckBoxFor(model => model.paidservice, new { @class = "me-2", id = "termsCheckbox" })
+                        <label for="termsCheckbox" id="termsLabel" class="me-4 mt-2">I agree to proceed with this service as a paid request</label>
+                        <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="9">Submit</button>
+                        <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","HelpDesk")'" tabindex="10">
+                            Cancel
+                        </button>
+                    </div>
+
+
+                </div>
+
+            </form>
 
         }
         <br />
@@ -426,12 +431,12 @@
                     Swal.fire({
                         title: "",
                         html: `
-                                                                                    <p style="font-size: 15px;"><b>Ticket Raised Successfuly <br/> Admin Will Reach You Soon</b></p>
-                                                                                    <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
-                                                                                        <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
-                                                                                        <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
-                                                                                    </div>
-                                                                                `,
+                                                                                        <p style="font-size: 15px;"><b>Ticket Raised Successfuly <br/> Admin Will Reach You Soon</b></p>
+                                                                                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+                                                                                            <button id="confirmBtn" class="swal2-confirm swal2-styled" style="background-color: #6ed3d0; padding: 10px 15px; font-size: 13px;">Back to List</button>
+                                                                                            <button id="cancelBtn" class="swal2-cancel swal2-styled" style="background-color: #f0a72d; padding: 10px 15px; font-size: 13px;">New Ticket</button>
+                                                                                        </div>
+                                                                                    `,
                         showConfirmButton: false,
                         showCancelButton: false,
                         allowOutsideClick: false,
@@ -587,62 +592,92 @@
 
             // Handle warranty logic on dropdown change
             $(document).on('change', '#CustomerDropdown', function () {
+
                 const selectedOption = $(this).find('option:selected');
                 const warrantyUpto = selectedOption.data('warranty');
-                const warrantyFreeCalls = selectedOption.data('warrantyfreecalls');
+                const warrantyFreeCalls = selectedOption.data('warrantyfreecalls') || 0;
+
+                // Set free calls field
+                $('#warrantyfreecalls').val(warrantyFreeCalls);
+
+                let disableCheckbox = true; // default state
 
                 if (warrantyUpto) {
                     const date = new Date(warrantyUpto);
-                    const formattedDate = ("0" + date.getDate()).slice(-2) + "-" +
+
+                    const formattedDate =
+                        ("0" + date.getDate()).slice(-2) + "-" +
                         ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
                         date.getFullYear();
-                    $('#warranty').val(formattedDate);
-                    $('#warrantyfreecalls').val(warrantyFreeCalls);
 
-                    // Compare dates to enable/disable checkbox
+                    $('#warranty').val(formattedDate);
+
                     const currentDate = new Date();
                     currentDate.setHours(0, 0, 0, 0);
                     date.setHours(0, 0, 0, 0);
 
-                    if (date >= currentDate) {
-                        // Warranty is valid
-                        $('#termsCheckbox').prop('checked', false).prop('disabled', true);
-                    } else {
-                        // Warranty expired
-                        $('#termsCheckbox').prop('disabled', false);
+                    // Enable checkbox ONLY if warranty expired AND free calls > 0
+                    if (date < currentDate && warrantyFreeCalls > 0) {
+                        disableCheckbox = false;
                     }
 
                 } else {
                     $('#warranty').val('');
-                    $('#termsCheckbox').prop('checked', false).prop('disabled', true);
+                }
+
+                // Apply checkbox state once
+                $('#termsCheckbox')
+                    .prop('checked', false)
+                    .prop('disabled', disableCheckbox);
+                console.log("disableCheckbox", disableCheckbox);
+                if (disableCheckbox) {
+                    $('#termsLabel').addClass('label-gray');
+                } else {
+                    $('#termsLabel').removeClass('label-gray');
                 }
             });
+
 
             // Handle submit button click
             $('#submitBtn').on('click', function (e) {
-                const warrantyDateStr = $('#warranty').val(); // Format: DD-MM-YYYY
+
+                const warrantyDateStr = $('#warranty').val(); // DD-MM-YYYY
                 const isCheckboxChecked = $('#termsCheckbox').is(':checked');
+                const warrantyFreeCalls = parseInt($('#warrantyfreecalls').val(), 10) || 0;
+
+                // 🚫 Free calls exhausted → block immediately
+                if (warrantyFreeCalls === 0) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Free Calls Exhausted',
+                        text: 'You have already used all free service calls. Please contact the help desk to renew your plan.'
+                    });
+                    return;
+                }
 
                 if (warrantyDateStr) {
                     const parts = warrantyDateStr.split('-');
-                    const warrantyDate = new Date(parts[2], parts[1] - 1, parts[0]); // YYYY, MM-1, DD
+                    const warrantyDate = new Date(parts[2], parts[1] - 1, parts[0]);
                     const currentDate = new Date();
                     currentDate.setHours(0, 0, 0, 0);
 
+                    // 🚫 Warranty expired & checkbox not checked
                     if (warrantyDate < currentDate && !isCheckboxChecked) {
-                        e.preventDefault(); // Block submission
+                        e.preventDefault();
                         Swal.fire({
                             icon: 'warning',
                             title: 'Warranty Expired',
-                            text: 'The warranty has expired. Please agree to paid service.',
+                            text: 'The warranty has expired. Please agree to proceed with this service as a paid request.',
                             confirmButtonColor: '#d33'
                         });
                     }
-                    // else: allow submit
                 }
             });
+
         });
     </script>
+
 
 
 

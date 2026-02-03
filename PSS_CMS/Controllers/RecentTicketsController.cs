@@ -198,7 +198,7 @@ namespace PSS_CMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AdminResponseTicket(Admintickets Admintickets, string RESPONSE_DATETIME, string RESPONSE_COMMENTS, HttpPostedFileBase myfile)
+        public async Task<ActionResult> AdminResponseTicket(Admintickets Admintickets, string RESPONSE_DATETIME, string RESPONSE_COMMENTS, HttpPostedFileBase myfile,string Query)
         {
             try
             {
@@ -230,7 +230,23 @@ namespace PSS_CMS.Controllers
                 var AdminResponsePostURL = ConfigurationManager.AppSettings["AdminResponse"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
-                var content = $@"{{           
+                var content = "";
+                if (Query=="Q")
+                {
+                     content = $@"{{           
+            ""tC_RECID"": ""{Session["LastRecid"]}"",           
+            ""tC_CRECID"": ""{Session["CompanyID"]}"",           
+            ""tC_RESPONSE_ATTPREFIX"": ""{base64Image}"",
+            ""tC_RESPONSE_URECID"": ""{Session["UserRECID"]}"",
+            ""tC_RESPONSE_DATETIME"": ""{DateTime.Now.ToString("yyyy-MM-dd")}"",
+            ""tC_RESPONSECOMMENTS"": ""{HttpUtility.JavaScriptStringEncode(RESPONSE_COMMENTS)}"",                              
+            ""tC_ADMINNAME"": ""{Session["UserName"]}"",                              
+            ""tC_STATUS"": ""{"Q"}""           
+        }}";
+                }
+                else
+                {
+                     content = $@"{{           
             ""tC_RECID"": ""{Session["LastRecid"]}"",           
             ""tC_CRECID"": ""{Session["CompanyID"]}"",           
             ""tC_RESPONSE_ATTPREFIX"": ""{base64Image}"",
@@ -240,6 +256,8 @@ namespace PSS_CMS.Controllers
             ""tC_ADMINNAME"": ""{Session["UserName"]}"",                              
             ""tC_STATUS"": ""{"R"}""           
         }}";
+                }
+               
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
@@ -940,6 +958,53 @@ namespace PSS_CMS.Controllers
                 return Content("Exception occurred: " + ex.Message);
             }
         }
-       
+
+        public async Task<ActionResult> AdminTicketsPdfDownload()
+        {
+            string Weburl = ConfigurationManager.AppSettings["AdminClientsTicketsPdf"];
+
+
+            string apiKey = Session["APIKEY"]?.ToString();
+            string authKey = ConfigurationManager.AppSettings["AuthKey"];
+
+            int userId = Convert.ToInt32(Session["UserRECID"]);
+            string userRole = Session["UserRole"]?.ToString();
+            int companyId = Convert.ToInt32(Session["CompanyID"]);
+
+            string finalUrl =
+                $"{Weburl}?TC_USERID={userId}&StrUsertype={userRole}&cmprecid={companyId}";
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (s, c, ch, e) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", apiKey);
+                        client.DefaultRequestHeaders.Add("Authorization", authKey);
+
+                        var response = await client.GetAsync(finalUrl);
+
+                        if (!response.IsSuccessStatusCode)
+                            return Content("PDF download failed.");
+
+                        byte[] pdfBytes = await response.Content.ReadAsByteArrayAsync();
+
+                        return File(
+                            pdfBytes,
+                            "application/pdf",
+                            $"{userRole}_Tickets_{DateTime.Now:yyyyMMddHHmmss}.pdf"
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Error: " + ex.Message);
+            }
+        }
+
     }
 }

@@ -281,8 +281,12 @@ namespace PSS_CMS.Controllers
             ""tC_STATUS"": ""{"S"}"",
             ""tC_PRIORITYTYPE"": ""{tickets.TC_PRIORITYTYPE}"",
             ""tC_TICKETTYPE"": ""{tickets.SelectedTicketType}"",
-            ""tC_USERNAME"": ""{Session["UserName"]}"",
-            ""tC_REFERENCETRECID"": ""{0}""
+            ""tC_PAIDSERVICE"": ""{(tickets.paidservice ? "Y" : "N")}"",   
+            ""tC_USERNAME"": ""{Session["UserName"] ?? ""}-{Session["Role"] ?? ""}"",
+            ""tC_REFERENCETRECID"": ""{0}"",
+            ""tC_HFLAG"": ""{"Y"}"",
+""tC_ASSIGNFLAG"": ""{"N"}"",
+""tC_PICKFLAG"": ""{"N"}""
         }}";
 
                 // Create the HTTP request 

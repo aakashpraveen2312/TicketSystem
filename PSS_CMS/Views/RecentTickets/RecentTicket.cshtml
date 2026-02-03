@@ -86,6 +86,14 @@
         i.bi.bi-card-checklist {
             font-size: 20px;
         }
+        i.bx.bx-select-multiple {
+            font-size: 18px;
+            margin-top: 4px;
+            cursor:pointer;
+        }
+        i.bx.bx-check.me-1 {
+            font-size: 20px;
+        }
     </style>
 
 </head>
@@ -179,27 +187,60 @@
                 </div>
             </div>
             <div class="col-lg-3 col-md-4 col-sm-4">
+                @*<div class="row ">
+
+            <div class="col-md-10">
+                @using (Html.BeginForm("RecentTicket", "RecentTickets", FormMethod.Get, new { id = "searchForm" }))
+                {
+                    <div class="position-relative w-100">
+                        <input type="text" id="searchPharse" name="searchPharse" autocomplete="off" class="inputcustom" placeholder="Search" value="@Request["searchPharse"]" style="margin-top:9px; padding-right: 40px;" />
+                    </div>
+                }
+            </div>
+
+            <div class="col-md-2 mt-3 d-flex justify-content-end">
+                <i class="bi bi-calendar3" id="daterange" style="cursor: pointer; color: #357ebd;font-size:20px"></i>
+                <form id="dateForm" method="post" action="@Url.Action("RecentTicket", "RecentTickets")">
+                    @Html.Hidden("StartDate")
+                    @Html.Hidden("EndDate")
+                </form>
+                <a href="@Url.Action("ExcelAdminDownload", "RecentTickets")" class="" title="Export as Excel" style="text-decoration:none;">
+                    <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
+                </a>
+            </div>
+
+        </div>*@
+
                 <div class="row ">
 
-                    <div class="col-md-10">
+                    <div class="col-md-9">
+
                         @using (Html.BeginForm("RecentTicket", "RecentTickets", FormMethod.Get, new { id = "searchForm" }))
+
                         {
-                            <div class="position-relative w-100">
-                                <input type="text" id="searchPharse" name="searchPharse" autocomplete="off" class="inputcustom" placeholder="Search" value="@Request["searchPharse"]" style="margin-top:9px; padding-right: 40px;" />
-                                @*<i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-2 text-muted"></i>*@
-                            </div>
+            <div class="position-relative">
+                <input type="text" id="searchPharse" name="searchPharse" autocomplete="off" class="inputcustom" placeholder="Search" value="@Request["searchPharse"]" style="margin-top:9px; padding-right: 40px;" />
+
+            </div>
                         }
                     </div>
 
-                    <div class="col-md-2 mt-3 d-flex justify-content-end">
+                    <div class="col-md-3 mt-3 d-flex justify-content-end">
                         <i class="bi bi-calendar3" id="daterange" style="cursor: pointer; color: #357ebd;font-size:20px"></i>
                         <form id="dateForm" method="post" action="@Url.Action("RecentTicket", "RecentTickets")">
+
                             @Html.Hidden("StartDate")
+
                             @Html.Hidden("EndDate")
                         </form>
                         <a href="@Url.Action("ExcelAdminDownload", "RecentTickets")" class="" title="Export as Excel" style="text-decoration:none;">
                             <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
                         </a>
+                        <a href="@Url.Action("AdminTicketsPdfDownload", "RecentTickets")">
+                            <i class="bi bi-file-earmark-pdf-fill"
+                               style="font-size:20px; color:#d9534f;"></i>
+                        </a>
+
                     </div>
 
                 </div>
@@ -222,51 +263,89 @@
                columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority Type");
                columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket Type");
                columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status");
+               if (Session["UserRole"].ToString() == "Manager")
+               {
+                   columns.Add(c => c.U_ASSIGNEDUSERNAME).Titled("Assigned To");
+               }
+
                columns.Add().Titled("Action")
-              .Encoded(false)
-               .Sanitized(false)
-            .RenderValueAs(o =>
-            {
-                string assigntoLinkHtml = "";
-                if ((Session["UserRole"]?.ToString() == "Manager") && (o.TC_STATUS != "C"))
-                {
-                    var assignToUrl = Url.Action("Assignto", "AssignTo", new { Recid = o.TC_RECID });
-                    assigntoLinkHtml = $"<a href='{assignToUrl}' data-toggle='tooltip' data-placement='top' title='Assign To'><i class='bx bx-user-plus'></i></a>&nbsp;";
-                }
-                string MCLinkHtml = "";
-                string ServiceLinkHtml = "";
-                if ((Session["MaterialConsumptionFlag"]?.ToString() == "Y") && (o.TC_STATUS != "C"))
-                {
-                    var MCUrl = Url.Action("List", "MaterialConsumption", new {TC_RECID=o.TC_RECID,Type="Material",P_RECID=o.P_RECID});
-                    MCLinkHtml = $"<a href='{MCUrl}' data-toggle='tooltip' data-placement='top' title='Job card Items”'><i class='bx bx-cart-alt'></i></a>&nbsp;";
+     .Encoded(false)
+     .SetWidth(120)
+     .Sanitized(false)
+     .RenderValueAs(o =>
+     {
+         var actionHtml = "<div class='d-flex align-items-center gap-2'>";
 
-                    var ServiceUrl = Url.Action("List", "MaterialConsumption", new { TC_RECID = o.TC_RECID, Type = "Service", P_RECID = o.P_RECID });
-                    ServiceLinkHtml = $"<a href='{ServiceUrl}' data-toggle='tooltip' data-placement='top' title='Services'><i class='bi bi-card-checklist'></i></a>";
-                }
+         // Assign To (Manager only)
+         if ((Session["UserRole"]?.ToString() == "Manager") && (o.TC_STATUS != "C"))
+         {
+             var assignToUrl = Url.Action("Assignto", "AssignTo", new { Recid = o.TC_RECID });
+             actionHtml += $"<a href='{assignToUrl}' data-toggle='tooltip' title='Assign To'><i class='bx bx-user-plus'></i></a>";
+         }
 
-                string PDFLinkHtml = "";
-                if ((o.TC_STATUS == "C") && (Session["MaterialConsumptionFlag"]?.ToString() == "Y"))
-                {
-                    var PDFUrl = Url.Action("DownloadPDF", "PDF", new {TRECID=o.TC_RECID });
-                    PDFLinkHtml = $"<a href='#' class='download-pdf' data-id='{o.TC_RECID}' data-toggle='tooltip' title='PDF'><i class='bx bxs-file-pdf red'></i></a>&nbsp;";
-                }
+         // Review Ticket
+         var lineItemsUrl = Url.Action("AdminTickets", "RecentTickets", new
+         {
+             recid2 = o.TC_RECID,
+             userid = o.TC_URECID,
+             status = o.TC_STATUS,
+             adminresolvedname = o.TC_ADMINNAME
+         });
 
-                var lineItemsUrl = Url.Action("AdminTickets", "RecentTickets", new
-                {
-                    recid2 = o.TC_RECID,
-                    userid = o.TC_URECID,
-                    status = o.TC_STATUS,
-                    adminresolvedname = o.TC_ADMINNAME
-                });
+         actionHtml += $"<a href='{lineItemsUrl}' data-toggle='tooltip' title='Review Tickets'><i class='bx bx-reply-all'></i></a>";
 
-                var lineItemLinkHtml = $"<a href='{lineItemsUrl}' data-toggle='tooltip' data-placement='top' title='Review Tickets'><i class='bx bx-reply-all'></i></a>";
+         // Material / Service
+         if ((Session["MaterialConsumptionFlag"]?.ToString() == "Y") && (o.TC_STATUS != "C"))
+         {
+             var mcUrl = Url.Action("List", "MaterialConsumption",
+                 new { TC_RECID = o.TC_RECID, Type = "Material", P_RECID = o.P_RECID });
 
-                return MvcHtmlString.Create($"{assigntoLinkHtml}{lineItemLinkHtml}{MCLinkHtml}{PDFLinkHtml}{ServiceLinkHtml}");
-            });
+             actionHtml += $"<a href='{mcUrl}' data-toggle='tooltip' title='Job Card Items'><i class='bx bx-cart-alt'></i></a>";
 
-           }).WithPaging(10).Sortable(false).EmptyText("No ticket records are available to display at this time") 
+             var serviceUrl = Url.Action("List", "MaterialConsumption",
+                 new { TC_RECID = o.TC_RECID, Type = "Service", P_RECID = o.P_RECID });
+
+             actionHtml += $"<a href='{serviceUrl}' data-toggle='tooltip' title='Services'><i class='bi bi-card-checklist'></i></a>";
+         }
+
+         // PDF (Closed tickets)
+         if (o.TC_STATUS == "C" && Session["MaterialConsumptionFlag"]?.ToString() == "Y")
+         {
+             actionHtml += $"<a href='#' class='download-pdf' data-id='{o.TC_RECID}' data-toggle='tooltip' title='PDF'><i class='bx bxs-file-pdf red'></i></a>";
+         }
+         if (o.TC_STATUS != "C")
+         {
+             // Pick Ticket
+             if (o.TC_ASSIGNFLAG == "Y" && o.TC_PICKFLAG == "N")
+             {
+                 actionHtml += $@"
+                <a class='pick-ticket'
+                   data-recid='{o.TC_RECID}'
+                   data-toggle='tooltip'
+                   title='Pick Ticket'>
+                    <i class='bx bx-select-multiple'></i>
+                </a>";
+             }
+             else if (o.TC_ASSIGNFLAG == "Y" && o.TC_PICKFLAG == "Y")
+             {
+                 actionHtml += @"
+                <span class='text-success fw-bold d-flex align-items-center'>
+                    <i class='bx bx-check me-1'></i> Picked
+                </span>";
+             }
+         }
+
+
+         actionHtml += "</div>";
+
+         return MvcHtmlString.Create(actionHtml);
+     });
+
+
+           }).WithPaging(10).Sortable(false).EmptyText("No ticket records are available to display at this time")
             }
-           
+
+
               <footer>
             <div class="footer">
                 <div class="flex-container" style="padding-top:5px;padding-left:5px">
@@ -293,12 +372,15 @@
                     </div>
                     @if ((Session["UserRole"]?.ToString() == "Manager"))
                     {
-                <div class="flex-item">
-                    <div class="d-flex justify-content-center footerb">
-                        <i style="color:#337ab7" class='bx bx-user-plus'></i>
-                        ~ Assign To
-                    </div>
-                </div>}
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <i style="color:#337ab7" class='bx bx-user-plus'></i>
+                                ~ Assign To
+                            </div>
+                        </div>}
+
+                    @if (Session["MaterialConsumptionFlag"]?.ToString() == "Y")
+                    {
                     <div class="flex-item">
                         <div class="d-flex justify-content-center footerb">
                             <i style="color:#337ab7" class='bx bx-cart-alt'></i>
@@ -312,6 +394,7 @@
                             ~ Services
                         </div>
                     </div>
+                    }
 
                 </div>
             </div>
@@ -334,7 +417,8 @@
             <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
         </div>
     </div>
-  
+
+
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
 
@@ -343,8 +427,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
+                    Swal.fire({
+                    title: "Are you sure you want to log out?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Confirm",
@@ -352,12 +436,12 @@
             confirmButtonColor: "#28a745",
             cancelButtonColor: "#dc3545",
             reverseButtons: true
-        }).then((result) => {
+                    }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = '@Url.Action("Logout", "Login")';
             }
         });
-    });
+                });
     </script>
 
     @*script for filers*@
@@ -514,6 +598,72 @@
 </script>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
+
+
+    @*swett alert Script for user closed ticket*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).on("click", ".pick-ticket", function (e) {
+            e.preventDefault(); // Prevent default link action
+
+            var recid2 = $(this).data("recid");
+            
+            // Show a loading alert while waiting for the server response
+            Swal.fire({
+                title: "Processing...",
+                text: "Please wait while the ticket is being picked.",
+                icon: "info",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: "/AssignTo/PickTicket",
+                type: "POST",
+                data: { recid2: recid2 },
+                success: function (response) {
+                    Swal.close(); // Close the loading alert
+
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Ticket Picked!",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 2000 // Auto-close in 2 seconds
+                        }).then(() => {
+                            location.reload(); // Refresh page after alert disappears
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Message",
+                            text: response.message,
+                            icon: "info",
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close(); // Close the loading alert
+
+                    console.error("AJAX Error:", status, error, xhr.responseText); // Log error to console
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Something went wrong. Try again.",
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            });
+        });
+
+    </script>
+
 
 </body>
 </html>

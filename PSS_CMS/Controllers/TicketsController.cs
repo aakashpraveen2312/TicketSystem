@@ -141,8 +141,11 @@ namespace PSS_CMS.Controllers
             ""tC_PRIORITYTYPE"": ""{tickets.TC_PRIORITYTYPE}"",
             ""tC_TICKETTYPE"": ""{tickets.SelectedTicketType}"",
             ""tC_PAIDSERVICE"": ""{(tickets.paidservice ? "Y" : "N")}"",           
-            ""tC_USERNAME"": ""{Session["UserName"]}"",
-            ""tC_REFERENCETRECID"": ""{0}""
+            ""tC_USERNAME"": ""{Session["UserName"] ?? ""}-{Session["Role"] ?? ""}"",
+            ""tC_REFERENCETRECID"": ""{0}"",
+  ""tC_HFLAG"": ""{"N"}"",
+""tC_ASSIGNFLAG"": ""{"N"}"",
+""tC_PICKFLAG"": ""{"N"}""
         }}";
 
                 // Create the HTTP request
@@ -983,6 +986,53 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
+        //PDF
+        public async Task<ActionResult> UserTicketsPdfDownload()
+        {
+            string Weburl = ConfigurationManager.AppSettings["UserClientsTicketsPdf"];
 
+            string apiKey = Session["APIKEY"]?.ToString();
+            string authKey = ConfigurationManager.AppSettings["AuthKey"];
+
+            int userId = Convert.ToInt32(Session["UserRECID"]);
+            string userRole = Session["UserRole"]?.ToString(); // should be "User"
+            int companyId = Convert.ToInt32(Session["CompanyID"]);
+
+            string finalUrl =
+                $"{Weburl}?TC_USERID={userId}&StrUsertype={userRole}&cmprecid={companyId}";
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (s, c, ch, e) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", apiKey);
+                        client.DefaultRequestHeaders.Add("Authorization", authKey);
+
+                        var response = await client.GetAsync(finalUrl);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            return Content("PDF download failed.");
+                        }
+
+                        byte[] pdfBytes = await response.Content.ReadAsByteArrayAsync();
+
+                        return File(
+                            pdfBytes,
+                            "application/pdf",
+                            $"User_Tickets_{DateTime.Now:yyyyMMddHHmmss}.pdf"
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Error: " + ex.Message);
+            }
+        }
     }
 }

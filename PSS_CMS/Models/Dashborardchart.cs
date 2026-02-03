@@ -7,6 +7,10 @@ namespace PSS_CMS.Models
 {
     public class Dashborardchart
     {
+        public int AssignedTickets { get; set; }
+        public int UnAssignedTickets { get; set; }
+        public int UnpickedTicket { get; set; }
+        public int PickedTicket { get; set; }
         public int TotalTickets { get; set; }
         public int OpenTickets { get; set; }
         public int ResolvedTickets { get; set; }

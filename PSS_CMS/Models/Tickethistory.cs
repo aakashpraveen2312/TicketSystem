@@ -10,15 +10,18 @@ namespace PSS_CMS.Models
     public class Tickethistory
     {
         public int Serialnumber { get; set; }
+       
         public string Name { get; set; }
         public string Reason { get; set; }
         public string Date { get; set; }
+        public string TC_PICKFLAG { get; set; }
         public int TC_RECID { get; set; }
         public string TC_USERID { get; set; }
         public string TC_COMPANYID { get; set; }
         public string TC_PROJECTID { get; set; }
         public string TC_TICKETDATE { get; set; }
         public string TC_TICKETTYPE { get; set; }
+        public string U_ASSIGNEDUSERNAME { get; set; }
         public string TC_USERNAME { get; set; }
         public string TC_ADMINNAME { get; set; }
         public string AdminNameDisplay => string.IsNullOrEmpty(TC_ADMINNAME) ? "Unassigned" : TC_ADMINNAME;
@@ -49,6 +52,8 @@ namespace PSS_CMS.Models
                         return "Resolved";
                     case "C":
                         return "Closed";
+                    case "Q":
+                        return "Query";
 
                     default:
                         return "Re-Opened";
@@ -84,6 +89,7 @@ namespace PSS_CMS.Models
         public string P_CODE { get; set; }
         public string P_NAME { get; set; }
         public string CU_NAME { get; set; }
+        public string CU_MOBILENO { get; set; }
         public int P_RECID { get; set; }
         public int CU_RECID { get; set; }
         public string P_SORTORDER { get; set; }

@@ -18,6 +18,7 @@
 
         <div class="col-md-12 mt-2 mb-3 d-flex justify-content-md-end justify-content-start">
             <button type="submit" class="btncolorsubmit me-3" id="submitBtn">Submit</button>
+            <button type="submit" class="btncolorquery me-3" name="Query" value="Q" id="submitBtn">Query</button>
             <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("RecentTicket", "RecentTickets")'">Cancel</button>
         </div>
     </div>
@@ -36,7 +37,12 @@
             e.preventDefault(); // Prevent default form submission
 
             var formData = new FormData(this); // Create FormData object for file upload
+            // Get the button that submitted the form
+            var submitter = e.originalEvent.submitter;
 
+            if (submitter && submitter.name) {
+                formData.append(submitter.name, submitter.value);
+            }
             $.ajax({
                 url: '@Url.Action("AdminResponseTicket", "RecentTickets")',
                 type: 'POST',

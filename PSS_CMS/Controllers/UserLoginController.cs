@@ -152,7 +152,6 @@ namespace PSS_CMS.Controllers
             });
         }
 
-
         public async Task<ActionResult> List(string searchPharse, string R_CODE, string Role)
         {
             if (R_CODE!=null)

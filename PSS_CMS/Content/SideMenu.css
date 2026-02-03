@@ -7,7 +7,23 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
     !important;
 }
+/* Original Design */
+.alert {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
 
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+.text-center {
+    text-align: center;
+}
 :root {
     --savebtn: #6ED3D0;
     --cancelbtn: #F0A72D;
@@ -230,7 +246,7 @@ body.dark .sidebar header .toggle {
 /*Search input*/
 .inputcustom {
     height: 50%;
- width:100%;
+ width:90%;
     font-size: 17px;
     font-weight: 500;
     transition: var(--tran-05);

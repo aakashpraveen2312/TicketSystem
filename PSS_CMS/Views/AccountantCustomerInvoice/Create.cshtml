@@ -2,6 +2,11 @@
 @{
     Layout = null;
 }
+
+@{ var cuCtrecid = Session["RECID"]?.ToString();
+                var contractName = Session["ContractName"]?.ToString();
+                var ctPrecid = Session["CT_PRECID"]?.ToString();
+                var contractAmount = Session["ContractAmount"]?.ToString(); }
 <!DOCTYPE html>
 <html>
 <head>
@@ -149,15 +154,15 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bxs-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">User Accounts</span>
+                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
                         </a>
                     </li>
-                    <li class="nav-link">
+                    @*<li class="nav-link">
                         <a href="@Url.Action("List", "AccountantCustomerInvoice")">
                             <i class='bi bi-bag-check' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
                         </a>
-                    </li>
+                    </li>*@
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -342,7 +347,7 @@
 
                                     @Html.DropDownList("SelectedProduct",
                                                                  modifiedProductList,
-                                                                 new { @class = "form-select textboxcolors", id = "" })
+                                                                 new { @class = "form-select textboxcolors", id = "SelectedProduct" })
                                 }
                                 else
                                 {
@@ -360,31 +365,63 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_ADMINRECID, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @*<select id="AdminDropdown" class="form-select textboxcolors" disabled>
+                                    <option value="">-- Select Admin --</option>
+                                </select>
+                                <input type="hidden" id="AdminRecId" name="AdminRecId" />*@
+
+                            <select id="AdminDropdown" class="form-select textboxcolors" disabled>
+                                <option value="">-- Select Admin --</option>
+                            </select>
+
+                            <input type="hidden" id="CU_ADMINRECID" name="CU_ADMINRECID" />
+                        </div>
+                    </div>
+
+
+
+
+
+
 
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
                             @Html.LabelFor(model => model.CU_NAME, new { @class = "labels" })
-                            @Html.HiddenFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_NAME" } })
-
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
-                            <select id="UserDropdown" class="form-select textboxcolors">
-                                <option value="">-- Select User --</option>
-                                @foreach (var user in ViewBag.User as List<PSS_CMS.Models.UserDropdownItem>)
-                                {
-                                    <option value="@user.Value"
-                                            data-username="@user.Text"
-                                            data-email="@user.Email"
-                                            data-recid="@user.Recid"
-                                            data-mobile="@user.Mobile">
-                                        @user.Text
-                                    </option>
-                                }
-                            </select>
-                            @Html.HiddenFor(model => model.CU_URECID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_URECID" } })
-
+                            @Html.EditorFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_EMAIL" } })
                         </div>
                     </div>
+
+                    @*<div class="row mb-3">
+                            <div class="col-lg-2 col-md-2 col-sm-12">
+                                @Html.LabelFor(model => model.CU_NAME, new { @class = "labels" })
+                                @Html.HiddenFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_NAME" } })
+
+                            </div>
+                            <div class="col-lg-5 col-md-5 col-sm-12">
+                                <select id="UserDropdown" class="form-select textboxcolors">
+                                    <option value="">-- Select User --</option>
+                                    @foreach (var user in ViewBag.User as List<PSS_CMS.Models.UserDropdownItem>)
+                                    {
+                                        <option value="@user.Value"
+                                                data-username="@user.Text"
+                                                data-email="@user.Email"
+                                                data-recid="@user.Recid"
+                                                data-mobile="@user.Mobile">
+                                            @user.Text
+                                        </option>
+                                    }
+                                </select>
+                                @Html.HiddenFor(model => model.CU_URECID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_URECID" } })
+
+                            </div>
+                        </div>*@
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
                             @Html.LabelFor(model => model.CU_EMAIL, new { @class = "labels" })
@@ -434,7 +471,7 @@
                     <div class="mb-3 d-flex justify-content-end">
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
                         <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new { CompanyRecID = Session["CompanyID"] })'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
                     </div>
 
                 </div>
@@ -481,7 +518,7 @@
                     <div class="mb-3 d-flex justify-content-end">
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
                         <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new { CompanyRecID = Session["CompanyID"] })'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
 
 
                     </div>
@@ -551,7 +588,23 @@
                             </div>
                             <div class="mb-3 d-flex justify-content-end">
                                 <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new { CompanyRecID = Session["CompanyID"] })'" />
+                                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
+                          
+                            
+        @*<input type="button"
+                                   value="Cancel"
+                                   class="cancelbuttons"
+                                   onclick="window.location.href='@Url.Action(
+           "List",
+           "AccountantCustomerInvoice",
+           new {
+               CU_CTRECID = cuCtrecid,
+               Name = contractName,
+               CT_PRECID = ctPrecid,
+               CT_CONTRACTAMOUNT = contractAmount
+           })'" />*@
+                            
+                            
                             </div>
 
                         </div>
@@ -620,13 +673,30 @@
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
 
+
+
+    @*<script>
+            document.getElementById("UserDropdown").addEventListener("change", function () {
+                var selected = this.options[this.selectedIndex];
+                var email = selected.getAttribute("data-email") || "";
+                var name = selected.getAttribute("data-username") || "";
+                var mobile = selected.getAttribute("data-mobile") || "";
+                var recid = selected.getAttribute("data-recid") || "";
+
+                document.getElementById("CU_EMAIL").value = email;
+                document.getElementById("CU_NAME").value = name;
+                document.getElementById("CU_MOBILENO").value = mobile;
+                document.getElementById("CU_URECID").value = recid;
+            });
+
+        </script>*@
+
+
     <script>
-        document.getElementById("UserDropdown").addEventListener("change", function () {
+        document.getElementById("AdminDropdown").addEventListener("change", function () {
             var selected = this.options[this.selectedIndex];
             var email = selected.getAttribute("data-email") || "";
             var name = selected.getAttribute("data-username") || "";
-            var mobile = selected.getAttribute("data-mobile") || "";
-            var recid = selected.getAttribute("data-recid") || "";
 
             document.getElementById("CU_EMAIL").value = email;
             document.getElementById("CU_NAME").value = name;
@@ -635,8 +705,100 @@
         });
 
     </script>
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+
+
+    <script>
+$(document).ready(function () {
+
+    $("#SelectedProduct").on("change", function () {
+        console.log("Product changed:", $(this).val());
+        var precid = $(this).val();
+        var cmprecid = '@Session["CompanyID"]';
+
+        $("#AdminDropdown")
+            .prop("disabled", true)
+            .empty()
+            .append('<option value="">Loading admins...</option>');
+
+        if (!precid) {
+            $("#AdminDropdown")
+                .empty()
+                .append('<option value="">-- Select Admin --</option>');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("GetProductAdmins", "AccountantCustomerInvoice")',
+            type: 'GET',
+            data: {
+                cmprecid: cmprecid,
+                precid: precid
+            },
+            success: function (res) {
+
+                console.log("API response:", res);
+
+                $("#AdminDropdown").empty();
+
+                if (res.status === "Y" && res.data && res.data.length > 0) {
+
+                    $("#AdminDropdown")
+                        .append('<option value="">-- Select Admin --</option>')
+                        .prop("disabled", false);
+
+                    $.each(res.data, function (i, admin) {
+                        $("#AdminDropdown").append(
+                            `<option value="${admin.u_RECID}">
+                    ${admin.u_USERNAME}
+                 </option>`
+                        );
+                    });
+                    //NEWLY ADDED
+                    $("#AdminDropdown").on("change", function () {
+                        $("#CU_ADMINRECID").val($(this).val());
+                    });
+
+                } else {
+                    $("#AdminDropdown")
+                        .append('<option value="">No Admins mapped to this product</option>')
+                        .prop("disabled", true);
+                }
+            },
+            error: function () {
+                $("#AdminDropdown")
+                    .empty()
+                    .append('<option value="">Error loading admins</option>')
+                    .prop("disabled", true);
+            }
+        });
+    });
+
+    // Store selected admin RECID
+    $("#AdminDropdown").on("change", function () {
+        $("#AdminRecId").val($(this).val());
+    });
+
+});
+    </script>
+
+
+
+
+
+
+
+
+
+
+
     @*Logout Pronptbox script*@
     <script>
     document.getElementById("logoutLink").addEventListener("click", function () {
@@ -716,7 +878,7 @@
                             if (result.isConfirmed) {
                                 location.reload();
                             } else {
-                                window.location.href = '@Url.Action("List", "AccountantCustomerInvoice")';
+                                window.location.href = '@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})';
                             }
                         });
                     }, 1000); // 1 second delay for "Processing"

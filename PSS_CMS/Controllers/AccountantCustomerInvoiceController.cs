@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using PSS_CMS.Fillter;
 using PSS_CMS.Models;
@@ -17,19 +18,29 @@ namespace PSS_CMS.Controllers
     [ApiKeyAuthorize]
     public class AccountantCustomerInvoiceController : Controller
     {
+
         // GET: AccountantCustomerInvoice
-        public async Task<ActionResult> List(string searchPharse)
+        public async Task<ActionResult> List(string searchPharse, int? CU_CTRECID,string Name,int? CT_PRECID,decimal? CT_CONTRACTAMOUNT)
         {
+
+            if (CU_CTRECID != null && Name != null)
+            {
+                Session["RECID"] = CU_CTRECID;
+                Session["ContractName"] = Name;
+                Session["CT_PRECID"] = CT_PRECID;
+            }
             Projectmaster objprojectmaster = new Projectmaster();
 
             string Weburl = ConfigurationManager.AppSettings["CUSTOMERGET"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
+            Session["CU_CTRECID"] = CU_CTRECID;
+            Session["ContractAmount"] = CT_CONTRACTAMOUNT;
 
             List<Projectmaster> projectmasterlist = new List<Projectmaster>();
 
-            string strparams = "CompanyRecID=" + Session["CompanyID"];
+            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&ContractRecID="+ CU_CTRECID;
             string url = Weburl + "?" + strparams;
 
             try
@@ -79,8 +90,18 @@ namespace PSS_CMS.Controllers
             }
             return View(projectmasterlist);
         }
-        public async Task<ActionResult> Create()
+        public async Task<ActionResult> Create(int? CU_CTRECID, string Name, int? CT_PRECID, decimal? CT_CONTRACTAMOUNT)
         {
+            if (CU_CTRECID != null && Name != null)
+            {
+                Session["RECID"] = CU_CTRECID;
+                Session["ContractName"] = Name;
+                Session["CT_PRECID"] = CT_PRECID;
+                Session["ContractAmount"] = CT_CONTRACTAMOUNT;
+            }
+
+
+
             await ComboProductSelection();
             await ComboUser();
             await LocationType();
@@ -97,6 +118,7 @@ namespace PSS_CMS.Controllers
 
                 var content = $@"{{           
             ""cU_CODE"": ""{projectmaster.CU_CODE}"",           
+            ""cU_ADMINRECID"": ""{projectmaster.CU_ADMINRECID}"",           
             ""cU_NAME"": ""{projectmaster.CU_NAME}"",           
             ""cU_EMAIL"": ""{ projectmaster.CU_EMAIL}"",                    
             ""cU_PRECID"": ""{(string.IsNullOrWhiteSpace(projectmaster.SelectedProduct) ? "0" : projectmaster.SelectedProduct)}"",                
@@ -129,7 +151,8 @@ namespace PSS_CMS.Controllers
                           
                           
             ""cU_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",        
-            ""cU_CRECID"": ""{Session["CompanyID"]}""           
+            ""cU_CRECID"": ""{Session["CompanyID"]}"",           
+            ""cU_CTRECID"": ""{Session["CU_CTRECID"]}""           
         }}";
 
                 // Create the HTTP request
@@ -291,6 +314,7 @@ namespace PSS_CMS.Controllers
             ""cU_CONTACTPERSONDESIGINATION3"": ""{ projectmaster.CU_CONTACTPERSONDESIGINATION3}"",                    
                           
             ""cU_CRECID"": ""{ Session["CompanyID"]}""                              
+            ""cU_CTRECID"": ""{ Session["CU_CTRECID"]}""                              
         }}";
 
                 // Create the HTTP request
@@ -425,7 +449,7 @@ namespace PSS_CMS.Controllers
             string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"];
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&precid=" + 52;
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -476,7 +500,7 @@ namespace PSS_CMS.Controllers
             string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"];
+            string strparams = "cmprecid=" + Session["CompanyID"] ;
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -836,6 +860,40 @@ namespace PSS_CMS.Controllers
             }
 
             return LocationRef;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetProductAdmins(int cmprecid, int precid)
+        {
+            if (cmprecid == 0 || precid == 0)
+                return Json(new { Status = "N", Message = "Invalid data." });
+
+            string webUrlGet = ConfigurationManager.AppSettings["GETPRODUCTADMIN"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            string url = $"{webUrlGet}?cmprecid={cmprecid}&precid={precid}";
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = await client.GetAsync(url);
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    return Content(json, "application/json");
+                }
+            }
+
+
+
         }
 
     }

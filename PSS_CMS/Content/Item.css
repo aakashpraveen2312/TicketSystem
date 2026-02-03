@@ -1,0 +1,1684 @@
+﻿/*/ Google Font Import - Poppins /*/
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    /*font-family: "Poppins", sans-serif;*/
+    font-family: 'Times New Roman';
+}
+
+:root {
+    --savebtn: #6ED3D0;
+    --cancelbtn: #F0A72D;
+    /* ===== Colors ===== */
+    --body-color: #e4e9f7;
+    --sidebar-color: #fff;
+    --primary-color: #695cfe;
+    --primary-color-light: #f6f5ff;
+    --toggle-color: #ddd;
+    --text-color: #707070;
+    --footer: white;
+    /* ====== Transition ====== */
+    --tran-03: all 0.2s ease;
+    --tran-03: all 0.3s ease;
+    --tran-04: all 0.3s ease;
+    --tran-05: all 0.3s ease;
+}
+
+/*FOR CANCEL AND SAVE BUTTON*/
+input.btn.btn-default1 {
+    background-color: var(--savebtn);
+    width: 75px;
+}
+
+input.btn.btn-default2 {
+    background-color: var(--cancelbtn);
+    width: 75px;
+}
+
+.submenu {
+    display: none;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/*/ Show submenu when hovering over the parent link /*/
+.nav-link:hover .submenu {
+    display: block;
+}
+
+body {
+    min-height: 100vh;
+    background-color: var(--body-color);
+    transition: var(--tran-05);
+    width: 100%;
+}
+
+::selection {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+/* Akash bro changes */
+
+@media (max-width: 768px) {
+        .form-horizontals .control-label {
+                width: 100%; /* Full width label on small screens */
+
+
+           
+    }
+
+         .form-horizontals .col-md-10 {
+                width: 100%; /* Full width input on small screens */
+
+
+           
+    }
+}
+
+
+
+body.dark {
+    --body-color: #18191a;
+    --sidebar-color: #242526;
+    --primary-color: #3a3b3c;
+    --primary-color-light: #3a3b3c;
+    --toggle-color: #fff;
+    --text-color: #ccc;
+}
+
+/*/ ===== Sidebar ===== /*/
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 280px;
+    background: var(--sidebar-color);
+    transition: var(--tran-05);
+    z-index: 100;
+}
+
+    .sidebar.close {
+        width: 80px;
+    }
+
+    /*/ ===== Reusable code - Here ===== /*/
+    .sidebar li {
+        height: 35px;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        /*margin-top: 10px;*/
+    }
+
+    .sidebar header .image,
+    .sidebar .icon {
+        min-width: 60px;
+        border-radius: 6px;
+    }
+
+    .sidebar .icon {
+        min-width: 60px;
+        border-radius: 6px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+
+    .sidebar .text,
+    .sidebar .icon {
+        color: var(--text-color);
+        transition: var(--tran-03);
+    }
+
+    .sidebar .text {
+        font-size: 17px;
+        font-weight: 500;
+        white-space: nowrap;
+        opacity: 1;
+    }
+
+    .sidebar.close .text {
+        opacity: 0;
+    }
+
+    .sidebar header {
+        position: relative;
+    }
+
+        .sidebar header .image-text {
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar header .logo-text {
+            display: flex;
+            flex-direction: column;
+            font-size: 20px;
+            position: relative;
+            top: 40px;
+            left: 44px;
+        }
+
+header .image-text .name {
+    margin-top: 2px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+header .image-text .profession {
+    font-size: 16px;
+    margin-top: -2px;
+    display: block;
+}
+
+.sidebar header .image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .sidebar header .image img {
+        width: 40px;
+        border-radius: 6px;
+    }
+
+.sidebar header .toggle {
+    position: absolute;
+    top: 50%;
+    right: -25px;
+    transform: translateY(-50%) rotate(180deg);
+    height: 35px;
+    width: 35px;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: var(--sidebar-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    cursor: pointer;
+    transition: var(--tran-05);
+    z-index: 1000;
+}
+
+body.dark .sidebar header .toggle {
+    color: var(--text-color);
+}
+
+.sidebar.close .toggle {
+    transform: translateY(-50%) rotate(0deg);
+}
+
+.sidebar .menu {
+    margin-top: 75px;
+}
+
+.sidebar li.search-box input {
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+    font-size: 17px;
+    font-weight: 500;
+    transition: var(--tran-05);
+    border: none;
+    outline: none;
+}
+
+/*for restricting access to sidemenu when it is closed*/
+/* Disable pointer events when the sidebar is closed */
+.sidebar.close {
+    pointer-events: none;
+}
+
+    .sidebar.close .toggle {
+        pointer-events: all; /* Keep the toggle button functional */
+    }
+
+/*Search input*/
+.inputcustom {
+    height: 50%;
+    width: 100%;
+    margin-top: 22px;
+    background-color: transparent;
+    font-size: 17px;
+    font-weight: 500;
+    transition: var(--tran-05);
+    border: none;
+    border-bottom: 2px solid #3498db;
+    outline: none;
+    float: none;
+}
+
+
+
+span.addbtn {
+    margin-top: 16px;
+}
+
+img.addimg {
+    margin-top: 16px;
+    /*    margin-left: 30px;*/
+    position: sticky
+}
+
+
+/* Optional: Adjustments for smaller screens */
+@media (max-width: 768px) {
+    .inputcustom {
+        width: 100%; /* Ensure full width on smaller screens */
+        font-size: 15px; /* Optional: Reduce font size for better readability */
+    }
+
+    img.addimg {
+        margin-left: 10px; /* Adjust margin for smaller screens */
+    }
+}
+
+/* Optional: Adjustments for larger screens */
+@media (min-width: 769px) and (max-width: 1200px) {
+    .inputcustom {
+        width: 125%;
+        /*        Optional: Adjust width for larger screens /*/
+        margin-left: 8px;
+    }
+
+    img.addimg {
+        margin-left: 60px;
+        /*       Optional: Increase margin for larger screens /
+*/
+    }
+}
+
+@media (min-width: 350px) and (max-width: 600px) {
+    a.login-link.ms-3.me-3.text-danger {
+        width: 30px;
+    }
+}
+
+
+@media (min-width: 350px) and (max-width: 600px) {
+    a.login-link.ms-3.me-3.text-danger {
+        width: 30px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+    .inputcustom {
+        width: 125%;
+        /*        / Optional: Adjust width for larger screens /
+*/
+    }
+
+    img.addimg {
+        margin-left: 60px;
+        /*         Optional: Increase margin for larger screens /
+*/
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+    .inputcustom {
+        width: 115%; /* Optional: Adjust width for larger screens */
+    }
+
+    img.addimg {
+        margin-left: 45px; /* Optional: Increase margin for larger screens */
+    }
+}
+
+@media (min-width: 649px) and (max-width: 768px) {
+    .inputcustom {
+        width: 115%; /* Optional: Adjust width for larger screens */
+    }
+
+    img.addimg {
+        margin-left: 45px; /* Optional: Increase margin for larger screens */
+    }
+}
+
+
+
+@media (min-width: 300px) and (max-width: 648px) {
+    .inputcustom {
+        width: 90%;
+        margin-left: 17px;
+        margin-right: 35px; /* Optional: Adjust width for larger screens */
+    }
+
+    img.addimg {
+        margin-top: 16px;
+        /* margin-left: 12px;*/
+        position: sticky
+    }
+}
+
+.sidebar li a {
+    list-style: none;
+    height: 100%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: var(--tran-03);
+}
+
+#bg-action {
+    color: var(--text-color);
+}
+
+    #bg-action:hover {
+        background-color: var(--primary-color);
+        border-radius: 6px;
+    }
+
+span > a {
+    color: var(--text-color);
+    padding: 10px;
+    padding-left: 0px;
+    padding-right: 30px;
+}
+
+    span > a:hover {
+        color: white;
+    }
+
+.sidebar li a:hover {
+    background-color: var(--primary-color);
+}
+
+    .sidebar li a:hover .icon,
+    .sidebar li a:hover .text {
+        color: var(--sidebar-color);
+    }
+
+body.dark .sidebar li a:hover .icon,
+body.dark .sidebar li a:hover .text {
+    color: var(--text-color);
+}
+
+.sidebar .menu-bar {
+    height: calc(100% - 55px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: scroll;
+}
+
+.menu-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.sidebar .menu-bar .mode {
+    border-radius: 6px;
+    background-color: var(--primary-color-light);
+    position: relative;
+    transition: var(--tran-05);
+}
+
+.menu-bar .mode .sun-moon {
+    height: 50px;
+    width: 60px;
+}
+
+.mode .sun-moon i {
+    position: absolute;
+}
+
+    .mode .sun-moon i.sun {
+        opacity: 0;
+    }
+
+body.dark .mode .sun-moon i.sun {
+    opacity: 1;
+}
+
+body.dark .mode .sun-moon i.moon {
+    opacity: 0;
+}
+
+.menu-bar .bottom-content .toggle-switch {
+    position: absolute;
+    right: 0;
+    height: 100%;
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.toggle-switch .switch {
+    position: relative;
+    height: 22px;
+    width: 40px;
+    border-radius: 25px;
+    background-color: var(--toggle-color);
+    transition: var(--tran-05);
+}
+
+.switch::before {
+    content: "";
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    background-color: var(--sidebar-color);
+    transition: var(--tran-04);
+}
+
+body.dark .switch::before {
+    left: 20px;
+}
+
+.home {
+    position: absolute;
+    top: 0;
+    left: 280px;
+    height: 100vh;
+    width: calc(100% - 280px);
+    background-color: var(--body-color);
+    transition: var(--tran-05);
+    overflow-x: hidden;
+}
+
+    .home .text {
+        font-size: 30px;
+        font-weight: 500;
+        color: var(--text-color);
+        padding: 12px 60px;
+    }
+
+
+.sidebar.close ~ .home {
+    left: 78px;
+    height: 100vh;
+    width: calc(100% - 78px);
+}
+
+body.dark .home .text {
+    color: var(--text-color);
+}
+
+.red {
+    color: red;
+}
+
+
+
+/*NAVBAR*/
+
+.user-info {
+    font-size: 18px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.navbar-collapse {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.logo {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    margin-left: 15px;
+    width: 120px; /* fixed width */
+    height: 60px; /* fixed height */
+    object-fit: contain; /* keeps aspect ratio */
+}
+
+.login-link {
+    font-size: 24px;
+    color: black;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin-top: 5px;
+}
+
+/*/ Adjustments for screens less than 648px /*/
+@media (max-width: 648px) {
+    .container-fluid {
+        padding: 15px 30px 10px;
+    }
+
+    .text1 {
+        font-size: 30px;
+    }
+
+
+    .col-lg-6, .col-md-6, .col-sm-12 {
+        flex: 0 0 auto;
+        width: auto;
+    }
+
+    .navbar-collapse {
+        flex-direction: row;
+        align-items: center;
+        padding: 0px;
+    }
+
+    .logo, .login-link {
+        margin-top: 0;
+        margin-left: 5px;
+    }
+
+    .user-info {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 572px) and (min-width:350px) {
+    .container-fluid text {
+        padding: 15px 30px 10px;
+    }
+
+    .navbar-collapse {
+        flex-direction: row;
+        align-items: center;
+        padding: 0px;
+    }
+
+    .text1 {
+        font-size: 20px;
+        font-family: inherit;
+    }
+
+    .text {
+        font-size: 14px;
+    }
+
+    .logo, .login-link {
+        margin-top: 0;
+        margin-left: 5px;
+    }
+
+
+
+    .numberscolor {
+        background-color: #fcfcdc;
+        z-index: 1
+    }
+
+    .textcolor {
+        background-color: #f2f9fc;
+    }
+}
+
+
+
+/*LOGOUT PROMPT*/
+
+
+/* Center the modal vertically and horizontally */
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Full height for proper centering */
+    margin: 0; /* Remove default margin */
+}
+
+/* Modal content styles with default minimum width and height */
+.modal-content {
+    border-radius: 8px;
+    padding: 20px;
+    min-width: 500px; /* Set minimum width */
+    min-height: 200px; /* Set minimum height */
+    width: 100%; /* Allow width to be responsive */
+    /*  max-width: 600px;*/ /* Maximum width */
+}
+
+.modal-header {
+    background-color: var(--body-color); /* Custom color */
+    color: black;
+    border-radius: 5px;
+}
+
+.modal-body {
+    color: #000; /* Ensure text is visible */
+}
+
+.modal-footer {
+    justify-content: flex-end;
+}
+
+/* Make modal responsive for smaller screens */
+@media (max-width: 768px) {
+    .modal-content {
+        min-width: 300px; /* Reduce minimum width for smaller screens */
+        max-width: 90%; /* Modal should not exceed 90% of the screen width */
+    }
+}
+
+
+
+@media (max-width: 480px) {
+    .modal-content {
+        min-width: 250px; /* Further reduce minimum width for very small screens */
+        padding: 15px; /* Reduce padding for smaller screens */
+    }
+}
+
+.show {
+    display: block !important;
+    opacity: 0.78 !important;
+}
+/*main apges css starts here*/
+/*Footer*/
+.footer {
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    padding: 0px;
+    font-family: sans-serif;
+    background-color: var(--footer);
+    font-size: 15px;
+    margin-top: 0px;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+}
+/*Breadcrumbs*/
+ul.breadcrumb li {
+    font-size: 18px;
+    color: #2888bb;
+}
+
+.createatag img {
+    width: 20px;
+    height: 20px;
+    text-decoration: none;
+}
+
+
+/*Preloader css*/
+#loadingScreen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #ffffff;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader {
+    width: 50px;
+    aspect-ratio: 1;
+    display: grid;
+    border: 4px solid #0000;
+    border-radius: 50%;
+    border-right-color: #25b09b;
+    animation: l15 1s infinite linear;
+}
+
+    .loader::before,
+    .loader::after {
+        content: "";
+        grid-area: 1/1;
+        margin: 2px;
+        border: inherit;
+        border-radius: 50%;
+        animation: l15 2s infinite;
+    }
+
+    .loader::after {
+        margin: 8px;
+        animation-duration: 3s;
+    }
+
+@keyframes l15 {
+    100% {
+        transform: rotate(1turn)
+    }
+}
+
+
+@media (min-width: 1020px) and (max-width: 1450px) {
+    .inputcustom {
+        max-width: 130% !important; /* Full width on smaller screens */
+    }
+
+    .addimg {
+        /* margin-left: 20px;*/ /* Adjust button margin */
+    }
+}
+
+
+.red-underline-label {
+    border-bottom: 2px solid red;
+    font-weight: bold;
+    display: inline-block;
+}
+
+
+
+
+
+
+
+@media (max-width: 991px) {
+    .mainsubcanbuttons {
+        padding-right: 15px; /* Keep the right padding the same */
+        justify-content: flex-end !important; /* Ensure the buttons are aligned to the right */
+    }
+
+    .col-12 {
+        display: flex; /* Flex to ensure alignment */
+        justify-content: flex-end; /* Right align the content */
+    }
+}
+
+@media(max-width:991px) and (min-width:320px) {
+
+    .justify-content-end {
+        margin-right: 10px;
+        justify-content: flex-end !important;
+    }
+}
+
+/*div#contents {
+    margin-left: -7%;
+}
+*/
+
+
+
+
+
+.textboxstylecreateandedit {
+    display: block;
+    width: 80%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #100c0c;
+    background-color: #dceef5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 20px;
+}
+
+.boxstylecreateandedit {
+    display: block;
+    width: 80%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #100c0c;
+    background-color: #fcfccc;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+/*.parent {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    padding-left:15px;
+}
+*/
+
+.div3 {
+    grid-row-start: 2;
+}
+
+.div4 {
+    grid-row-start: 2;
+}
+
+.div5 {
+    grid-row-start: 3;
+}
+
+.div6 {
+    grid-row-start: 3;
+}
+
+.div7 {
+    grid-row-start: 4;
+}
+
+.div8 {
+    grid-row-start: 4;
+}
+
+.div9 {
+    grid-row-start: 5;
+}
+
+.div10 {
+    grid-row-start: 5;
+}
+
+.div11 {
+    grid-row-start: 6;
+}
+
+.div12 {
+    grid-row-start: 6;
+}
+/* For larger screens */
+.div2, .div4, .div6, .div8, .div10, .div12, .div14 {
+    grid-column: span 2 / span 2;
+}
+
+.div13 {
+    grid-row-start: 7;
+}
+
+.div14 {
+    grid-row-start: 7;
+}
+
+input#IsDisabled, input#JobworkoutDisabled, input#JobworkinDisabled, input#SalesDisabled, input#PurchaseDisabled {
+    height: 16px;
+    width: 17px;
+    margin-left: 65px;
+    margin-top: 10px;
+}
+
+@media (min-width: 577px) and (max-width: 600px) {
+    .textboxstylecreateandedit {
+        display: block;
+        width: 80%; /* Full width minus padding */
+        height: 40px; /* Slightly larger height for better touch targets */
+        padding: 8px 12px; /* Increased padding for mobile usability */
+        font-size: 16px; /* Larger font size for readability */
+        line-height: 1.5; /* Adjusted line height */
+        color: #100c0c;
+        background-color: #dceef5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 65px; /* Center horizontally */
+        margin-right: auto; /* Center horizontally */
+    }
+
+    .boxstylecreateandedit {
+        display: block;
+        width: 80%; /* Full width minus padding */
+        height: 40px; /* Adjusted height for mobile usability */
+        padding: 8px 12px; /* Increased padding for better touch targets */
+        font-size: 16px; /* Larger font size for readability */
+        line-height: 1.5; /* Adjusted line height */
+        color: #100c0c;
+        background-color: #fcfccc;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 65px; /* Center horizontally */
+        margin-right: auto; /* Center horizontally */
+        margin-top: 10px; /* Increased spacing between elements */
+    }
+
+    input#IsDisabled, input#JobworkoutDisabled, input#JobworkinDisabled, input#SalesDisabled, input#PurchaseDisabled {
+        margin: 6px 65px 0;
+        height: 16px;
+        width: 17px;
+    }
+
+    .mainsubcanbuttons {
+        display: block;
+        padding-right: 15px; /* Keep the right padding */
+        padding: 8px 12px; /* Keep the top padding */
+        justify-content: flex-end !important;
+        width: calc(100% - 0px); /* Ensure the buttons are aligned to the right */
+    }
+
+    .col-md-6.d-flex.justify-content-md-end.justify-content-sm-start.me-5 {
+        padding-left: 183px;
+    }
+
+
+    .col-12 {
+        display: flex; /* Flex to ensure alignment */
+        justify-content: flex-end; /* Right align the content */
+    }
+
+    .labels {
+        font-size: 16px;
+        margin-bottom: 9px;
+    }
+
+    div#contents {
+        margin-left: -15%;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 767px) {
+    .textboxstylecreateandedit {
+        display: block;
+        width: 80%; /* Full width minus padding */
+        height: 40px; /* Slightly larger height for better touch targets */
+        padding: 8px 12px; /* Increased padding for mobile usability */
+        font-size: 16px; /* Larger font size for readability */
+        line-height: 1.5; /* Adjusted line height */
+        color: #100c0c;
+        background-color: #dceef5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 65px; /* Center horizontally */
+        margin-right: auto; /* Center horizontally */
+    }
+
+    .boxstylecreateandedit {
+        display: block;
+        width: 80%; /* Full width minus padding */
+        height: 40px; /* Adjusted height for mobile usability */
+        padding: 8px 12px; /* Increased padding for better touch targets */
+        font-size: 16px; /* Larger font size for readability */
+        line-height: 1.5; /* Adjusted line height */
+        color: #100c0c;
+        background-color: #fcfccc;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 65px; /* Center horizontally */
+        margin-right: auto; /* Center horizontally */
+        margin-top: 10px; /* Increased spacing between elements */
+    }
+
+    input#IsDisabled, input#JobworkoutDisabled, input#JobworkinDisabled, input#SalesDisabled, input#PurchaseDisabled {
+        margin: 6px 65px 0;
+        height: 16px;
+        width: 17px;
+    }
+
+    .mainsubcanbuttons {
+        display: block;
+        padding-right: 15px; /* Keep the right padding */
+        padding: 8px 12px; /* Keep the top padding */
+        justify-content: flex-end !important;
+        width: calc(100% - 25px); /* Ensure the buttons are aligned to the right */
+    }
+
+    .col-md-6.d-flex.justify-content-md-end.justify-content-sm-start.me-5 {
+        padding-left: 213px;
+    }
+
+
+    .col-12 {
+        display: flex; /* Flex to ensure alignment */
+        justify-content: flex-end; /* Right align the content */
+    }
+
+    .labels {
+        font-size: 16px;
+        margin-bottom: 9px;
+    }
+
+    div#contents {
+        margin-left: -15%;
+    }
+}
+
+.parent {
+    display: flex; /* Use flexbox for layout */
+    flex-direction: row; /* Default to row layout for desktop */
+    flex-wrap: wrap; /* Allow wrapping of columns */
+}
+
+/* Default styles for div1 */
+.div1 {
+    flex: 1; /* Allow div1 to grow equally */
+    /* Set a minimum width for each column */
+}
+
+/* Mobile-specific styles using media query */
+/*@media (max-width: 576px) {
+    .parent {
+        flex-direction: column;*/ /* Stack columns vertically on mobile */
+/*}
+
+    .row {
+        display: flex;
+        flex-direction: column;*/ /* Stack label and input vertically */
+/*margin-bottom: 15px;*/ /* Add space between rows on mobile */
+/*}
+
+    .textboxstylecreateandedit,
+    .boxstylecreateandedit {
+        width: 100%;*/ /* Full width on mobile devices */
+/*margin-left: 0;*/ /* Reset left margin for mobile */
+/*margin-right: 0;*/ /* Reset right margin for mobile */
+/*}
+
+    .labels {
+        margin-bottom: 5px;*/ /* Add space between label and input */
+/*}
+}*/
+
+
+
+
+/* Responsive Styles for screens between 767px and 400px */
+/*@media (min-width: 400px) and (max-width: 576px) {
+    .textboxstylecreateandedit,
+    .boxstylecreateandedit {
+        width: 100%;*/ /* Full width on mobile devices */
+/*margin-left: 0;*/ /* Reset left margin for mobile */
+/*margin-right: 0;*/ /* Reset right margin for mobile */
+/*margin-top: 15px;*/ /* Add spacing between elements for better readability on mobile */
+/*box-sizing: border-box;*/ /* Ensure padding and borders are included in total width/height */
+/*}
+
+    .tooltipcode {
+        font-size: 14px;*/ /* Smaller font size for tooltips on mobile */
+/*line-height: 1.4;
+        display: block;*/ /* Ensure tooltips stack vertically on mobile */
+/*margin-top: 5px;
+    }
+
+    .large-checkbox {
+        transform: scale(1.2);*/ /* Make checkboxes slightly larger for touch usability on mobile */
+/*margin-top: 10px;
+    }
+
+    .row {
+        flex-direction: column;*/ /* Stack rows vertically on mobile devices */
+/*align-items: flex-start;*/ /* Align items to the start of the row */
+/*margin-bottom: 20px;*/ /* Add space between rows for better readability on smaller screens */
+/*}
+
+
+    input#IsDisabled, input#JobworkoutDisabled, input#JobworkinDisabled, input#SalesDisabled, input#PurchaseDisabled {
+        margin: 15px 65px 0;
+        height: 16px;
+        width: 17px;
+    }
+    .mainsubcanbuttons {
+        display: block;
+        padding-right: 15px;*/ /* Keep the right padding */
+/*padding: 8px 12px;*/ /* Keep the top padding */
+/*justify-content: flex-end !important;
+        width: calc(100% - 0px);*/ /* Ensure the buttons are aligned to the right */
+/*}
+    .col-md-6.d-flex.justify-content-md-end.justify-content-sm-start.me-5 {
+        padding-left: 130px;
+        padding-top: 16px;
+        column-gap: 10px;
+    }
+
+
+    .col-12 {
+        display: flex;*/ /* Flex to ensure alignment */
+/*justify-content: flex-end;*/ /* Right align the content */
+/*}
+
+    .labels {
+        font-size: 16px;
+        padding-top: 9px;
+    }
+    div#contents {
+        margin-left: -7%;
+    }
+}*/
+
+
+
+
+@media (min-width: 350px) and (max-width: 399px) {
+    .textboxstylecreateandedit {
+        display: block;
+        width: 100%; /* Full width minus padding */
+        height: 40px; /* Slightly larger height for better touch targets */
+        padding: 8px 12px; /* Increased padding for mobile usability */
+        font-size: 16px; /* Larger font size for readability */
+        line-height: 1.5; /* Adjusted line height */
+        color: #100c0c;
+        background-color: #dceef5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 65px; /* Center horizontally */
+        margin-right: auto; /* Center horizontally */
+    }
+
+    .boxstylecreateandedit {
+        display: block;
+        width: 100%; /* Full width minus padding */
+        height: 40px; /* Adjusted height for mobile usability */
+        padding: 8px 12px; /* Increased padding for better touch targets */
+        font-size: 16px; /* Larger font size for readability */
+        line-height: 1.5; /* Adjusted line height */
+        color: #100c0c;
+        background-color: #fcfccc;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 65px; /* Center horizontally */
+        margin-right: auto; /* Center horizontally */
+        margin-top: 10px; /* Increased spacing between elements */
+    }
+
+    input#IsDisabled, input#JobworkoutDisabled, input#JobworkinDisabled, input#SalesDisabled, input#PurchaseDisabled {
+        margin: 17px 65px 0;
+        height: 16px;
+        width: 17px;
+    }
+
+    .mainsubcanbuttons {
+        display: block;
+        padding-right: 15px; /* Keep the right padding */
+        padding: 8px 12px; /* Keep the top padding */
+        justify-content: flex-end !important;
+        width: calc(100% - 0px); /* Ensure the buttons are aligned to the right */
+    }
+
+    .col-md-6.d-flex.justify-content-md-end.justify-content-sm-start.me-5 {
+        padding-left: 113px;
+    }
+
+
+    .col-12 {
+        display: flex; /* Flex to ensure alignment */
+        justify-content: flex-end; /* Right align the content */
+    }
+
+    .labels {
+        font-size: 16px;
+        padding-top: 9px;
+    }
+
+    div#contents {
+        margin-left: -15%;
+    }
+}
+/*
+Corrected form thead txt box
+*/
+
+.maincontentcreateandedit {
+    padding-left: 40px; /* Left padding */
+    padding-top: 0px; /* Add top padding for spacing */
+    padding-bottom: 0px; /* Add bottom padding for spacing */
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 0; /* Removes spaces between rows and columns */
+    height: 100vh;
+}
+
+.normalpagecreateandedit {
+    grid-column: span 2 / span 5;
+}
+
+.passworddiv {
+    display: block;
+    width: 90%;
+    height: 40px;
+    padding: 8px 4px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #100c0c;
+    background-color: #dceef5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 64px;
+    margin-right: auto;
+}
+
+.passworddiv2 {
+    display: block;
+    width: 95%;
+    height: 40px;
+    padding: 8px 4px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #100c0c;
+    background-color: #dceef5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 52px;
+    margin-right: 77px;
+}
+
+
+
+.textboxstylecreateandedit2 {
+    display: block;
+    width: 90%;
+    height: 40px;
+    padding: 8px 12px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #100c0c;
+    background-color: #dceef5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 65px;
+    margin-right: auto;
+}
+
+.boxstylecreateandedit2 {
+    display: block;
+    width: 90%; /* Full width minus padding */
+    height: 40px; /* Adjusted height for mobile usability */
+    padding: 8px 12px; /* Increased padding for better touch targets */
+    font-size: 16px; /* Larger font size for readability */
+    line-height: 1.5; /* Adjusted line height */
+    color: #100c0c;
+    background-color: #fcfccc;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 65px; /* Center horizontally */
+    margin-right: auto; /* Center horizontally */
+    margin-top: 0px; /* Increased spacing between elements */
+}
+
+.boxstylecreateandedit3 {
+    display: block;
+    width: 90%; /* Full width minus padding */
+    height: 40px; /* Adjusted height for mobile usability */
+    padding: 8px 12px; /* Increased padding for better touch targets */
+    font-size: 16px; /* Larger font size for readability */
+    line-height: 1.5; /* Adjusted line height */
+    color: #100c0c;
+    background-color: #fcfccc;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 58px; /* Center horizontally */
+    margin-right: auto; /* Center horizontally */
+    margin-top: 0px; /* Increased spacing between elements */
+}
+
+.validationmessageforthis {
+    padding-left: 64px;
+}
+
+.createandeditforrespectivescreens {
+    margin-bottom: -10px;
+}
+
+
+
+.column1 {
+    flex: 30%; /* Smaller column takes up 30% of the row's width */
+    padding: 10px 0; /* Adds space inside the column */
+}
+
+.column2 {
+    flex: 70%; /* Larger column takes up 70% of the row's width */
+    padding: 10px 0 0 0px; /* Adds space inside the column */
+}
+
+/* Media Query for Mobile Devices */
+/* Media Query for Mobile Devices */
+@media (max-width: 768px) {
+    .maincontentcreateandedit {
+        padding-left: 30px; /* Left padding */
+        padding-top: 10px; /* Add top padding for spacing */
+        padding-bottom: 0px; /* Add bottom padding for spacing */
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        gap: 0; /* Removes spaces between rows and columns */
+        height: 100vh;
+    }
+
+    .createandeditforrespectivescreens {
+        margin-top: 0px;
+    }
+
+    .passworddiv {
+        display: block;
+        width: 175%;
+        height: 40px;
+        padding: 8px 4px;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #100c0c;
+        background-color: #dceef5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 10px;
+        margin-right: auto;
+    }
+
+    .passworddiv2 {
+        display: block;
+        width: 175%;
+        height: 40px;
+        padding: 8px 4px;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #100c0c;
+        background-color: #dceef5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 0px;
+        margin-right: auto;
+    }
+
+    .validationmessageforthis {
+        padding-left: 0px;
+    }
+
+    .textboxstylecreateandedit2 {
+        display: block;
+        width: 230%;
+        height: 40px;
+        padding: 4px 12px;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #100c0c;
+        background-color: #dceef5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-right: auto;
+        margin-left: 10px;
+    }
+
+    .boxstylecreateandedit2 {
+        display: block;
+        width: 230%;
+        height: 40px;
+        padding: 8px 12px;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #100c0c;
+        background-color: #fcfccc;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-right: auto;
+        margin-left: 10px;
+    }
+
+    .boxstylecreateandedit3 {
+        display: block;
+        width: 90%; /* Full width minus padding */
+        height: 40px; /* Adjusted height for mobile usability */
+        padding: 8px 12px; /* Increased padding for better touch targets */
+        font-size: 16px; /* Larger font size for readability */
+        line-height: 1.5; /* Adjusted line height */
+        color: #100c0c;
+        background-color: #fcfccc;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 0px; /* Center horizontally */
+        margin-right: auto; /* Center horizontally */
+        margin-top: 0px; /* Increased spacing between elements */
+    }
+
+    .column1 {
+        flex: 100%; /* Set column1 to take full width on mobile */
+        padding: 0; /* Adjust padding as needed */
+    }
+
+    .column2 {
+        flex: 100%; /* Set column2 to take full width on mobile */
+        margin-right: 0; /* Remove right margin */
+        padding: 0; /* Adjust padding as needed */
+    }
+
+    .row > * {
+        flex-shrink: 0;
+        margin-top: var(--bs-gutter-y);
+        max-width: 157%;
+    }
+
+    input#IsDisabled, input#JobworkoutDisabled, input#JobworkinDisabled, input#SalesDisabled, input#PurchaseDisabled {
+        height: 16px;
+        width: 17px;
+        margin-left: 13px;
+        margin-bottom: 10px;
+    }
+}
+
+
+
+.mainsubcanbuttons2 {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    margin-left: 40px;
+    padding-bottom: 0px;
+}
+
+
+
+@media (max-width: 768px) {
+    .mainsubcanbuttons2 {
+        padding-bottom: 0px;
+        margin-left: 100px;
+    }
+}
+
+
+@media (min-width: 1201px) and (max-width: 2000px) {
+    .tooltipcode {
+        display: none;
+        position: absolute;
+        top: 189px;
+        left: 19%;
+        background-color: #DD5F61;
+        color: #fff;
+        padding: 8px;
+        border-radius: 2px;
+        font-size: 12px;
+        z-index: 1000;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        width: 200px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+        .tooltipcode::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 15%;
+            transform: translateX(-50%);
+            border-width: 0 6px 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent #DD5F61 transparent;
+        }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+    .tooltipcode {
+        display: none;
+        position: absolute;
+        top: 189px;
+        left: 20%;
+        background-color: #DD5F61;
+        color: #fff;
+        padding: 8px;
+        border-radius: 2px;
+        font-size: 12px;
+        z-index: 1000;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        width: 200px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+        .tooltipcode::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 15%;
+            transform: translateX(-50%);
+            border-width: 0 6px 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent #DD5F61 transparent;
+        }
+}
+
+@media (min-width: 769px) and (max-width:991px) {
+    .tooltipcode {
+        display: none;
+        position: absolute;
+        top: 241px;
+        left: 21%;
+        background-color: #DD5F61;
+        color: #fff;
+        padding: 8px;
+        border-radius: 2px;
+        font-size: 12px;
+        z-index: 1000;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        width: 200px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+        .tooltipcode::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 15%;
+            transform: translateX(-50%);
+            border-width: 0 6px 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent #DD5F61 transparent;
+        }
+}
+
+@media (min-width:577px) and (max-width:768px) {
+    .tooltipcode {
+        display: none;
+        position: absolute;
+        top: 300px;
+        left: 4%;
+        background-color: #DD5F61;
+        color: #fff;
+        padding: 8px;
+        border-radius: 2px;
+        font-size: 12px;
+        z-index: 1000;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        width: 200px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+        .tooltipcode::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 15%;
+            transform: translateX(-50%);
+            border-width: 0 6px 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent #DD5F61 transparent;
+        }
+}
+
+
+@media (min-width:431px) and (max-width:576px) {
+    .tooltipcode {
+        display: none;
+        position: absolute;
+        top: 280px;
+        left: 6%;
+        background-color: #DD5F61;
+        color: #fff;
+        padding: 8px;
+        border-radius: 2px;
+        font-size: 12px;
+        z-index: 1000;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        width: 200px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+        .tooltipcode::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 15%;
+            transform: translateX(-50%);
+            border-width: 0 6px 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent #DD5F61 transparent;
+        }
+}
+
+
+@media (min-width:350px) and (max-width:430px) {
+    .tooltipcode {
+        display: none;
+        position: absolute;
+        top: 303px;
+        left: 6%;
+        background-color: #DD5F61;
+        color: #fff;
+        padding: 8px;
+        border-radius: 2px;
+        font-size: 12px;
+        z-index: 1000;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        width: 200px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+        .tooltipcode::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 15%;
+            transform: translateX(-50%);
+            border-width: 0 6px 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent #DD5F61 transparent;
+        }
+}
+
+@media (min-width:250px) and (max-width:349px) {
+    .tooltipcode {
+        display: none;
+        position: absolute;
+        top: 349px;
+        left: 6%;
+        background-color: #DD5F61;
+        color: #fff;
+        padding: 8px;
+        border-radius: 2px;
+        font-size: 12px;
+        z-index: 1000;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        width: 200px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+        .tooltipcode::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 15%;
+            transform: translateX(-50%);
+            border-width: 0 6px 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent #DD5F61 transparent;
+        }
+}
+

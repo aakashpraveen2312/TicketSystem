@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using PSS_CMS.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -8,34 +10,29 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Newtonsoft.Json;
-using PSS_CMS.Fillter;
-using PSS_CMS.Models;
 
 namespace PSS_CMS.Controllers
 {
-    [ApiKeyAuthorize]
-    public class ContractInvoiceController : Controller
+    public class CustomerNotificationController : Controller
     {
-        // GET: ContractInvoice 
-        public async Task<ActionResult> List(int? id, string Name,decimal contractamount,string InvoiceNo)
+        // GET: CustomerNotification
+        public async Task<ActionResult> List(int? CustomerRecID , string Name,string InvoiceNo)
         {
-            if (id != null && Name != null)
+            if (CustomerRecID != null && Name != null)
             {
-                Session["CU_RECID"] = id;
+                Session["CustomerRecID"] = CustomerRecID;
                 Session["Customername"] = Name;
-                Session["contractamount"] = contractamount;
                 Session["InvoiceNo"] = InvoiceNo;
             }
 
-            string Weburl = ConfigurationManager.AppSettings["CONTRACTINVOICEGET"];
+            string Weburl = ConfigurationManager.AppSettings["GetCustomerNotification"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
 
-            List<ContractInvoice> contractinvoicelist = new List<ContractInvoice>();
+            List<Customernotification> Customernotificationlist = new List<Customernotification>();
 
-            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&Recid=" + Session["CU_CTRECID"]+ "&userrecid=" + Session["CU_RECID"] ;
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&CustomerRecID=" + Session["CustomerRecID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -54,10 +51,10 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ContractInvoiceRootObjects>(jsonString);
-                         
-                            contractinvoicelist = rootObjects.Data;
-                           
+                            var rootObjects = JsonConvert.DeserializeObject<CustomernotificationRootObjects>(jsonString);
+
+                            Customernotificationlist = rootObjects.Data;
+
                         }
                         else
                         {
@@ -70,40 +67,36 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            return View(contractinvoicelist);
+            return View(Customernotificationlist);
         }
 
-        public ActionResult Create(ContractInvoice contractInvoice)
+        public ActionResult Create()
         {
 
-            contractInvoice.CI_INVOICEAMOUNT = (decimal)Session["contractamount"];
-            contractInvoice.CI_INVOICENUMBER = (string)Session["InvoiceNo"];
-            return View(contractInvoice);
+            return View();
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(ContractInvoice contractInvoice, string CI_INVOICEAMOUNT)
+        public async Task<ActionResult> Create(Customernotification Customernotification, string CI_INVOICEAMOUNT)
         {
             try
             {
-                var ContractinvoicePostURL = ConfigurationManager.AppSettings["CONTRACTINVOICEPOST"];
+                var ContractinvoicePostURL = ConfigurationManager.AppSettings["CustomerNotification"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""ci_INVOICEDATE"": ""{contractInvoice.CI_INVOICEDATE}"",           
-            ""ci_INVOICENUMBER"": ""{contractInvoice.CI_INVOICENUMBER}"",           
-            ""ci_INVOICEAMOUNT"": ""{CI_INVOICEAMOUNT}"",                    
-            ""ci_PAYMENTRECEIVEDDATE"": ""{ contractInvoice.CI_PAYMENTRECEIVEDDATE}"",                    
-            ""ci_PAYMENTRECEIVEDAMOUNT"": ""{ contractInvoice.CI_PAYMENTRECEIVEDAMOUNT}"",                   
-            ""ci_PAYMENTDUEDATE"": ""{ contractInvoice.CI_PAYMENTDUEDATE}"",                    
-            ""ci_CTRECID"": ""{Session["CU_CTRECID"]}"",                    
-            ""ci_SORTORDER"": ""{(contractInvoice.CI_SORTORDER)}"",        
-            ""ci_CRECID"": ""{Session["CompanyID"]}"",   
-            ""ci_USERID"": ""{Session["CU_RECID"]}""
+            ""cN_INVOICENO"": ""{Customernotification.CN_INVOICENO}"",           
+            ""cN_FOLLOWUPDATE"": ""{Customernotification.CN_FOLLOWUPDATE}"",    
+            ""cN_STATUS"": ""{ Customernotification.CN_STATUS}"",                    
+            ""cN_COMMENTS"": ""{ Customernotification.CN_COMMENTS}"",          
+            ""cN_CURECID"": ""{Session["CustomerRecID"]}"",       
+            ""cN_CRECID"": ""{Session["CompanyID"]}"",   
+            ""cN_CTRECID"": ""{Session["CU_CTRECID"]}""
              
         }}";
 
+             
 
                 // Create the HTTP request
                 var request = new HttpRequestMessage
@@ -166,19 +159,16 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> Edit(int? id, int? CI_CRECID, string Name, int? CI_CTRECID)
+        public async Task<ActionResult> Edit(int? id)
         {
-            Session["CI_RECID"] = id;
-            Session["CI_CTRECID"] = CI_CTRECID;
-            Session["CI_CRECID"] = CI_CRECID;
-            Session["CI_INVOICENUMBER"] = Name;
+            Session["CN_RECID"] = id;
 
-            string WEBURLGETBYID = ConfigurationManager.AppSettings["CONTRACTINVOICEGETBYID"];
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["GetCustomerNotificationbyId"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            ContractInvoice contractInvoice = null;
+            Customernotification contractInvoice = null;
 
-            string strparams = "Recid=" + id + "&companyId=" + Session["CompanyID"];
+            string strparams = "recID=" + id + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -196,7 +186,7 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var content = JsonConvert.DeserializeObject<ContractInvoiceObject>(jsonString);
+                            var content = JsonConvert.DeserializeObject<CustomernotificationRootObject>(jsonString);
                             contractInvoice = content.Data;
 
                         }
@@ -218,26 +208,23 @@ namespace PSS_CMS.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(ContractInvoice contractInvoice)
+        public async Task<ActionResult> Edit(Customernotification Customernotification)
         {
             try
             {
-                var UpdateURL = ConfigurationManager.AppSettings["CONTRACTINVOICEPUT"];
+                var UpdateURL = ConfigurationManager.AppSettings["PutCustomerNotification"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""cI_RECID"": ""{Session["CI_RECID"]}"",           
-            ""cI_INVOICEDATE"": ""{contractInvoice.CI_INVOICEDATE}"",           
-            ""cI_INVOICENUMBER"": ""{contractInvoice.CI_INVOICENUMBER}"",
-            ""cI_INVOICEAMOUNT"": ""{contractInvoice.CI_INVOICEAMOUNT}"",
-            ""cI_PAYMENTRECEIVEDDATE"": ""{contractInvoice.CI_PAYMENTRECEIVEDDATE}"",
-            ""cI_PAYMENTRECEIVEDAMOUNT"": ""{contractInvoice.CI_PAYMENTRECEIVEDAMOUNT}"",
-            ""cI_CRECID"": ""{Session["CompanyID"]}"",
-            ""cI_CTRECID"": ""{Session["CI_CTRECID"]}"",
-            ""cI_USERID"": ""{Session["UserRECID"]}"",
-            ""cI_SORTORDER"": ""{contractInvoice.CI_SORTORDER}"",
-            ""cI_PAYMENTDUEDATE"": ""{contractInvoice.CI_PAYMENTDUEDATE}""                          
+            ""cN_RECID"": ""{Session["CN_RECID"]}"",           
+            ""cN_INVOICENO"": ""{Customernotification.CN_INVOICENO}"",           
+            ""cN_FOLLOWUPDATE"": ""{Customernotification.CN_FOLLOWUPDATE}"",
+            ""cN_STATUS"": ""{Customernotification.CN_STATUS}"",
+            ""cN_COMMENTS"": ""{Customernotification.CN_COMMENTS}"",
+            ""cN_CURECID"": ""{Session["CustomerRecID"]}"",
+            ""cN_CTRECID"": ""{Session["CU_CTRECID"]}"",                     
+            ""cN_CRECID"": ""{Session["CompanyID"]}""                     
         }}";
 
                 // Create the HTTP request
@@ -292,9 +279,9 @@ namespace PSS_CMS.Controllers
         public async Task<ActionResult> Delete(int id)
 
         {
-            string WEBURLDELETE = ConfigurationManager.AppSettings["CONTRACTINVOICEDELETE"];
+            string WEBURLDELETE = ConfigurationManager.AppSettings["DeleteCustomerNotification"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
-            string strparams = "companyId=" + Session["CompanyID"] + "&RecordId=" + id + "&userrecid=" + Session["UserRECID"];
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&RECID=" + id ;
             string finalurl = WEBURLDELETE + "?" + strparams;
             string APIKey = Session["APIKEY"].ToString();
 
@@ -327,7 +314,7 @@ namespace PSS_CMS.Controllers
                             if (apiResponse.Status == "Y")
                             {
 
-                                string redirectUrl = Url.Action("List", "ContractInvoice", new { });
+                                string redirectUrl = Url.Action("List", "CustomerNotification", new { CustomerRecID = Session["CustomerRecID"], Name= Session["Customername"], InvoiceNo = Session["InvoiceNo"] });
                                 return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
                             }
                             else if (apiResponse.Status == "U")
@@ -361,7 +348,6 @@ namespace PSS_CMS.Controllers
             return View();
 
         }
-    
-    
+
     }
 }

@@ -44,6 +44,7 @@ namespace PSS_CMS.Models
         }
         [DisplayName("Warranty free calls")]
         public int CU_WARRANTYFREECALLS { get; set; }
+        public string WARRANTY_STATUS { get; set; }
         [DisplayName("Sort")]
         public int CU_SORTORDER { get; set; }
         public int CU_CRECID { get; set; }
@@ -107,6 +108,8 @@ namespace PSS_CMS.Models
         public int CU_LTRECID { get; set; }
         [DisplayName("Location Reference")]
         public int CU_SPRECID { get; set; }
+        [DisplayName("Assigned Admin")]
+        public int CU_ADMINRECID { get; set; }
        
         public string LT_NAME { get; set; }
         public string SP_NAME { get; set; }

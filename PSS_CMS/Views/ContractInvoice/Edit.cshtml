@@ -214,8 +214,10 @@
                     </div>
                     <div class="col-lg-3 d-flex justify-content-end">
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ContractInvoice", new { })'" />
-                    </div>
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ContractInvoice", new {id = Session["CU_RECID"],
+              Name = Session["Customername"],
+              contractamount=  Session["contractamount"],
+              InvoiceNo =  Session["InvoiceNo"] })'" />                    </div>
                 </div>
             </div>
         }
@@ -337,7 +339,7 @@
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = '@Url.Action("List", "ContractInvoice", new { CompanyRecID = Session["CompanyID"] })';
+                                window.location.href = '@Url.Action("List", "ContractInvoice", new { id= Session["CU_RECID"], Name= Session["Customername"], contractamount = Session["contractamount"]})';
                             } else {
                                  window.location.href = '@Url.Action("Create", "ContractInvoice")';
                             }

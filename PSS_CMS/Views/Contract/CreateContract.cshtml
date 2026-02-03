@@ -67,7 +67,7 @@
                     }
 
                 </a>
-
+                
 
             </div>
 
@@ -235,20 +235,48 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_ATTACHMENT, new { @class = "labels"})
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        <input type="file"
+                               name="Attachment"
+                               class="form-control"
+                               id="attachment"
+                               accept=".pdf,.doc,.docx,.jpg,.png" />
+
+
+                    </div>
+                </div> 
+                
+                
+                
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.CT_SORTORDER, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.CT_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
+
+        
+
                     </div>
                 </div>
 
                 <div class="row mb-5 ">
                     <div class="col-lg-2">
-
+                    
                     </div>
                     <div class="col-lg-3 d-flex justify-content-end">
+                        <a href="@Url.Action("DownloadContractPdf", "Contract")"
+                           class="me-3"
+                           data-bs-toggle="tooltip"
+                           title="Download Contract Template (PDF)">
+                            <i class="bi bi-file-earmark-pdf-fill"
+                               style="font-size:26px; color:#d9534f;"></i>
+
+                        </a>
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("ContractList", "Contract", new { })'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("ContractList", "Contract", new {Recid = Session["Recid"],name = Session["name"]})'" />
                     </div>
                 </div>
             </div>

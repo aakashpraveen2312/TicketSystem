@@ -58,12 +58,15 @@ namespace PSS_CMS.Models
         public string CT_CONTRACTAPPROVEDDATE { get; set; }
         [DisplayName("Any Reference")]
         public string CT_ANYREFERENCE { get; set; }
+        [DisplayName("Contract Policy")]
+        public string CT_ATTACHMENT { get; set; }
         public int CT_CRECID { get; set; }
         [DisplayName("Sort")]
         public int CT_SORTORDER { get; set; }
         public int TotalContractAmount { get; set; }
         public int TotalPaidAmount { get; set; }
         public int PendingAmount { get; set; }
+      
         public int ExpiredCustomerWarrantyCount { get; set; }
         public int ExpiredProductWarrantyCount { get; set; }
         public decimal PaidAmount { get; set; }
@@ -82,6 +85,8 @@ namespace PSS_CMS.Models
     {
         public string Message { get; set; }
         public string Status { get; set; }
+        public int ExpiredContracts { get; set; }
+        public int YetToExpireContracts { get; set; }
         public Contract Data { get; set; }
     }
 }

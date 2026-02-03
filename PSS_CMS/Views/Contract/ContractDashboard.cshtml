@@ -102,15 +102,15 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bxs-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">User Accounts</span>
+                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
                         </a>
                     </li>
-                    <li class="nav-link">
+                    @*<li class="nav-link">
                         <a href="@Url.Action("List", "AccountantCustomerInvoice")">
                             <i class='bi bi-bag-check' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
                         </a>
-                    </li>
+                    </li>*@
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -172,13 +172,32 @@
                 <!-- Column A -->
                 <div class="col-md-6">
                     <div class="card text-center shadow p-4 mb-4 bg-white">
-                        <h5>Total Contract Amount</h5>
-                        <h2 class="text-primary fw-bold">₹ @ViewBag.TotalContractAmount</h2>
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-start">
+                                <h5>Total Contract Amount</h5>
+                                <h2 class="text-primary fw-bold mb-0">₹ @ViewBag.TotalContractAmount</h2>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <h5>Expired Contract</h5>
+
+                                <h2 class="text-primary fw-bold mb-0">@ViewBag.ExpiredContracts</h2>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card text-center shadow p-4 mb-4 bg-white">
-                        <h5>Total Paid Amount</h5>
-                        <h2 class="text-success fw-bold">₹@ViewBag.TotalPaidAmount</h2>
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-start">
+                                <h5>Total Paid Amount</h5>
+                                <h2 class="text-success fw-bold mb-0">₹ @ViewBag.TotalPaidAmount</h2>
+
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <h5>Yet to Expiry</h5>
+
+                                <h2 class="text-success fw-bold mb-0">@ViewBag.YetToExpireContracts</h2>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card text-center shadow p-4 mb-4 bg-white">

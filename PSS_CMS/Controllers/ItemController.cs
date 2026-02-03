@@ -1,0 +1,1320 @@
+﻿using Newtonsoft.Json;
+using PSS_CMS.Models;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+
+namespace PSS_CMS.Controllers
+{
+    public class ItemController : Controller
+    {
+        // GET: Item
+        string APIKey = "";
+        string Status;
+        string Message;
+        // GET: ItemGroup
+        public async Task<ActionResult> List(int? CompanyId, int? CategoryRecid, string ItemCatName, string searchPhrase)
+        {
+            if (CategoryRecid != null && CompanyId != null && ItemCatName != null)
+            {
+
+                //GlobalVariables.ItemCatName = ItemCatName;
+                Session["ItemCatName"] = ItemCatName;
+                //Session["ItemCatName1"] = ItemCatName.ToUpper();
+                Session["CompanyId"] = CompanyId.ToString();
+                //GlobalVariables.ICRECID = CategoryRecid.ToString();
+                Session["CategoryRecid"] = CategoryRecid.ToString();
+            }
+
+
+
+            Items objitems = new Items();
+
+            int SerialNo = objitems.SerialNumber;
+
+            if (SerialNo == 0)
+            {
+                SerialNo = 1; // Initialize to 1 if it's 0
+            }
+
+
+            string Weburl = ConfigurationManager.AppSettings["GETITEM"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+
+            List<Items> ItemList = new List<Items>();
+
+            APIKey = Session["APIKEY"].ToString();
+
+            string strparams = "companyId=" + Session["CompanyId"] + "&CategoryRecid=" + Session["CategoryRecid"] + "";
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<IRootObjects>(jsonString);
+
+                            ItemList = rootObjects.Data;
+
+                            if (ItemList.Count > 0)
+                            {
+
+                                // Assign serial numbers
+                                for (int i = 0; i < ItemList.Count; i++)
+                                {
+                                    ItemList[i].SerialNumber = i + 1;
+                                }
+
+
+
+                            }
+                            if (!string.IsNullOrEmpty(searchPhrase))
+                            {
+                                ItemList = ItemList
+                                 .Where(r => r.I_DESCRIPTION.ToLower().Contains(searchPhrase.ToLower()) ||
+                                     r.I_CODE.ToLower().Contains(searchPhrase.ToLower())) // Use OR (||) instead of chaining .Where()
+                                .ToList();
+
+                            }
+                            else
+                            {
+
+                            }
+                        }
+
+                        else
+                        {
+                            // Handle the error response here
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., logging)
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return View(ItemList);
+        }
+
+        public async Task<ActionResult> Create(int? carecid, string categoryName, string GroupName)
+        {
+            if (carecid >= 0)
+            {
+                Session["CategoryRecid"] = carecid;
+                Session["ItemgroupName"] = GroupName;
+                Session["ItemCatName"] = categoryName;
+
+            }
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["GetVI_HSN"];
+            string Authkey = ConfigurationManager.AppSettings["Authkey"];
+
+            List<Items> ItemList = new List<Items>();
+
+            string APIKey = Session["APIKEY"].ToString();
+            string companyId = Session["CompanyId"].ToString();
+
+
+            string strparams = "categoryID=" + Session["CategoryRecid"];
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", Authkey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ICreateRootObjects>(jsonString);
+
+                            // Assign Data directly since it's an object
+                            var ItemGroup = rootObjects.Data;
+
+                            // Populate combo box values
+                            //ItemGroup.Outlets = await GetOutletComboAsync();
+                            //ItemGroup.Bins = await GetBinsComboAsync();
+                            //ItemGroup.Shelves = await GetShelvesComboAsync();
+
+                            // Retrieve any message stored in TempData
+                            string message = TempData["Message"] as string;
+                            ViewBag.ErrorMessage = message;
+
+
+                            return View(ItemGroup);
+
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }
+
+            return View();
+
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(Items objItem)
+        {
+
+
+            //objItem.I_CRECID = Session["CompanyId"].ToString();
+
+            try
+            {
+                var Regurl = ConfigurationManager.AppSettings["POSTITEM"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                //string expiryApplicable = objItem.EXPIRYAPPLICABLE ? "Y" : "N";
+                //string Disable = objItem.IsDisabled ? "Y" : "N";
+                //string Underemployee = objItem.UNDER_EMPLOYEE_CUSTODY ? "Y" : "N";
+
+
+                var content = new
+                {
+                    I_CODE = "",
+                    I_DESCRIPTION = objItem.I_DESCRIPTION,
+                    I_PRICE = "0",
+                    I_BOXQUANTITY = "0",
+                    I_PIECEQUANTITY = "0",
+                    I_PUOM = "UOM",
+                    I_CUOM = "UOM",
+                    I_CONVERSIONQUANTITY = 0,
+                    I_IMAGE = "qwerty",
+                    I_SORTORDER = objItem.I_SORTORDER,
+                    I_SHRECID = 0,
+                    I_BINRECID = 0,
+                    I_SPRECID = 0,
+                    I_CRECID = Session["CompanyId"],
+                    I_ICRECID = Session["CategoryRecid"],
+                    I_IFEXPIRYAPPLICABLE = objItem.EXPIRYAPPLICABLE ? "Y" : "N",
+                    I_DISABLE = objItem.IsDisabled ? "Y" : "N",
+                    I_HSN = objItem.I_HSNCODE,
+                    I_HSNRECID = objItem.I_HSNRECID,
+                    I_SGST = objItem.I_SGST,
+                    I_CGST = objItem.I_CGST,
+                    I_UNDEREMPLOYEECUSTODY = objItem.UNDER_EMPLOYEE_CUSTODY ? "Y" : "N",
+                    I_SERVICEANDMAINTANANCE = objItem.ServiceAndMaintance ? "Y" : "N",
+                    I_TRADABLE = objItem.TRADABLE ? "Y" : "N",
+                    I_EXTENDEDWARRENTYAPPLICABLE = objItem.EXTENDEDWARRENTYAPPLICABLE ? "Y" : "N",
+                    I_ONDEMAND = objItem.ONDEMAND ? "Y" : "N",
+                    I_SCHEDULEDSERVICE = objItem.SCHEDULEDSERVICE ? "Y" : "N",
+                    I_TOTALWARRENTYPERIOD = objItem.I_TOTALWARRENTYPERIOD ?? "",
+                    I_WARRENTYENDPERIOD = objItem.I_WARRENTYENDPERIOD ?? "",
+                    I_EXTENDEDWARRENTYPERIOD = objItem.I_EXTENDEDWARRENTYPERIOD ?? "",
+                    I_EXTENDEDWARRENTYENDPERIOD = objItem.I_EXTENDEDWARRENTYENDPERIOD ?? "",
+                    I_BYPRODUCT = objItem.BYPRODUCT ? "Y" : "N",
+                    I_SPECREQUIRED = objItem.SPECREQUIRED ? "Y" : "N",
+                    I_DESIGNIMAGEREQUIRED = objItem.DESIGNIMAGEREQUIRED ? "Y" : "N",
+                    I_CUSTOMERPRICE = "0",
+                    I_CUSTOMERMAJORQUANTITY = "0",
+                    I_CUSTOMERMINORQUANTITY = "0",
+                    I_CUSTOMERMAJORUOM = "UOM",
+                    I_CUSTOMERMINORUOM = "UOM",
+                    I_CUSTOMERCONVERSIONQUANTITY = 0,
+                    I_VENDORPRICE = "0",
+                    I_VENDORMAJORQUANTITY = "0",
+                    I_VENDORMINORQUANTITY = "0",
+                    I_VENDORMAJORUOM = "UOM",
+                    I_VENDORMINORUOM = "UOM",
+                    I_VENDORCONVERSIONQUANTITY = 0
+                };
+
+
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(Regurl),
+                    Method = HttpMethod.Post,
+                    Content = new StringContent(JsonConvert.SerializeObject(content), System.Text.Encoding.UTF8, "application/json")
+                };
+
+                request.Headers.Add("X-Version", "1");
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+
+                using (var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true })
+                using (var client = new HttpClient(handler) { })
+                {
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                    var response = await client.SendAsync(request);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Return success status to enable tabs
+                        //return Json(new { status = "success" ,message = "Item  inserted successfully" });
+                        var responseBody = await response.Content.ReadAsStringAsync();
+
+
+                        var apiResponse = JsonConvert.DeserializeObject<IRootObjects>(responseBody);
+                        string message = apiResponse.Message;
+                        string ItemCode = apiResponse.ItemCode;
+                        Session["I_CODE"] = ItemCode;
+
+                        Items ObjcrtgetSP = new Items();
+
+                        // Fetch the combo box values from the API and populate the model
+                        ObjcrtgetSP.Outlets = await GetOutletComboAsync();
+                        ObjcrtgetSP.Bins = await GetBinsComboAsync();
+                        ObjcrtgetSP.Shelves = await GetShelvesComboAsync();
+                        if (apiResponse.Status == "Y")
+                        {
+                            return Json(new { status = "success", message = "Item Details Created Successfully", }, JsonRequestBehavior.AllowGet);
+                        }
+                        else if (apiResponse.Status == "U")
+                        {
+                            return Json(new { status = "error", message = apiResponse.Message });
+                        }
+                        else if (apiResponse.Status == "N")
+                        {
+                            return Json(new { status = "error", message = apiResponse.Message });
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = "error", message = "Exception: " + ex.Message });
+            }
+            return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateFlagItem(Items objitems)
+        {
+
+            try
+            {
+                var Regurl = ConfigurationManager.AppSettings["UpdateFlagItem"]; // Change this to the appropriate URL for PUT
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                // Prepare the content to be sent in the request
+                var content = $@"{{
+
+            ""i_CODE"": ""{Session["I_CODE"]}"",
+            ""i_CRECID"": ""{Session["CompanyId"]}"",
+            ""i_TRADABLE"": ""{ (objitems.TRADABLE ? "Y" : "N")}"",
+            ""i_UNDEREMPLOYEECUSTODY"": ""{ (objitems.UNDER_EMPLOYEE_CUSTODY ? "Y" : "N")}"",
+            ""i_IFEXPIRYAPPLICABLE"": ""{ (objitems.EXPIRYAPPLICABLE ? "Y" : "N")}"",
+            ""i_SERVICEANDMAINTANANCE"": ""{ (objitems.ServiceAndMaintance ? "Y" : "N")}"",
+            ""i_TOTALWARRENTYPERIOD"": ""{ (objitems.I_TOTALWARRENTYPERIOD)}"",
+            ""i_WARRENTYENDPERIOD"": ""{ (objitems.I_WARRENTYENDPERIOD)}"",
+            ""i_EXTENDEDWARRENTYAPPLICABLE"": ""{ (objitems.EXTENDEDWARRENTYAPPLICABLE ? "Y" : "N")}"",
+            ""i_EXTENDEDWARRENTYPERIOD"": ""{ (objitems.I_EXTENDEDWARRENTYPERIOD)}"",
+            ""i_EXTENDEDWARRENTYENDPERIOD"": ""{ (objitems.I_EXTENDEDWARRENTYENDPERIOD)}"",
+            ""i_SCHEDULEDSERVICE"": ""{ (objitems.SCHEDULEDSERVICE ? "Y" : "N")}"",
+            ""i_ONDEMAND"": ""{ (objitems.ONDEMAND ? "Y" : "N")}"",
+            ""i_GRACEPERIOD"": ""1"",
+            ""i_BYPRODUCT"": ""{ (objitems.BYPRODUCT ? "Y" : "N")}"",
+            ""i_SPECREQUIRED"": ""{ (objitems.SPECREQUIRED ? "Y" : "N")}"",
+            ""i_DESIGNIMAGEREQUIRED"": ""{ (objitems.DESIGNIMAGEREQUIRED ? "Y" : "N")}""
+           
+        }}";
+
+                // Prepare the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri($"{Regurl}"), // Assuming the ID is used in the URL
+                    Method = HttpMethod.Put, // Change from POST to PUT
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up the HTTP client
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler)
+                {
+
+                };
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                // Send the request and get the response
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+                    string message = apiResponse.Message;
+
+                    if (apiResponse.Status == "Y")
+                    {
+
+
+                        //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+                        return Json(new { status = "success", message = apiResponse.Message });
+                        //return RedirectToAction("Create","Item");
+                        //return Json(new { status = "success", message = "Item details edited successfully" });
+                        //    string redirectUrl = Url.Action("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+                        //    return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
+                        //}
+
+                        //return RedirectToAction("List", "StoragePoint", new { CompanyId = GlobalVariables.CompanyId });
+
+
+                    }
+                    else if (apiResponse.Status == "U")
+                    {
+                        TempData["Message"] = message;
+                        ViewBag.ErrorMessage = message;
+                        return Json(new { status = "error", message = apiResponse.Message });
+                    }
+
+                    else
+                    {
+
+                        ViewBag.ErrorMessage = message;
+                        return Json(new { status = "error", message = apiResponse.Message });
+                    }
+
+
+                    //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"] });
+                    return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Request failed.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
+            }
+
+            //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+
+            //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+        }
+
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateServiceGSTItem(Items objitems)
+        {
+
+            try
+            {
+                var Regurl = ConfigurationManager.AppSettings["UpdateServiceGSTItem"]; // Change this to the appropriate URL for PUT
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                // Prepare the content to be sent in the request
+                var content = $@"{{
+           
+              ""i_CODE"": ""{Session["I_CODE"]}"",
+              ""i_CRECID"": ""{Session["CompanyId"]}"",
+              ""i_TOTALWARRENTYPERIOD"": ""{ (objitems.I_TOTALWARRENTYPERIOD)}"",
+              ""i_WARRENTYENDPERIOD"": ""{(objitems.I_WARRENTYENDPERIOD)}"",
+              ""i_EXTENDEDWARRENTYAPPLICABLE"": ""{ (objitems.EXTENDEDWARRENTYAPPLICABLE ? "Y" : "N")}"",
+              ""i_ONDEMAND"": ""{(objitems.ONDEMAND ? "Y" : "N")}"",
+              ""i_EXTENDEDWARRENTYPERIOD"": ""{(objitems.I_EXTENDEDWARRENTYPERIOD)}"",
+              ""i_EXTENDEDWARRENTYENDPERIOD"": ""{(objitems.I_EXTENDEDWARRENTYENDPERIOD)}"",
+              ""i_SCHEDULEDSERVICE"": ""{ (objitems.SCHEDULEDSERVICE ? "Y" : "N")}"",
+              ""i_GRACEPERIOD"": ""1day""
+        }}";
+
+                // Prepare the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri($"{Regurl}"), // Assuming the ID is used in the URL
+                    Method = HttpMethod.Put, // Change from POST to PUT
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up the HTTP client
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler)
+                {
+
+                };
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                // Send the request and get the response
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+                    string message = apiResponse.Message;
+
+                    if (apiResponse.Status == "Y")
+                    {
+
+
+                        //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+                        return Json(new { status = "success", message = apiResponse.Message });
+                        //return RedirectToAction("Create","Item");
+                        //return Json(new { status = "success", message = "Item details edited successfully" });
+                        //    string redirectUrl = Url.Action("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+                        //    return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
+                        //}
+
+                        //return RedirectToAction("List", "StoragePoint", new { CompanyId = GlobalVariables.CompanyId });
+
+
+                    }
+                    else if (apiResponse.Status == "U")
+                    {
+                        TempData["Message"] = message;
+                        ViewBag.ErrorMessage = message;
+                        return Json(new { status = "error", message = apiResponse.Message });
+                    }
+
+
+                    //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"] });
+                    return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Request failed.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
+            }
+
+            //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+
+            //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+        }
+        [HttpPost]
+        public async Task<ActionResult> UpdateStockGSTItem(Items objitems)
+        {
+            try
+            {
+                var Regurl = ConfigurationManager.AppSettings["UPDATESTOCKITEM"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"]?.ToString();
+
+                if (string.IsNullOrWhiteSpace(APIKey))
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "API Key missing in session.");
+
+                // ✅ Build object properly (types preserved)
+                var payload = new
+                {
+                    i_CODE = Session["I_CODE"]?.ToString(),
+                    i_CRECID = Convert.ToInt32(Session["CompanyId"]),
+                    i_BOXQUANTITY = objitems.I_BOXQUANTITY,
+                    i_PIECEQUANTITY = objitems.I_PIECEQUANTITY,
+                    i_PRICE = objitems.I_PRICE,
+                    i_PUOM = objitems.I_PUOM,
+                    i_CUOM = objitems.I_CUOM,
+                    i_CONVERSIONQUANTITY = objitems.I_CONVERSIONQUANTITY,
+                    i_CUSTOMERMAJORQUANTITY = objitems.I_CUSTOMERMAJORQUANTITY,
+                    i_CUSTOMERMINORQUANTITY = objitems.I_CUSTOMERMINORQUANTITY,
+                    i_CUSTOMERPRICE = objitems.I_PRICE,
+                    i_CUSTOMERMAJORUOM = objitems.I_PUOM,
+                    i_CUSTOMERMINORUOM = objitems.I_CUOM,
+                    i_CUSTOMERCONVERSIONQUANTITY = objitems.I_CONVERSIONQUANTITY,
+                    i_VENDORMAJORQUANTITY = objitems.I_VENDORMAJORQUANTITY,
+                    i_VENDORMINORQUANTITY = objitems.I_VENDORMINORQUANTITY,
+                    i_VENDORPRICE = objitems.I_PRICE,
+                    i_VENDORMAJORUOM = objitems.I_PUOM,
+                    i_VENDORMINORUOM = objitems.I_CUOM,
+                    i_VENDORCONVERSIONQUANTITY = objitems.I_CONVERSIONQUANTITY
+                };
+
+                var json = JsonConvert.SerializeObject(payload);
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(Regurl),
+                    Method = HttpMethod.Put,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json" }
+            },
+                    Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                using (var client = new HttpClient(handler))
+                {
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                    var response = await client.SendAsync(request);
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    if (!response.IsSuccessStatusCode)
+                        return new HttpStatusCodeResult((int)response.StatusCode, responseBody);
+
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { status = "success", message = apiResponse.Message });
+                    }
+                    else if (apiResponse.Status == "U")
+                    {
+                        return Json(new { status = "error", message = apiResponse.Message });
+                    }
+                    else
+                    {
+                        return Json(new { status = "fail", message = apiResponse.Message });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, $"Error: {ex.Message}");
+            }
+        }
+
+
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdatePositionItem(Items objitems)
+        {
+
+
+            // Intialising Company recid in storagepoint
+            //objitems.I_ICRECID = Session["CompanyId"].ToString();
+            try
+            {
+                var Regurl = ConfigurationManager.AppSettings["UpdatePositionItem"]; // Change this to the appropriate URL for PUT
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                // Prepare the content to be sent in the request
+                var content = $@"{{
+
+            ""I_CODE"": ""{Session["I_CODE"]}"",
+            ""I_CRECID"": ""{Session["CompanyId"]}"",
+            ""I_SHRECID"": ""{objitems.I_SHRECID}"",
+            ""I_BINRECID"": ""{objitems.I_BINRECID}"",
+            ""I_SPRECID"": ""{objitems.I_SPRECID}""
+           
+        }}";
+
+                // Prepare the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri($"{Regurl}"), // Assuming the ID is used in the URL
+                    Method = HttpMethod.Put, // Change from POST to PUT
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up the HTTP client
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler)
+                {
+
+                };
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                // Send the request and get the response
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+                    string message = apiResponse.Message;
+
+                    if (apiResponse.Status == "Y")
+                    {
+
+                        if (apiResponse.Status == "Y")
+                        {
+                            //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+                            return Json(new { status = "success", message = apiResponse.Message });
+                            // return Json(new { status = "success", message = "Item details edited successfully" });
+                        }
+                        else
+                        {
+                            return Json(new { status = "error", message = apiResponse.Message });
+                        }
+                        //return RedirectToAction("List", "StoragePoint", new { CompanyId = GlobalVariables.CompanyId });
+
+
+                    }
+                    else if (apiResponse.Status == "U")
+                    {
+                        TempData["Message"] = message;
+                        ViewBag.ErrorMessage = message;
+                        return Json(new { status = "error", message = apiResponse.Message });
+                    }
+
+
+                    //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"] });
+                    return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Request failed.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
+            }
+
+            //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+
+            //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+        }
+
+        public async Task<ActionResult> Edit(int? companyId, int? id, string IEditName)
+        {
+            //GlobalVariables.IEditName = IEditName;
+            Session["IEditName"] = IEditName;
+
+            Session["CompanyId"] = companyId.ToString();
+            //GlobalVariables.IRECID = (int)id;
+            Session["IRECID"] = (int)id;
+
+
+            string Weburl = ConfigurationManager.AppSettings["GETBYIDITEM"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            List<Items> ItemList = new List<Items>();
+
+            //StoragePointViewModel viewModel = new StoragePointViewModel();
+
+            string strparams = "companyId=" + companyId + "&RecordId=" + id;
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<IRootObjects>(jsonString);
+                            //GlobalVariables.IEDITCODE = rootObjects.Data[0].I_CODE;
+                            Session["IEDITCODE"] = rootObjects.Data[0].I_CODE;
+                            Session["I_CODE"] = rootObjects.Data[0].I_CODE;
+                            Session["I_HSNRECID"] = rootObjects.Data[0].I_HSNRECID;
+                            ItemList = rootObjects.Data;
+
+                            ViewBag.OutletType = new SelectList(await GetOutletComboAsync(), "Value", "Text");
+                            ViewBag.BinsType = new SelectList(await GetBinsComboAsync(), "Value", "Text");
+                            ViewBag.ShelvesType = new SelectList(await GetShelvesComboAsync(), "Value", "Text");
+                            var Item = ItemList.FirstOrDefault();
+                            return View(Item);
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return View(new Items()); // Return an empty model or handle the error appropriately
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(Items objItems)
+        {
+
+            // Intialising Company recid in storagepoint
+            objItems.I_CRECID = Session["CompanyId"].ToString();
+            objItems.I_ICRECID = Session["CategoryRecid"].ToString();
+            try
+            {
+                var Regurl = ConfigurationManager.AppSettings["PUTITEM"]; // Change this to the appropriate URL for PUT
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+                Session["I_CODE"] = objItems.I_CODE;
+                // Prepare the content to be sent in the request
+                var content = $@"{{
+
+            ""I_RECID"": ""{Session["IRECID"]}"",
+            ""I_CODE"": ""{objItems.I_CODE}"",
+            ""I_CRECID"": ""{Session["CompanyId"]}"",
+            ""I_DESCRIPTION"": ""{objItems.I_DESCRIPTION}"",
+            ""I_PRICE"": ""{objItems.I_PRICE}"",
+            ""I_BOXQUANTITY"": ""{objItems.I_BOXQUANTITY}"",
+            ""I_PIECEQUANTITY"": ""{objItems.I_PIECEQUANTITY}"",
+            ""I_PUOM"": ""{objItems.I_PUOM}"",
+            ""I_CUOM"": ""{objItems.I_CUOM}"",
+            ""I_SORTORDER"": ""{objItems.I_SORTORDER}"",
+            ""I_ICRECID"": ""{Session["CategoryRecid"]}"",
+            ""I_HSNRECID"": ""{Session["I_HSNRECID"]}"",
+            ""I_HSN"": ""{objItems.I_HSN}"",
+            ""I_SGST"": ""{objItems.I_SGST}"",
+            ""I_CGST"": ""{objItems.I_CGST}"",
+             ""I_SHRECID"" :""0"",
+             ""I_BINRECID"": ""0"",
+             ""I_SPRECID"" : ""0"",
+             ""I_IFEXPIRYAPPLICABLE"": ""{(objItems.EXPIRYAPPLICABLE ? "Y" : "N")}"",
+             ""I_DISABLE"": ""{(objItems.IsDisabled ? "Y" : "N")}"",
+             ""I_UNDEREMPLOYEECUSTODY"": ""{ (objItems.UNDER_EMPLOYEE_CUSTODY ? "Y" : "N")}"",
+                ""I_TRADABLE"": ""{ (objItems.TRADABLE ? "Y" : "N")}"",
+             ""I_BYPRODUCT"": ""{(objItems.BYPRODUCT ? "Y" : "N")}"",
+             ""I_SPECREQUIRED"": ""{(objItems.SPECREQUIRED ? "Y" : "N")}"",
+             ""I_DESIGNIMAGEREQUIRED"": ""{(objItems.DESIGNIMAGEREQUIRED ? "Y" : "N")}""
+
+
+        }}";
+
+                // Prepare the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri($"{Regurl}"), // Assuming the ID is used in the URL
+                    Method = HttpMethod.Put, // Change from POST to PUT
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up the HTTP client
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler)
+                {
+
+                };
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                // Send the request and get the response
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+                    string message = apiResponse.Message;
+
+
+
+                    if (apiResponse.Status == "Y")
+                    {
+
+                        //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+                        return Json(new { status = "success", message = "Item details edited successfully" });
+                    }
+                    else if (apiResponse.Status == "U")
+                    {
+                        TempData["Message"] = message;
+                        ViewBag.ErrorMessage = message;
+                        return Json(new { status = "error", message = apiResponse.Message });
+                    }
+                    else if (apiResponse.Status == "N")
+                    {
+                        return Json(new { status = "error", message = apiResponse.Message });
+                    }
+                    //return RedirectToAction("List", "StoragePoint", new { CompanyId = GlobalVariables.CompanyId });
+
+
+
+
+
+                    //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"] });
+
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Request failed.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
+            }
+
+            return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+        }
+
+        public async Task<ActionResult> Delete(int? I_RECID, int companyId, ItemGroup ObjItemGroup)
+        {
+            string Weburl = ConfigurationManager.AppSettings["DELETEITEM"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string APIKey = ConfigurationManager.AppSettings["Apikey"];
+
+            // Construct the query string correctly
+            string strparams = $"companyId={companyId}&RecordId={I_RECID}";
+            string url = $"{Weburl}?{strparams}";
+            APIKey = Session["APIKEY"].ToString();
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    // Disable SSL validation (only use this if you trust the server)
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        // Add required headers
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                        // Create the DELETE request
+                        var request = new HttpRequestMessage
+                        {
+                            Method = HttpMethod.Delete,
+                            RequestUri = new Uri(url)
+                        };
+
+                        var response = await client.SendAsync(request);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+
+                            if (apiResponse.Status == "Y")
+                            {
+                                string redirectUrl = Url.Action("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+                                return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
+                            }
+                            else if (apiResponse.Status == "U")
+                            {
+                                return Json(new { status = "error", message = "You can't delete this record because other records depend on it" });
+                            }
+                            else
+                            {
+                                return Json(new { status = "error", message = apiResponse.Message });
+                            }
+                            //return RedirectToAction("List", "StoragePoint", new { CompanyId = GlobalVariables.CompanyId });
+                        }
+                        else
+                        {
+                            // Log the response or handle the error case here
+                            Console.WriteLine($"Failed to delete: {response.StatusCode} - {response.ReasonPhrase}");
+                        }
+                    }
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Console.WriteLine($"HTTP Request error occurred: {httpEx.Message}");
+            }
+            catch (TaskCanceledException tcEx)
+            {
+                Console.WriteLine($"Request timed out: {tcEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+
+            // In case of failure, return to the view
+            return View();
+        }
+
+        public async Task<List<SelectListItem>> GetOutletComboAsync()
+        {
+            var outletCombo = new List<SelectListItem>();
+            string apiurl = ConfigurationManager.AppSettings["ITEMCOMBO"];
+            string authkey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            string strparams = "companyId=" + Session["CompanyId"];
+            string url = apiurl + "?" + strparams;
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (var httpClient = new HttpClient(handler))
+                {
+                    httpClient.DefaultRequestHeaders.Add("Authorization", authkey);
+                    httpClient.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+
+                        try
+                        {
+                            var apiResponse = JsonConvert.DeserializeObject<ApiResponses>(content);
+
+                            if (apiResponse.status == "Y")
+                            {
+                                foreach (var item in apiResponse.Outlet)
+                                {
+                                    outletCombo.Add(new SelectListItem
+                                    {
+                                        Value = item.ComboId.ToString(),
+                                        Text = item.ComboName
+                                    });
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Error: " + apiResponse.message);
+                            }
+                        }
+                        catch (JsonException ex)
+                        {
+                            ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "API call failed: " + response.ReasonPhrase);
+                    }
+                }
+            }
+
+            return outletCombo ?? new List<SelectListItem>();
+        }
+
+        public async Task<List<SelectListItem>> GetBinsComboAsync()
+        {
+            var binsCombo = new List<SelectListItem>();
+            string apiurl = ConfigurationManager.AppSettings["ITEMCOMBO"];
+            string authkey = ConfigurationManager.AppSettings["AuthKey"];
+            APIKey = Session["APIKEY"].ToString();
+            string strparams = "companyId=" + Session["CompanyId"];
+            string url = apiurl + "?" + strparams;
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Bypass SSL certificate validation
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                // Pass the handler to the HttpClient
+                using (var httpClient = new HttpClient(handler))  // <- Use handler here
+                {
+                    httpClient.DefaultRequestHeaders.Add("Authorization", authkey);
+                    httpClient.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    try
+                    {
+                        HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string content = await response.Content.ReadAsStringAsync();
+
+                            try
+                            {
+                                var apiResponse = JsonConvert.DeserializeObject<ApiResponses>(content);
+
+                                if (apiResponse.status == "Y")
+                                {
+                                    foreach (var item in apiResponse.Bins)
+                                    {
+                                        binsCombo.Add(new SelectListItem
+                                        {
+                                            Value = item.ComboId.ToString(),
+                                            Text = item.ComboName
+                                        });
+                                    }
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError(string.Empty, "Error: " + apiResponse.message);
+                                }
+                            }
+                            catch (JsonException ex)
+                            {
+                                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "API call failed: " + response.ReasonPhrase);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                    }
+                }
+            }
+
+
+            return binsCombo ?? new List<SelectListItem>();
+        }
+
+        public async Task<List<SelectListItem>> GetShelvesComboAsync()
+        {
+            var shelvesCombo = new List<SelectListItem>();
+            string apiurl = ConfigurationManager.AppSettings["ITEMCOMBO"];
+            string authkey = ConfigurationManager.AppSettings["AuthKey"];
+            APIKey = Session["APIKEY"].ToString();
+            string strparams = "companyId=" + Session["CompanyId"];
+            string url = apiurl + "?" + strparams;
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (var httpClient = new HttpClient(handler))
+                {
+                    httpClient.DefaultRequestHeaders.Add("Authorization", authkey);
+                    httpClient.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+
+                        try
+                        {
+                            var apiResponse = JsonConvert.DeserializeObject<ApiResponses>(content);
+
+                            if (apiResponse.status == "Y")
+                            {
+                                foreach (var item in apiResponse.Shelves)
+                                {
+                                    shelvesCombo.Add(new SelectListItem
+                                    {
+                                        Value = item.ComboId.ToString(),
+                                        Text = item.ComboName
+                                    });
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Error: " + apiResponse.message);
+                            }
+                        }
+                        catch (JsonException ex)
+                        {
+                            ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "API call failed: " + response.ReasonPhrase);
+                    }
+                }
+            }
+
+            return shelvesCombo ?? new List<SelectListItem>();
+        }
+
+     
+        public async Task<ActionResult> UploadDesignImage(int ItemRecID, HttpPostedFileBase DesignFile)
+        {
+            if (DesignFile == null || DesignFile.ContentLength == 0)
+                return Content("No file selected.");
+
+            string[] allowedExt = { ".png", ".jpg", ".jpeg" };
+            string ext = Path.GetExtension(DesignFile.FileName).ToLower();
+
+            if (!allowedExt.Contains(ext))
+                return Content("Invalid file format! Only PNG, JPG, JPEG allowed.");
+
+            // Convert file to Base64
+            byte[] fileBytes;
+            using (var binaryReader = new BinaryReader(DesignFile.InputStream))
+            {
+                fileBytes = binaryReader.ReadBytes(DesignFile.ContentLength);
+            }
+
+            string base64String = Convert.ToBase64String(fileBytes);
+
+            try
+            {
+
+                var MaterialcatPostURL = ConfigurationManager.AppSettings["UPDATEITEMSPECIFICATIONIMAGE"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{
+                        ""SPEC_IRECID"": {ItemRecID},
+                        ""SPEC_CRECID"": ""{Session["CompanyId"]}"",
+                        ""SPEC_DESIGNIMAGE_BASE64"": ""{base64String}""                      
+                    }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(MaterialcatPostURL),
+                    Method = HttpMethod.Put,
+                    Headers =
+                        {
+                            {"X-Version", "1" },
+                            {HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+                        },
+
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+
+                };
+                var client = new HttpClient(handler)
+                {
+
+                };
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+
+                {
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponseInfo>(responseBody);
+                    //Session["P_RECID"]= apiResponse.Recid;
+                    string message = apiResponse.Message;
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return RedirectToAction("List", "Item");
+                    }
+                    else if (apiResponse.Status == "U")
+                    {
+                        return RedirectToAction("List", "Item");
+                    }
+                    else if (apiResponse.Status == "N")
+                    {
+                        return RedirectToAction("List", "Item");
+                    }
+                    else
+                    {
+                        return RedirectToAction("List", "Item");
+
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+
+            }
+            return RedirectToAction("List", "Item");
+        }
+
+
+
+    }
+}

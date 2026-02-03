@@ -73,16 +73,16 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bxs-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">User Accounts</span>
+                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
                         </a>
                     </li>
 
-                    <li class="nav-link">
+                    @*<li class="nav-link">
                         <a href="@Url.Action("List", "AccountantCustomerInvoice")">
                             <i class='bi bi-bag-check' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
                         </a>
-                    </li>
+                    </li>*@
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -130,8 +130,8 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER ACCOUNTS</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">LIST(@Session["name"])</a></li>
+                    <li>CONTRACTS AND USERS</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">PRODUCT(@Session["name"])</a></li>
                     <li>CONTRACT LIST</li>
                 </ul>
             </div>
@@ -170,23 +170,24 @@
                .RenderValueAs(o =>
                {
                    var Editurl = Url.Action("EditContract", "Contract", new { id=o.CT_RECID, Name=o.CT_CONTRACTREFERENCENUMBER,Precid=o.CT_PRECID });
-                   var Contracturl = Url.Action("List", "ContractInvoice", new { id = o.CT_RECID, Name = o.CT_CONTRACTREFERENCENUMBER, CT_PRECID = o.CT_PRECID, ContractAmount = o.CT_CONTRACTAMOUNT });
+                   //   var Customerurl = Url.Action("List", "ContractInvoice", new { id = o.CT_RECID, Name = o.CT_CONTRACTREFERENCENUMBER, CT_PRECID = o.CT_PRECID, ContractAmount = o.CT_CONTRACTAMOUNT });
+                   var Customerurl = Url.Action("List", "AccountantCustomerInvoice", new { CU_CTRECID = o.CT_RECID, Name = o.CT_CONTRACTREFERENCENUMBER, CT_PRECID = o.CT_PRECID, CT_CONTRACTAMOUNT = o.CT_CONTRACTAMOUNT });
                    var Deleteurl = Url.Action("DeleteContract", "Contract", new { id = o.CT_RECID });
 
 
                    var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
-                   var ContracticonHtml = "<i class='bi bi-ui-checks-grid bx-sm'></i> ";
+                   var CUstomericonHtml = "<i class='bi bi-people bx-sm'></i> ";
                    var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
 
 
                    var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
-                   var ContractlinkHtml = $"<a href='{Contracturl}' data-toggle='tooltip' data-placement='top' title='Contract Invoice'>{ContracticonHtml}</a>";
+                   var CustomerlinkHtml = $"<a href='{Customerurl}' data-toggle='tooltip' data-placement='top' title='Customer'>{CUstomericonHtml}</a>";
                    var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
 
 
                    var extraSpaces = "&nbsp;&nbsp;&nbsp;";
-                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ContractlinkHtml}");
+                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{CustomerlinkHtml}");
                });
 
            }).WithPaging(10).Sortable(true)
@@ -225,9 +226,9 @@
 
                         <div class="flex-item  mt-1">
                             <div class="d-flex justify-content-center footerb">
-                                <i class='bi bi-ui-checks-grid bx-sm'></i>
+                                <i class='bi bi-people bx-sm'></i>
                             </div>
-                            &nbsp;- Contract Invoice
+                            &nbsp;- Customer
                         </div>
 
                     </div>

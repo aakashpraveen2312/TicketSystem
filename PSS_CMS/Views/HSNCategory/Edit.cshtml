@@ -83,7 +83,7 @@
                 </ul>
             </div>
         </div>
-        @using (Html.BeginForm("Edit", "HSNCategory", FormMethod.Post, new { id = "Editform", enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Edit", "HSNCategory", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
         {
 
             <div class="create ms-4 me-2 mt-3">
@@ -112,7 +112,7 @@
                         @Html.LabelFor(model => model.HSNC_SORTORDER, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.HSNC_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", tabindex = "3", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.HSNC_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", tabindex = "3", autocomplete = "off",type="text" } })
 
                     </div>
                 </div>
@@ -210,124 +210,91 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- jQuery CDN -->
     <script>
-$(function () {
+    $(document).ready(function () {
+        $("#editform").submit(function (event) {
+            event.preventDefault();
 
-    $("#Editform").on("submit", function (e) {
-        e.preventDefault();
+            var submitBtn = $("#savebutton");
+            submitBtn.prop("disabled", true);
 
-        const $btn = $("#savebutton");
-        $btn.prop("disabled", true);
-        $("body").css("pointer-events", "none");
+            var formData = new FormData(this);
 
-        $.ajax({
-            url: '@Url.Action("Edit", "HSNCategory")',
-            type: 'POST',
-            data: new FormData(this),
-            processData: false,
-            contentType: false,
 
-            success: function (response) {
+            // Disable page interaction
+            $("body").css("pointer-events", "none");
 
-                if (response.success) {
+            $.ajax({
+                url: '@Url.Action("Edit", "HSNCategory")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        // 🔹 First show processing bar
+                        Swal.fire({
+                            title: "Processing...",
+                            html: "Please wait while we save your changes.",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
 
+                        // ⏳ After small delay, show success popup
+                        setTimeout(function () {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            confirmButtonText: "Ok",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            customClass: {
+                                confirmButton: "swal-btn-continue",
+                            },
+                            didOpen: () => {
+                                $(".swal2-container").css("pointer-events", "auto");
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '@Url.Action("List", "HSNCategory")';
+                            } else {
+                                 window.location.href = '@Url.Action("Create", "HSNCategory")';
+                            }
+                        });
+                    }, 1000); // 1 second delay for "Processing"
+                    } else {
+                        Swal.fire({
+                            title: "Message",
+                            text: response.message,
+                            icon: "info",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                },
+                error: function () {
                     Swal.fire({
-                        title: "Message",
-                        text: response.message,
-                        icon: "success",
-                        confirmButtonText: "OK",
-                        allowOutsideClick: false
-                    }).then(() => {
-                        window.location.href = '@Url.Action("List","HSNCategory")';
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
                     });
-
-                } else {
-                    Swal.fire("Message", response.message, "info");
-                    reset();
+                    resetButton();
                 }
-            },
-
-            error: function () {
-                Swal.fire("Error", "Unexpected error occurred", "error");
-                reset();
-            }
+            });
         });
 
-        function reset() {
-            $btn.prop("disabled", false);
+        function resetButton() {
+            $("#savebutton").prop("disabled", false).text("Submit");
             $("body").css("pointer-events", "auto");
         }
     });
-
-});
     </script>
-    @*<script>
-        $(function () {
-
-            $("#Editform").on("submit", function (e) {
-                e.preventDefault();
-
-                const $btn = $("#savebutton");
-                $btn.prop("disabled", true);
-
-                $("body").css("pointer-events", "none");
-
-                $.ajax({
-                    url: '@Url.Action("Edit", "HSNCategory")',
-                    type: 'POST',
-                    data: new FormData(this),
-                    processData: false,
-                    contentType: false,
-
-                    success: function (response) {
-
-                        if (response.success) {
-
-                            Swal.fire({
-                                title: "Processing...",
-                                allowOutsideClick: false,
-                                didOpen: () => Swal.showLoading()
-                            });
-
-                            setTimeout(() => {
-                                Swal.fire({
-                                    title: "Success!",
-                                    text: response.message,
-                                    icon: "success",
-                                    showCancelButton: true,
-                                    confirmButtonText: "Continue",
-                                    cancelButtonText: "Back to List",
-                                    customClass: {
-                                        confirmButton: "swal-btn-continue",
-                                        cancelButton: "swal-btn-back"
-                                    }
-                                }).then(r => {
-                                    r.isConfirmed
-                                        ? location.reload()
-                                        : window.location.href = '@Url.Action("List","HSNCategory")';
-                                });
-                            }, 800);
-
-                        } else {
-                            Swal.fire("Message", response.message, "info");
-                            reset();
-                        }
-                    },
-                    error: function () {
-                        Swal.fire("Error", "Unexpected error occurred", "error");
-                        reset();
-                    }
-                });
-
-                function reset() {
-                    $btn.prop("disabled", false).val("Save");
-                    $("body").css("pointer-events", "auto");
-                }
-            });
-
-        });
-            </script>*@
-
-
 
 </body>
 </html>

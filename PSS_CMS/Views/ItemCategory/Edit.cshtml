@@ -100,7 +100,7 @@
                 </ul>
             </div>
         </div>
-        @using (Html.BeginForm("Create", "ItemCategory", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Edit", "ItemCategory", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
         {
 
             <div class="create ms-4 me-2 mt-3">
@@ -167,7 +167,7 @@
                                                       @class = "form-control textboxcolors text-right",
                                                       id = "IC_SORTORDER",
                                                       tabindex = "5",
-                                                      type = "number",
+                                                      type = "text",
                                                       placeholder = "0",
                                                   min = "0"
                                                   }
@@ -434,70 +434,90 @@
 
 
     <script>
-$(function () {
+    $(document).ready(function () {
+        $("#editform").submit(function (event) {
+            event.preventDefault();
 
-    $("#createform").on("submit", function (e) {
-        e.preventDefault();
+            var submitBtn = $("#savebutton");
+            submitBtn.prop("disabled", true);
 
-        const $btn = $("#savebutton");
-        $btn.prop("disabled", true);
+            var formData = new FormData(this);
 
-        $("body").css("pointer-events", "none");
 
-        $.ajax({
-            url: '@Url.Action("Edit", "ItemCategory")',
-            type: 'POST',
-            data: new FormData(this),
-            processData: false,
-            contentType: false,
+            // Disable page interaction
+            $("body").css("pointer-events", "none");
 
-            success: function (response) {
+            $.ajax({
+                url: '@Url.Action("Edit", "ItemCategory")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        // 🔹 First show processing bar
+                        Swal.fire({
+                            title: "Processing...",
+                            html: "Please wait while we save your changes.",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
 
-                if (response.success) {
-
-                    Swal.fire({
-                        title: "Processing...",
-                        allowOutsideClick: false,
-                        didOpen: () => Swal.showLoading()
-                    });
-
-                    setTimeout(() => {
+                        // ⏳ After small delay, show success popup
+                        setTimeout(function () {
                         Swal.fire({
                             title: "Success!",
                             text: response.message,
                             icon: "success",
-                            showCancelButton: true,
-                            confirmButtonText: "Continue",
-                            cancelButtonText: "Back to List",
+                            confirmButtonText: "Ok",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
                             customClass: {
                                 confirmButton: "swal-btn-continue",
-                                cancelButton: "swal-btn-back"
+                            },
+                            didOpen: () => {
+                                $(".swal2-container").css("pointer-events", "auto");
                             }
-                        }).then(r => {
-                            r.isConfirmed
-                                ? location.reload()
-                                : window.location.href = '@Url.Action("List", "ItemCategory")';
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '@Url.Action("List", "ItemCategory")';
+                            } else {
+                                 window.location.href = '@Url.Action("Create", "ItemCategory")';
+                            }
                         });
-                    }, 800);
-
-                } else {
-                    Swal.fire("Message", response.message, "info");
-                    reset();
+                    }, 1000); // 1 second delay for "Processing"
+                    } else {
+                        Swal.fire({
+                            title: "Message",
+                            text: response.message,
+                            icon: "info",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    resetButton();
                 }
-            },
-            error: function () {
-                Swal.fire("Error", "Unexpected error occurred", "error");
-                reset();
-            }
+            });
         });
 
-        function reset() {
-            $btn.prop("disabled", false).val("Save");
+        function resetButton() {
+            $("#savebutton").prop("disabled", false).text("Submit");
             $("body").css("pointer-events", "auto");
         }
     });
-
-});
     </script>
 </body>
 </html>

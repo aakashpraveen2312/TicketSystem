@@ -14,7 +14,7 @@ namespace PSS_CMS.Models
         public int SerialNumber { get; set; }
 
 
-        [DisplayName("Code")]
+        [DisplayName("HSN Code")]
         public string HM_CODE { get; set; }
 
 

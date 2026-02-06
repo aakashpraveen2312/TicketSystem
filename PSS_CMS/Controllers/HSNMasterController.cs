@@ -177,21 +177,20 @@ namespace PSS_CMS.Controllers
 
                     if (apiResponse.Status == "Y")
                     {
-                        return Json(new { status = "success", message = "HSN created successfully" });
+                        return Json(new { success = true, message = apiResponse.Message });
                     }
-                    else if (apiResponse.Status == "U")
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
                     {
-                        return Json(new { status = "error", message = apiResponse.Message });
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
-                    else if (apiResponse.Status == "N")
+                    else
                     {
-                        return Json(new { status = "error", message = apiResponse.Message });
+                        return Json(new { success = false, message = "An unexpected status was returned." });
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
-
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
                 }
             }
             catch (Exception ex)
@@ -328,28 +327,20 @@ namespace PSS_CMS.Controllers
 
                     if (apiResponse.Status == "Y")
                     {
-                        //return RedirectToAction("List", "LineItem", new { CompanyId = Session["CompanyId"], GSTType = Session["GSTType"], Type = Session["Type"], QH_RECID = Session["QH_RECID"] });
-
-                        return Json(new { status = "success", message = "HSN details edited successfully" });
+                        return Json(new { success = true, message = apiResponse.Message });
                     }
-                    else if (apiResponse.Status == "U")
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
                     {
-                        return Json(new { status = "error", message = apiResponse.Message });
-                    }
-                    else if (apiResponse.Status == "N")
-                    {
-                        return Json(new { status = "error", message = apiResponse.Message });
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
                     else
                     {
-                        return RedirectToAction("List", "HSNMaster");
-
+                        return Json(new { success = false, message = "An unexpected status was returned." });
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
-
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
                 }
             }
             catch (Exception ex)

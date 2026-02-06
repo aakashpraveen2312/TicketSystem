@@ -170,33 +170,22 @@ namespace PSS_CMS.Controllers
                     //string IC_IGRECId = apiResponse.IC_IGRECID;
                     //Session["IC_IGRECID"] = IC_IGRECId;
 
-
                     if (apiResponse.Status == "Y")
                     {
-                        return Json(new { status = "success", message = "ItemCategory created successfully" });
-
+                        return Json(new { success = true, message = apiResponse.Message });
                     }
-                    else if (apiResponse.Status == "U")
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
                     {
-
-                        return Json(new { status = "error", message = apiResponse.Message });
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
-
-                    else if (apiResponse.Status == "N")
-                    {
-                        return Json(new { status = "error", message = apiResponse.Message });
-                    }
-
                     else
                     {
-                        return RedirectToAction("List", "ItemCategory", new { IGRECID = Session["IC_IGRECID"], ItemgroupName = Session["ItemgroupName"] });
+                        return Json(new { success = false, message = "An unexpected status was returned." });
                     }
-
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
-
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
                 }
             }
             catch (Exception ex)
@@ -340,26 +329,20 @@ namespace PSS_CMS.Controllers
 
                     if (apiResponse.Status == "Y")
                     {
-                        return Json(new { status = "success", message = "ItemCategory details edited successfully" });
+                        return Json(new { success = true, message = apiResponse.Message });
                     }
-                    else if (apiResponse.Status == "U")
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
                     {
-                        return Json(new { status = "error", message = apiResponse.Message });
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
-
-                    else if (apiResponse.Status == "N")
-                    {
-                        return Json(new { status = "error", message = apiResponse.Message });
-                    }
-
                     else
                     {
-                        return RedirectToAction("List", "ItemCategory", new { IGRECID = Session["IC_IGRECID"], ItemgroupName = Session["ItemgroupName"] });
+                        return Json(new { success = false, message = "An unexpected status was returned." });
                     }
                 }
                 else
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Request failed.");
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
                 }
             }
             catch (Exception ex)

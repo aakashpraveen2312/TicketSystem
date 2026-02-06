@@ -167,7 +167,7 @@
                                                       @class = "form-control textboxcolors text-right",
                                                       id = "IC_SORTORDER",
                                                       tabindex = "5",
-                                                      type = "number",
+                                                      type = "text",
                                                       placeholder = "0",
                                                   min = "0"
                                                   }
@@ -199,43 +199,91 @@
 
         }
         <!-- Modal -->
-        <div class="modal fade" id="hsnModal" tabindex="-1" role="dialog" aria-labelledby="hsnModalLabel">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
+        <div class="modal fade" id="hsnModal" tabindex="-1" role="dialog" aria-labelledby="hsnModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content shadow-lg">
 
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span>&times;</span>
+                    <!-- Modal Header -->
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title d-flex align-items-center" id="hsnModalLabel">
+                            <i class="fa fa-check-circle mr-2"></i> HSN Confirmation
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4 class="modal-title" id="hsnModalLabel">HSN Confirmation</h4>
                     </div>
 
+                    <!-- Modal Body -->
                     <div class="modal-body">
-                        <div class="table-responsive">
+                        <p class="text-muted mb-3">
+                            Please select the appropriate HSN code from the list below.
+                        </p>
 
-                            <table id="optionsTable" class="table table-bordered table-striped">
-                                <thead>
+                        <div class="table-responsive">
+                            <table id="optionsTable" class="table table-hover table-bordered align-middle">
+                                <thead class="thead-light">
                                     <tr>
-                                        <th>HSN Code</th>
-                                        <th>Description</th>
-                                        <th>CGST (%)</th>
-                                        <th>SGST (%)</th>
-                                        <th>Action</th>
+                                        <th style="width:15%">HSN Code</th>
+                                        <th style="width:10%">Description</th>
+                                        <th class="text-center" style="width:15%">CGST (%)</th>
+                                        <th class="text-center" style="width:15%">SGST (%)</th>
+                                        <th class="text-center" style="width:15%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Dynamically populated rows will go here -->
+                                    <!-- Dynamically populated rows -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
+                    <!-- Modal Footer -->
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                            <i class="fa fa-times"></i> Cancel
+                        </button>
                     </div>
 
                 </div>
             </div>
         </div>
+        <!--<div class="modal fade" id="hsnModal" tabindex="-1" role="dialog" aria-labelledby="hsnModalLabel">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="hsnModalLabel">HSN Confirmation</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="table-responsive">
+
+                        <table id="optionsTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>HSN Code</th>
+                                    <th>Description</th>
+                                    <th>CGST (%)</th>
+                                    <th>SGST (%)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>-->
+        <!-- Dynamically populated rows will go here -->
+        <!--</tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                </div>
+
+            </div>
+        </div>
+    </div>-->
 
 
         <footer>
@@ -435,34 +483,41 @@
 
 
     <script>
-$(function () {
+    $(document).ready(function () {
+        $("#createform").submit(function (event) {
+            event.preventDefault();
 
-    $("#createform").on("submit", function (e) {
-        e.preventDefault();
+            var submitBtn = $("#savebutton");
+            submitBtn.prop("disabled", true);
 
-        const $btn = $("#savebutton");
-        $btn.prop("disabled", true);
+            var formData = new FormData(this);
 
-        $("body").css("pointer-events", "none");
 
-        $.ajax({
-            url: '@Url.Action("Create", "ItemCategory")',
-            type: 'POST',
-            data: new FormData(this),
-            processData: false,
-            contentType: false,
 
-            success: function (response) {
+            // Disable page interaction
+            $("body").css("pointer-events", "none");
 
-                if (response.success) {
+            $.ajax({
+                url: '@Url.Action("Create", "ItemCategory")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        // 🔹 First show processing bar
+                        Swal.fire({
+                            title: "Processing...",
+                            html: "Please wait while we save your changes.",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
 
-                    Swal.fire({
-                        title: "Processing...",
-                        allowOutsideClick: false,
-                        didOpen: () => Swal.showLoading()
-                    });
-
-                    setTimeout(() => {
+                        // ⏳ After small delay, show success popup
+                        setTimeout(function () {
                         Swal.fire({
                             title: "Success!",
                             text: response.message,
@@ -470,40 +525,54 @@ $(function () {
                             showCancelButton: true,
                             confirmButtonText: "Continue",
                             cancelButtonText: "Back to List",
+                            allowOutsideClick: false, // Prevent closing by clicking outside
+                            allowEscapeKey: false, // Prevent closing using Esc key
                             customClass: {
                                 confirmButton: "swal-btn-continue",
                                 cancelButton: "swal-btn-back"
+                            },
+                            didOpen: () => {
+                                // Allow interaction inside the alert only
+                                $(".swal2-container").css("pointer-events", "auto");
                             }
-                        }).then(r => {
-                            r.isConfirmed
-                                ? location.reload()
-                                : window.location.href = '@Url.Action("List", "ItemCategory")';
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            } else {
+                                window.location.href = '@Url.Action("List", "ItemCategory")';
+                            }
                         });
-                    }, 800);
-
-                } else {
-                    Swal.fire("Message", response.message, "info");
-                    reset();
+                        }, 1000); // 1 second delay for "Processing"
+                    } else {
+                        Swal.fire({
+                            title: "Message",
+                            text: response.message,
+                            icon: "info",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    resetButton();
                 }
-            },
-            error: function () {
-                Swal.fire("Error", "Unexpected error occurred", "error");
-                reset();
-            }
+            });
         });
 
-        function reset() {
-            $btn.prop("disabled", false).val("Save");
-            $("body").css("pointer-events", "auto");
+        function resetButton() {
+            $("#savebutton").prop("disabled", false).text("Submit");
+            $("body").css("pointer-events", "auto"); // Re-enable page interaction
         }
     });
-
-});
     </script>
-
-
-
-
 </body>
 </html>
 

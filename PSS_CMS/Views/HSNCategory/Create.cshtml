@@ -92,7 +92,7 @@
                         @Html.LabelFor(model => model.HSNC_CODE, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.HSNC_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", tabindex = "1",autocomplete = "off", placeholder = "Auto-Code", disabled = "disabled" } })
+                        @Html.EditorFor(model => model.HSNC_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", tabindex = "1", autocomplete = "off", placeholder = "Auto-Code", disabled = "disabled" } })
                         @Html.ValidationMessageFor(model => model.HSNC_CODE, "", new { @class = "text-danger" })
 
                     </div>
@@ -112,7 +112,7 @@
                         @Html.LabelFor(model => model.HSNC_SORTORDER, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.HSNC_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", tabindex = "3", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.HSNC_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", tabindex = "3", autocomplete = "off", type = "text" } })
 
                     </div>
                 </div>
@@ -129,7 +129,6 @@
 
                     </div>
                     <div class="col-lg-3 d-flex justify-content-end">
-                        @*<input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />*@
                         <input type="submit"
                                value="Save"
                                class="submitbuttons me-3"
@@ -138,7 +137,7 @@
                     </div>
                 </div>
             </div>
-         
+
         }
 
         <footer>
@@ -208,36 +207,45 @@
 
     @*Toastr for created succesfully*@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-$(function () {
+    $(document).ready(function () {
+        $("#createform").submit(function (event) {
+            event.preventDefault();
 
-    $("#createform").on("submit", function (e) {
-        e.preventDefault();
+            var submitBtn = $("#savebutton");
+            submitBtn.prop("disabled", true);
 
-        const $btn = $("#savebutton");
-        $btn.prop("disabled", true);
+            var formData = new FormData(this);
 
-        $("body").css("pointer-events", "none");
 
-        $.ajax({
-            url: '@Url.Action("Create", "HSNCategory")',
-            type: 'POST',
-            data: new FormData(this),
-            processData: false,
-            contentType: false,
 
-            success: function (response) {
+            // Disable page interaction
+            $("body").css("pointer-events", "none");
 
-                if (response.success) {
+            $.ajax({
+                url: '@Url.Action("Create", "HSNCategory")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        // 🔹 First show processing bar
+                        Swal.fire({
+                            title: "Processing...",
+                            html: "Please wait while we save your changes.",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
 
-                    Swal.fire({
-                        title: "Processing...",
-                        allowOutsideClick: false,
-                        didOpen: () => Swal.showLoading()
-                    });
-
-                    setTimeout(() => {
+                        // ⏳ After small delay, show success popup
+                        setTimeout(function () {
                         Swal.fire({
                             title: "Success!",
                             text: response.message,
@@ -245,35 +253,53 @@ $(function () {
                             showCancelButton: true,
                             confirmButtonText: "Continue",
                             cancelButtonText: "Back to List",
+                            allowOutsideClick: false, // Prevent closing by clicking outside
+                            allowEscapeKey: false, // Prevent closing using Esc key
                             customClass: {
                                 confirmButton: "swal-btn-continue",
                                 cancelButton: "swal-btn-back"
+                            },
+                            didOpen: () => {
+                                // Allow interaction inside the alert only
+                                $(".swal2-container").css("pointer-events", "auto");
                             }
-                        }).then(r => {
-                            r.isConfirmed
-                                ? location.reload()
-                                : window.location.href = '@Url.Action("List","HSNCategory")';
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            } else {
+                                window.location.href = '@Url.Action("List", "HSNCategory")';
+                            }
                         });
-                    }, 800);
-
-                } else {
-                    Swal.fire("Message", response.message, "info");
-                    reset();
+                        }, 1000); // 1 second delay for "Processing"
+                    } else {
+                        Swal.fire({
+                            title: "Message",
+                            text: response.message,
+                            icon: "info",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    resetButton();
                 }
-            },
-            error: function () {
-                Swal.fire("Error", "Unexpected error occurred", "error");
-                reset();
-            }
+            });
         });
 
-        function reset() {
-            $btn.prop("disabled", false).val("Save");
-            $("body").css("pointer-events", "auto");
+        function resetButton() {
+            $("#savebutton").prop("disabled", false).text("Submit");
+            $("body").css("pointer-events", "auto"); // Re-enable page interaction
         }
     });
-
-});
     </script>
 </body>
 </html>

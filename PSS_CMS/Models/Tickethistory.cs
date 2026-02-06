@@ -91,6 +91,10 @@ namespace PSS_CMS.Models
         public string CU_NAME { get; set; }
         public string CU_MOBILENO { get; set; }
         public int P_RECID { get; set; }
+        public int IG_RECID { get; set; }
+        public string IG_DESCRIPTION { get; set; } 
+        public int IC_RECID { get; set; }
+        public string IC_DESCRIPTION { get; set; }
         public int CU_RECID { get; set; }
         public string P_SORTORDER { get; set; }
         public string P_DISABLE { get; set; }

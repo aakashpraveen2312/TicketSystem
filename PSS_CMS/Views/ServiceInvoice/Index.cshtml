@@ -194,7 +194,7 @@
         else if (o.TC_SISTATUS == "IG")
         {
             // Update Payment icon
-            var editUrl = Url.Action("UpdatePayment", "ServiceInvoice", new { TC_RECID = o.TC_RECID });
+            var editUrl = Url.Action("UpdatePayment", "ServiceInvoice", new { TC_RECID = o.TC_RECID,Amount=o.TotalNetAmount });
             var editIconHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
             linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Update Payment'>{editIconHtml}</a>";
         }

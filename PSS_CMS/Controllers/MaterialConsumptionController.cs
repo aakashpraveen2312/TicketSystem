@@ -91,6 +91,7 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> Create()
         {
+            await ItemGroupCombo();
             return View();
         }
         [HttpPost]
@@ -104,7 +105,7 @@ namespace PSS_CMS.Controllers
 
                 var content = $@"{{           
             ""tM_UOM"": ""{materialcategory.tM_UOM}"",           
-            ""tM_TYPE"": ""{materialcategory.tM_TYPE}"",           
+            ""tM_TYPE"": ""{Session["Type"]}"",           
             ""tM_QUANTITY"": ""{materialcategory.tM_QUANTITY}"",           
             ""tM_PRICE"": ""{materialcategory.tM_PRICE}"",                    
             ""tM_DISCOUNT"": ""{materialcategory.tM_DISCOUNT}"",                    
@@ -114,7 +115,8 @@ namespace PSS_CMS.Controllers
             ""tM_NETAMOUNT"": ""{materialcategory.tM_NETAMOUNT}"",                    
             ""tM_TCRECID"": ""{Session["TC_RECID"]}"",                    
             ""tM_CRECID"": ""{Session["CompanyID"]}"",                    
-            ""tM_MCRECID"": ""{0}"",                    
+            ""tM_MCRECID"": ""{materialcategory.SelectedItemCategory}"",                    
+            ""tM_MGRECID"": ""{materialcategory.SelectedItemGroup}"",                    
             ""tM_MRECID"": ""{materialcategory.SelectedMaterial}"",                    
             ""tM_SORTORDER"": ""{materialcategory.tM_SORTORDER}"",                    
             ""tM_BILLABLE"": ""{(materialcategory.tM_BILLABLE ? "Y" : "N")}"" ,               
@@ -180,13 +182,16 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
-        public async Task<ActionResult> Edit(int? MACRecid, string MACNAME,int? TICRECID)
+        public async Task<ActionResult> Edit(int? MACRecid, string MACNAME,int? TICRECID,int? TM_MCRECID,int? TM_MRECID,int? TM_MGRECID)
         {
             Session["MACRecid"] = MACRecid;
             Session["MACNAME"] = MACNAME;
             Session["TICRECID"] = TICRECID;
+            Session["TM_MCRECID"] = TM_MCRECID;
+            Session["TM_MRECID"] = TM_MRECID;
+            Session["TM_MGRECID"] = TM_MGRECID;
             string WEBURLGETBYID = ConfigurationManager.AppSettings["MATERIALCONSUMPTIONBYID"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             Materialconsumption materialconsumption = null;
 
@@ -228,7 +233,7 @@ namespace PSS_CMS.Controllers
             return View(materialconsumption);
         }
         [HttpPost]
-        public async Task<ActionResult> Edit(Materialconsumption materialcategory)
+        public async Task<ActionResult>Edit(Materialconsumption materialcategory)
         {
             try
             {
@@ -238,8 +243,8 @@ namespace PSS_CMS.Controllers
 
                 var content = $@"{{           
             ""tM_RECID"": ""{Session["MACRecid"]}"",           
-            ""tM_UOM"": ""{materialcategory.tM_UOM}"", 
-            ""tM_TYPE"": ""{materialcategory.tM_TYPE}"", 
+            ""tM_UOM"": ""{materialcategory.tM_UOM}"",           
+            ""tM_TYPE"": ""{Session["Type"]}"",           
             ""tM_QUANTITY"": ""{materialcategory.tM_QUANTITY}"",           
             ""tM_PRICE"": ""{materialcategory.tM_PRICE}"",                    
             ""tM_DISCOUNT"": ""{materialcategory.tM_DISCOUNT}"",                    
@@ -247,14 +252,16 @@ namespace PSS_CMS.Controllers
             ""tM_CGST"": ""{materialcategory.tM_CGST}"",                    
             ""tM_SGST"": ""{materialcategory.tM_SGST}"",                    
             ""tM_NETAMOUNT"": ""{materialcategory.tM_NETAMOUNT}"",                    
-            ""tM_TCRECID"": ""{Session["TICRECID"]}"",                    
+            ""tM_TCRECID"": ""{Session["TC_RECID"]}"",                    
             ""tM_CRECID"": ""{Session["CompanyID"]}"",                    
-            ""tM_MCRECID"": ""{0}"",                    
-            ""tM_MRECID"": ""{materialcategory.M_RECID}"",                    
+            ""tM_MCRECID"": ""{materialcategory.tM_MCRECID}"",                    
+            ""tM_MGRECID"": ""{materialcategory.tM_MGRECID}"",                    
+            ""tM_MRECID"": ""{materialcategory.tM_MRECID}"",                    
             ""tM_SORTORDER"": ""{materialcategory.tM_SORTORDER}"",                    
             ""tM_BILLABLE"": ""{(materialcategory.tM_BILLABLE ? "Y" : "N")}"" ,               
             ""tM_DISABLE"": ""{"N"}""                
         }}";
+
                 // if any error came kindly replace before
                 //before  ""tM_MRECID"": ""{materialcategory.tM_MRECID}"",  
                 //after  ""tM_MRECID"": ""{materialcategory.M_RECID}"",  
@@ -379,112 +386,260 @@ namespace PSS_CMS.Controllers
 
         }
 
-        public async Task<JsonResult> ComboMaterial()
-        {
-            List<Materialconsumption> materialList = new List<Materialconsumption>();
+        //public async Task<JsonResult> ComboMaterial()
+        //{
+        //    List<Materialconsumption> materialList = new List<Materialconsumption>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["MATERIALTYPECOMBO"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"]?.ToString();
-            string cmpRecId = Session["CompanyID"]?.ToString();
-            string strparams = "cmprecid=" + cmpRecId + "&type=" + Session["Type"] + "&productrecid=" + Session["P_RECID"];
-            string url = webUrlGet + "?" + strparams;
+        //    string webUrlGet = ConfigurationManager.AppSettings["MATERIALTYPECOMBO"];
+        //    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+        //    string APIKey = Session["APIKEY"]?.ToString();
+        //    string cmpRecId = Session["CompanyID"]?.ToString();
+        //    string strparams = "cmprecid=" + cmpRecId + "&type=" + Session["Type"] + "&productrecid=" + Session["P_RECID"];
+        //    string url = webUrlGet + "?" + strparams;
 
-            try
-            {
-                using (HttpClientHandler handler = new HttpClientHandler())
-                {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+        //    try
+        //    {
+        //        using (HttpClientHandler handler = new HttpClientHandler())
+        //        {
+        //            handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-                    using (HttpClient client = new HttpClient(handler))
-                    {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            using (HttpClient client = new HttpClient(handler))
+        //            {
+        //                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+        //                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                        var response = await client.GetAsync(url);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
+        //                var response = await client.GetAsync(url);
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    var jsonString = await response.Content.ReadAsStringAsync();
+        //                    var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
 
-                            if (rootObjects?.Data != null)
-                            {
-                                materialList = rootObjects.Data.Select(m => new Materialconsumption
-                                {
-                                    M_RECID = m.M_RECID,
-                                    M_NAME = m.M_NAME,
-                                    M_UOM = m.M_UOM,
-                                    M_QUANTITY = m.M_QUANTITY,
-                                    M_PRICE = m.M_PRICE,
-                                    M_DISCOUNT = m.M_DISCOUNT,
-                                    M_TOTALAMOUNT = m.M_TOTALAMOUNT,
-                                    M_CGST = m.M_CGST,
-                                    M_SGST = m.M_SGST,
-                                    M_NETAMOUNT = m.M_NETAMOUNT,
-                                    M_SORTORDER = m.M_SORTORDER,
-                                    M_TYPE = m.M_TYPE
-                                }).ToList();
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
-            }
+        //                    if (rootObjects?.Data != null)
+        //                    {
+        //                        materialList = rootObjects.Data.Select(m => new Materialconsumption
+        //                        {
+        //                            M_RECID = m.M_RECID,
+        //                            M_NAME = m.M_NAME,
+        //                            M_UOM = m.M_UOM,
+        //                            M_QUANTITY = m.M_QUANTITY,
+        //                            M_PRICE = m.M_PRICE,
+        //                            M_DISCOUNT = m.M_DISCOUNT,
+        //                            M_TOTALAMOUNT = m.M_TOTALAMOUNT,
+        //                            M_CGST = m.M_CGST,
+        //                            M_SGST = m.M_SGST,
+        //                            M_NETAMOUNT = m.M_NETAMOUNT,
+        //                            M_SORTORDER = m.M_SORTORDER,
+        //                            M_TYPE = m.M_TYPE
+        //                        }).ToList();
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+        //    }
 
-            return Json(materialList, JsonRequestBehavior.AllowGet);
-        }
+        //    return Json(materialList, JsonRequestBehavior.AllowGet);
+        //}
 
 
-        public async Task<JsonResult> ComboMaterialEdit()
-        {
-            List<Materialconsumption> MaterialList = new List<Materialconsumption>(); // Use your full model here
+        //public async Task<JsonResult> ComboMaterialEdit()
+        //{
+        //    List<Materialconsumption> MaterialList = new List<Materialconsumption>(); // Use your full model here
 
-            string webUrlGet = ConfigurationManager.AppSettings["MATERIALTYPECOMBO"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"]?.ToString();
-            string cmpRecId = Session["CompanyID"]?.ToString();
-            string strparams = "cmprecid=" + cmpRecId + "&type=" + Session["Type"] + "&productrecid=" + Session["P_RECID"];
-            string url = webUrlGet + "?" + strparams;
+        //    string webUrlGet = ConfigurationManager.AppSettings["MATERIALTYPECOMBO"];
+        //    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+        //    string APIKey = Session["APIKEY"]?.ToString();
+        //    string cmpRecId = Session["CompanyID"]?.ToString();
+        //    string strparams = "cmprecid=" + cmpRecId + "&type=" + Session["Type"] + "&productrecid=" + Session["P_RECID"];
+        //    string url = webUrlGet + "?" + strparams;
 
-            try
-            {
-                using (HttpClientHandler handler = new HttpClientHandler())
-                {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+        //    try
+        //    {
+        //        using (HttpClientHandler handler = new HttpClientHandler())
+        //        {
+        //            handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-                    using (HttpClient client = new HttpClient(handler))
-                    {
-                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            using (HttpClient client = new HttpClient(handler))
+        //            {
+        //                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+        //                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                        var response = await client.GetAsync(url);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
+        //                var response = await client.GetAsync(url);
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    var jsonString = await response.Content.ReadAsStringAsync();
+        //                    var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
 
-                            if (rootObjects?.Data != null)
-                            {
-                                MaterialList = rootObjects.Data.ToList(); // Move assignment to outer scope
+        //                    if (rootObjects?.Data != null)
+        //                    {
+        //                        MaterialList = rootObjects.Data.ToList(); // Move assignment to outer scope
                                
-                            }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+        //    }
+
+        //    return Json(MaterialList, JsonRequestBehavior.AllowGet);
+        //}
+
+
+        public async Task<ActionResult> ItemGroupCombo()
+        {
+            var viewModel = new Materialconsumption();
+            List<Materialconsumption> itemgroup = new List<Materialconsumption>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["ITEMGROUPCOMBO"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+
+            if (Session["APIKEY"] == null || Session["CompanyID"] == null)
+            {
+                ModelState.AddModelError(string.Empty, "Session expired. Please login again.");
+                return View(viewModel);
+            }
+
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "companyId=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept
+                            .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        HttpResponseMessage response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects =
+                                JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
+
+                            itemgroup = rootObjects?.Data ?? new List<Materialconsumption>();
+
+                            viewModel.ItemGroups = itemgroup.Select(item => new SelectListItem
+                            {
+                                Value = item.IG_RECID.ToString(),
+                                Text = item.IG_DESCRIPTION
+                            }).ToList();
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty,
+                                "Error: " + response.ReasonPhrase);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+                ModelState.AddModelError(string.Empty,
+                    "Exception occurred: " + ex.Message);
             }
 
-            return Json(MaterialList, JsonRequestBehavior.AllowGet);
+            return View(viewModel);
+        }
+
+        public async Task<ActionResult> ItemGroupCategoryCombo(int? Grouprecid)
+        {
+            List<Materialconsumption> itemcategory = new List<Materialconsumption>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["ITEMCATEGORYCOMBO"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "companyId=" + Session["CompanyID"] + "&GroupRecid=" + Grouprecid;
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (s, c, ch, e) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
+                            itemcategory = rootObjects?.Data ?? new List<Materialconsumption>();
+
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return Json(itemcategory, JsonRequestBehavior.AllowGet);
         }
 
 
+
+        public async Task<ActionResult> ItemCombo(int? Categoryrecid)
+        {
+            List<Materialconsumption> itemcategory = new List<Materialconsumption>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["ITEMCOMBO"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "companyId=" + Session["CompanyID"] + "&CategoryRecid=" + Categoryrecid;
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (s, c, ch, e) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<MaterialconsumptionRootObject>(jsonString);
+                            itemcategory = rootObjects?.Data ?? new List<Materialconsumption>();
+
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return Json(itemcategory, JsonRequestBehavior.AllowGet);
+        }
     }
 }

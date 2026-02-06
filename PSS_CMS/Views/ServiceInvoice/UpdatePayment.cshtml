@@ -191,7 +191,7 @@
                         @Html.LabelFor(model => model.TC_TotalAmount, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_TotalAmount, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.TC_TotalAmount, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",Value= @ViewBag.Amount, @readonly = "readonly" } })
                     </div>
                 </div>
 

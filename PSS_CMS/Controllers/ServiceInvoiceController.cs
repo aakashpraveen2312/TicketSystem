@@ -249,8 +249,9 @@ namespace PSS_CMS.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> UpdatePayment(int? TC_Recid)
+        public async Task<ActionResult> UpdatePayment(int? TC_Recid, decimal Amount)
         {
+            ViewBag.Amount = Amount;
             Session["tC_RECID"] = TC_Recid;
             string WEBURLGETBYID = ConfigurationManager.AppSettings["GETPAYMENT"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -299,6 +300,7 @@ namespace PSS_CMS.Controllers
           [HttpGet]
         public async Task<ActionResult> UpdatePaymentView(int? TC_Recid)
         {
+           
             Session["tC_RECID"] = TC_Recid;
             string WEBURLGETBYID = ConfigurationManager.AppSettings["GETPAYMENT"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];

@@ -53,6 +53,10 @@
         select#tM_MCRECID, select#MaterialDropdown {
             font-size: 15px;
         }
+        input#tM_BILLABLE {
+            height: 20px;
+            width: 20px;
+        }
     </style>
 </head>
 
@@ -83,136 +87,156 @@
         </div>
         @using (Html.BeginForm("Edit", "MaterialConsumption", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
         {
-    <div class="create ms-4 me-2 mt-3">
-        <div class="row mb-3">
+            <div class="create ms-4 me-2 mt-3">
+                <div class="row mb-3">
 
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.MATERIAL, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.M_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-                @Html.HiddenFor(model => model.M_RECID)
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.ITEMGROUP, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.IG_DESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.HiddenFor(model => model.tM_MGRECID)
 
-                @*@Html.HiddenFor(model => model.M_RECID) this rec id is mentined in the matcon line 253*@
+                        @*@Html.HiddenFor(model => model.M_RECID) this rec id is mentined in the matcon line 253*@
 
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_UOM, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_UOM, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.ITEMCATEGORY, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.IC_DESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.HiddenFor(model => model.tM_MCRECID)
+                    </div>
+                </div>
+                <div class="row mb-3">
 
-            </div>
-        </div>
-        <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.MATERIAL, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.I_DESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.HiddenFor(model => model.tM_MRECID)
 
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_PRICE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @*@Html.HiddenFor(model => model.M_RECID) this rec id is mentined in the matcon line 253*@
 
-            </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_UOM, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_UOM, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_QUANTITY, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
 
-            </div>
-        </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_PRICE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_QUANTITY, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()",type="text" } })
+
+                    </div>
+                </div>
 
 
-        <div class="row mb-3">
+                <div class="row mb-3">
 
-            
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_SGST, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_CGST, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_SGST, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly",type="text" } })
 
-            </div>
-        </div>
-         
-        <div class="row mb-3">
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_CGST, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly",type="text" } })
 
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_DISCOUNT, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
+                    </div>
+                </div>
 
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_TOTALAMOUNT, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                <div class="row mb-3">
 
-            </div>
-        </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_DISCOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()",type="text" } })
 
-        <div class="row mb-3">
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_TOTALAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_NETAMOUNT, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_NETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                    </div>
+                </div>
 
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_TYPE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_TYPE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-            </div>
-           
-        </div>
-        <div class="row mb-3">
+                <div class="row mb-3">
 
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_SORTORDER, new { @class = "labels" })
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_NETAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_NETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.tM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_TYPE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_TYPE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                    </div>
 
-            </div>
+                </div>
+                <div class="row mb-3">
 
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.tM_BILLABLE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.CheckBoxFor(model => model.tM_BILLABLE, new { @class = "form-check-input" })
-            </div>
-        </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_SORTORDER, new { @class = "labels" })
 
-        <div class="row mb-3">
-            <div class="col-lg-2">
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off",type="text" } })
 
-            </div>
-            <div class="col-lg-3 d-flex justify-content-end">
+                    </div>
 
-            </div>
-            <div class="col-lg-2">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_BILLABLE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.CheckBoxFor(model => model.tM_BILLABLE, new { @class = "form-check-input" })
+                    </div>
+                </div>
 
+                <div class="row mb-3">
+                    <div class="col-lg-2">
+
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+
+                    </div>
+                    <div class="col-lg-2">
+
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "MaterialConsumption", new { })'" />
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-3 d-flex justify-content-end">
-                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "MaterialConsumption", new { })'" />
-            </div>
-        </div>
-    </div>
         }
         <footer>
             <div class="footer">
@@ -284,97 +308,169 @@
     </script>
     @*Toastr for created succesfully*@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- jQuery CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
+
     $(document).ready(function () {
+
         $("#editform").submit(function (event) {
+
             event.preventDefault();
 
             var submitBtn = $("#savebutton");
+
             submitBtn.prop("disabled", true);
 
             var formData = new FormData(this);
 
             // Disable page interaction
+
             $("body").css("pointer-events", "none");
 
             $.ajax({
+
                 url: '@Url.Action("Edit", "MaterialConsumption")',
+
                 type: 'POST',
+
                 data: formData,
+
                 processData: false,
+
                 contentType: false,
+
                 success: function (response) {
+
                     if (response.success) {
+
                         // 🔹 First show processing bar
+
                         Swal.fire({
+
                             title: "Processing...",
+
                             html: "Please wait while we save your changes.",
+
                             allowOutsideClick: false,
+
                             allowEscapeKey: false,
+
                             didOpen: () => {
+
                                 Swal.showLoading();
+
                             }
+
                         });
 
                         // ⏳ After small delay, show success popup
+
                         setTimeout(function () {
+
                         Swal.fire({
+
                             title: "Success!",
+
                             text: response.message,
+
                             icon: "success",
+
                             confirmButtonText: "Ok",
+
                             allowOutsideClick: false,
+
                             allowEscapeKey: false,
+
                             customClass: {
+
                                 confirmButton: "swal-btn-continue",
+
                             },
+
                             didOpen: () => {
+
                                 $(".swal2-container").css("pointer-events", "auto");
+
                             }
+
                         }).then((result) => {
+
                             if (result.isConfirmed) {
+
                                 window.location.href = '@Url.Action("List", "MaterialConsumption")';
+
                             } else {
+
                                  window.location.href = '@Url.Action("Create", "MaterialConsumption")';
+
                             }
+
                         });
+
                     }, 1000); // 1 second delay for "Processing"
+
                     } else {
+
                         Swal.fire({
+
                             title: "Message",
+
                             text: response.message,
+
                             icon: "info",
+
                             allowOutsideClick: false,
+
                             allowEscapeKey: false
+
                         });
+
                         resetButton();
+
                     }
+
                 },
+
                 error: function () {
+
                     Swal.fire({
+
                         title: "Error!",
+
                         text: "An unexpected error occurred.",
+
                         icon: "error",
+
                         allowOutsideClick: false,
+
                         allowEscapeKey: false
+
                     });
+
                     resetButton();
+
                 }
+
             });
+
         });
 
         function resetButton() {
+
             $("#savebutton").prop("disabled", false).text("Submit");
+
             $("body").css("pointer-events", "auto");
+
         }
+
     });
     </script>
 
-    <!-- Loadin of material and display the values in the Input box -->
-  
 
+
+
+
+    <!-- Loadin of material and display the values in the Input box -->
     <!-- Net Amount Calculation -->
     <script>
         function Netamount() {

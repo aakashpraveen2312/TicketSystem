@@ -92,7 +92,7 @@
             .RenderValueAs(o =>
             {
 
-                var Editurl = Url.Action("Edit", "MaterialConsumption", new { MACRecid = o.tM_RECID, MACNAME = o.TM_MNAME, TICRECID = o.tM_TCRECID }, null);
+                var Editurl = Url.Action("Edit", "MaterialConsumption", new { MACRecid = o.tM_RECID, MACNAME = o.TM_MNAME, TICRECID = o.tM_TCRECID, TM_MGRECID=o.tM_MGRECID, TM_MRECID=o.tM_MRECID, TM_MCRECID=o.tM_MCRECID }, null);
                 var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 

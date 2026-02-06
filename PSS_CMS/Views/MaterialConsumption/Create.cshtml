@@ -38,7 +38,7 @@
             font-weight: bold;
         }
 
- select#MATERIAL {
+        select#MATERIAL {
             display: block;
             width: 100%;
             height: 34px;
@@ -58,11 +58,15 @@
             transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
             transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
         }
-        select#SelectedCategory, select#MaterialDropdown {
+        select#MaterialDropdown, select#itemGroupDropdown, select#itemCategoryDropdown {
             font-size: 15px;
         }
 
-
+        input#tM_BILLABLE {
+            height: 20px;
+            width: 20px;
+        }
+       
     </style>
 </head>
 
@@ -97,12 +101,33 @@
             <div class="create ms-4 me-2 mt-3">
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.ITEMGROUP, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.DropDownListFor(model => model.SelectedItemGroup, Model.ItemGroups, "Select an Item Group",
+ new { id = "itemGroupDropdown", @class = "form-select textboxcolors", tabindex = "1" })
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.ITEMCATEGORY, new { @class = "labels" })
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.DropDownListFor(model => model.SelectedItemCategory, Model.ItemCategories, "Select an Item Category",
+     new { id = "itemCategoryDropdown", @class = "form-select textboxcolors", tabindex = "2" })
+                    </div>
+
+
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.MATERIAL, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.DropDownList("SelectedMaterial",
                             new List<SelectListItem> {
-                                new SelectListItem { Text = "Loading...", Value = "" }
+                                new SelectListItem { Text = "Select an Item", Value = "" }
                             },
                             new { @class = "form-select textboxcolors", id = "MaterialDropdown" })
                     </div>
@@ -128,7 +153,7 @@
                         @Html.LabelFor(model => model.tM_QUANTITY, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
+                        @Html.EditorFor(model => model.tM_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()", type = "text" } })
 
                     </div>
                 </div>
@@ -140,14 +165,14 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @*@Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
-                        @Html.TextBoxFor(model => model.tM_SGST, "{0:0.00}",new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "formatPrice(this)", placeholder = "0.00", @readonly = "readonly" })
+                        @Html.TextBoxFor(model => model.tM_SGST, "{0:0.00}", new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "formatPrice(this)", placeholder = "0.00", @readonly = "readonly" })
 
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.tM_CGST, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.tM_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly", type = "text" } })
 
                     </div>
                 </div>
@@ -157,7 +182,7 @@
                         @Html.LabelFor(model => model.tM_DISCOUNT, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()" } })
+                        @Html.EditorFor(model => model.tM_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()", type = "text" } })
 
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
@@ -179,11 +204,11 @@
 
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_TYPE, new { @class = "labels" })
+                        @Html.LabelFor(model => model.tM_SORTORDER, new { @class = "labels" })
 
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_TYPE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.tM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
 
                     </div>
                 </div>
@@ -192,11 +217,11 @@
 
 
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_SORTORDER, new { @class = "labels" })
+                        @*@Html.LabelFor(model => model.tM_SORTORDER, new { @class = "labels" })*@
 
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.tM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                        @*@Html.EditorFor(model => model.tM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })*@
 
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
@@ -391,52 +416,38 @@
     });
     </script>
     <!-- Loadin of material and display the values in the Input box -->
+
     <script>
-    var materials = []; // Global variable to store materials
-
-    $(document).ready(function () {
-        $.ajax({
-            url: '@Url.Action("ComboMaterial", "MaterialConsumption")',
-            type: 'GET',
-            dataType: 'json',
-            success: function (data) {
-                materials = data; // Store the data globally
-
-                var $dropdown = $('#MaterialDropdown');
-                $dropdown.empty();
-                $dropdown.append($('<option>').text('Select Material').attr('value', ''));
-
-                $.each(materials, function (i, item) {
-                    $dropdown.append($('<option>').text(item.M_NAME).attr('value', item.M_RECID));
-                });
-            },
-            error: function (xhr, status, error) {
-                console.log("Error loading materials: " + error);
-            }
-        });
-
-        // Handle dropdown change
         $('#MaterialDropdown').on('change', function () {
+
             var selectedId = $(this).val();
-            var selectedMaterial = materials.find(m => m.M_RECID == selectedId);
+
+            // 🔥 FIX 1: Correct key
+            var selectedMaterial = materials.find(m => m.I_RECID == selectedId);
 
             if (selectedMaterial) {
-                $('#tM_UOM').val(selectedMaterial.M_UOM);
-                $('#tM_PRICE').val(selectedMaterial.M_PRICE);
-                $('#tM_QUANTITY').val(selectedMaterial.M_QUANTITY);
-                $('#tM_DISCOUNT').val(selectedMaterial.M_DISCOUNT);
-                $('#tM_TOTALAMOUNT').val(selectedMaterial.M_TOTALAMOUNT);
-                $('#tM_CGST').val(selectedMaterial.M_CGST);
-                $('#tM_SGST').val(selectedMaterial.M_SGST);
-                $('#tM_NETAMOUNT').val(selectedMaterial.M_NETAMOUNT);
-                $('#tM_TYPE').val(selectedMaterial.M_TYPE);
-                $('#tM_SORTORDER').val(selectedMaterial.M_SORTORDER);
+
+                // 🔥 FIX 2: Correct property names
+                $('#tM_UOM').val(selectedMaterial.I_CUOM);
+                $('#tM_PRICE').val(selectedMaterial.I_PRICE);
+                $('#tM_QUANTITY').val(selectedMaterial.I_SMQUANTITY);
+                $('#tM_DISCOUNT').val(selectedMaterial.I_SMDISCOUNT);
+                $('#tM_TOTALAMOUNT').val(selectedMaterial.I_SMTOTALAMOUNT);
+                $('#tM_CGST').val(selectedMaterial.I_CGST);
+                $('#tM_SGST').val(selectedMaterial.I_SGST);
+                $('#tM_NETAMOUNT').val(selectedMaterial.I_SMNETAMOUNT);
+                $('#tM_TYPE').val(selectedMaterial.I_TYPE);
+                $('#tM_SORTORDER').val(selectedMaterial.I_SORTORDER);
+
             } else {
-                // Clear all fields if nothing is selected
-                $('#tM_UOM, #tM_PRICE, #tM_QUANTITY, #tM_DISCOUNT, #tM_TOTALAMOUNT, #tM_CGST, #tM_SGST, #tM_NETAMOUNT, #tM_TYPE, #tM_SORTORDER').val('');
+                clearMaterialFields();
             }
         });
-    });
+
+        function clearMaterialFields() {
+            $('#tM_UOM, #tM_PRICE, #tM_QUANTITY, #tM_DISCOUNT, #tM_TOTALAMOUNT, #tM_CGST, #tM_SGST, #tM_NETAMOUNT, #tM_TYPE, #tM_SORTORDER')
+                .val('');
+        }
     </script>
 
 
@@ -462,7 +473,7 @@
             /* Net Amount*/
 
             var NetAmount = TotalAmount + SGSTamount + CGSTamount
-            Totalnetamount = parseFloat(NetAmount).toFixed(3);
+            Totalnetamount = parseFloat(NetAmount).toFixed(2);
             document.getElementById("tM_NETAMOUNT").value = Totalnetamount;
         }
     </script>
@@ -493,6 +504,101 @@
                 input.value = parseInt(integerPart, 10) + "." + decimalPart;
             }
         }
+    </script>
+
+
+
+    @*Item Category function call*@
+    <script>
+    $(document).ready(function () {
+
+        $('#itemGroupDropdown').on('change', function () {
+
+            var grecid = $(this).val();
+
+            if (grecid) {
+                $.ajax({
+                    url: '@Url.Action("ItemGroupCategoryCombo", "MaterialConsumption")',
+                    type: 'GET',
+                    data: { Grouprecid: grecid },
+                    success: function (data) {
+                        console.log("Category data:", data);
+                        var categoryDropdown = $('#itemCategoryDropdown');
+                        categoryDropdown.empty();
+                        categoryDropdown.append('<option value="">Select an Item Category</option>');
+
+                        $.each(data, function (index, item) {
+                            categoryDropdown.append(
+                                $('<option>', {
+                                    value: item.IC_RECID,
+                                    text: item.IC_DESCRIPTION
+                                })
+                            );
+                        });
+                    },
+                    error: function () {
+                        alert('Error loading categories.');
+                    }
+                });
+            } else {
+                $('#itemCategoryDropdown').empty()
+                    .append('<option value="">Select an Item Category</option>');
+            }
+
+        });
+
+    });
+    </script>
+    @*Item dropdown data loading*@
+    <script>
+    var materials = []; // store items globally
+
+    $('#itemCategoryDropdown').on('change', function () {
+
+        var categoryRecId = $(this).val();
+        var materialDropdown = $('#MaterialDropdown');
+
+        materialDropdown.empty();
+        materials = [];
+
+        if (!categoryRecId) {
+            materialDropdown.append('<option value="">Select Item Category first</option>');
+            clearMaterialFields();
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("ItemCombo", "MaterialConsumption")',
+            type: 'GET',
+            data: { Categoryrecid: categoryRecId },
+            success: function (data) {
+                console.log("Item data:", data);
+                if (data && data.length > 0) {
+
+                    materialDropdown.append('<option value="">Select an Item</option>');
+
+                    materials = data; // store full object list
+
+                    $.each(data, function (i, item) {
+                        materialDropdown.append(
+                            $('<option>', {
+                                value: item.I_RECID,
+                                text: item.I_DESCRIPTION
+                            })
+                        );
+                    });
+                }
+                else {
+                    materialDropdown.append('<option disabled>No items are available</option>');
+                    clearMaterialFields();
+                }
+            },
+            error: function () {
+                materialDropdown.append('<option disabled>Error loading items</option>');
+                clearMaterialFields();
+            }
+        });
+    });
     </script>
 
 </body>

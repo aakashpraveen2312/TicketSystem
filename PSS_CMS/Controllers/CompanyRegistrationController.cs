@@ -27,7 +27,7 @@ namespace PSS_CMS.Controllers
 
             string registrationUrl = ConfigurationManager.AppSettings["COMPANYREGISTRATION"];
             string authKey = ConfigurationManager.AppSettings["AuthKey"];
-            string emailUrl = ConfigurationManager.AppSettings["EMAILURL"];
+            //string emailUrl = ConfigurationManager.AppSettings["EMAILURL"];
 
             var companyPayload = new
             {
@@ -51,7 +51,7 @@ namespace PSS_CMS.Controllers
             {
                 var requestContent = new StringContent(JsonConvert.SerializeObject(companyPayload), Encoding.UTF8, "application/json");
 
-                var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true };
+                 var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true };
                 using (var client = new HttpClient(handler))
                 {
                     client.DefaultRequestHeaders.Add("Authorization", authKey);
@@ -62,30 +62,15 @@ namespace PSS_CMS.Controllers
 
                     var responseData = JsonConvert.DeserializeObject<Companies>(await response.Content.ReadAsStringAsync());
 
-                    if (responseData.Status == "Y")
+                    string Status = responseData.Status;
+                    if (Status == "Y")
                     {
-                        var emailPayload = new
-                        {
-                            emailID = cmp.C_EMAILID,
-                            name = cmp.C_APPUSERNAME,
-                            password = responseData.Password,
-                            Usercode = responseData.Usercode,
-                            domain = cmp.C_Domain
-                        };
+                        return Json(new { status = "success", message = responseData.Message });
 
-                        var emailContent = new StringContent(JsonConvert.SerializeObject(emailPayload), Encoding.UTF8, "application/json");
-
-                        using (var emailClient = new HttpClient())
-                        {
-                            emailClient.DefaultRequestHeaders.Add("Authorization", authKey);
-                            var emailResponse = await emailClient.PostAsync(emailUrl, emailContent);
-
-                            bool success = emailResponse.IsSuccessStatusCode;
-                            return Json(new { success, message = responseData.Message });
-                        }
                     }
-
-                    return Json(new { success = false, message = responseData.Message });
+                    
+                        return Json(new { success = false, message = responseData.Message });
+                   
                 }
             }
             catch (Exception ex)

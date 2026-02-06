@@ -111,15 +111,9 @@ namespace PSS_CMS.Controllers
         {
 
             string IC_IGRECID = Session["IC_IGRECID"].ToString();
-
-
-
             //string Name = GlobalVariables.IC_DESCRIPTION;
             string companyId = "";
             companyId = Session["CompanyId"].ToString();
-
-
-
             try
             {
 
@@ -281,7 +275,6 @@ namespace PSS_CMS.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(ItemCategory itemCategory)
         {
 

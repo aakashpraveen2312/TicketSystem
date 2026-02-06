@@ -121,18 +121,34 @@
                         </li>
                        
                         <li class="nav-link">
-                            <a href="@Url.Action("List", "ProjectMaster")">
+                            @*<a href="@Url.Action("List", "ProjectMaster")">*@
+                            <a href="@Url.Action("CustomerList", "Contract")">
                                 <i class='bi bi-bag-check' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
+                                <span class="text nav-text" style="margin-left:15px">Contract and Customer</span>
                             </a>
                         </li>
                     }
                     @if ((Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa") && (Session["MaterialConsumptionFlag"] != null && Session["MaterialConsumptionFlag"].ToString().ToLower() == "y"))
                     {
-                        <li class="nav-link">
+                        @*<li class="nav-link">
                             <a href="@Url.Action("List", "MaterialCategory")">
                                 <i class='bx bxs-category' style="font-size:24px"></i>
                                 <span class="text nav-text" style="margin-left:15px">Item Category</span>
+                            </a>
+                        </li>*@
+                    
+                        <li class="nav-link">
+                            <a href="@Url.Action("List", "HSNCategory")">
+                                <i class='bx bx-book' style="font-size:24px"></i>
+                                <span class="text nav-text" style="margin-left:15px">HSN Congifuration</span>
+                            </a>
+                        </li>  
+                        
+                        
+                        <li class="nav-link">
+                            <a href="@Url.Action("List", "ItemGroup")">
+                                <i class='bx bx-cart-alt' style="font-size:24px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Item Configuration</span>
                             </a>
                         </li>
                     }

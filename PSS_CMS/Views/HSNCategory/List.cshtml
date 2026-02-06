@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PSS_CMS.Models.ItemGroup>
+﻿@model IEnumerable<PSS_CMS.Models.HSNCategory>
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -50,16 +50,19 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>ITEM GROUP</li>
+                    <li>HSN CATEGORY</li>
                     <li>LIST</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "ItemGroup", FormMethod.Get, new { id = "searchForm" }))
+                @using (Html.BeginForm("List", "HSNCategory", FormMethod.Get, new { id = "searchForm" }))
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
-             
+                <!-- Add button with icon -->
+                <a href="@Url.Action("Create", "HSNCategory")" class=" ms-3" style="margin-left: 30px;">
+                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add MaterialCategory" />
+                </a>
 
             </div>
 
@@ -69,31 +72,41 @@
             @if (Model != null)
             {
                 @Html.Grid(Model).Columns(columns =>
-      {
-          columns.Add(c => c.SerialNumber).Titled("S.No").Sortable(true).Css("text-right").SetWidth("50px");
+       {
+           columns.Add(c => c.SerialNumber).Titled("S.No").Sortable(true).Css("text-right").SetWidth("50px");
 
-          columns.Add(c => c.IG_CODE).Titled("Code").Sortable(true).SetWidth("100px");
-          columns.Add(c => c.IG_DESCRIPTION).Titled("Description").Sortable(true).SetWidth("550px");
-          columns.Add(c => c.IG_SORTORDER).Titled("Sort").Sortable(true).Css("text-right").SetWidth("50px");
-          columns.Add().Titled("Action")
-             .Encoded(false)
-             .Sanitized(false)
-             .RenderValueAs(o =>
-             {
-                 var ItemCategory = Url.Action("List", "ItemCategory", new { IGRECID = o.IG_RECID, companyId = o.IG_CRECID, Itemgroupname = o.IG_DESCRIPTION.ToUpper() }, null);
-                 var ItemCategoryicon = "<i class='bx bx-collection'></i>";
-                 var ItemCategorylinkHtml = $"<a href='{ItemCategory}'data-toggle='tooltip' data-placement='top' title='Item Category'>{ItemCategoryicon}</a>";
+           columns.Add(c => c.HSNC_CODE).Titled("Code").Sortable(true).SetWidth("120px");
+           columns.Add(c => c.HSNC_CATEGORYNAME).Titled("Category Name").Sortable(true).SetWidth("650px");
+           //columns.Add(c => c.HSNC_CATEGORYNAME).Titled("Description").Sortable(true).SetWidth("250px");
+           columns.Add(c => c.HSNC_SORTORDER).Titled("Sort").Sortable(true).Css("text-right").SetWidth("50px");
+           columns.Add().Titled("Action")
+              .Encoded(false)
+              .Sanitized(false)
+              .RenderValueAs(o =>
+              {
+                  var extraSpaces = "&nbsp;&nbsp;&nbsp;";
 
-                 return MvcHtmlString.Create($"{ItemCategorylinkHtml}");
-             });
+                  var Editurl = Url.Action("Edit", "HSNCategory", new { id = o.HSNC_RECID, HSNEditName = o.HSNC_CATEGORYNAME.ToUpper(), companyId = o.HSNC_CRECID }, null);
+                  var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
+                  var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
-      }).WithPaging(10).Sortable(true)
+                  var Deleteurl = Url.Action("Delete", "HSNCategory", new { HSNC_RECID = o.HSNC_RECID, companyId = o.HSNC_CRECID }, null);
+                  var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
+                  var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
+                  var HSNMaster = Url.Action("List", "HSNMaster", new { HSNC_RECID = o.HSNC_RECID, companyId = o.HSNC_CRECID, HSNC_CATEGORYNAME = o.HSNC_CATEGORYNAME.ToUpper() }, null);
+                  var HSNMastericon = "<i class='bx bx-collection'></i>";
+                  var HSNMasterlinkHtml = $"<a href='{HSNMaster}'data-toggle='tooltip' data-placement='top' title='HSN Master'>{HSNMastericon}</a>";
+
+                  return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{HSNMasterlinkHtml}");
+              });
+
+       }).WithPaging(10).Sortable(true)
             }
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No Material Category's are available</b>
+                    <b>No HSN Category's are available</b>
                 </div>}
 
             <footer>
@@ -126,7 +139,7 @@
                             <div class="d-flex justify-content-center footerb">
                                 <i style="color:#337ab7" class='bi bi-basket2 bx-sm mb-1'></i>
                             </div>
-                            &nbsp;- Materials
+                            &nbsp;- HSN Master
                         </div>
 
                     </div>

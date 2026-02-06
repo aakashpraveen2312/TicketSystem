@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PSS_CMS.Models.ItemGroup>
+﻿@model IEnumerable<PSS_CMS.Models.ItemCategory>
 @using GridMvc.Html
 <!DOCTYPE html>
 <html>
@@ -50,16 +50,20 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>ITEM GROUP</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ItemGroup")">ITEM GROUP(@Session["ItemgroupName"])</a></li>
+                    <li>ITEM CATEGORY</li>
                     <li>LIST</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "ItemGroup", FormMethod.Get, new { id = "searchForm" }))
+                @using (Html.BeginForm("List", "ItemCategory", FormMethod.Get, new { id = "searchForm" }))
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
-             
+                <!-- Add button with icon -->
+                <a href="@Url.Action("Create", "ItemCategory")" class=" ms-3" style="margin-left: 30px;">
+                        <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add MaterialCategory" />
+                    </a>
 
             </div>
 
@@ -69,25 +73,36 @@
             @if (Model != null)
             {
                 @Html.Grid(Model).Columns(columns =>
-      {
-          columns.Add(c => c.SerialNumber).Titled("S.No").Sortable(true).Css("text-right").SetWidth("50px");
+           {
+               columns.Add(c => c.SerialNumber).Titled("S.No").Sortable(true).Css("text-right").SetWidth("80px");
 
-          columns.Add(c => c.IG_CODE).Titled("Code").Sortable(true).SetWidth("100px");
-          columns.Add(c => c.IG_DESCRIPTION).Titled("Description").Sortable(true).SetWidth("550px");
-          columns.Add(c => c.IG_SORTORDER).Titled("Sort").Sortable(true).Css("text-right").SetWidth("50px");
-          columns.Add().Titled("Action")
-             .Encoded(false)
-             .Sanitized(false)
-             .RenderValueAs(o =>
-             {
-                 var ItemCategory = Url.Action("List", "ItemCategory", new { IGRECID = o.IG_RECID, companyId = o.IG_CRECID, Itemgroupname = o.IG_DESCRIPTION.ToUpper() }, null);
-                 var ItemCategoryicon = "<i class='bx bx-collection'></i>";
-                 var ItemCategorylinkHtml = $"<a href='{ItemCategory}'data-toggle='tooltip' data-placement='top' title='Item Category'>{ItemCategoryicon}</a>";
+               columns.Add(c => c.IC_CODE).Titled("Code").Sortable(true).SetWidth("100px");
+               columns.Add(c => c.IC_DESCRIPTION).Titled("Description").Sortable(true).SetWidth("550px");
+               columns.Add(c => c.IC_HSNCODE).Titled("HSN Code").Sortable(true).SetWidth("250px");
+               columns.Add(c => c.IC_SORTORDER).Titled("Sort").Sortable(true).Css("text-right").SetWidth("80px");
+               columns.Add().Titled("Action")
+                  .Encoded(false)
+                  .Sanitized(false)
+                  .RenderValueAs(o =>
+                  {
+                      var extraSpaces = "&nbsp;&nbsp;&nbsp;";
 
-                 return MvcHtmlString.Create($"{ItemCategorylinkHtml}");
-             });
+                      var Editurl = Url.Action("Edit", "ItemCategory", new { id = o.IC_RECID, EdititemCatName = o.IC_DESCRIPTION.ToUpper() }, null);
+                      var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
+                      var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
-      }).WithPaging(10).Sortable(true)
+                      var Deleteurl = Url.Action("Delete", "ItemCategory", new { id = o.IC_RECID, ItemgroupName = Session["ItemgroupName"] }, null);
+                      var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
+                      var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
+
+                      var ItemGroup = Url.Action("List", "Item", new { CategoryRecid = o.IC_RECID, CompanyId = Session["CompanyId"], ItemCatName = o.IC_DESCRIPTION.ToUpper() }, null);
+                      var ItemGroupicon = "<i class='bx bx-collection'></i>";
+                      var ItemlinkHtml = $"<a href='{ItemGroup}'data-toggle='tooltip' data-placement='top' title='Item'>{ItemGroupicon}</a>";
+
+                      return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ItemlinkHtml}");
+                  });
+
+           }).WithPaging(10).Sortable(true)
 
             }
             else

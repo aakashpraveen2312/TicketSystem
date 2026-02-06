@@ -1,0 +1,510 @@
+﻿@model PSS_CMS.Models.ItemCategory
+
+@using GridMvc.Html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+
+    @*Bootstrap Icons and Boxicons*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <script src="~/Scripts/Script.js"></script>
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/Colors.css" rel="stylesheet" />
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <style>
+        .swal-btn-continue {
+            background-color: #6ed3d0 !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        .swal-btn-back {
+            background-color: #f0a72d !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        select#TUG_NAME {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        }
+
+        .textboxstylecreateandedit2 {
+            display: block;
+            width: 230%;
+            height: 40px;
+            padding: 4px 12px;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #100c0c;
+            background-color: #dceef5;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: auto;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="content" style=" overflow-x: hidden!important;">
+        <nav class="nav d-flex">
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
+            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+                </a>
+            </div>
+
+        </nav>
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-12">
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "Group")">ITEM GROUP(@Session["ItemgroupName"])</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ItemCategory")">ITEM CATEGORY</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ItemCategory")">LIST</a></li>
+                    <li>EDIT</li>
+                </ul>
+            </div>
+        </div>
+        @using (Html.BeginForm("Edit", "ItemCategory", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
+        {
+
+            <div class="create ms-4 me-2 mt-3">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.IC_CODE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.IC_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", id = "IC_CODE", tabindex = "1", @readonly = "readonly", placeholder = "Auto-Code" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.IC_HSNCODE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 d-flex">
+                        @Html.EditorFor(model => model.IC_HSNCODE, new
+                                                  {
+                                                      htmlAttributes = new
+                                                      {
+                                                          @class = "form-control textboxcolors text-left",
+                                                          id = "hsncode",
+                                                          tabindex = "2",
+                                                          oninput = "this.value = this.value.replace(/[^0-9]/g, '')", // Allow only digits
+                                                          type = "text",
+                                                          min = "1",
+                                                          @readonly = true
+                                                      }
+                                                  }) &nbsp;
+                        <i class="bi bi-journal-text custom-icon"
+                           style="font-size: 20px; cursor: pointer;"
+                           id="openModalBtn"
+                           tabindex="3" ,
+                           value="Open Modal"
+                           data-toggle="modal"
+                           data-target="#hsnModal"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.IC_DESCRIPTION, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.IC_DESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", id = "hsndes", tabindex = "4" } })
+
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.IC_SORTORDER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.IC_SORTORDER, new
+                                              {
+                                                  htmlAttributes = new
+                                                  {
+                                                      @class = "form-control textboxcolors text-right",
+                                                      id = "IC_SORTORDER",
+                                                      tabindex = "5",
+                                                      type = "number",
+                                                      placeholder = "0",
+                                                  min = "0"
+                                                  }
+                                              })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.IsDisabled, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input", tabindex = "6" })
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-2">
+
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+                        <input type="submit"
+                               value="Save"
+                               class="submitbuttons me-3"
+                               tabindex="7"
+                               id="savebutton" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="8" id="" onclick="window.location.href='@Url.Action("List", "ItemCategory", new { })'" />
+                    </div>
+                </div>
+            </div>
+
+        }
+        <!-- Modal -->
+        <div class="modal fade" id="hsnModal" tabindex="-1" role="dialog" aria-labelledby="hsnModalLabel">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="hsnModalLabel">HSN Confirmation</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="table-responsive">
+
+                            <table id="optionsTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>HSN Code</th>
+                                        <th>Description</th>
+                                        <th>CGST (%)</th>
+                                        <th>SGST (%)</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamically populated rows will go here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <footer>
+            <div class="footer">
+                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck1"></span>
+                            - Text Fields
+                        </div>
+                    </div>
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck2"></span>
+                            - Number Fields
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+            <h4>Are you sure you want to log out?</h4>
+        </div>
+        <div class="offcanvas-footer d-flex justify-content-center">
+            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+        </div>
+    </div>
+    <div id="preloader2"></div>
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#openModalBtn').on('click', function () {
+                $('#hsnModal').modal('show');
+            });
+
+            $('#confirmActionBtn').on('click', function () {
+                alert('Confirmed!');
+                $('#hsnModal').modal('hide');
+            });
+        });
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @*Logout Pronptbox script*@
+    <script>
+    document.getElementById("logoutLink").addEventListener("click", function () {
+        Swal.fire({
+            title: "Are you sure you want to log out?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#dc3545",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '@Url.Action("Logout", "Login")';
+            }
+        });
+    });
+    </script>
+
+    @*Toastr for created succesfully*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Scripts/Create Sweet Alert.js"></script>
+    <!-- jQuery CDN -->
+    <script>
+        $(document).ready(function () {
+    console.log("Document is ready");
+
+    let isSelected = false;
+
+    $('#openModalBtn').click(function () {
+        console.log("Launch modal button clicked");
+
+        $.ajax({
+            url: '@Url.Action("GetApiData", "ItemCategory")',
+            type: 'GET',
+            success: function (response) {
+                console.log(response);
+
+                if (response.Data && Array.isArray(response.Data)) {
+                    // Clear the table body before appending new rows
+                    $('#optionsTable tbody').empty();
+
+                    response.Data.forEach(function (item) {
+                        console.log(item);
+
+                        // Append the data to the table
+                        $('#optionsTable tbody').append(
+                            `<tr>
+                                <td>${item.HM_CODE}</td>
+                                <td>${item.HM_DESCRIPTION}</td>
+                                <td style="text-align:right;">${item.HM_CGST ? parseFloat(item.HM_CGST).toFixed(2) : "0.00"}</td>
+                                <td style="text-align:right;">${item.HM_SGST ? parseFloat(item.HM_SGST).toFixed(2) : "0.00"}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary optionButton"
+                                        data-hsnrecid="${item.HM_RECID}"
+                                        data-hsncode="${item.HM_CODE}"
+                                        data-hsndes="${item.HM_DESCRIPTION}"
+                                        data-hsncgst="${item.HM_CGST}"
+                                        data-hsnsgst="${item.HM_SGST}">
+                                        Select
+                                    </button>
+                                </td>
+                            </tr>`
+                        );
+                    });
+                    $(document).ready(function () {
+                        $('.optionButton').click(function () {
+                            var itemname = $(this).data('hsndes'); // Get party name
+                            console.log("itemname", itemname);
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Your selected itemname "' + itemname + '" has been submitted.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Ensure the modal closes when "OK" is clicked
+                                    $('#exampleModal').modal('hide');
+
+                                    // If Bootstrap 5, use this instead:
+                                    document.getElementById('exampleModal').classList.remove('show');
+                                    document.getElementById('exampleModal').style.display = 'none';
+                                    document.body.classList.remove('modal-open');
+                                    document.querySelector('.modal-backdrop').remove();
+                                }
+                            });
+                        });
+                    });
+                } else {
+                    console.error("Data property is missing or is not an array.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching data: ", error);
+            }
+        });
+    });
+
+    $(document).on('click', '.optionButton', function () {
+        console.log("Option selected");
+
+        var HM_RECID = $(this).data('hsnrecid');
+        var HM_CODE = $(this).data('hsncode');
+        var HM_DESCRIPTION = $(this).data('hsndes');
+        var HM_CGST = $(this).data('hsncgst');
+        var HM_SGST = $(this).data('hsnsgst');
+
+
+        $('#hsnrecid').val(HM_RECID);
+        $('#hsncode').val(HM_CODE);
+        $('#hsndes').val(HM_DESCRIPTION);
+        $('#hsncgst').val(HM_CGST);
+        $('#hsnsgst').val(HM_SGST);
+
+        isSelected = true;
+        $('#exampleModal').modal('hide');
+    });
+
+    $('#exampleModal').on('hidden.bs.modal', function () {
+        console.log("Modal is closed");
+
+        if (!isSelected) {
+            console.log("No selection made, clearing modal content");
+            $('#optionsTable tbody').empty();
+        } else {
+            console.log("Selection made, not clearing input fields");
+        }
+
+        isSelected = false;
+    });
+});
+
+    </script>
+
+
+    <script>
+$(function () {
+
+    $("#createform").on("submit", function (e) {
+        e.preventDefault();
+
+        const $btn = $("#savebutton");
+        $btn.prop("disabled", true);
+
+        $("body").css("pointer-events", "none");
+
+        $.ajax({
+            url: '@Url.Action("Create", "ItemCategory")',
+            type: 'POST',
+            data: new FormData(this),
+            processData: false,
+            contentType: false,
+
+            success: function (response) {
+
+                if (response.success) {
+
+                    Swal.fire({
+                        title: "Processing...",
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+
+                    setTimeout(() => {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            showCancelButton: true,
+                            confirmButtonText: "Continue",
+                            cancelButtonText: "Back to List",
+                            customClass: {
+                                confirmButton: "swal-btn-continue",
+                                cancelButton: "swal-btn-back"
+                            }
+                        }).then(r => {
+                            r.isConfirmed
+                                ? location.reload()
+                                : window.location.href = '@Url.Action("List", "ItemCategory")';
+                        });
+                    }, 800);
+
+                } else {
+                    Swal.fire("Message", response.message, "info");
+                    reset();
+                }
+            },
+            error: function () {
+                Swal.fire("Error", "Unexpected error occurred", "error");
+                reset();
+            }
+        });
+
+        function reset() {
+            $btn.prop("disabled", false).val("Save");
+            $("body").css("pointer-events", "auto");
+        }
+    });
+
+});
+    </script>
+
+
+
+
+</body>
+</html>
+
+

@@ -26,12 +26,12 @@ namespace PSS_CMS.Models
         public string I_DESCRIPTION { get; set; }
 
 
-        [DisplayName("Guideline Price (Box)")]
+        [DisplayName("Price")]
         //[Required(ErrorMessage = "* Mandatory")]
 
         public decimal I_PRICE { get; set; }
 
-        [DisplayName("Box Quantity")]
+        [DisplayName("Quantity")]
         //[Required(ErrorMessage = "* Mandatory")]
         public int I_BOXQUANTITY { get; set; }
 
@@ -83,7 +83,7 @@ namespace PSS_CMS.Models
         public int I_SPRECID { get; set; }
         [DisplayName("Purchase UOM")]
         public string I_PUOM { get; set; }
-        [DisplayName("Consumption UOM")]
+        [DisplayName("UOM")]
         public string I_CUOM { get; set; }
 
         [DisplayName("Date of Sales")]
@@ -280,9 +280,23 @@ namespace PSS_CMS.Models
         public string I_CUSTOMERMAJORUOM { get; set; }
         public int I_CUSTOMERCONVERSIONQUANTITY { get; set; }
         public int I_CUSTOMERMAJORQUANTITY { get; set; }
+        public int I_CUSTOMERMINORQUANTITY { get; set; }
         public string I_CUSTOMERMINORUOM { get; set; }
         public decimal I_CUSTOMERPRICE { get; set; }
-        public int I_CUSTOMERMINORQUANTITY { get; set; }
+
+
+        //SERVICE MANAGEMENT
+        [DisplayName("Quantity")]
+        public decimal I_SMQUANTITY { get; set; }
+        [DisplayName("Net Amount")]
+        public decimal I_SMNETAMOUNT { get; set; }
+        [DisplayName("Total Amount")]
+        public decimal I_SMTOTALAMOUNT { get; set; }
+        [DisplayName("Discount")]
+        public int I_SMDISCOUNT { get; set; }
+
+        
+
 
 
         public List<SelectListItem> Outlets { get; set; }

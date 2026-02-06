@@ -199,138 +199,128 @@ namespace PSS_CMS.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Items objItem)
         {
-
-
-            //objItem.I_CRECID = Session["CompanyId"].ToString();
-
             try
             {
-                var Regurl = ConfigurationManager.AppSettings["POSTITEM"];
+                var ItemPostURL = ConfigurationManager.AppSettings["POSTITEM"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
-                //string expiryApplicable = objItem.EXPIRYAPPLICABLE ? "Y" : "N";
-                //string Disable = objItem.IsDisabled ? "Y" : "N";
-                //string Underemployee = objItem.UNDER_EMPLOYEE_CUSTODY ? "Y" : "N";
+                var content = $@"{{
+    ""I_CODE"": ""0"",
+    ""I_DESCRIPTION"": ""{objItem.I_DESCRIPTION}"",
+    ""I_PRICE"": ""{objItem.I_PRICE}"",
+    ""I_SMQUANTITY"": ""{objItem.I_SMQUANTITY}"",
+    ""I_SMNETAMOUNT"": ""{objItem.I_SMNETAMOUNT}"",
+    ""I_SMTOTALAMOUNT"": ""{objItem.I_SMTOTALAMOUNT}"",
+    ""I_SMDISCOUNT"": ""0"",
+    ""I_CUOM"": ""{objItem.I_CUOM}"",
+    ""I_HSN"": ""0"",
+    ""I_HSNRECID"": ""0"",
+    ""I_SGST"": ""{objItem.I_SGST}"",
+    ""I_CGST"": ""{objItem.I_CGST}"",
+    ""I_CRECID"": ""{Session["CompanyId"]}"",
+    ""I_ICRECID"": ""{Session["CategoryRecid"]}"",
+    ""I_SORTORDER"": ""{objItem.I_SORTORDER}"",
+    ""I_DISABLE"": ""N"",
+    ""I_BOXQUANTITY"": ""0"",
+    ""I_PIECEQUANTITY"": ""0"",
+    ""I_PUOM"": ""UOM"",
+    ""I_CONVERSIONQUANTITY"": ""0"",
+    ""I_IMAGE"": ""qwerty"",
+    ""I_SHRECID"": ""0"",
+    ""I_BINRECID"": ""0"",
+    ""I_SPRECID"": ""0"",
+    ""I_IFEXPIRYAPPLICABLE"": ""N"",
+    ""I_UNDEREMPLOYEECUSTODY"": ""N"",
+    ""I_SERVICEANDMAINTANANCE"": ""N"",
+    ""I_TRADABLE"": ""N"",
+    ""I_EXTENDEDWARRENTYAPPLICABLE"": ""N"",
+    ""I_ONDEMAND"": ""N"",
+    ""I_SCHEDULEDSERVICE"": ""N"",
+    ""I_TOTALWARRENTYPERIOD"": """",
+    ""I_WARRENTYENDPERIOD"": """",
+    ""I_EXTENDEDWARRENTYPERIOD"": """",
+    ""I_EXTENDEDWARRENTYENDPERIOD"": """",
+    ""I_BYPRODUCT"": ""N"",
+    ""I_SPECREQUIRED"": ""N"",
+    ""I_DESIGNIMAGEREQUIRED"": ""N"",
+    ""I_CUSTOMERPRICE"": ""0"",
+    ""I_CUSTOMERMAJORQUANTITY"": ""0"",
+    ""I_CUSTOMERMINORQUANTITY"": ""0"",
+    ""I_CUSTOMERMAJORUOM"": ""UOM"",
+    ""I_CUSTOMERMINORUOM"": ""UOM"",
+    ""I_CUSTOMERCONVERSIONQUANTITY"": ""0"",
+    ""I_VENDORPRICE"": ""0"",
+    ""I_VENDORMAJORQUANTITY"": ""0"",
+    ""I_VENDORMINORQUANTITY"": ""0"",
+    ""I_VENDORMAJORUOM"": ""UOM"",
+    ""I_VENDORMINORUOM"": ""UOM"",
+    ""I_VENDORCONVERSIONQUANTITY"": ""0""
+}}";
 
 
-                var content = new
-                {
-                    I_CODE = "",
-                    I_DESCRIPTION = objItem.I_DESCRIPTION,
-                    I_PRICE = "0",
-                    I_BOXQUANTITY = "0",
-                    I_PIECEQUANTITY = "0",
-                    I_PUOM = "UOM",
-                    I_CUOM = "UOM",
-                    I_CONVERSIONQUANTITY = 0,
-                    I_IMAGE = "qwerty",
-                    I_SORTORDER = objItem.I_SORTORDER,
-                    I_SHRECID = 0,
-                    I_BINRECID = 0,
-                    I_SPRECID = 0,
-                    I_CRECID = Session["CompanyId"],
-                    I_ICRECID = Session["CategoryRecid"],
-                    I_IFEXPIRYAPPLICABLE = objItem.EXPIRYAPPLICABLE ? "Y" : "N",
-                    I_DISABLE = objItem.IsDisabled ? "Y" : "N",
-                    I_HSN = objItem.I_HSNCODE,
-                    I_HSNRECID = objItem.I_HSNRECID,
-                    I_SGST = objItem.I_SGST,
-                    I_CGST = objItem.I_CGST,
-                    I_UNDEREMPLOYEECUSTODY = objItem.UNDER_EMPLOYEE_CUSTODY ? "Y" : "N",
-                    I_SERVICEANDMAINTANANCE = objItem.ServiceAndMaintance ? "Y" : "N",
-                    I_TRADABLE = objItem.TRADABLE ? "Y" : "N",
-                    I_EXTENDEDWARRENTYAPPLICABLE = objItem.EXTENDEDWARRENTYAPPLICABLE ? "Y" : "N",
-                    I_ONDEMAND = objItem.ONDEMAND ? "Y" : "N",
-                    I_SCHEDULEDSERVICE = objItem.SCHEDULEDSERVICE ? "Y" : "N",
-                    I_TOTALWARRENTYPERIOD = objItem.I_TOTALWARRENTYPERIOD ?? "",
-                    I_WARRENTYENDPERIOD = objItem.I_WARRENTYENDPERIOD ?? "",
-                    I_EXTENDEDWARRENTYPERIOD = objItem.I_EXTENDEDWARRENTYPERIOD ?? "",
-                    I_EXTENDEDWARRENTYENDPERIOD = objItem.I_EXTENDEDWARRENTYENDPERIOD ?? "",
-                    I_BYPRODUCT = objItem.BYPRODUCT ? "Y" : "N",
-                    I_SPECREQUIRED = objItem.SPECREQUIRED ? "Y" : "N",
-                    I_DESIGNIMAGEREQUIRED = objItem.DESIGNIMAGEREQUIRED ? "Y" : "N",
-                    I_CUSTOMERPRICE = "0",
-                    I_CUSTOMERMAJORQUANTITY = "0",
-                    I_CUSTOMERMINORQUANTITY = "0",
-                    I_CUSTOMERMAJORUOM = "UOM",
-                    I_CUSTOMERMINORUOM = "UOM",
-                    I_CUSTOMERCONVERSIONQUANTITY = 0,
-                    I_VENDORPRICE = "0",
-                    I_VENDORMAJORQUANTITY = "0",
-                    I_VENDORMINORQUANTITY = "0",
-                    I_VENDORMAJORUOM = "UOM",
-                    I_VENDORMINORUOM = "UOM",
-                    I_VENDORCONVERSIONQUANTITY = 0
-                };
-
-
-
+                // Create the HTTP request
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(Regurl),
+                    RequestUri = new Uri(ItemPostURL),
                     Method = HttpMethod.Post,
-                    Content = new StringContent(JsonConvert.SerializeObject(content), System.Text.Encoding.UTF8, "application/json")
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
                 };
 
-                request.Headers.Add("X-Version", "1");
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
-
-                using (var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true })
-                using (var client = new HttpClient(handler) { })
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
                 {
-                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
 
-                    var response = await client.SendAsync(request);
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
 
-                    if (response.IsSuccessStatusCode)
+
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<IRootObjects>(responseBody);
+
+                    if (apiResponse.Status == "Y")
                     {
-                        // Return success status to enable tabs
-                        //return Json(new { status = "success" ,message = "Item  inserted successfully" });
-                        var responseBody = await response.Content.ReadAsStringAsync();
-
-
-                        var apiResponse = JsonConvert.DeserializeObject<IRootObjects>(responseBody);
-                        string message = apiResponse.Message;
-                        string ItemCode = apiResponse.ItemCode;
-                        Session["I_CODE"] = ItemCode;
-
-                        Items ObjcrtgetSP = new Items();
-
-                        // Fetch the combo box values from the API and populate the model
-                        ObjcrtgetSP.Outlets = await GetOutletComboAsync();
-                        ObjcrtgetSP.Bins = await GetBinsComboAsync();
-                        ObjcrtgetSP.Shelves = await GetShelvesComboAsync();
-                        if (apiResponse.Status == "Y")
-                        {
-                            return Json(new { status = "success", message = "Item Details Created Successfully", }, JsonRequestBehavior.AllowGet);
-                        }
-                        else if (apiResponse.Status == "U")
-                        {
-                            return Json(new { status = "error", message = apiResponse.Message });
-                        }
-                        else if (apiResponse.Status == "N")
-                        {
-                            return Json(new { status = "error", message = apiResponse.Message });
-                        }
+                        return Json(new { success = true, message = apiResponse.Message });
+                    }
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
+                    {
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        return Json(new { success = false, message = "An unexpected status was returned." });
                     }
                 }
+                else
+                {
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
+                }
+
+
             }
             catch (Exception ex)
             {
-                return Json(new { status = "error", message = "Exception: " + ex.Message });
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
+
+            return View();
+
         }
+
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
@@ -577,21 +567,21 @@ namespace PSS_CMS.Controllers
                     i_BOXQUANTITY = objitems.I_BOXQUANTITY,
                     i_PIECEQUANTITY = objitems.I_PIECEQUANTITY,
                     i_PRICE = objitems.I_PRICE,
-                    i_PUOM = objitems.I_PUOM,
+                    i_PUOM = "",
                     i_CUOM = objitems.I_CUOM,
-                    i_CONVERSIONQUANTITY = objitems.I_CONVERSIONQUANTITY,
-                    i_CUSTOMERMAJORQUANTITY = objitems.I_CUSTOMERMAJORQUANTITY,
-                    i_CUSTOMERMINORQUANTITY = objitems.I_CUSTOMERMINORQUANTITY,
-                    i_CUSTOMERPRICE = objitems.I_PRICE,
-                    i_CUSTOMERMAJORUOM = objitems.I_PUOM,
-                    i_CUSTOMERMINORUOM = objitems.I_CUOM,
-                    i_CUSTOMERCONVERSIONQUANTITY = objitems.I_CONVERSIONQUANTITY,
-                    i_VENDORMAJORQUANTITY = objitems.I_VENDORMAJORQUANTITY,
-                    i_VENDORMINORQUANTITY = objitems.I_VENDORMINORQUANTITY,
-                    i_VENDORPRICE = objitems.I_PRICE,
-                    i_VENDORMAJORUOM = objitems.I_PUOM,
-                    i_VENDORMINORUOM = objitems.I_CUOM,
-                    i_VENDORCONVERSIONQUANTITY = objitems.I_CONVERSIONQUANTITY
+                    i_CONVERSIONQUANTITY = 0,
+                    i_CUSTOMERMAJORQUANTITY = 0,
+                    i_CUSTOMERMINORQUANTITY = 0,
+                    i_CUSTOMERPRICE = 0,
+                    i_CUSTOMERMAJORUOM = "",
+                    i_CUSTOMERMINORUOM = "",
+                    i_CUSTOMERCONVERSIONQUANTITY = 0,
+                    i_VENDORMAJORQUANTITY = 0,
+                    i_VENDORMINORQUANTITY = 0,
+                    i_VENDORPRICE = 0,
+                    i_VENDORMAJORUOM ="",
+                    i_VENDORMINORUOM ="",
+                    i_VENDORCONVERSIONQUANTITY = 0
                 };
 
                 var json = JsonConvert.SerializeObject(payload);
@@ -842,6 +832,9 @@ namespace PSS_CMS.Controllers
             ""I_CODE"": ""{objItems.I_CODE}"",
             ""I_CRECID"": ""{Session["CompanyId"]}"",
             ""I_DESCRIPTION"": ""{objItems.I_DESCRIPTION}"",
+   ""I_SMQUANTITY"": ""{objItems.I_SMQUANTITY}"",
+    ""I_SMNETAMOUNT"": ""{objItems.I_SMNETAMOUNT}"",
+    ""I_SMTOTALAMOUNT"": ""{objItems.I_SMTOTALAMOUNT}"",
             ""I_PRICE"": ""{objItems.I_PRICE}"",
             ""I_BOXQUANTITY"": ""{objItems.I_BOXQUANTITY}"",
             ""I_PIECEQUANTITY"": ""{objItems.I_PIECEQUANTITY}"",

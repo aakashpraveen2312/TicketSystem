@@ -89,7 +89,7 @@
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ItemGroup")">ITEM GROUP(@Session["ItemgroupName"])</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ItemCategory",new {IGRECID= Session["IGRECID"]})">ITEM CATEGORY(@Session["ItemCatName"])</a></li>
                     <li>ITEM</li>
-                    <li>CREATE</li>
+                    <li>EDIT</li>
                 </ul>
             </div>
         </div>
@@ -126,7 +126,7 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @*@Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
-                        @Html.EditorFor(model => model.I_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()",placeholder = "0.00" } })
+                        @Html.EditorFor(model => model.I_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()", placeholder = "0.00" } })
 
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
@@ -146,7 +146,7 @@
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @*@Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
                         @Html.TextBoxFor(model => model.I_SGST, "{0:0.00}", new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "formatPrice(this)", placeholder = "0.00", @readonly = "readonly" })
-                     
+
 
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
@@ -230,7 +230,7 @@
                     </div>
                     <div class="col-lg-3 d-flex justify-content-end">
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "MaterialConsumption", new { })'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "Item", new { })'" />
                     </div>
                 </div>
             </div>
@@ -326,7 +326,7 @@
             $("body").css("pointer-events", "none");
 
             $.ajax({
-                url: '@Url.Action("Create", "Item")',
+                url: '@Url.Action("Edit", "Item")',
                 type: 'POST',
                 data: formData,
                 processData: false,

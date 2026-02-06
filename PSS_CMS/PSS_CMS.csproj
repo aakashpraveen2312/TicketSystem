@@ -371,6 +371,8 @@
     <Compile Include="Controllers\ChangePasswordController.cs" />
     <Compile Include="Controllers\ContractInvoiceController.cs" />
     <Compile Include="Controllers\CustomerNotificationController.cs" />
+    <Compile Include="Controllers\HSNCategoryController.cs" />
+    <Compile Include="Controllers\HSNMasterController.cs" />
     <Compile Include="Controllers\ItemCategoryController.cs" />
     <Compile Include="Controllers\ItemController.cs" />
     <Compile Include="Controllers\ItemGroupController.cs" />
@@ -563,6 +565,7 @@
     <None Include="Json\Main1.json" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\ComboFilter.js" />
+    <Content Include="Scripts\Create Sweet Alert.js" />
     <Content Include="Scripts\Fordelete.js" />
     <Content Include="Scripts\Formatcheck.js" />
     <Content Include="Scripts\gridmvc.js" />
@@ -687,15 +690,23 @@
     <Content Include="Views\CustomerNotification\Edit.cshtml" />
     <Content Include="Views\CustomerNotification\List.cshtml" />
     <Content Include="Views\Item\Create.cshtml" />
-    <Content Include="Views\ItemGroup\Create.cshtml" />
-    <Content Include="Views\ItemGroup\Edit.cshtml" />
     <Content Include="Views\ItemGroup\List.cshtml" />
     <Content Include="Views\ChangePassword\HelpdeskChangePassword.cshtml" />
+    <Content Include="Views\ItemCategory\Create.cshtml" />
+    <Content Include="Views\ItemCategory\Edit.cshtml" />
+    <Content Include="Views\ItemCategory\List.cshtml" />
+    <Content Include="Views\HSNCategory\List.cshtml" />
+    <Content Include="Views\HSNCategory\Create.cshtml" />
+    <Content Include="Views\HSNCategory\Edit.cshtml" />
+    <Content Include="Views\HSNMaster\Create.cshtml" />
+    <Content Include="Views\HSNMaster\Edit.cshtml" />
+    <Content Include="Views\HSNMaster\List.cshtml" />
+    <Content Include="Views\Item\List.cshtml" />
+    <Content Include="Views\Item\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\InActivity\" />
-    <Folder Include="Views\ItemCategory\" />
     <Folder Include="Views\PDF\" />
   </ItemGroup>
   <ItemGroup>

@@ -96,7 +96,7 @@
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "Group")">ITEM GROUP(@Session["ItemgroupName"])</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ItemCategory")">ITEM CATEGORY</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ItemCategory")">LIST</a></li>
-                    <li>CREATE</li>
+                    <li>EDIT</li>
                 </ul>
             </div>
         </div>
@@ -199,43 +199,54 @@
 
         }
         <!-- Modal -->
-        <div class="modal fade" id="hsnModal" tabindex="-1" role="dialog" aria-labelledby="hsnModalLabel">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
+    <div class="modal fade" id="hsnModal" tabindex="-1" role="dialog" aria-labelledby="hsnModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content shadow-lg">
 
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span>&times;</span>
-                        </button>
-                        <h4 class="modal-title" id="hsnModalLabel">HSN Confirmation</h4>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="table-responsive">
-
-                            <table id="optionsTable" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>HSN Code</th>
-                                        <th>Description</th>
-                                        <th>CGST (%)</th>
-                                        <th>SGST (%)</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Dynamically populated rows will go here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                    </div>
-
+                <!-- Modal Header -->
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title d-flex align-items-center" id="hsnModalLabel">
+                        <i class="fa fa-check-circle mr-2"></i> HSN Confirmation
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <p class="text-muted mb-3">
+                        Please select the appropriate HSN code from the list below.
+                    </p>
+
+                    <div class="table-responsive">
+                        <table id="optionsTable" class="table table-hover table-bordered align-middle">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th style="width:15%">HSN Code</th>
+                                    <th style="width:15%">Description</th>
+                                    <th class="text-center" style="width:15%">CGST (%)</th>
+                                    <th class="text-center" style="width:15%">SGST (%)</th>
+                                    <th class="text-center" style="width:15%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamically populated rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                        <i class="fa fa-times"></i> Cancel
+                    </button>
+                </div>
+
             </div>
         </div>
+    </div>
 
 
         <footer>
@@ -297,6 +308,20 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#openModalBtn').on('click', function () {
+                $('#hsnModal').modal('show');
+            });
+
+            $('#confirmActionBtn').on('click', function () {
+                alert('Confirmed!');
+                $('#hsnModal').modal('hide');
+            });
+        });
+    </script>
     @*Logout Pronptbox script*@
     <script>
     document.getElementById("logoutLink").addEventListener("click", function () {
@@ -428,6 +453,11 @@
 
         isSelected = false;
     });
+            document.getElementById('hsnModal')
+                .addEventListener('hidden.bs.modal', function () {
+                    $('#optionsTable tbody').empty();
+                });
+
 });
 
     </script>

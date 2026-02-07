@@ -682,10 +682,10 @@ namespace PSS_CMS.Controllers
         {
             using (var stream = new MemoryStream())
             {
-                PdfWriter writer = new PdfWriter(stream);
-                PdfDocument pdf = new PdfDocument(writer);
-                Document document = new Document(pdf);
 
+                var writer = new PdfWriter(stream);
+                var pdf = new PdfDocument(writer);
+                var document = new Document(pdf);
                 // Set margins
                 document.SetMargins(40, 40, 40, 40);
 

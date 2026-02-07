@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using System.Web.Mvc;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class ItemController : Controller
     {
         // GET: Item
@@ -472,37 +474,24 @@ namespace PSS_CMS.Controllers
                     var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
                     string message = apiResponse.Message;
 
-
-
                     if (apiResponse.Status == "Y")
                     {
-
-                        //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"], ItemCatName = Session["ItemCatName"] });
-                        return Json(new { status = "success", message = "Item details edited successfully" });
+                        return Json(new { success = true, message = apiResponse.Message });
                     }
-                    else if (apiResponse.Status == "U")
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
                     {
-                        TempData["Message"] = message;
-                        ViewBag.ErrorMessage = message;
-                        return Json(new { status = "error", message = apiResponse.Message });
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
-                    else if (apiResponse.Status == "N")
+                    else
                     {
-                        return Json(new { status = "error", message = apiResponse.Message });
+                        return Json(new { success = false, message = "An unexpected status was returned." });
                     }
-                    //return RedirectToAction("List", "StoragePoint", new { CompanyId = GlobalVariables.CompanyId });
-
-
-
-
-
-                    //return RedirectToAction("List", "Item", new { CompanyId = Session["CompanyId"], CategoryRecid = Session["CategoryRecid"] });
-
                 }
                 else
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Request failed.");
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
                 }
+
             }
             catch (Exception ex)
             {

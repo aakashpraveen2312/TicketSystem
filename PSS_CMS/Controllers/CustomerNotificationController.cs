@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Web.Mvc;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class CustomerNotificationController : Controller
     {
         // GET: CustomerNotification
@@ -32,7 +34,7 @@ namespace PSS_CMS.Controllers
 
             List<Customernotification> Customernotificationlist = new List<Customernotification>();
 
-            string strparams = "cmprecid=" + Session["CompanyID"] + "&CustomerRecID=" + Session["CustomerRecID"];
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&curecid=" + Session["CustomerRecID"];
             string url = Weburl + "?" + strparams;
 
             try

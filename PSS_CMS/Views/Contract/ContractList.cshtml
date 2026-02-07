@@ -131,7 +131,7 @@
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
                     <li>CONTRACTS AND USERS</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">PRODUCT(@Session["name"])</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">PRODUCT(@Session["name"].ToString().ToUpper())</a></li>
                     <li>CONTRACT LIST</li>
                 </ul>
             </div>

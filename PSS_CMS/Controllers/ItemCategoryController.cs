@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using System.Web.Mvc;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class ItemCategoryController : Controller
     {
         public object IC_IGRECId;

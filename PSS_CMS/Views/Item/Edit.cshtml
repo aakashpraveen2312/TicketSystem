@@ -93,7 +93,7 @@
                 </ul>
             </div>
         </div>
-        @using (Html.BeginForm("Edit", "Item", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Edit", "Item", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
         {
 
 
@@ -107,14 +107,14 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @*@Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
-                        @Html.EditorFor(model => model.I_CODE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", placeholder = "Auto Code", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.I_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", placeholder = "Auto Code", @readonly = "readonly" } })
 
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.I_DESCRIPTION, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.I_DESCRIPTION, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()", type = "text" } })
+                        @Html.EditorFor(model => model.I_DESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", oninput = "Netamount()", type = "text" } })
 
                     </div>
                 </div>
@@ -312,14 +312,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     $(document).ready(function () {
-        $("#createform").submit(function (event) {
+        $("#editform").submit(function (event) {
             event.preventDefault();
 
             var submitBtn = $("#savebutton");
             submitBtn.prop("disabled", true);
 
             var formData = new FormData(this);
-
 
 
             // Disable page interaction
@@ -350,27 +349,23 @@
                             title: "Success!",
                             text: response.message,
                             icon: "success",
-                            showCancelButton: true,
-                            confirmButtonText: "Continue",
-                            cancelButtonText: "Back to List",
-                            allowOutsideClick: false, // Prevent closing by clicking outside
-                            allowEscapeKey: false, // Prevent closing using Esc key
+                            confirmButtonText: "Ok",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
                             customClass: {
                                 confirmButton: "swal-btn-continue",
-                                cancelButton: "swal-btn-back"
                             },
                             didOpen: () => {
-                                // Allow interaction inside the alert only
                                 $(".swal2-container").css("pointer-events", "auto");
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                location.reload();
-                            } else {
                                 window.location.href = '@Url.Action("List", "Item")';
+                            } else {
+                                 window.location.href = '@Url.Action("Create", "Item")';
                             }
                         });
-                        }, 1000); // 1 second delay for "Processing"
+                    }, 1000); // 1 second delay for "Processing"
                     } else {
                         Swal.fire({
                             title: "Message",
@@ -397,7 +392,7 @@
 
         function resetButton() {
             $("#savebutton").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto"); // Re-enable page interaction
+            $("body").css("pointer-events", "auto");
         }
     });
     </script>

@@ -18,13 +18,28 @@ namespace PSS_CMS.Controllers
     public class ContractInvoiceController : Controller
     {
         // GET: ContractInvoice 
-        public async Task<ActionResult> List(int? id, string Name,decimal contractamount,string InvoiceNo)
+        public async Task<ActionResult> List(int? id, string Name,decimal? contractamount,string InvoiceNo)
         {
-            if (id != null && Name != null)
+            if (id != null)
             {
                 Session["CU_RECID"] = id;
+              
+            }
+            if ( Name != null )
+            {
+                
                 Session["Customername"] = Name;
+               
+            }
+            if (contractamount != null)
+            {
+               
                 Session["contractamount"] = contractamount;
+                
+            }
+            if ( InvoiceNo != null)
+            {
+               
                 Session["InvoiceNo"] = InvoiceNo;
             }
 

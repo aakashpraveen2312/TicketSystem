@@ -107,14 +107,14 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @*@Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
-                        @Html.EditorFor(model => model.I_CODE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", placeholder = "Auto Code", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.I_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", placeholder = "Auto Code", @readonly = "readonly" } })
 
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.I_DESCRIPTION, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.I_DESCRIPTION, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()", type = "text" } })
+                        @Html.EditorFor(model => model.I_DESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", oninput = "Netamount()", type = "text" } })
 
                     </div>
                 </div>
@@ -230,7 +230,7 @@
                     </div>
                     <div class="col-lg-3 d-flex justify-content-end">
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "MaterialConsumption", new { })'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "Item", new { })'" />
                     </div>
                 </div>
             </div>

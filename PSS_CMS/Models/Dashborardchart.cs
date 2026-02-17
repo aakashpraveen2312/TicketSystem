@@ -24,6 +24,16 @@ namespace PSS_CMS.Models
         public WeekWiseData WeekWise { get; set; }
 
         public List<Ticketdashboard> RecentTickets { get; set; }
+        public List<TicketTrendVM> ProductTrend { get; set; }
+    }
+
+    public class TicketTrendVM
+    {
+        public string productName { get; set; }
+        public string yearMonth { get; set; }
+        public int ticketCount { get; set; }
+        public int closedCount { get; set; }
+        public int OpenCount { get; set; }
     }
     public class MonthWiseData
     {

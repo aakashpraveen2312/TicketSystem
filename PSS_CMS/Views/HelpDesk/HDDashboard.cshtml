@@ -3,6 +3,7 @@
 @{
     Layout = null;
 }
+@using Newtonsoft.Json;
 <!DOCTYPE html>
 <html>
 <head>
@@ -78,6 +79,8 @@
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="@Url.Action("HDDashboard", "HelpDesk")">Dashboard</a></li>
                 <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="@Url.Action("Report", "HelpDesk")">Report</a></li>
+                <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="@Url.Action("HelpdeskChangePassword", "ChangePassword")">Change Password</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
@@ -141,8 +144,8 @@
                     <div class="col-md-3">
                         <div class="card text-white bg-@stat.Color mb-3">
                             <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="TotalTickets"})'">@stat.Title</h5>
-                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="TotalTickets"})'">@stat.Count</h3>
+                                <h5 class="card-title" style="cursor:pointer;">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;">@stat.Count</h3>
                             </div>
                         </div>
                     </div>
@@ -154,8 +157,8 @@
                     <div class="col-md-3">
                         <div class="card text-white bg-@stat.Color mb-3">
                             <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="CloseTickets"})'">@stat.Title</h5>
-                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="CloseTickets"})'">@stat.Count</h3>
+                                <h5 class="card-title" style="cursor:pointer;">@stat.Title</h5>
+                                <h3 class="card-text" style="cursor:pointer;">@stat.Count</h3>
                             </div>
                         </div>
                     </div>
@@ -285,7 +288,11 @@
                 </script>
             </div>
 
+            <p>Product Trend Count: @(Model.ProductTrend?.Count ?? 0)</p>
 
+            <div style="height:260px;">
+                <canvas id="ticketTrendChart"></canvas>
+            </div>
 
             <div class="row">
 
@@ -338,9 +345,68 @@
     new Chart(document.getElementById('ticketChart'), config);
                 </script>
 
+               
+                @*Trend Analysis*@
+                @*<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>*@
+            <script>
+document.addEventListener("DOMContentLoaded", function () {
 
+    // ✅ Product trend data from model
+    const rawData = @Html.Raw(
+        JsonConvert.SerializeObject(Model.ProductTrend)
+    );
 
+    console.log("ProductTrend:", rawData);
+    console.log(rawData[0].yearMonth); // should print "2025-09"
 
+    if (!Array.isArray(rawData) || rawData.length === 0) {
+        console.warn("No Product Trend data");
+        return;
+    }
+
+    // ✅ FIX: use camelCase
+    const labels = [...new Set(rawData.map(x => x.yearMonth))];
+
+    const grouped = {};
+    rawData.forEach(x => {
+        if (!grouped[x.productName]) {
+            grouped[x.productName] = {};
+        }
+        grouped[x.productName][x.yearMonth] = x.ticketCount;
+    });
+
+    const datasets = Object.keys(grouped).map(product => ({
+        label: product,
+        data: labels.map(m => grouped[product][m] || 0),
+        borderWidth: 2,
+        tension: 0.4,
+        fill: false
+    }));
+
+    new Chart(document.getElementById("ticketTrendChart"), {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: "top" },
+                title: {
+                    display: true,
+                    text: "Product Ticket Trend"
+                }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+});
+            </script>
                 @* Speedometer Container *@
                 <div class="col-md-6 ">
 

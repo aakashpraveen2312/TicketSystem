@@ -29,6 +29,45 @@
             font-size: 15px !important;
             text-align: center !important;
         }
+        /* Sidebar basics */
+.sidebar {
+    width: 260px;
+    transition: width 0.3s ease;
+}
+
+/* Submenu animation */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+
+.submenu.show {
+    max-height: 200px;
+    opacity: 1;
+}
+
+/* Active menu header */
+.nav-link.openfold.active {
+    background: rgba(0, 123, 255, 0.12);
+    font-weight: 600;
+}
+
+/* Active page link */
+.nav-link.submenu.active a {
+    background: #0d6efd;
+    color: #fff;
+    border-radius: 6px;
+}
+
+@*/* Mobile accordion */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        z-index: 1000;
+    }
+}*@
 
     </style>
 </head>
@@ -72,7 +111,7 @@
                 </a>
             }
             <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
-            
+
         </header>
         <div class="menu-bar">
             <div class="menu">
@@ -81,46 +120,107 @@
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/book.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 10px;" />
                         <img src="~/assets/img/book.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 10px;" />
-                        <span class="text nav-text" style="margin-left:15px">KNOWLEDGE BASED </span>
+                        <span class="text nav-text kb-menu" style="margin-left:15px">KNOWLEDGE BASED </span>
                     </li>
                     <!-- User Group -->
-                    <li class="nav-link">
+                    <li class="nav-link kb-item">
                         <a href="@Url.Action("FAQADMIN", "RecentTickets")">
                             <i class='bx  bx-message-circle-question-mark' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">FAQ</span>
                         </a>
                     </li>
                     <!-- App User -->
-                    <li class="nav-link">
+                    <li class="nav-link kb-item">
                         <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
                             <i class='bx bx-newspaper' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">White Paper</span>
                         </a>
                     </li>
+
+
+                    <li class="nav-link openfold " style="margin-top:10px;">
+                        <img src="~/assets/img/book.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 10px;" />
+                        <img src="~/assets/img/book.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 10px;" />
+                        <span class="text nav-text report-menu" style="margin-left:15px">REPORT </span>
+                    </li>
+                    <!-- User Group -->
+                    <li class="nav-link report-item">
+                        <a href="@Url.Action("FAQADMIN", "RecentTickets")">
+                            <i class='bx  bx-message-circle-question-mark' style="font-size:20px"></i>
+                            <span class="text nav-text " style="margin-left:15px">Priority Based Ticket</span>
+                        </a>
+                    </li>
+                    <!-- App User -->
+                    <li class="nav-link report-item">
+                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
+                            <i class='bx bx-newspaper' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
+                        </a>
+                    </li>   
+                    
+                    <li class="nav-link report-item">
+                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
+                            <i class='bx bx-newspaper' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-link report-item">
+                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
+                            <i class='bx bx-newspaper' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                        </a>
+                    </li>  
+                    
+                    <li class="nav-link report-item">
+                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
+                            <i class='bx bx-newspaper' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Product</span>
+                        </a>
+                    </li>  
+                    
+                    <li class="nav-link report-item">
+                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
+                            <i class='bx bx-newspaper' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Suboridinate Productivity</span>
+                        </a>
+                    </li>  
+                    
+                    <li class="nav-link report-item">
+                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
+                            <i class='bx bx-newspaper' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Ticket Aging</span>
+                        </a>
+                    </li>
+
+
+
+
+
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
                         <img src="~/assets/img/cyber-security.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 5px;" />
-                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
+                        <span class="text nav-text security-menu" style="margin-left:15px">SECURITY</span>
                     </li>
                     <!-- Change Password -->
                     @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "admin")
                     {
-                        <li class="nav-link">
+                        <li class="nav-link security-item">
                             <a href="@Url.Action("List", "UserGroup")">
                                 <i class='bx bx-user-circle' style="font-size:24px"></i>
                                 <span class="text nav-text" style="margin-left:15px">User Category</span>
                             </a>
                         </li>
 
-                        <li class="nav-link">
+                        <li class="nav-link security-item">
                             <a href="@Url.Action("List", "ProductMaster")">
                                 <i class='bx bx-spreadsheet' style="font-size:24px"></i>
                                 <span class="text nav-text" style="margin-left:15px">Products</span>
                             </a>
                         </li>
-                       
-                        <li class="nav-link">
+
+                        <li class="nav-link security-item">
                             @*<a href="@Url.Action("List", "ProjectMaster")">*@
                             <a href="@Url.Action("CustomerList", "Contract")">
                                 <i class='bi bi-bag-check' style="font-size:24px"></i>
@@ -131,21 +231,24 @@
                     @if ((Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa") && (Session["MaterialConsumptionFlag"] != null && Session["MaterialConsumptionFlag"].ToString().ToLower() == "y"))
                     {
                         @*<li class="nav-link">
-                            <a href="@Url.Action("List", "MaterialCategory")">
-                                <i class='bx bxs-category' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Item Category</span>
-                            </a>
-                        </li>*@
-                    
-                        <li class="nav-link">
+                                <a href="@Url.Action("List", "MaterialCategory")">
+                                    <i class='bx bxs-category' style="font-size:24px"></i>
+                                    <span class="text nav-text" style="margin-left:15px">Item Category</span>
+                                </a>
+                            </li>*@
+
+                        <li class="nav-link  security-item">
                             <a href="@Url.Action("List", "HSNCategory")">
                                 <i class='bx bx-book' style="font-size:24px"></i>
                                 <span class="text nav-text" style="margin-left:15px">HSN Congifuration</span>
                             </a>
-                        </li>  
-                        
-                        
-                        <li class="nav-link">
+                        </li>
+
+
+
+
+
+                        <li class="nav-link security-item">
                             <a href="@Url.Action("List", "ItemGroup")">
                                 <i class='bx bx-cart-alt' style="font-size:24px"></i>
                                 <span class="text nav-text" style="margin-left:15px">Item Configuration</span>
@@ -153,22 +256,19 @@
                         </li>
                     }
 
-                    <li class="nav-link">
+                    <li class="nav-link security-item">
                         <a href="@Url.Action("Info", "CompanyInfo")">
                             <i class='bx bx-buildings' style="font-size:24px"></i>
                             <span class="text nav-text" style="margin-left:15px">Company Onboard</span>
                         </a>
                     </li>
-
-
-                    <li class="nav-link">
+                    <li class="nav-link security-item">
                         <a href="@Url.Action("ChangePassword", "ChangePassword")">
                             <i class='bx bxs-key' style="font-size:24px"></i>
                             <span class="text nav-text" style="margin-left:15px">Change Password</span>
                         </a>
                     </li>
-                    <!-- Logout -->
-                    <li class="nav-link">
+                    <li class="nav-link security-item">
                         <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
                             <i class='bx bx-log-out' style="font-size:24px"></i>
                             <span class="text nav-text" style="margin-left:15px">Logout</span>
@@ -177,12 +277,99 @@
                 </ul>
             </div>
         </div>
+
+
     </nav>
 
     <div>
         @RenderBody()
 
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const openfolds = document.querySelectorAll(".nav-link.openfold");
+            const submenus = document.querySelectorAll(".submenu");
+            const currentUrl = window.location.pathname.toLowerCase();
+
+            /* ---------- UTILITIES ---------- */
+
+            function toggleIcons(menu, open) {
+                const settingsIcon = menu.querySelector(".settingsIcon");
+                const openIcon = menu.querySelector(".openIcon");
+
+                settingsIcon.style.display = open ? "none" : "inline";
+                openIcon.style.display = open ? "inline" : "none";
+            }
+
+            function closeAllMenus(except = null) {
+                openfolds.forEach(menu => {
+                    if (menu !== except) {
+                        menu.classList.remove("active");
+                        toggleIcons(menu, false);
+                    }
+                });
+
+                submenus.forEach(sm => {
+                    if (!except || sm.dataset.parent !== except.dataset.menu) {
+                        sm.classList.remove("show");
+                    }
+                });
+            }
+
+            function openMenu(menu) {
+                const key = menu.dataset.menu;
+                menu.classList.add("active");
+                toggleIcons(menu, true);
+
+                document.querySelectorAll(`.submenu[data-parent="${key}"]`)
+                    .forEach(sm => sm.classList.add("show"));
+
+                localStorage.setItem("openMenu", key);
+            }
+
+            /* ---------- CLICK HANDLERS ---------- */
+
+            openfolds.forEach(menu => {
+                menu.addEventListener("click", function () {
+                    const isOpen = this.classList.contains("active");
+                    closeAllMenus(this);
+
+                    if (!isOpen) {
+                        openMenu(this);
+                    } else {
+                        localStorage.removeItem("openMenu");
+                    }
+                });
+            });
+
+            /* ---------- ACTIVE PAGE HIGHLIGHT ---------- */
+
+            document.querySelectorAll(".submenu a").forEach(link => {
+                if (link.getAttribute("href") &&
+                    currentUrl.includes(link.getAttribute("href").toLowerCase())) {
+
+                    const submenuItem = link.closest(".submenu");
+                    submenuItem.classList.add("active");
+
+                    const parentMenu = document.querySelector(
+                        `.openfold[data-menu="${submenuItem.dataset.parent}"]`
+                    );
+                    if (parentMenu) openMenu(parentMenu);
+                }
+            });
+
+            /* ---------- RESTORE OPEN MENU ---------- */
+
+            const savedMenu = localStorage.getItem("openMenu");
+            if (savedMenu) {
+                const menu = document.querySelector(`.openfold[data-menu="${savedMenu}"]`);
+                if (menu) openMenu(menu);
+            }
+
+        });
+    </script>
     @*Toastr CSS*@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     @*jQuery (required by Toastr)*@

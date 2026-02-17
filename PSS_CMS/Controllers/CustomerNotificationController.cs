@@ -72,9 +72,9 @@ namespace PSS_CMS.Controllers
             return View(Customernotificationlist);
         }
 
-        public ActionResult Create()
+        public ActionResult Create(Customernotification customernotification)
         {
-
+            customernotification.CN_INVOICENO = Session["InvoiceNo"].ToString();
             return View();
         }
 

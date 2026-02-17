@@ -84,24 +84,51 @@
                         <span class="text nav-text" style="margin-left:15px">ACCOUNTS ADMIN</span>
                     </li>
                     <!-- Customer Accounts -->
+                    @*<li class="nav-link">
+            <a href="@Url.Action("CustomerList", "Contract")">
+                <i class='bx bxs-file' style="font-size:20px"></i>
+                <span class="text nav-text" style="margin-left:15px">User Accounts</span>
+            </a>
+        </li>
+
+        <li class="nav-link">
+            <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                <i class='bi bi-bag-check' style="font-size:20px"></i>
+                <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
+            </a>
+        </li>
+
+        <li class="nav-link">
+            <a href="@Url.Action("Index", "ServiceInvoice")">
+                <i class='bi bi-list-columns-reverse' style="font-size:20px"></i>
+                <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
+            </a>
+        </li>*@
+                    <!-- Customer Accounts -->
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bxs-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">User Accounts</span>
+                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
                         </a>
                     </li>
 
-                    <li class="nav-link">
-                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
-                            <i class='bi bi-bag-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
-                        </a>
-                    </li>
+                    @*<li class="nav-link">
+            <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                <i class='bi bi-bag-check' style="font-size:20px"></i>
+                <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
+            </a>
+        </li>*@
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
                             <i class='bi bi-list-columns-reverse' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("Report", "FollowUpReport")">
+                            <i class='bi bi-list-columns-reverse' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">FollowUp Report</span>
                         </a>
                     </li>
                     <!-- Settings Section -->

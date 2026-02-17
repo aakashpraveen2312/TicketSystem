@@ -45,6 +45,7 @@ namespace PSS_CMS.Models
         [DisplayName("Warranty free calls")]
         public int CU_WARRANTYFREECALLS { get; set; }
         public string WARRANTY_STATUS { get; set; }
+        public string WARRANTY_TYPE { get; set; }
         [DisplayName("Sort")]
         public int CU_SORTORDER { get; set; }
         public int CU_CRECID { get; set; }

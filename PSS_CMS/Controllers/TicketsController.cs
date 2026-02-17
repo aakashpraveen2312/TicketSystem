@@ -141,7 +141,7 @@ namespace PSS_CMS.Controllers
             ""tC_PRIORITYTYPE"": ""{tickets.TC_PRIORITYTYPE}"",
             ""tC_TICKETTYPE"": ""{tickets.SelectedTicketType}"",
             ""tC_PAIDSERVICE"": ""{(tickets.paidservice ? "Y" : "N")}"",           
-            ""tC_USERNAME"": ""{Session["UserName"] ?? ""}-{Session["Role"] ?? ""}"",
+            ""tC_USERNAME"": ""{Session["UserName"] ?? ""} - {Session["Role"] ?? ""}"",
             ""tC_REFERENCETRECID"": ""{0}"",
   ""tC_HFLAG"": ""{"N"}"",
 ""tC_ASSIGNFLAG"": ""{"N"}"",

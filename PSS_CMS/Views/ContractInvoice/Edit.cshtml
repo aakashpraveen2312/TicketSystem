@@ -149,7 +149,7 @@
                         @Html.LabelFor(model => model.CI_INVOICENUMBER, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CI_INVOICENUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.CI_INVOICENUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",@readonly="readonly" } })
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -193,7 +193,10 @@
                         @Html.LabelFor(model => model.CI_PAYMENTRECEIVEDAMOUNT, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CI_PAYMENTRECEIVEDAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
+                        @Html.EditorFor(model => model.CI_PAYMENTRECEIVEDAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off",
+                       inputmode = "decimal",
+                       oninput = "this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\\..*)\\./g,'$1')"
+                   } })
 
                     </div>
                 </div>
@@ -204,7 +207,10 @@
                         @Html.LabelFor(model => model.CI_SORTORDER, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CI_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
+                        @Html.EditorFor(model => model.CI_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text",
+                       inputmode = "numeric",
+                       oninput = "this.value=this.value.replace(/[^0-9]/g,'')"
+                   } })
                     </div>
                 </div>
 

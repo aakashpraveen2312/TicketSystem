@@ -106,11 +106,11 @@
                         </a>
                     </li>
                     @*<li class="nav-link">
-                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
-                            <i class='bi bi-bag-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
-                        </a>
-                    </li>*@
+            <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                <i class='bi bi-bag-check' style="font-size:20px"></i>
+                <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
+            </a>
+        </li>*@
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -130,6 +130,12 @@
                         <a href="@Url.Action("ChangePassword", "Contract")">
                             <i class='bx bxs-key' style="font-size:24px"></i>
                             <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("Report", "FollowUpReport")">
+                            <i class='bi bi-list-columns-reverse' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">FollowUp Report</span>
                         </a>
                     </li>
                     <!-- Logout -->
@@ -158,7 +164,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Accountant")">ACCOUNTANT DASHBOARD</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none">ACCOUNTANT DASHBOARD</li>
                 </ul>
             </div>
 
@@ -175,7 +181,7 @@
                         <div class="row align-items-center">
                             <div class="col-md-6 text-start">
                                 <h5>Total Contract Amount</h5>
-                                <h2 class="text-primary fw-bold mb-0">₹ @ViewBag.TotalContractAmount</h2>
+                                <h2 class="text-primary fw-bold mb-0">₹ @ViewBag.TotalContractAmount.00</h2>
                             </div>
                             <div class="col-md-6 text-end">
                                 <h5>Expired Contract</h5>
@@ -189,11 +195,11 @@
                         <div class="row align-items-center">
                             <div class="col-md-6 text-start">
                                 <h5>Total Paid Amount</h5>
-                                <h2 class="text-success fw-bold mb-0">₹ @ViewBag.TotalPaidAmount</h2>
+                                <h2 class="text-success fw-bold mb-0">₹ @ViewBag.TotalPaidAmount.00</h2>
 
                             </div>
                             <div class="col-md-6 text-end">
-                                <h5>Yet to Expiry</h5>
+                                <h5>Yet to Expiry Contract</h5>
 
                                 <h2 class="text-success fw-bold mb-0">@ViewBag.YetToExpireContracts</h2>
                             </div>
@@ -202,7 +208,7 @@
 
                     <div class="card text-center shadow p-4 mb-4 bg-white">
                         <h5>Pending Amount</h5>
-                        <h2 class="text-warning fw-bold">₹@ViewBag.PendingAmount</h2>
+                        <h2 class="text-warning fw-bold">₹@ViewBag.PendingAmount.00</h2>
                     </div>
                 </div>
 

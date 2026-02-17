@@ -23,24 +23,40 @@ namespace PSS_CMS.Controllers
         public async Task<ActionResult> List(string searchPharse, int? CU_CTRECID,string Name,int? CT_PRECID,decimal? CT_CONTRACTAMOUNT)
         {
 
-            if (CU_CTRECID != null && Name != null)
+            if (CU_CTRECID != null)
             {
                 Session["RECID"] = CU_CTRECID;
+                Session["CU_CTRECID"] = CU_CTRECID;
+               
+            }
+            if (Name != null)
+            {
                 Session["ContractName"] = Name;
+              
+            }
+            if (CT_PRECID != null)
+            {
+
+
                 Session["CT_PRECID"] = CT_PRECID;
             }
+            if (CT_CONTRACTAMOUNT != null )
+            {
+               
+                Session["ContractAmount"] = CT_CONTRACTAMOUNT;
+            }
+           
             Projectmaster objprojectmaster = new Projectmaster();
 
             string Weburl = ConfigurationManager.AppSettings["CUSTOMERGET"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            Session["CU_CTRECID"] = CU_CTRECID;
-            Session["ContractAmount"] = CT_CONTRACTAMOUNT;
+            
 
             List<Projectmaster> projectmasterlist = new List<Projectmaster>();
 
-            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&ContractRecID="+ CU_CTRECID;
+            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&ContractRecID="+ Session["RECID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -313,7 +329,7 @@ namespace PSS_CMS.Controllers
             ""cU_CONTACTPERSONEMAILID3"": ""{ projectmaster.CU_CONTACTPERSONEMAILID3}"",                    
             ""cU_CONTACTPERSONDESIGINATION3"": ""{ projectmaster.CU_CONTACTPERSONDESIGINATION3}"",                    
                           
-            ""cU_CRECID"": ""{ Session["CompanyID"]}""                              
+            ""cU_CRECID"": ""{ Session["CompanyID"]}"",                              
             ""cU_CTRECID"": ""{ Session["CU_CTRECID"]}""                              
         }}";
 

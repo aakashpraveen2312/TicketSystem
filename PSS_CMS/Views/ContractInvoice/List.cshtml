@@ -125,8 +125,8 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>Contracts and User</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract", new {Recid = Session["Recid"],name = Session["name"]})">CONTRACT LIST</a></li>
+                    <li>CONTRACTS AND USERS</li>
+                    <li><a href="@Url.Action("ContractList", "Contract", new { Recid = Session["CT_PRECID"] ,name = Session["ContractName"] })">CONTRACT LIST</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})">CUSTOMER(@Session["ContractName"])</a></li>
                     <li>CONTRACT INVOICE</li>
                 </ul>
@@ -164,9 +164,9 @@
     .Sanitized(false)
     .RenderValueAs(item =>
         "<span class='badge " +
-        (item.WARRANTY_STATUS == "Active"
+        (item.WARRANTY_TYPE == "Active"
             ? "bg-success text-center"
-            : item.WARRANTY_STATUS == "Going to Expire"
+            : item.WARRANTY_TYPE == "Going to Expire"
                 ? "bg-warning text-center"
                 : "bg-danger text-center") +
         "'>" +

@@ -132,10 +132,11 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">PRODUCT(@Session["name"])</a></li>
+                    <li>CONTRACTS AND USERS</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">PRODUCT(@Session["name"].ToString().ToUpper())</a></li>
                     <li><a href="@Url.Action("ContractList", "Contract", new { Recid = Session["CT_PRECID"] ,name = Session["ContractName"] })">CONTRACT LIST</a></li>
                     <li>CUSTOMER LIST</li>
-                    
+
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
@@ -177,9 +178,9 @@
      .Sanitized(false)
      .RenderValueAs(item =>
          "<span class='badge " +
-         (item.WARRANTY_STATUS == "Active"
+         (item.WARRANTY_TYPE == "Active"
              ? "bg-success text-center"
-             : item.WARRANTY_STATUS == "Going to Expire"
+             : item.WARRANTY_TYPE == "Going to Expire"
                  ? "bg-warning text-center"
                  : "bg-danger text-center") +
          "'>" +
@@ -199,7 +200,7 @@
 
 
 
-                var Customerurl = Url.Action("List", "ContractInvoice", new { id = o.CU_RECID, Name = o.CU_NAME ,contractamount = Session["ContractAmount"] ,InvoiceNo = o.CU_INVOICENO});
+                var Customerurl = Url.Action("List", "ContractInvoice", new { id = o.CU_RECID, Name = o.CU_NAME ,contractamount = Session["ContractAmount"] ,InvoiceNo = o.CU_INVOICENO,WarrantyDate=o.CU_WARRANTYUPTODATE});
                 var CustomerIconHtml = "<i class='bi bi-receipt bx-sm'></i>";
                 var CustomerlinkHtml = $"<a href='{Customerurl}' data-toggle='tooltip' data-placement='top' title='Contract Invoice'>{CustomerIconHtml}</a>";
 

@@ -18,7 +18,7 @@ namespace PSS_CMS.Controllers
     public class ContractInvoiceController : Controller
     {
         // GET: ContractInvoice 
-        public async Task<ActionResult> List(int? id, string Name,decimal? contractamount,string InvoiceNo)
+        public async Task<ActionResult> List(int? id, string Name,decimal? contractamount,string InvoiceNo,string WarrantyDate)
         {
             if (id != null)
             {
@@ -41,6 +41,13 @@ namespace PSS_CMS.Controllers
             {
                
                 Session["InvoiceNo"] = InvoiceNo;
+                ViewBag.InvoiceNo = InvoiceNo;
+            }
+            if (WarrantyDate != null)
+            {
+
+                Session["WarrantyDate"] = WarrantyDate;
+                ViewBag.WarrantyDate = WarrantyDate;
             }
 
             string Weburl = ConfigurationManager.AppSettings["CONTRACTINVOICEGET"];
@@ -93,6 +100,7 @@ namespace PSS_CMS.Controllers
 
             contractInvoice.CI_INVOICEAMOUNT = (decimal)Session["contractamount"];
             contractInvoice.CI_INVOICENUMBER = (string)Session["InvoiceNo"];
+            contractInvoice.CI_PAYMENTDUEDATE = (string)Session["WarrantyDate"];
             return View(contractInvoice);
         }
 

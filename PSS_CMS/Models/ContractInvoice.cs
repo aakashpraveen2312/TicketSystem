@@ -53,6 +53,7 @@ namespace PSS_CMS.Models
         [DisplayName("Payment Due Date")]
         public string CI_PAYMENTDUEDATE { get; set; }
         public string WARRANTY_STATUS { get; set; }
+        public string WARRANTY_TYPE { get; set; }
 
         public string Paymentduedate
         {

@@ -178,8 +178,16 @@
                 @Html.LabelFor(model => model.CT_CONTRACTAMOUNT, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_CONTRACTAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
-
+                @Html.EditorFor(model => model.CT_CONTRACTAMOUNT, new
+                {
+                    htmlAttributes = new
+                    {
+                        @class = "form-control integerboxcolors",
+                        autocomplete = "off",
+                        inputmode = "decimal",
+                        oninput = "this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\\..*)\\./g,'$1')"
+                    }
+                })
             </div>
         </div>
         <div class="row mb-3">
@@ -255,7 +263,17 @@
                 @Html.LabelFor(model => model.CT_SORTORDER, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
+                @Html.EditorFor(model => model.CT_SORTORDER, new
+           {
+               htmlAttributes = new
+               {
+                   @class = "form-control integerboxcolors",
+                   autocomplete = "off",
+                   type = "text",
+                   inputmode = "numeric",
+                   oninput = "this.value=this.value.replace(/[^0-9]/g,'')"
+               }
+           })
             </div>
         </div>
 

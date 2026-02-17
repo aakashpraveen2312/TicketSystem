@@ -56,9 +56,12 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             contract = JsonConvert.DeserializeObject<Contract>(jsonString);
 
-                            ViewBag.TotalContractAmount = contract.TotalContractAmount;
-                            ViewBag.TotalPaidAmount = contract.TotalPaidAmount;
-                            ViewBag.PendingAmount = contract.PendingAmount;
+                            //ViewBag.TotalContractAmount = contract.TotalContractAmount;
+                            //ViewBag.TotalPaidAmount = contract.TotalPaidAmount;
+                            //ViewBag.PendingAmount = contract.PendingAmount;
+                            ViewBag.TotalContractAmount = Convert.ToDecimal(contract.TotalContractAmount).ToString("N0");
+                            ViewBag.TotalPaidAmount = Convert.ToDecimal(contract.TotalPaidAmount).ToString("N0");
+                            ViewBag.PendingAmount = Convert.ToDecimal(contract.PendingAmount).ToString("N0");
                         }
                         else
                         {

@@ -372,6 +372,7 @@
     <Compile Include="Controllers\CompanyInfoController.cs" />
     <Compile Include="Controllers\CompanyRegistrationController.cs" />
     <Compile Include="Controllers\ChangePasswordController.cs" />
+    <Compile Include="Controllers\ContractExpiryReportController.cs" />
     <Compile Include="Controllers\ContractInvoiceController.cs" />
     <Compile Include="Controllers\CustomerNotificationController.cs" />
     <Compile Include="Controllers\HSNCategoryController.cs" />
@@ -379,6 +380,8 @@
     <Compile Include="Controllers\ItemCategoryController.cs" />
     <Compile Include="Controllers\ItemController.cs" />
     <Compile Include="Controllers\ItemGroupController.cs" />
+    <Compile Include="Controllers\ManagerSubordinateReportController.cs" />
+    <Compile Include="Controllers\PriorityWiseReportController.cs" />
     <Compile Include="Controllers\ServiceInvoiceController.cs" />
     <Compile Include="Controllers\UserManagerController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
@@ -428,12 +431,14 @@
     <Compile Include="Models\Locations.cs" />
     <Compile Include="Models\LocationType.cs" />
     <Compile Include="Models\Login.cs" />
+    <Compile Include="Models\ManagerReport.cs" />
     <Compile Include="Models\Material.cs" />
     <Compile Include="Models\Materialcategory.cs" />
     <Compile Include="Models\Materialconsumption.cs" />
     <Compile Include="Models\MaterialProductmap.cs" />
     <Compile Include="Models\PaymentUpdate.cs" />
     <Compile Include="Models\PDFDetails.cs" />
+    <Compile Include="Models\Prioritywise.cs" />
     <Compile Include="Models\ProductMaster.cs" />
     <Compile Include="Models\Projectmaster.cs" />
     <Compile Include="Models\Recenttickets.cs" />
@@ -706,6 +711,12 @@
     <Content Include="Views\HSNMaster\List.cshtml" />
     <Content Include="Views\Item\List.cshtml" />
     <Content Include="Views\Item\Edit.cshtml" />
+    <Content Include="Views\PriorityWiseReport\PrioritywiseReport.cshtml" />
+    <Content Include="Views\ContractExpiryReport\ContractexpiryReport.cshtml" />
+    <Content Include="Views\ContractExpiryReport\ProductFinanceReport.cshtml" />
+    <Content Include="Views\ContractExpiryReport\CustomerFinanceReport.cshtml" />
+    <Content Include="Views\ContractExpiryReport\ServiceProductReport.cshtml" />
+    <Content Include="Views\ManagerSubordinateReport\ManagersubordinateReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

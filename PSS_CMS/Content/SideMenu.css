@@ -95,7 +95,7 @@ body.dark {
     top: 0;
     left: 0;
     height: 100%;
-    width: 280px;
+    width: 315px;
     background: var(--sidebar-color);
     transition: var(--tran-05);
     z-index: 100;
@@ -163,7 +163,7 @@ body.dark {
             flex-direction: column;
             font-size: 20px;
             position: relative;
-            top: 14px;
+            top: 20px;
             left: 44px;
         }
 

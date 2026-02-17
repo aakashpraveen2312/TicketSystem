@@ -134,18 +134,33 @@
 
         </nav>
         <div class="row" style="margin-top:10px">
-            <div class="col-lg-9">
+            <div class="col-lg-5">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
                     <li>CONTRACTS AND USERS</li>
                     <li>PRODUCTS</li>
                     <li>LIST</li>
                 </ul>
             </div>
-            <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
+            <div class="col-lg-7" style="display:flex;align-items:end;justify-content:end;">
                 @using (Html.BeginForm("List", "ProductMaster", FormMethod.Get, new { id = "searchForm" }))
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />}
-               
+                <form method="post" action="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                    <button type="submit"
+                            name="ActionType"
+                            value="Download"
+                            class="btn btn-primary px-4 ms-5 me-3">
+                        Product Finance Report
+                    </button>
+                </form>
+                <form method="post" action="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                    <button type="submit"
+                            name="ActionType"
+                            value="Download"
+                            class="btn btn-warning px-4 ms-5 me-3">
+                        Customer Finance Report
+                    </button>
+                </form>
             </div>
 
         </div>

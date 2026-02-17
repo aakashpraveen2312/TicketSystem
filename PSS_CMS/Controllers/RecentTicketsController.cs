@@ -1006,5 +1006,131 @@ namespace PSS_CMS.Controllers
             }
         }
 
+        private async Task<List<SelectListItem>> LoadProductsAsync()
+        {
+            List<SelectListItem> product = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["HELPDESKNEWTICKETPRODUCT"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonString = await response.Content.ReadAsStringAsync();
+                        var rootObjects = JsonConvert.DeserializeObject<TicketTypeModel>(jsonString);
+
+                        if (rootObjects?.Data != null)
+                        {
+                            product = rootObjects.Data.Select(t => new SelectListItem
+                            {
+                                Value = t.P_RECID.ToString(),
+                                Text = t.P_NAME
+                            }).ToList();
+                        }
+                    }
+                }
+            }
+
+            return product;
+        }
+
+        [HttpGet]
+        
+        public async Task<ActionResult> TicketAgeingReportPdf()
+        {
+            ViewBag.Product = await LoadProductsAsync();
+            return View();
+        }
+
+    
+    //Report
+    [HttpPost]
+        public async Task<ActionResult> TicketAgeingReportPdf(
+    string fromDate,
+    string toDate,
+    string userRecID,
+    int? ProductId)
+        {
+            string Weburl = ConfigurationManager.AppSettings["TicketAgeingReportPdfApi"];
+
+
+            userRecID = Session["UserRECID"].ToString();
+
+            string apiKey = Session["APIKEY"]?.ToString();
+            string authKey = ConfigurationManager.AppSettings["AuthKey"];
+
+            int companyId = Convert.ToInt32(Session["CompanyID"]);
+
+            string finalUrl =
+                $"{Weburl}?companyRecID={companyId}";
+
+            if (!string.IsNullOrWhiteSpace(fromDate))
+                finalUrl += $"&fromDate={fromDate}";
+
+            if (!string.IsNullOrWhiteSpace(userRecID))
+                finalUrl += $"&userRecID={userRecID}"; 
+            
+            if (!string.IsNullOrWhiteSpace(toDate))
+                finalUrl += $"&toDate={toDate}";
+
+            if (ProductId.HasValue)
+                finalUrl += $"&product={ProductId.Value}";
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (s, c, ch, e) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", apiKey);
+                        client.DefaultRequestHeaders.Add("Authorization", authKey);
+
+                        var response = await client.GetAsync(finalUrl);
+
+
+                        if (!response.IsSuccessStatusCode)
+                            return Content("PDF generation failed");
+
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<TIcketagePdfResponse>(json);
+
+                        byte[] pdfBytes = await client.GetByteArrayAsync(result.FileUrl);
+
+                        return File(
+                            pdfBytes,
+                            "application/pdf",
+                            $"TicketAgeingReport_{DateTime.Now:yyyyMMddHHmmss}.pdf"
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Error: " + ex.Message);
+            }
+        }
+        public class TIcketagePdfResponse
+        {
+            public string Status { get; set; }
+            public string Message { get; set; }
+            public string FileUrl { get; set; }
+        }
+
+
     }
 }

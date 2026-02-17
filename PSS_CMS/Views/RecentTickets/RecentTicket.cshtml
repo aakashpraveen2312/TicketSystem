@@ -131,7 +131,15 @@
             </div>
             <div class="col-lg-2 col-md-2 col-sm-2 mt-2 d-flex justify-content-end">
                 <button type="button" id="resetFilters" class="btn btn-primary">Reset Filters</button>
-            </div>
+                &nbsp;
+                <a href="@Url.Action("TicketAgeingReportPdf", "RecentTickets")"
+                   class="btn btn-primary">
+                    <i class="bi bi-file-earmark-pdf-fill me-1"
+                       style="color:#fff;"></i>
+                    Report
+                </a>
+            </div>  
+           
 
         </div>
 
@@ -239,7 +247,9 @@
                         <a href="@Url.Action("AdminTicketsPdfDownload", "RecentTickets")">
                             <i class="bi bi-file-earmark-pdf-fill"
                                style="font-size:20px; color:#d9534f;"></i>
-                        </a>
+                        </a> 
+                        
+                       
 
                     </div>
 
@@ -363,7 +373,18 @@
                             ~ Date Picker
                         </div>
                     </div>
-
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bx bx-select-multiple'></i>
+                            ~ Pick Ticket
+                        </div>
+                    </div>
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bx bx-check text-success'></i>
+                            ~ Picked
+                        </div>
+                    </div>
                     <div class="flex-item">
                         <div class="d-flex justify-content-center footerb">
                             <i class='bx bx-reply-all'></i>
@@ -381,19 +402,19 @@
 
                     @if (Session["MaterialConsumptionFlag"]?.ToString() == "Y")
                     {
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bx-cart-alt'></i>
-                            ~ Job card Items
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <i style="color:#337ab7" class='bx bx-cart-alt'></i>
+                                ~ Job card Items
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bi bi-card-checklist'></i>
-                            ~ Services
+                        <div class="flex-item">
+                            <div class="d-flex justify-content-center footerb">
+                                <i style="color:#337ab7" class='bi bi-card-checklist'></i>
+                                ~ Services
+                            </div>
                         </div>
-                    </div>
                     }
 
                 </div>

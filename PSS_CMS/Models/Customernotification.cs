@@ -16,6 +16,17 @@ namespace PSS_CMS.Models
         [DisplayName("Follow Up Date")]
 
         public string CN_FOLLOWUPDATE { get; set; }
+        public string Followupdate
+        {
+            get
+            {
+                if (DateTime.TryParse(CN_FOLLOWUPDATE, out DateTime parsedDate))
+                {
+                    return parsedDate.ToString("dd-MM-yyyy");
+                }
+                return string.Empty; // Return an empty string or handle as needed if parsing fails
+            }
+        }
         [DisplayName("Status")]
 
         public string CN_STATUS { get; set; }
@@ -23,10 +34,18 @@ namespace PSS_CMS.Models
         [DisplayName("Comments")]
 
         public string CN_COMMENTS { get; set; }
-    public int CN_CTRECID { get; set; }
+
+        public DateTime? CN_CREATEDDATE { get; set; }
+        public int CN_CTRECID { get; set; }
     public int CN_CURECID { get; set; }
     public int CN_CRECID { get; set; }
-}
+        public int CU_RECID { get; set; }
+        public string CU_NAME { get; set; }
+        public string CU_EMAIL { get; set; }
+        public string CU_MOBILENO { get; set; }
+
+
+    }
     public class CustomernotificationRootObjects
     {
         public string Message { get; set; }

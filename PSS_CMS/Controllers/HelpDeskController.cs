@@ -24,13 +24,15 @@ namespace PSS_CMS.Controllers
         // GET: HelpDesk
         public async Task<ActionResult> HDDashboard()
         {
+            int CompanyID = (int)Session["CompanyID"];
             string WEBURLGET = ConfigurationManager.AppSettings["HELPDESKDASHBOARD"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             string strparams = "Userid=" + Session["UserRECID"] + "&type=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
             Dashborardchart dashboardData = null;
-
+            string Weburl = ConfigurationManager.AppSettings["TicketTrend"];
+           // await TicketTrendDashboard(CompanyID);
             try
             {
                 using (HttpClientHandler handler = new HttpClientHandler())
@@ -63,7 +65,26 @@ namespace PSS_CMS.Controllers
                             ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
                         }
                     }
+                    // ================= PRODUCT TREND =================
+                    using (HttpClient client = new HttpClient())
+                    {
+                        string finalTrendUrl = $"{Weburl}?companyRecID={Session["CompanyID"]}";
+                        var response = await client.GetAsync(finalTrendUrl);
+                        response.EnsureSuccessStatusCode();
+
+                        var json = await response.Content.ReadAsStringAsync();
+                        dashboardData.ProductTrend =
+                            JsonConvert.DeserializeObject<List<TicketTrendVM>>(json);
+                    }
+
+                    if (dashboardData.ProductTrend == null)
+                    {
+                        dashboardData.ProductTrend = new List<TicketTrendVM>();
+                    }
+
+
                 }
+            
             }
             catch (Exception ex)
             {
@@ -282,7 +303,7 @@ namespace PSS_CMS.Controllers
             ""tC_PRIORITYTYPE"": ""{tickets.TC_PRIORITYTYPE}"",
             ""tC_TICKETTYPE"": ""{tickets.SelectedTicketType}"",
             ""tC_PAIDSERVICE"": ""{(tickets.paidservice ? "Y" : "N")}"",   
-            ""tC_USERNAME"": ""{Session["UserName"] ?? ""}-{Session["Role"] ?? ""}"",
+            ""tC_USERNAME"": ""{Session["UserName"] ?? ""} - {Session["Role"] ?? ""}"",
             ""tC_REFERENCETRECID"": ""{0}"",
             ""tC_HFLAG"": ""{"Y"}"",
 ""tC_ASSIGNFLAG"": ""{"N"}"",
@@ -858,6 +879,112 @@ namespace PSS_CMS.Controllers
             ViewBag.User = User;
 
             return View();
+        }
+
+
+        public async Task<ActionResult> Report()
+        {
+            await ComboBoxTicketHistoryProduct();
+            return View();
+        } 
+        
+        
+        [HttpPost]
+        public async Task<ActionResult> Report(string fromDate,
+    string toDate,
+    int? Product)
+        {
+            string Weburl = ConfigurationManager.AppSettings["HELPDESKCUSTOMERREPORTPDF"];
+
+            string apiKey = Session["APIKEY"]?.ToString();
+            string authKey = ConfigurationManager.AppSettings["AuthKey"];
+
+            int companyId = Convert.ToInt32(Session["CompanyID"]);
+            int userId = Convert.ToInt32(Session["UserRECID"]);
+            string userType = Session["UserRole"]?.ToString();
+
+            string finalUrl =
+                $"{Weburl}?companyRecID={companyId}" +
+                $"&userRecID={userId}" +
+                $"&userType=HelpDesk" +
+                $"&Product={Product}";
+
+            if (!string.IsNullOrWhiteSpace(fromDate))
+                finalUrl += $"&fromDate={fromDate}";
+
+            if (!string.IsNullOrWhiteSpace(toDate))
+                finalUrl += $"&toDate={toDate}";
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (s, c, ch, e) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", apiKey);
+                        client.DefaultRequestHeaders.Add("Authorization", authKey);
+
+                        // Step 1: Call API
+                        var response = await client.GetAsync(finalUrl);
+                        if (!response.IsSuccessStatusCode)
+                            return Content("PDF generation failed.");
+
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<PriorityWisePdfResponse>(json);
+
+                        if (result?.Status != "Y")
+                            return Content("PDF generation failed.");
+
+                        // Step 2: Download PDF from FileUrl
+                        byte[] pdfBytes = await client.GetByteArrayAsync(result.FileUrl);
+
+                        return File(
+                            pdfBytes,
+                            "application/pdf",
+                            $"PriorityWiseReport_{DateTime.Now:yyyyMMddHHmmss}.pdf"
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Error: " + ex.Message);
+            }
+        }
+
+        //public async Task<ActionResult> TicketTrendDashboard(int companyRecID)
+        //{
+        //    var model = new Dashborardchart();
+
+        //    string Weburl = ConfigurationManager.AppSettings["TicketTrend"];
+        //    int companyId = Convert.ToInt32(Session["CompanyID"]);
+          
+
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        string finalUrl =
+        //  $"{Weburl}?companyRecID={companyId}";
+
+        //        var response = await client.GetAsync(finalUrl);
+        //        response.EnsureSuccessStatusCode();
+
+        //        var json = await response.Content.ReadAsStringAsync();
+        //        model.ProductTrend =
+        //        JsonConvert.DeserializeObject<List<TicketTrendVM>>(json);
+        //    }
+
+        //    return View(model);
+        //}
+
+     
+
+        public class PriorityWisePdfResponse
+        {
+            public string Status { get; set; }
+            public string Message { get; set; }
+            public string FileUrl { get; set; }
         }
 
     }

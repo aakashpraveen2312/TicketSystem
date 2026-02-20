@@ -471,6 +471,7 @@
     <Content Include="assets\img\open.png" />
     <Content Include="assets\img\pssbrowserlogo.jpeg" />
     <Content Include="assets\img\PSSlogo.png" />
+    <Content Include="assets\img\ReportImage.png" />
     <Content Include="assets\img\software-engineer.png" />
     <Content Include="assets\vendor\aos\aos.cjs.js" />
     <Content Include="assets\vendor\aos\aos.css" />
@@ -722,6 +723,7 @@
     <Content Include="Views\ContractExpiryReport\CustomerFinanceReport.cshtml" />
     <Content Include="Views\ContractExpiryReport\ServiceProductReport.cshtml" />
     <Content Include="Views\ManagerSubordinateReport\ManagersubordinateReport.cshtml" />
+    <Content Include="Views\HelpDesk\PrioritywiseReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

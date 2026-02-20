@@ -62,11 +62,13 @@ function setupEvents() {
     // Configuration menu and submenu items
     const configMenu = document.querySelector('.menu-links .nav-link:nth-child(1)');
     //const configItems = document.querySelectorAll('.menu-links .nav-link:nth-child(2),.menu-links .nav-link:nth-child(3),.menu-links .nav-link:nth-child(4)');
-    const configItems = document.querySelectorAll('.menu-links .nav-link:nth-child(2),.menu-links .nav-link:nth-child(3),.menu-links .nav-link:nth-child(4)');
+    const configItems = document.querySelectorAll('.menu-links .nav-link:nth-child(2),.menu-links .nav-link:nth-child(3)');
 
-    const configMenu1 = document.querySelector('.menu-links .nav-link:nth-child(5)');
-    const configItems1 = document.querySelectorAll('.menu-links .nav-link:nth-child(6),.menu-links .nav-link:nth-child(7)');
+    const configMenu1 = document.querySelector('.menu-links .nav-link:nth-child(4)');
+    const configItems1 = document.querySelectorAll('.menu-links .nav-link:nth-child(5),.menu-links .nav-link:nth-child(6),.menu-links .nav-link:nth-child(7),.menu-links .nav-link:nth-child(8)');
 
+    const configMenu2 = document.querySelector('.menu-links .nav-link:nth-child(9)');
+    const configItems2 = document.querySelectorAll('.menu-links .nav-link:nth-child(10),.menu-links .nav-link:nth-child(11)');
     // Settings menu and submenu items
     //const settingsMenu = document.querySelector('.menu-links .nav-link:nth-child(12)');
     //const settingsItems = document.querySelectorAll('.menu-links .nav-link:nth-child(13), .menu-links .nav-link:nth-child(14), .menu-links .nav-link:nth-child(15)');
@@ -82,6 +84,7 @@ function setupEvents() {
     function showMainMenusOnly() {
         configMenu.style.display = 'block';
         configMenu1.style.display = 'block';
+        configMenu2.style.display = 'block';
         //settingsMenu.style.display = 'block';
         //settingsMenu2.style.display = 'block';
 
@@ -154,6 +157,7 @@ function setupEvents() {
 
         configItems.forEach(closeItem);
         configItems1.forEach(closeItem);
+        configItems2.forEach(closeItem);
         //settingsItems.forEach(closeItem);
         //settingsItems2.forEach(closeItem);
 
@@ -174,6 +178,12 @@ function setupEvents() {
         configMenu1.addEventListener("click", (event) => {
             event.stopPropagation();
             toggleSubmenu(configItems1);
+        });
+    }
+    if (configMenu2) {
+        configMenu2.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleSubmenu(configItems2);
         });
     }
 

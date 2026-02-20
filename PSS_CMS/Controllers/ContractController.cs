@@ -56,12 +56,14 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             contract = JsonConvert.DeserializeObject<Contract>(jsonString);
 
-                            //ViewBag.TotalContractAmount = contract.TotalContractAmount;
-                            //ViewBag.TotalPaidAmount = contract.TotalPaidAmount;
-                            //ViewBag.PendingAmount = contract.PendingAmount;
-                            ViewBag.TotalContractAmount = Convert.ToDecimal(contract.TotalContractAmount).ToString("N0");
-                            ViewBag.TotalPaidAmount = Convert.ToDecimal(contract.TotalPaidAmount).ToString("N0");
-                            ViewBag.PendingAmount = Convert.ToDecimal(contract.PendingAmount).ToString("N0");
+                            ViewBag.TotalContractAmount = contract.TotalContractAmount;
+                            ViewBag.TotalPaidAmount = contract.TotalPaidAmount;
+                            ViewBag.PendingAmount = contract.PendingAmount;
+
+
+                            ViewBag.TotalContractAmount1 = Convert.ToDecimal(contract.TotalContractAmount).ToString("N0");
+                            ViewBag.TotalPaidAmount1 = Convert.ToDecimal(contract.TotalPaidAmount).ToString("N0");
+                            ViewBag.PendingAmount1 = Convert.ToDecimal(contract.PendingAmount).ToString("N0");
                         }
                         else
                         {
@@ -186,7 +188,7 @@ namespace PSS_CMS.Controllers
         {
             if (Recid!=null && name!=null)
             {
-                Session["Recid"] = Recid;
+                Session["ConRecid"] = Recid;
                 Session["name"] = name;
             }
             string WEBURLGET = ConfigurationManager.AppSettings["CONTRACTGET"];
@@ -198,7 +200,7 @@ namespace PSS_CMS.Controllers
             string APIKey = Session["APIKEY"].ToString();
 
 
-            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&Recid=" + Session["Recid"];
+            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&Recid=" + Session["ConRecid"];
             string finalurl = WEBURLGET + "?" + strparams;
             try
             {

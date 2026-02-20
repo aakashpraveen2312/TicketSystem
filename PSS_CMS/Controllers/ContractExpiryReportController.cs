@@ -33,6 +33,12 @@ namespace PSS_CMS.Controllers
                 TempData["ErrorMessage"] = "Please select either a Date Range or a Type";
                 return RedirectToAction("ContractexpiryReport");
             }
+            // 2️⃣ Check ToDate >= FromDate
+            if (FromDate.HasValue && ToDate.HasValue && ToDate < FromDate)
+            {
+                TempData["ErrorMessage"] = "To Date must be greater than or equal to From Date";
+                return RedirectToAction("ContractexpiryReport");
+            }
 
 
             string Weburl = ConfigurationManager.AppSettings["CONTRACTEXPIRYREPORT"];

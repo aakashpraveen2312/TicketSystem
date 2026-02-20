@@ -27,7 +27,11 @@ namespace PSS_CMS.Controllers
         public async Task<ActionResult> PrioritywiseReport(Prioritywise prioritywise,DateTime? FromDate, DateTime? ToDate,string Type)
         {
 
-
+            if (FromDate.HasValue && ToDate.HasValue && ToDate < FromDate)
+            {
+                TempData["ErrorMessage"] = "To Date must be greater than or equal to From Date";
+                return RedirectToAction("PrioritywiseReport");
+            }
             if (string.IsNullOrWhiteSpace(Type))
             {
                 TempData["ErrorMessage"] = "Please select the Type";

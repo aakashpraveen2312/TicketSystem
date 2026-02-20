@@ -1058,12 +1058,32 @@ namespace PSS_CMS.Controllers
     
     //Report
     [HttpPost]
-        public async Task<ActionResult> TicketAgeingReportPdf(
-    string fromDate,
-    string toDate,
-    string userRecID,
-    int? ProductId)
+        public async Task<ActionResult> TicketAgeingReportPdf(string fromDate,string toDate,string userRecID,int? ProductId)
         {
+            if (ProductId == null || ProductId == 0)
+            {
+                TempData["ErrorMessage"] = "Please Select Product";
+                return RedirectToAction("TicketAgeingReportPdf");
+            }
+            if (!string.IsNullOrWhiteSpace(fromDate) &&
+        !string.IsNullOrWhiteSpace(toDate))
+            {
+                DateTime from;
+                DateTime to;
+
+                bool isFromValid = DateTime.TryParse(fromDate, out from);
+                bool isToValid = DateTime.TryParse(toDate, out to);
+
+                if (isFromValid && isToValid)
+                {
+                    if (to < from)
+                    {
+                        TempData["ErrorMessage"] = "To Date must be greater than or equal to From Date";
+                        return RedirectToAction("TicketAgeingReportPdf");
+                    }
+                }
+               
+            }
             string Weburl = ConfigurationManager.AppSettings["TicketAgeingReportPdfApi"];
 
 

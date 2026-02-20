@@ -139,60 +139,50 @@
 
 
                     <li class="nav-link openfold " style="margin-top:10px;">
-                        <img src="~/assets/img/book.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 10px;" />
-                        <img src="~/assets/img/book.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 10px;" />
+                        <img src="~/assets/img/ReportImage.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 10px;" />
+                        <img src="~/assets/img/ReportImage.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 10px;" />
                         <span class="text nav-text report-menu" style="margin-left:15px">REPORT </span>
                     </li>
-                    <!-- User Group -->
-                    <li class="nav-link report-item">
-                        <a href="@Url.Action("FAQADMIN", "RecentTickets")">
-                            <i class='bx  bx-message-circle-question-mark' style="font-size:20px"></i>
-                            <span class="text nav-text " style="margin-left:15px">Priority Based Ticket</span>
-                        </a>
-                    </li>
-                    <!-- App User -->
-                    <li class="nav-link report-item">
-                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
-                            <i class='bx bx-newspaper' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
-                        </a>
-                    </li>   
-                    
-                    <li class="nav-link report-item">
-                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
-                            <i class='bx bx-newspaper' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    
-                    <li class="nav-link report-item">
-                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
-                            <i class='bx bx-newspaper' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>  
-                    
-                    <li class="nav-link report-item">
-                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
-                            <i class='bx bx-newspaper' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Service Product</span>
-                        </a>
-                    </li>  
-                    
-                    <li class="nav-link report-item">
-                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
-                            <i class='bx bx-newspaper' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Suboridinate Productivity</span>
-                        </a>
-                    </li>  
-                    
-                    <li class="nav-link report-item">
-                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
-                            <i class='bx bx-newspaper' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Ticket Aging</span>
-                        </a>
-                    </li>
+                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "admin" ||
+                        Session["UserRole"].ToString().ToLower() == "manager")
+                    {
+                        <!-- Priority based Report -->
+                        <li class="nav-link report-item">
+                            <a href="@Url.Action("PrioritywiseReport", "PriorityWiseReport")">
+                                <i class='bx  bx-link' style="font-size:20px"></i>
+                                <span class="text nav-text " style="margin-left:15px">Priority Based Ticket</span>
+                            </a>
+                        </li>
 
+                    }
+                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "admin")
+                    {
+                        <li class="nav-link report-item">
+                            <a href="@Url.Action("ServiceProductReport", "ContractExpiryReport")">
+                                <i class='bx bx-wrench' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Service Product</span>
+                            </a>
+                        </li>
+                    }
+                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "manager")
+                    {
+                        <li class="nav-link report-item">
+                            <a href="@Url.Action("ManagersubordinateReport", "ManagerSubordinateReport")">
+                                <i class='bx bx-bar-chart-alt-2' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Suboridinate Productivity</span>
+                            </a>
+                        </li>
+                    }
+                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa"||
+                        Session["UserRole"].ToString().ToLower() == "manager")
+                    {
+                        <li class="nav-link report-item">
+                            <a href="@Url.Action("TicketAgeingReportPdf", "RecentTickets")">
+                                <i class='bx bx-timer' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Ticket Aging</span>
+                            </a>
+                        </li>
+                    }
 
 
 
@@ -231,11 +221,11 @@
                     @if ((Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa") && (Session["MaterialConsumptionFlag"] != null && Session["MaterialConsumptionFlag"].ToString().ToLower() == "y"))
                     {
                         @*<li class="nav-link">
-                                <a href="@Url.Action("List", "MaterialCategory")">
-                                    <i class='bx bxs-category' style="font-size:24px"></i>
-                                    <span class="text nav-text" style="margin-left:15px">Item Category</span>
-                                </a>
-                            </li>*@
+                <a href="@Url.Action("List", "MaterialCategory")">
+                    <i class='bx bxs-category' style="font-size:24px"></i>
+                    <span class="text nav-text" style="margin-left:15px">Item Category</span>
+                </a>
+            </li>*@
 
                         <li class="nav-link  security-item">
                             <a href="@Url.Action("List", "HSNCategory")">

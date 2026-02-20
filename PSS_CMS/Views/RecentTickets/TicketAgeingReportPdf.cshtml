@@ -110,7 +110,7 @@
 
                 <ul class="breadcrumb mt-3">
                     <li class="resadminFAQ" style="color: #2888bb;">REPORT</li>
-                    <li>Aging Report</li>
+                    <li>AGING REPORT</li>
                 </ul>
             </div>
 
@@ -121,48 +121,48 @@
             @using (Html.BeginForm("TicketAgeingReportPdf", "RecentTickets", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
             {
                 <div class="container mt-5 card shadow p-4 rounded-3">
-                    <h3 class="mb-4 text-center">TICKETS AGING REPORT</h3>
+                    <h3 class="mb-4 text-center">Ticket Aging Report</h3>
                     <!-- ✅ Form starts here -->
-                   
-                        <div class="row g-3">
 
-                            <!-- From Date -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">From Date</label>
-                                <input type="date" name="FromDate" id="fromDate" class="form-control">
-                            </div>
+                    <div class="row g-3">
 
-                            <!-- To Date -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">To Date</label>
-                                <input type="date" name="ToDate" id="toDate" class="form-control">
-                            </div> 
-                            
-                            @*Product DropDown*@
-                            
-                            <div class="col-md-4">
-                                    <label for="ProductId">Product</label>
-                                    @Html.DropDownList(
-                                "ProductId",
-                                (IEnumerable<SelectListItem>)ViewBag.Product,
-                                "-- Select Product --",
-                                new { @class = "form-control" }
-                                )
+                        <!-- From Date -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">From Date</label>
+                            <input type="date" name="FromDate" id="fromDate" class="form-control">
+                        </div>
 
-                            </div>
+                        <!-- To Date -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">To Date</label>
+                            <input type="date" name="ToDate" id="toDate" class="form-control">
+                        </div>
+
+                        @*Product DropDown*@
+
+                        <div class="col-md-4">
+                            <label for="ProductId">Product</label>
+                            @Html.DropDownList(
+                        "ProductId",
+                        (IEnumerable<SelectListItem>)ViewBag.Product,
+                        "-- Select Product --",
+                        new { @class = "form-control" }
+                        )
 
                         </div>
 
-                        <!-- Submit Button -->
-                        <div class="text-center mt-5">
-                            <button type="submit"
-                                    name="ActionType"
-                                    value="Download"
-                                    class="btn btn-danger px-4 me-3">
-                                Download PDF
-                            </button>
+                    </div>
 
-                        </div>
+                    <!-- Submit Button -->
+                    <div class="text-center mt-5">
+                        <button type="submit"
+                                name="ActionType"
+                                value="Download"
+                                class="btn btn-danger px-4 me-3">
+                            Download PDF
+                        </button>
+
+                    </div>
 
                     <!-- ✅ Form ends here -->
                 </div>
@@ -223,7 +223,26 @@
         });
     });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+$(document).ready(function () {
 
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <text>
+            Swal.fire({
+                icon: 'info',
+                title: 'Message',
+                text: '@TempData["ErrorMessage"]',
+                confirmButtonColor: '#034CAE',
+                confirmButtonText: 'OK'
+            });
+        </text>
+    }
+
+});
+    </script>
     @*Script for edited succesfully*@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

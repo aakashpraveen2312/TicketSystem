@@ -26,10 +26,7 @@ namespace PSS_CMS.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Report(
-    DateTime? fromDate,
-    DateTime? toDate,
-    string status)
+        public async Task<ActionResult> Report(DateTime? fromDate,DateTime? toDate,string status)
         {
             string WEBURL = ConfigurationManager.AppSettings["GetCustomerNotificationFollowUpReport"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -94,10 +91,7 @@ namespace PSS_CMS.Controllers
             return View(notifications);
         }
             
-        public async Task<ActionResult> FollowUpReportPdfDownload(
-    DateTime? fromDate,
-    DateTime? toDate,
-    string status)
+        public async Task<ActionResult> FollowUpReportPdfDownload(DateTime? fromDate,DateTime? toDate,string status)
         {
             string Weburl = ConfigurationManager
                 .AppSettings["GenerateFollowUpReportPdf"];

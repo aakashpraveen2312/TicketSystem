@@ -66,7 +66,17 @@ namespace PSS_CMS.Models
                 return string.Empty; // Return an empty string or handle as needed if parsing fails
             }
         }
-
+        public string Paymentduedate1
+        {
+            get
+            {
+                if (DateTime.TryParse(CI_PAYMENTDUEDATE, out DateTime parsedDate))
+                {
+                    return parsedDate.ToString("yyyy-MM-dd");
+                }
+                return string.Empty; // Return an empty string or handle as needed if parsing fails
+            }
+        }
     }
     public class ContractInvoiceRootObjects
     {

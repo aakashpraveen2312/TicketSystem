@@ -65,11 +65,17 @@
             .dropdown-check-list ul.items li {
                 padding: 6px 10px;
             }
+        .contents {
+            padding: 0 16px 0 25px !important;
+            min-height: 250px !important;
+            margin-left: 65px !important;
+            background-color: #e4e9f7 !important;
+        }
     </style>
 </head>
 
 <body>
-    <div class="content" style=" overflow-x: hidden!important;">
+    <div class="contents">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
             <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>

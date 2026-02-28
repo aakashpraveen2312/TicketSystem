@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<PSS_CMS.Models.Prioritywise>
+@{
     Layout = null;
 }
 
@@ -41,7 +42,7 @@
     <style>
         .card {
             max-width: 100% !important;
-            height: 50vh;
+            height: 40vh;
             overflow: visible;
         }
 
@@ -63,7 +64,6 @@
                 top: 100%;
                 left: 0;
                 width: 100%;
-               
                 background: #fff;
                 border: 1px solid #ccc;
                 max-height: 250px;
@@ -79,6 +79,7 @@
             .dropdown-check-list ul.items li {
                 padding: 6px 10px;
             }
+
         .contents {
             padding: 0 16px 0 25px !important;
             min-height: 250px !important;
@@ -323,9 +324,16 @@
                 <div class="text-center mt-5">
                     <button type="submit"
                             name="ActionType"
-                            value="Download"
+                            value="Filter"
+                            class="btn btn-warning px-4 me-3">
+                        Fillter
+                    </button>
+
+                    <button type="submit"
+                            name="ActionType"
+                            value="PDF"
                             class="btn btn-danger px-4 me-3">
-                        Download PDF
+                        PDF
                     </button>
 
                 </div>
@@ -333,6 +341,60 @@
             </form>
             <!-- ✅ Form ends here -->
         </div>
+
+        <!-- Report Table -->
+
+        <div class="card report-card mt-5 ms-3  mb-5">
+            <div class="card-body table-responsive">
+
+                <table class="table table-bordered table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Customer Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Contract Amount</th>
+                            <th>Paid Amount</th>
+                            <th>Pending Amount</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td>@item.customerName</td>
+                                    <td>@item.customerEmail</td>
+                                    <td>@item.customerMobile</td>
+                                    <td class="text-right">@item.ContractAmount</td>  
+                                    <td class="text-right">@item.PaidAmount</td>
+                                    <td class="text-right">@item.PendingAmount</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-muted text-center">
+                                    No records found
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+                <div class="d-flex justify-content-start mt-3">
+                    <button id="prevBtn" class="btn btn-primary me-2">Previous</button>
+                    <span id="pageInfo" class="mt-2"></span>
+                    <button id="nextBtn" class="btn btn-primary ms-2">Next</button>
+                </div>
+            </div>
+        </div>
+
         <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
@@ -350,6 +412,42 @@
     <script src="~/Scripts/Logoutjs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const rowsPerPage = 10;
+            const rows = document.querySelectorAll("tbody tr");
+            const totalRows = rows.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            let currentPage = 1;
+
+            function showPage(page) {
+                currentPage = page;
+
+                rows.forEach((row, index) => {
+                    row.style.display =
+                        (index >= (page - 1) * rowsPerPage &&
+                            index < page * rowsPerPage)
+                            ? ""
+                            : "none";
+                });
+
+                document.getElementById("pageInfo").innerText =
+                    "Page " + currentPage + " of " + totalPages;
+            }
+
+            document.getElementById("prevBtn").addEventListener("click", function () {
+                if (currentPage > 1) showPage(currentPage - 1);
+            });
+
+            document.getElementById("nextBtn").addEventListener("click", function () {
+                if (currentPage < totalPages) showPage(currentPage + 1);
+            });
+
+            showPage(1);
+        });
+    </script>
     <script>
 $(document).ready(function () {
 

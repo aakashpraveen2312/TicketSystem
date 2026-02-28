@@ -186,9 +186,14 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> ContractList(int? Recid,string name,string searchPharse)
         {
-            if (Recid!=null && name!=null)
+            if (Recid!=null)
             {
                 Session["ConRecid"] = Recid;
+               
+            }
+            if (name != null)
+            {
+               
                 Session["name"] = name;
             }
             string WEBURLGET = ConfigurationManager.AppSettings["CONTRACTGET"];
@@ -294,7 +299,7 @@ namespace PSS_CMS.Controllers
                     attachmentBase64 = Convert.ToBase64String(fileBytes);
                 }
                 var content = $@"{{           
-            ""cT_PRECID"": ""{Session["Recid"]}"",           
+            ""cT_PRECID"": ""{Session["ConRecid"]}"",           
             ""cT_CONTRACTREFERENCENUMBER"": ""{contract.CT_CONTRACTREFERENCENUMBER}"",           
             ""cT_FROMDATE"": ""{contract.CT_FROMDATE}"",           
             ""cT_TODATE"": ""{ contract.CT_TODATE}"",                    

@@ -17,7 +17,9 @@ namespace PSS_CMS.Models
         [DisplayName("Code")]
         public string P_CODE { get; set; }
         [DisplayName("Product Name")]
-        public string P_NAME { get; set; }
+        public string P_NAME { get; set; } 
+        [DisplayName("Product Warranty Date")]
+        public string P_WARRANTYDATE { get; set; }
         [DisplayName("Sort")]
         public int P_SORTORDER { get; set; }
 

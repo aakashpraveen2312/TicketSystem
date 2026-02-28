@@ -996,7 +996,7 @@ namespace PSS_CMS.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PrioritywiseReport(Prioritywise prioritywise, DateTime? FromDate, DateTime? ToDate, string Type)
+        public async Task<ActionResult> PrioritywiseReport(Prioritywise prioritywise, DateTime? FromDate, DateTime? ToDate, string Type,string ActionType)
         {
 
             if (FromDate.HasValue && ToDate.HasValue && ToDate < FromDate)
@@ -1010,7 +1010,13 @@ namespace PSS_CMS.Controllers
                 return RedirectToAction("PrioritywiseReport"); // or return same view
             }
 
-            string Weburl = ConfigurationManager.AppSettings["PRIORITYREPORT"];
+            List<Prioritywise> list = new List<Prioritywise>();
+
+            string Weburl = ConfigurationManager.AppSettings[
+     ActionType == "PDF" ? "PRIORITYREPORT" : "PRIORITYREPORTLISTVIEW"];
+
+
+           // string Weburl = ConfigurationManager.AppSettings["PRIORITYREPORT"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
@@ -1038,13 +1044,26 @@ namespace PSS_CMS.Controllers
                     if (rootObjects == null || rootObjects.Status != "Y")
                         return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
 
-                    // The API already returns a PDF URL
-                    string pdfUrl = rootObjects.fileUrl;
-                    var fileBytes = await client.GetByteArrayAsync(pdfUrl);
-                    var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
+                    if (ActionType == "Filter")
+                    {
+                        if (rootObjects != null && rootObjects.Status == "Y")
+                        {
+                            list = rootObjects.Data;
+                        }
+                        return View(list);
+                    }
+                    else
+                    {
+                        // The API already returns a PDF URL
+                        string pdfUrl = rootObjects.fileUrl;
+                        var fileBytes = await client.GetByteArrayAsync(pdfUrl);
+                        var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
 
-                    // Download
-                    return File(fileBytes, "application/pdf", fileName);
+                        // Download
+                        return File(fileBytes, "application/pdf", fileName);
+
+
+                    }
 
                 }
             }

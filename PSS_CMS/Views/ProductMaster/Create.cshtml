@@ -105,10 +105,10 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.P_GRACEPERIOD, new { @class = "labels" })
+                        @Html.LabelFor(model => model.P_WARRANTYDATE, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.P_GRACEPERIOD, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.P_WARRANTYDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",type="date" } })
                     </div>
                 </div>
 
@@ -117,7 +117,7 @@
                         @Html.LabelFor(model => model.P_SORTORDER, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.P_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.P_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off",placeholder="0" } })
 
                     </div>
                 </div>

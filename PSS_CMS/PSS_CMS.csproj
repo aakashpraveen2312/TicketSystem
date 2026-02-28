@@ -447,6 +447,7 @@
     <Compile Include="Models\ServiceInvoice.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\TicketAgeingViewModel.cs" />
+    <Compile Include="Models\TIcketagePdf.cs" />
     <Compile Include="Models\Tickethistory.cs" />
     <Compile Include="Models\Tickets.cs" />
     <Compile Include="Models\Timeline.cs" />

@@ -24,9 +24,13 @@ namespace PSS_CMS.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> ManagersubordinateReport(Prioritywise prioritywise, string Type, string Productrecid, string contractrecid,string Status)
+        public async Task<ActionResult> ManagersubordinateReport(Prioritywise prioritywise, string Type, string Productrecid, string contractrecid,string Status,string ActionType)
         {
-            string Weburl = ConfigurationManager.AppSettings["SUBORDINATEREPORT"];
+            List<Prioritywise> list = new List<Prioritywise>();
+            string Weburl = ConfigurationManager.AppSettings[
+     ActionType == "PDF" ? "SUBORDINATEREPORT" : "SUBORDINATEREPORTLISTVIEW"];
+
+            //string Weburl = ConfigurationManager.AppSettings["SUBORDINATEREPORT"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
@@ -55,13 +59,26 @@ namespace PSS_CMS.Controllers
                     if (rootObjects == null || rootObjects.Status != "Y")
                         return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
 
-                    // The API already returns a PDF URL
-                    string pdfUrl = rootObjects.fileUrl;
-                    var fileBytes = await client.GetByteArrayAsync(pdfUrl);
-                    var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
+                    if (ActionType == "Filter")
+                    {
+                        if (rootObjects != null && rootObjects.Status == "Y")
+                        {
+                            list = rootObjects.Data;
+                        }
+                        return View(list);
+                    }
+                    else
+                    {
+                        // The API already returns a PDF URL
+                        string pdfUrl = rootObjects.fileUrl;
+                        var fileBytes = await client.GetByteArrayAsync(pdfUrl);
+                        var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
 
-                    // Download
-                    return File(fileBytes, "application/pdf", fileName);
+                        // Download
+                        return File(fileBytes, "application/pdf", fileName);
+
+
+                    }
 
                 }
             }

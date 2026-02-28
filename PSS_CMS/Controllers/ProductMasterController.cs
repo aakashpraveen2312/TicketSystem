@@ -99,8 +99,9 @@ namespace PSS_CMS.Controllers
 
                 var content = $@"{{           
             ""p_CODE"": ""{productmaster.P_CODE}"",           
-            ""p_NAME"": ""{productmaster.P_NAME}"",           
-            ""p_GRACEPERIOD"": ""{productmaster.P_GRACEPERIOD}"",           
+            ""p_NAME"": ""{productmaster.P_NAME}"",    
+            ""p_WARRANTYDATE"": ""{productmaster.P_WARRANTYDATE}"",   
+            ""p_GRACEPERIOD"": ""{3}"",           
             ""p_SORTORDER"": ""{ productmaster.P_SORTORDER}"",                    
             ""p_DISABLE"": ""{(productmaster.P_ProductDisable ? "Y" : "N")}"",                    
             ""p_CRECID"": ""{Session["CompanyID"]}""           
@@ -240,7 +241,8 @@ namespace PSS_CMS.Controllers
             ""p_RECID"": ""{Session["Productrecid"]}"",           
             ""p_CODE"": ""{productmaster.P_CODE}"",           
             ""p_NAME"": ""{productmaster.P_NAME}"",   
-            ""p_GRACEPERIOD"": ""{productmaster.P_GRACEPERIOD}"",
+            ""p_WARRANTYDATE"": ""{productmaster.P_WARRANTYDATE}"",   
+            ""p_GRACEPERIOD"": ""{3}"",
             ""p_SORTORDER"": ""{productmaster.P_SORTORDER}"",
             ""p_DISABLE"": ""{(productmaster.P_ProductDisable ? "Y" : "N")}"",
             ""p_CRECID"": ""{ Session["CompanyID"]}""                              

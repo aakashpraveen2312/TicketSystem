@@ -1039,10 +1039,13 @@ namespace PSS_CMS.Controllers
                                 Value = t.P_RECID.ToString(),
                                 Text = t.P_NAME
                             }).ToList();
+                            
                         }
                     }
                 }
             }
+
+            ViewBag.Product = product;
 
             return product;
         }
@@ -1051,14 +1054,14 @@ namespace PSS_CMS.Controllers
         
         public async Task<ActionResult> TicketAgeingReportPdf()
         {
-            ViewBag.Product = await LoadProductsAsync();
+           await LoadProductsAsync();
             return View();
         }
 
     
     //Report
     [HttpPost]
-        public async Task<ActionResult> TicketAgeingReportPdf(string fromDate,string toDate,string userRecID,int? ProductId)
+        public async Task<ActionResult> TicketAgeingReportPdf(string fromDate,string toDate,string userRecID,int? ProductId,string ActionType)
         {
             if (ProductId == null || ProductId == 0)
             {
@@ -1084,7 +1087,10 @@ namespace PSS_CMS.Controllers
                 }
                
             }
-            string Weburl = ConfigurationManager.AppSettings["TicketAgeingReportPdfApi"];
+            List<TicketAgeingViewModel> list = new List<TicketAgeingViewModel>();
+            string Weburl = ConfigurationManager.AppSettings[
+     ActionType == "PDF" ? "TicketAgeingReportPdfApi" : "TicketAgeingReportPdfApiListView"];
+            //string Weburl = ConfigurationManager.AppSettings["TicketAgeingReportPdfApi"];
 
 
             userRecID = Session["UserRECID"].ToString();
@@ -1127,15 +1133,29 @@ namespace PSS_CMS.Controllers
                             return Content("PDF generation failed");
 
                         var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<TIcketagePdfResponse>(json);
+                        var result = JsonConvert.DeserializeObject<TIcketagePdfObject>(json);
 
-                        byte[] pdfBytes = await client.GetByteArrayAsync(result.FileUrl);
+                        if (ActionType == "Filter")
+                        {
+                            if (result != null && result.Status == "Y")
+                            {
+                                list = result.Data;
+                            }
+                            await LoadProductsAsync();
+                            return View(list);
+                        }
+                        else
+                        {
+                            byte[] pdfBytes = await client.GetByteArrayAsync(result.FileUrl);
 
-                        return File(
-                            pdfBytes,
-                            "application/pdf",
-                            $"TicketAgeingReport_{DateTime.Now:yyyyMMddHHmmss}.pdf"
-                        );
+                            return File(
+                                pdfBytes,
+                                "application/pdf",
+                                $"TicketAgeingReport_{DateTime.Now:yyyyMMddHHmmss}.pdf"
+                            );
+
+                        }
+                       
                     }
                 }
             }

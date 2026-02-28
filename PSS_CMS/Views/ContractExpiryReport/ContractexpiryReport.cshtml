@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model IEnumerable<PSS_CMS.Models.Prioritywise>
+<!DOCTYPE html>
 @{
     Layout = null;
 }
@@ -42,8 +43,12 @@
     <style>
         .card {
             max-width: 100% !important;
-            height: 50vh;
+            height: 40vh;
             overflow: visible;
+        }
+        input#PastExpiry {
+            width: 25px;
+            height: 25px;
         }
     </style>
 </head>
@@ -179,19 +184,19 @@
                 <div class="row g-3">
 
                     <!-- From Date -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">From Date</label>
                         <input type="date" name="FromDate" id="fromDate" class="form-control">
                     </div>
 
                     <!-- To Date -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">To Date</label>
                         <input type="date" name="ToDate" id="toDate" class="form-control">
                     </div>
 
                     <!-- Priority type Combo Box -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Select Type</label>
                         <select id="comboBox" name="Type" class="form-select" style="font-size:15px;">
                             <option value="">-- Select Type --</option>
@@ -200,15 +205,33 @@
                             <option value="This Month">This Month</option>
                         </select>
                     </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold d-block">Past Expiry</label>
+
+                        <div class="form-check mt-1">
+                            <input type="checkbox"
+                                   class="form-check-input"
+                                   id="PastExpiry"
+                                   name="PastExpiry" />
+                           
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="text-center mt-5">
                     <button type="submit"
                             name="ActionType"
-                            value="Download"
+                            value="Filter"
+                            class="btn btn-warning px-4 me-3">
+                        Fillter
+                    </button>
+
+                    <button type="submit"
+                            name="ActionType"
+                            value="PDF"
                             class="btn btn-danger px-4 me-3">
-                        Download PDF
+                        PDF
                     </button>
 
                 </div>
@@ -216,6 +239,61 @@
             </form>
             <!-- ✅ Form ends here -->
         </div>
+
+        <!-- Report Table -->
+
+        <div class="card report-card mt-5 ms-3  mb-5">
+            <div class="card-body table-responsive">
+
+                <table class="table table-bordered table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Customer Email</th>
+                            <th>Customer Number</th>
+                            <th>Invoice Number</th>
+                            <th>Expiry Date</th>
+                            <th>Remaining Days</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.customerName</td>
+                                    <td>@item.customerEmail</td>
+                                    <td>@item.customerMobile</td>
+                                    <td>@item.invoiceNumber</td>
+                                    <td>@item.expiryDate</td>   <!-- FIXED -->
+                                    <td class="text-right">@item.remainingDays</td>
+                                    <td>@item.Status</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-muted text-center">
+                                    No records found
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+                <div class="d-flex justify-content-start mt-3">
+                    <button id="prevBtn" class="btn btn-primary me-2">Previous</button>
+                    <span id="pageInfo" class="mt-2"></span>
+                    <button id="nextBtn" class="btn btn-primary ms-2">Next</button>
+                </div>
+            </div>
+        </div>
+
+
         <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
@@ -233,6 +311,43 @@
     <script src="~/Scripts/Logoutjs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const rowsPerPage = 10;
+            const rows = document.querySelectorAll("tbody tr");
+            const totalRows = rows.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            let currentPage = 1;
+
+            function showPage(page) {
+                currentPage = page;
+
+                rows.forEach((row, index) => {
+                    row.style.display =
+                        (index >= (page - 1) * rowsPerPage &&
+                            index < page * rowsPerPage)
+                            ? ""
+                            : "none";
+                });
+
+                document.getElementById("pageInfo").innerText =
+                    "Page " + currentPage + " of " + totalPages;
+            }
+
+            document.getElementById("prevBtn").addEventListener("click", function () {
+                if (currentPage > 1) showPage(currentPage - 1);
+            });
+
+            document.getElementById("nextBtn").addEventListener("click", function () {
+                if (currentPage < totalPages) showPage(currentPage + 1);
+            });
+
+            showPage(1);
+        });
+    </script>
     <script>
 $(document).ready(function () {
 
@@ -250,6 +365,20 @@ $(document).ready(function () {
     }
 
 });
+    </script>
+    <script>
+        document.querySelector("form").addEventListener("submit", function () {
+
+            var checkbox = document.getElementById("PastExpiry");
+
+            if (checkbox.checked) {
+                checkbox.value = "checked";
+            } else {
+                checkbox.value = "unchecked";
+            }
+
+           
+        });
     </script>
 
 </body>

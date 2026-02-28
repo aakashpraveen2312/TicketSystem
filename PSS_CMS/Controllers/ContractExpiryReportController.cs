@@ -23,16 +23,16 @@ namespace PSS_CMS.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> ContractexpiryReport(Prioritywise prioritywise, DateTime? FromDate, DateTime? ToDate, string Type)
+        public async Task<ActionResult> ContractexpiryReport(Prioritywise prioritywise, DateTime? FromDate, DateTime? ToDate, string Type,string ActionType, string PastExpiry)
         {
             bool hasDateRange = FromDate.HasValue && ToDate.HasValue;
             bool hasType = !string.IsNullOrWhiteSpace(Type);
 
-            if (!hasDateRange && !hasType)
-            {
-                TempData["ErrorMessage"] = "Please select either a Date Range or a Type";
-                return RedirectToAction("ContractexpiryReport");
-            }
+            //if (!hasDateRange && !hasType)
+            //{
+            //    TempData["ErrorMessage"] = "Please select either a Date Range or a Type";
+            //    return RedirectToAction("ContractexpiryReport");
+            //}
             // 2️⃣ Check ToDate >= FromDate
             if (FromDate.HasValue && ToDate.HasValue && ToDate < FromDate)
             {
@@ -40,13 +40,18 @@ namespace PSS_CMS.Controllers
                 return RedirectToAction("ContractexpiryReport");
             }
 
+            List<Prioritywise> list = new List<Prioritywise>();
 
-            string Weburl = ConfigurationManager.AppSettings["CONTRACTEXPIRYREPORT"];
+            string Weburl = ConfigurationManager.AppSettings[
+     ActionType == "PDF" ? "CONTRACTEXPIRYREPORT" : "CONTRACTEXPIRYREPORTLISTVIEW"];
+
+
+            //string Weburl = ConfigurationManager.AppSettings["CONTRACTEXPIRYREPORT"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
 
-            string url = $"{Weburl}?companyRecID={Session["CompanyId"]}&fromDate={FromDate:yyyy-MM-dd}&toDate={ToDate:yyyy-MM-dd}&type={Type}";
+            string url = $"{Weburl}?companyRecID={Session["CompanyId"]}&fromDate={FromDate:yyyy-MM-dd}&toDate={ToDate:yyyy-MM-dd}&type={Type}&PastExpiry={PastExpiry}";
 
             try
             {
@@ -69,13 +74,26 @@ namespace PSS_CMS.Controllers
                     if (rootObjects == null || rootObjects.Status != "Y")
                         return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
 
-                    // The API already returns a PDF URL
-                    string pdfUrl = rootObjects.fileUrl;
-                    var fileBytes = await client.GetByteArrayAsync(pdfUrl);
-                    var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
+                    if (ActionType == "Filter")
+                    {
+                        if (rootObjects != null && rootObjects.Status == "Y")
+                        {
+                            list = rootObjects.Data;
+                        }
+                        return View(list);
+                    }
+                    else
+                    {
+                        // The API already returns a PDF URL
+                        string pdfUrl = rootObjects.fileUrl;
+                        var fileBytes = await client.GetByteArrayAsync(pdfUrl);
+                        var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
 
-                    // Download
-                    return File(fileBytes, "application/pdf", fileName);
+                        // Download
+                        return File(fileBytes, "application/pdf", fileName);
+
+
+                    }
 
                 }
             }
@@ -90,10 +108,14 @@ namespace PSS_CMS.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> ProductFinanceReport(Prioritywise prioritywise,string Type,string Productrecid,string contractrecid)
+        public async Task<ActionResult> ProductFinanceReport(Prioritywise prioritywise,string Type,string Productrecid,string contractrecid,string ActionType)
         {
-           
-            string Weburl = ConfigurationManager.AppSettings["PRODUCTFINANCEREPORT"];
+            List<Prioritywise> list = new List<Prioritywise>();
+
+            string Weburl = ConfigurationManager.AppSettings[
+     ActionType == "PDF" ? "PRODUCTFINANCEREPORT" : "PRODUCTFINANCEREPORTLISTVIEW"];
+
+            //string Weburl = ConfigurationManager.AppSettings["PRODUCTFINANCEREPORT"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
@@ -122,13 +144,26 @@ namespace PSS_CMS.Controllers
                     if (rootObjects == null || rootObjects.Status != "Y")
                         return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
 
-                    // The API already returns a PDF URL
-                    string pdfUrl = rootObjects.fileUrl;
-                    var fileBytes = await client.GetByteArrayAsync(pdfUrl);
-                    var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
+                    if (ActionType == "Filter")
+                    {
+                        if (rootObjects != null && rootObjects.Status == "Y")
+                        {
+                            list = rootObjects.Data;
+                        }
+                        return View(list);
+                    }
+                    else
+                    {
+                        // The API already returns a PDF URL
+                        string pdfUrl = rootObjects.fileUrl;
+                        var fileBytes = await client.GetByteArrayAsync(pdfUrl);
+                        var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
 
-                    // Download
-                    return File(fileBytes, "application/pdf", fileName);
+                        // Download
+                        return File(fileBytes, "application/pdf", fileName);
+
+
+                    }
 
                 }
             }
@@ -144,10 +179,13 @@ namespace PSS_CMS.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> CustomerFinanceReport(Prioritywise prioritywise, string Type, string CustomerRecid, string ContractRecid,string ProductRecid)
+        public async Task<ActionResult> CustomerFinanceReport(Prioritywise prioritywise, string Type, string CustomerRecid, string ContractRecid,string ProductRecid,string ActionType)
         {
+            List<Prioritywise> list = new List<Prioritywise>();
+            string Weburl = ConfigurationManager.AppSettings[
+     ActionType == "PDF" ? "CUSTOMERFINANCEREPORT" : "CUSTOMERFINANCEREPORTLISTVIEW"];
 
-            string Weburl = ConfigurationManager.AppSettings["CUSTOMERFINANCEREPORT"];
+            //string Weburl = ConfigurationManager.AppSettings["CUSTOMERFINANCEREPORT"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
@@ -176,13 +214,26 @@ namespace PSS_CMS.Controllers
                     if (rootObjects == null || rootObjects.Status != "Y")
                         return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
 
-                    // The API already returns a PDF URL
-                    string pdfUrl = rootObjects.fileUrl;
-                    var fileBytes = await client.GetByteArrayAsync(pdfUrl);
-                    var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
+                    if (ActionType == "Filter")
+                    {
+                        if (rootObjects != null && rootObjects.Status == "Y")
+                        {
+                            list = rootObjects.Data;
+                        }
+                        return View(list);
+                    }
+                    else
+                    {
+                        // The API already returns a PDF URL
+                        string pdfUrl = rootObjects.fileUrl;
+                        var fileBytes = await client.GetByteArrayAsync(pdfUrl);
+                        var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
 
-                    // Download
-                    return File(fileBytes, "application/pdf", fileName);
+                        // Download
+                        return File(fileBytes, "application/pdf", fileName);
+
+
+                    }
 
                 }
             }
@@ -548,10 +599,15 @@ namespace PSS_CMS.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> ServiceProductReport(Prioritywise prioritywise, string Type, string Productrecid, string contractrecid,string Materialrecid)
+        public async Task<ActionResult> ServiceProductReport(Prioritywise prioritywise, string Type, string Productrecid, string contractrecid,string Materialrecid, string ActionType)
         {
 
-            string Weburl = ConfigurationManager.AppSettings["SERVICEPRODUCTREPORT"];
+            List<Prioritywise> list = new List<Prioritywise>();
+
+            string Weburl = ConfigurationManager.AppSettings[
+     ActionType == "PDF" ? "SERVICEPRODUCTREPORT" : "SERVICEPRODUCTREPORTLISTVIEW"];
+
+            //string Weburl = ConfigurationManager.AppSettings["SERVICEPRODUCTREPORT"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
@@ -580,13 +636,28 @@ namespace PSS_CMS.Controllers
                     if (rootObjects == null || rootObjects.Status != "Y")
                         return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
 
-                    // The API already returns a PDF URL
-                    string pdfUrl = rootObjects.fileUrl;
-                    var fileBytes = await client.GetByteArrayAsync(pdfUrl);
-                    var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
+                    if (ActionType == "Filter")
+                    {
+                        if (rootObjects != null && rootObjects.Status == "Y")
+                        {
+                            list = rootObjects.Data;
+                        }
+                        await CustomerCombo();
+                        await MaterialCombo();
+                        return View(list);
+                    }
+                    else
+                    {
+                        // The API already returns a PDF URL
+                        string pdfUrl = rootObjects.fileUrl;
+                        var fileBytes = await client.GetByteArrayAsync(pdfUrl);
+                        var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
 
-                    // Download
-                    return File(fileBytes, "application/pdf", fileName);
+                        // Download
+                        return File(fileBytes, "application/pdf", fileName);
+
+
+                    }
 
                 }
             }

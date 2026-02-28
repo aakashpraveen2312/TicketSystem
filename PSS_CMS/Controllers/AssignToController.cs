@@ -102,7 +102,7 @@ namespace PSS_CMS.Controllers
 
             List<SelectListItem> admin = new List<SelectListItem>();
 
-            string Weburl = ConfigurationManager.AppSettings["AdminCombo"];
+            string Weburl = ConfigurationManager.AppSettings["AdminCombo1"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();

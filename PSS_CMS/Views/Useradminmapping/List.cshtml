@@ -97,12 +97,15 @@
                     </div>}
 
 
-                <div class="button-container d-flex justify-content-end mt-3">
+            <div class="button-container d-flex justify-content-end mt-3">
+                @if (Session["R_CODE"] != null && Session["R_CODE"].ToString().ToLower() != "user")
+                {
                     <input type="submit" id="submitButton" value="Save" class="btn btn-default1 me-2 text-white" tabindex="8" />
+                }
                     <input type="button" class="btn btn-default2 text-white" tabindex="9"
-                           onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'"
-                           value="Cancel" />
-                </div>
+                       onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'"
+                       value="Cancel" />
+            </div>
             </form>
         </div>
         <footer>

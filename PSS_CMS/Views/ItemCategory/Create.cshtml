@@ -161,17 +161,18 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.IC_SORTORDER, new
-                                              {
-                                                  htmlAttributes = new
-                                                  {
-                                                      @class = "form-control textboxcolors text-right",
-                                                      id = "IC_SORTORDER",
-                                                      tabindex = "5",
-                                                      type = "text",
-                                                      placeholder = "0",
-                                                  min = "0"
-                                                  }
-                                              })
+                   {
+                       htmlAttributes = new
+                       {
+                           @class = "form-control textboxcolors text-right",
+                           id = "IC_SORTORDER",
+                           tabindex = "5",
+                           type = "text",
+                           placeholder = "0",
+                           min = "0",
+                           placeholder = "0"
+                       }
+                   })
                     </div>
                 </div>
                 <div class="row mb-3">

@@ -325,7 +325,7 @@
                                         // If only one project is available, preselect it
                                         @Html.DropDownList("SelectedProduct",
                                                                          modifiedProductList,
-                                                                         new { @class = "form-select textboxcolors", id = "", required = "required" }) }
+                                                                         new { @class = "form-select textboxcolors", id = "SelectedProduct", required = "required" }) }
                                 }
                                 else
                                 {
@@ -349,10 +349,10 @@
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
                             @*<select id="AdminDropdown" class="form-select textboxcolors" disabled>
-                                    <option value="">-- Select Admin --</option>
-                                </select>
-                                <input type="hidden" id="AdminRecId" name="AdminRecId" />*@
-
+            <option value="">-- Select Admin --</option>
+        </select>
+        <input type="hidden" id="AdminRecId" name="AdminRecId" />*@
+                            <input type="hidden" id="AdminRecId" name="AdminRecId" />
                             <select id="AdminDropdown" class="form-select textboxcolors" disabled>
                                 <option value="">-- Select Admin --</option>
                             </select>
@@ -719,7 +719,9 @@ $(document).ready(function () {
 
                     $.each(res.data, function (i, admin) {
 
-                        var isSelected = admin.u_RECID == selectedAdminFromEdit;
+                        //var isSelected = admin.u_RECID == selectedAdminFromEdit;
+                        var isSelected =
+                            admin.u_RECID.toString() === selectedAdminFromEdit.toString();
 
                         $("#AdminDropdown").append(
                             $('<option>', {

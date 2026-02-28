@@ -298,7 +298,8 @@
                            autocomplete = "off",
                            type="text",
                            inputmode = "numeric",
-                           oninput = "this.value=this.value.replace(/[^0-9]/g,'')"
+                           oninput = "this.value=this.value.replace(/[^0-9]/g,'')",
+                           placeholder = "0"
                        }
                    })
 
@@ -321,7 +322,7 @@
 
                         </a>
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("ContractList", "Contract", new {Recid = Session["Recid"],name = Session["name"]})'" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("ContractList", "Contract")'" />
                     </div>
                 </div>
             </div>

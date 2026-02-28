@@ -296,7 +296,8 @@ namespace PSS_CMS.Controllers
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""cU_RECID"": ""{Session["Productrecid"]}"",           
+            ""cU_RECID"": ""{Session["Productrecid"]}"",        
+            ""cU_ADMINRECID"": ""{projectmaster.CU_ADMINRECID}"",      
             ""cU_CODE"": ""{projectmaster.CU_CODE}"",           
             ""cU_NAME"": ""{projectmaster.CU_NAME}"",
             ""cU_EMAIL"": ""{projectmaster.CU_EMAIL}"",
@@ -462,10 +463,10 @@ namespace PSS_CMS.Controllers
         {
             List<SelectListItem> Product = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
+            string webUrlGet = ConfigurationManager.AppSettings["GETCOMBOPRODUCTBASEDPRODUCT"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"] + "&precid=" + 52;
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&productrecid=" + Session["CT_PRECID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -513,10 +514,12 @@ namespace PSS_CMS.Controllers
         {
             List<SelectListItem> Product = new List<SelectListItem>();
 
-            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
+            //string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
+            string webUrlGet = ConfigurationManager.AppSettings["GETCOMBOPRODUCTBASEDPRODUCT"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"] ;
+            //string strparams = "cmprecid=" + Session["CompanyID"] ;
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&productrecid=" + Session["CT_PRECID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -553,10 +556,9 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-
+     
             // Assuming you are passing ticketTypes to the view
             ViewBag.Product = Product;
-
             return View();
         }
 
@@ -889,6 +891,7 @@ namespace PSS_CMS.Controllers
             string APIKey = Session["APIKEY"].ToString();
 
 
+            //string url = $"{webUrlGet}?cmprecid={cmprecid}&precid={precid}";
             string url = $"{webUrlGet}?cmprecid={cmprecid}&precid={precid}";
 
             using (HttpClientHandler handler = new HttpClientHandler())

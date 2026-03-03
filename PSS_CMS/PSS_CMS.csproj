@@ -575,6 +575,8 @@
     <Content Include="Grid.mvc.readme" />
     <Content Include="Json\Main.json" />
     <None Include="Json\Main1.json" />
+    <None Include="Properties\PublishProfiles\TICKET_DEV_PUBLISH.pubxml" />
+    <None Include="Properties\PublishProfiles\TICKET_LIVE_PUBLISH.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\ComboFilter.js" />
     <Content Include="Scripts\Create Sweet Alert.js" />

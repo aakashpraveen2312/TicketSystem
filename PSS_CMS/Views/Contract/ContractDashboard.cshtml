@@ -102,10 +102,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
-                   
+
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>*@ 
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -131,7 +143,7 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
+                    @*<li class="nav-link">
                         <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
                             <i class='bx bx-credit-card' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Product Finance</span>
@@ -142,7 +154,7 @@
                             <i class='bx bx-wallet' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
                         </a>
-                    </li>
+                    </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -227,9 +239,21 @@
                     </div>
 
                     <div class="card text-center shadow p-4 mb-4 bg-white">
-                        <h5>Pending Amount</h5>
-                        <h2 class="text-warning fw-bold">₹@ViewBag.PendingAmount1.00</h2>
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-start">
+                                <h5>Extra Paid Amount</h5>
+                                <h2 class="text-danger fw-bold mb-0">₹ @ViewBag.ExtraPaidAmount1.00</h2>
+
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <h5>Pending Amount</h5>
+
+                                <h2 class="text-warning fw-bold mb-0">₹ @ViewBag.PendingAmount1.00</h2>
+                            </div>
+                        </div>
                     </div>
+
+                   
                 </div>
 
                 <!-- Column B -->
@@ -241,15 +265,15 @@
                 </div>
             </div>
 
-            <div class="row mt-4 mb-4">
+            <!--<div class="row mt-4 mb-4">
                 <div class="col-md-6">
                     <div class="card shadow p-4 bg-white">
                         <h5 class="text-center mb-4">Company Paid Vs Unpaid </h5>
                         <canvas id="accoutantChart" height="350"></canvas>
                     </div>
-                </div>
+                </div>-->
                 @*Prioritytype bar chart script*@
-                <script>
+                <!--<script>
     const labels = @Html.Raw(ViewBag.CustomerNames); //It came in the array format
 
     const data = {
@@ -291,10 +315,10 @@
     };
 
                     new Chart(document.getElementById('accoutantChart'), config);
-                </script>
+                </script>-->
 
 
-                <div class="col-md-6">
+                @*<div class="col-md-6">
                     <div class="card shadow p-4 bg-white">
                         <h5 class="text-center mb-4">Yet to Invoice</h5>
 
@@ -335,9 +359,9 @@
                     </script>
                         }
                     </div>
-                </div>
+                </div>*@
 
-            </div>
+            <!--</div>-->
         </div>
 
 

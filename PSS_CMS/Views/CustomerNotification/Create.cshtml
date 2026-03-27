@@ -88,10 +88,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -117,7 +129,7 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
+                    @*<li class="nav-link">
                         <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
                             <i class='bx bx-credit-card' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Product Finance</span>
@@ -128,7 +140,7 @@
                             <i class='bx bx-wallet' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
                         </a>
-                    </li>
+                    </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -172,9 +184,10 @@
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
 
-                    <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none">
-                        <a href="@Url.Action("List", "CustomerNotification")">CUSTOMER NOTIFICATION</a>
-                    </li>
+                    <li>WARRANTY PRODUCTS</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">@Session["P_NAME"].ToString().ToUpper()</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "AccountantCustomerInvoice")">SALES CUSTOMER(@Session["Customername"].ToString().ToUpper())</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "CustomerNotification")">FOLLOWUP</a></li>
                     <li>CREATE</li>
                 </ul>
             </div>
@@ -190,7 +203,7 @@
                         @Html.LabelFor(model => model.CN_INVOICENO, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CN_INVOICENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.CN_INVOICENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",@readonly="readonly" } })
                     </div>
                 </div>
 

@@ -1,0 +1,725 @@
+﻿@model PSS_CMS.Models.Materialconsumption
+@using GridMvc.Html
+@{ Layout = null;}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
+    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
+    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+
+    @*Bootstrap Icons and Boxicons*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+
+    <script src="~/Scripts/Sidebarscript.js"></script>
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/Colors.css" rel="stylesheet" />
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <style>
+        .swal-btn-continue {
+            background-color: #6ed3d0 !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        .swal-btn-back {
+            background-color: #f0a72d !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        select#MATERIAL {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        }
+
+        select#MaterialDropdown, select#itemGroupDropdown, select#itemCategoryDropdown {
+            font-size: 15px;
+        }
+
+        input#tM_BILLABLE {
+            height: 20px;
+            width: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="sidebar close">
+        <header>
+            <div class="text logo-text" style="display:inline-block">
+
+                <a href="@Url.Action("ContractDashboard", "Contract")">
+
+
+                    @if (Session["Logo"] != null)
+                    {
+                        <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
+                    }
+
+                </a>
+
+
+            </div>
+
+            <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
+
+        </header>
+        <div class="menu-bar">
+            <div class="menu">
+                <ul class="menu-links" style="margin-left:20px">
+                    <!-- ACCOUNTS ADMIN -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/software-engineer.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
+                        <img src="~/assets/img/software-engineer.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
+                        <span class="text nav-text" style="margin-left:15px">ACCOUNTS ADMIN</span>
+                    </li>
+                    <!-- Customer Accounts -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("CustomerList", "Contract")">
+                            <i class='bx bx-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="@Url.Action("Index", "ServiceInvoice")">
+                            <i class='bx bx-receipt' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
+                        </a>
+                    </li>
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/ReportImage.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
+                        <img src="~/assets/img/ReportImage.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
+                        <span class="text nav-text" style="margin-left:15px">REPORTS</span>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="@Url.Action("Report", "FollowUpReport")">
+                            <i class='bx bx-phone-call' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Follow-up Report</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractexpiryReport", "ContractExpiryReport")">
+                            <i class='bx bx-time-five' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
+                        </a>
+                    </li>
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                            <i class='bx bx-credit-card' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                            <i class='bx bx-wallet' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                        </a>
+                    </li>*@
+                    <!-- Settings Section -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
+                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:5px;" />
+                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
+                    </li>
+
+                    @*Change Password*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ChangePassword", "Contract")">
+                            <i class='bx bxs-key' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                        </a>
+                    </li>
+
+                    <!-- Logout -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
+                            <i class='bx bx-log-out' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="content" style=" overflow-x: hidden!important;">
+        <nav class="nav d-flex">
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
+            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+                </a>
+            </div>
+
+        </nav>
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-12">
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    <li>SERVICE CONTRACTS</li>
+                    <li>SERVICE MATERIALS</li>
+                    @*<li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">@Session["P_NAME"].ToString().ToUpper()</a></li>*@
+                    <li>CREATE</li>
+
+                </ul>
+            </div>
+        </div>
+        @using (Html.BeginForm("Create", "ServiceMaterialConsumption", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
+        {
+
+
+            <div class="create ms-4 me-2 mt-3">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.ITEMGROUP, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.DropDownListFor(model => model.SelectedItemGroup, Model.ItemGroups, "Select an Item Group",
+ new { id = "itemGroupDropdown", @class = "form-select textboxcolors", tabindex = "1" })
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.ITEMCATEGORY, new { @class = "labels" })
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.DropDownListFor(model => model.SelectedItemCategory, Model.ItemCategories, "Select an Item Category",
+     new { id = "itemCategoryDropdown", @class = "form-select textboxcolors", tabindex = "2" })
+                    </div>
+
+
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.MATERIAL, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.DropDownList("SelectedMaterial",
+                            new List<SelectListItem> {
+                                new SelectListItem { Text = "Select an Item", Value = "" }
+                            },
+                            new { @class = "form-select textboxcolors", id = "MaterialDropdown" })
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_UOM, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_UOM, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_PRICE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @*@Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
+                        @Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", placeholder = "0.00", @readonly = "readonly" } })
+
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_QUANTITY, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_QUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()", type = "text" } })
+
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_SGST, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @*@Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
+                        @Html.TextBoxFor(model => model.tM_SGST, "{0:0.00}", new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "formatPrice(this)", placeholder = "0.00"})
+
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_CGST, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_DISCOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_DISCOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()", type = "text" } })
+
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_TOTALAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly", placeholder = "0.00" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_NETAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_NETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly", placeholder = "0.00" } })
+
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_SORTORDER, new { @class = "labels" })
+
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text", placeholder = "0" } })
+
+                    </div>
+                </div>
+
+                <!--<div class="row mb-3">
+
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.tM_SERVICECHARGES, new { @class = "labels" })
+
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.tM_SERVICECHARGES, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
+
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">-->
+                        @*@Html.LabelFor(model => model.tM_BILLABLE, new { @class = "labels" })*@
+                    <!--</div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">-->
+                        @*@Html.CheckBoxFor(model => model.tM_BILLABLE, new { @class = "form-check-input" })*@
+                    <!--</div>
+
+
+                </div>-->
+
+                <div class="row mb-3">
+                    <div class="col-lg-2">
+
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+
+                    </div>
+                    <div class="col-lg-2">
+
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ServiceMaterialConsumption", new { })'" />
+                    </div>
+                </div>
+            </div>
+
+        }
+        <footer>
+            <div class="footer">
+                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck1"></span>
+                            - Text Fields
+                        </div>
+                    </div>
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck2"></span>
+                            - Number Fields
+                        </div>
+                    </div>
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck3"></span>
+                            - Read Only
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+            <h4>Are you sure you want to log out?</h4>
+        </div>
+        <div class="offcanvas-footer d-flex justify-content-center">
+            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+        </div>
+    </div>
+    <div id="preloader2"></div>
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @*Logout Pronptbox script*@
+    <script>
+    document.getElementById("logoutLink").addEventListener("click", function () {
+        Swal.fire({
+            title: "Are you sure you want to log out?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#dc3545",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '@Url.Action("Logout", "Login")';
+            }
+        });
+    });
+    </script>
+
+    @*Toastr for created succesfully*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $("#createform").submit(function (event) {
+            event.preventDefault();
+
+            var submitBtn = $("#savebutton");
+            submitBtn.prop("disabled", true);
+
+            var formData = new FormData(this);
+
+
+
+            // Disable page interaction
+            $("body").css("pointer-events", "none");
+
+            $.ajax({
+                url: '@Url.Action("Create", "ServiceMaterialConsumption")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        // 🔹 First show processing bar
+                        Swal.fire({
+                            title: "Processing...",
+                            html: "Please wait while we save your changes.",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // ⏳ After small delay, show success popup
+                        setTimeout(function () {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            showCancelButton: true,
+                            confirmButtonText: "Continue",
+                            cancelButtonText: "Back to List",
+                            allowOutsideClick: false, // Prevent closing by clicking outside
+                            allowEscapeKey: false, // Prevent closing using Esc key
+                            customClass: {
+                                confirmButton: "swal-btn-continue",
+                                cancelButton: "swal-btn-back"
+                            },
+                            didOpen: () => {
+                                // Allow interaction inside the alert only
+                                $(".swal2-container").css("pointer-events", "auto");
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            } else {
+                                window.location.href = '@Url.Action("List", "ServiceMaterialConsumption")';
+                            }
+                        });
+                        }, 1000); // 1 second delay for "Processing"
+                    } else {
+                        Swal.fire({
+                            title: "Message",
+                            text: response.message,
+                            icon: "info",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    resetButton();
+                }
+            });
+        });
+
+        function resetButton() {
+            $("#savebutton").prop("disabled", false).text("Submit");
+            $("body").css("pointer-events", "auto"); // Re-enable page interaction
+        }
+    });
+    </script>
+    <!-- Loadin of material and display the values in the Input box -->
+
+    <script>
+        $('#MaterialDropdown').on('change', function () {
+
+            var selectedId = $(this).val();
+
+            // 🔥 FIX 1: Correct key
+            var selectedMaterial = materials.find(m => m.I_RECID == selectedId);
+
+            if (selectedMaterial) {
+
+                // 🔥 FIX 2: Correct property names
+                $('#tM_UOM').val(selectedMaterial.I_CUOM);
+                $('#tM_PRICE').val(selectedMaterial.I_PRICE);
+                $('#tM_QUANTITY').val(selectedMaterial.I_SMQUANTITY);
+                $('#tM_DISCOUNT').val(selectedMaterial.I_SMDISCOUNT);
+                $('#tM_TOTALAMOUNT').val(selectedMaterial.I_SMTOTALAMOUNT);
+                $('#tM_CGST').val(selectedMaterial.I_CGST);
+                $('#tM_SGST').val(selectedMaterial.I_SGST);
+                $('#tM_NETAMOUNT').val(selectedMaterial.I_SMNETAMOUNT);
+                $('#tM_TYPE').val(selectedMaterial.I_TYPE);
+                $('#tM_SORTORDER').val(selectedMaterial.I_SORTORDER);
+
+            } else {
+                clearMaterialFields();
+            }
+        });
+
+        function clearMaterialFields() {
+            $('#tM_UOM, #tM_PRICE, #tM_QUANTITY, #tM_DISCOUNT, #tM_TOTALAMOUNT, #tM_CGST, #tM_SGST, #tM_NETAMOUNT, #tM_TYPE, #tM_SORTORDER')
+                .val('');
+        }
+    </script>
+
+
+    <!-- Net Amount Calculation -->
+    <script>
+        function Netamount() {
+            /* Total Amount and Discount */
+            var price = document.getElementById("tM_PRICE").value;
+            var quantity = document.getElementById("tM_QUANTITY").value;
+            var discount = document.getElementById("tM_DISCOUNT").value;
+
+            var TotalAmount = (price * quantity) * (1 - discount / 100)
+            document.getElementById("tM_TOTALAMOUNT").value = TotalAmount;
+
+            /*SGST and CGST*/
+
+            var SGST = document.getElementById("tM_SGST").value;
+            var SGSTamount = TotalAmount * SGST / 100;
+
+            var CGST = document.getElementById("tM_CGST").value;
+            var CGSTamount = TotalAmount * CGST / 100;
+
+            /* Net Amount*/
+
+            var NetAmount = TotalAmount + SGSTamount + CGSTamount
+            Totalnetamount = parseFloat(NetAmount).toFixed(2);
+            document.getElementById("tM_NETAMOUNT").value = Totalnetamount;
+        }
+    </script>
+
+    <!-- Decimal filed for price -->
+    <script>
+        function formatPrice(input) {
+            // Remove non-digit characters
+            let digits = input.value.replace(/\D/g, '');
+
+            if (digits.length === 0) {
+                input.value = "0.00";
+                return;
+            }
+
+            // If only 1 digit → treat as cents (0.0X)
+            if (digits.length === 1) {
+                input.value = "0.0" + digits;
+            }
+            // If only 2 digits → treat as cents (0.XX)
+            else if (digits.length === 2) {
+                input.value = "0." + digits;
+            }
+            // Otherwise → split into integer + decimal
+            else {
+                let integerPart = digits.slice(0, -2);
+                let decimalPart = digits.slice(-2);
+                input.value = parseInt(integerPart, 10) + "." + decimalPart;
+            }
+        }
+    </script>
+
+
+
+    @*Item Category function call*@
+    <script>
+    $(document).ready(function () {
+
+        $('#itemGroupDropdown').on('change', function () {
+
+            var grecid = $(this).val();
+
+            if (grecid) {
+                $.ajax({
+                    url: '@Url.Action("ItemGroupCategoryCombo", "ServiceMaterialConsumption")',
+                    type: 'GET',
+                    data: { Grouprecid: grecid },
+                    success: function (data) {
+                        console.log("Category data:", data);
+                        var categoryDropdown = $('#itemCategoryDropdown');
+                        categoryDropdown.empty();
+                        categoryDropdown.append('<option value="">Select an Item Category</option>');
+
+                        $.each(data, function (index, item) {
+                            categoryDropdown.append(
+                                $('<option>', {
+                                    value: item.IC_RECID,
+                                    text: item.IC_DESCRIPTION
+                                })
+                            );
+                        });
+                    },
+                    error: function () {
+                        alert('Error loading categories.');
+                    }
+                });
+            } else {
+                $('#itemCategoryDropdown').empty()
+                    .append('<option value="">Select an Item Category</option>');
+            }
+
+        });
+
+    });
+    </script>
+    @*Item dropdown data loading*@
+    <script>
+    var materials = []; // store items globally
+
+    $('#itemCategoryDropdown').on('change', function () {
+
+        var categoryRecId = $(this).val();
+        var materialDropdown = $('#MaterialDropdown');
+
+        materialDropdown.empty();
+        materials = [];
+
+        if (!categoryRecId) {
+            materialDropdown.append('<option value="">Select Item Category first</option>');
+            clearMaterialFields();
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("ItemCombo", "ServiceMaterialConsumption")',
+            type: 'GET',
+            data: { Categoryrecid: categoryRecId },
+            success: function (data) {
+                console.log("Item data:", data);
+                if (data && data.length > 0) {
+
+                    materialDropdown.append('<option value="">Select an Item</option>');
+
+                    materials = data; // store full object list
+
+                    $.each(data, function (i, item) {
+                        materialDropdown.append(
+                            $('<option>', {
+                                value: item.I_RECID,
+                                text: item.I_DESCRIPTION
+                            })
+                        );
+                    });
+                }
+                else {
+                    materialDropdown.append('<option disabled>No items are available</option>');
+                    clearMaterialFields();
+                }
+            },
+            error: function () {
+                materialDropdown.append('<option disabled>Error loading items</option>');
+                clearMaterialFields();
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>
+
+

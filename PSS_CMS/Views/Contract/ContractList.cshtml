@@ -73,10 +73,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                            <a href="@Url.Action("List", "Party")">
+                                <i class='bi bi-person-check' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Party</span>
+                            </a>
+                        </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -102,18 +114,18 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>
+                    @*<li class="nav-link">
+                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-wallet' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                            </a>
+                        </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -155,9 +167,8 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>CONTRACTS AND USERS</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">PRODUCT(@Session["name"].ToString().ToUpper())</a></li>
-                    <li>CONTRACT LIST</li>
+                    <li>SERVICE CONTRACTS</li>
+                    <li>LIST</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
@@ -165,12 +176,12 @@
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
-               
-                    <!-- Add button with icon -->
-                    <a href="@Url.Action("CreateContract", "Contract")" class=" ms-3" style="margin-left: 30px;">
-                        <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add User" />
-                    </a>
-                
+
+                <!-- Add button with icon -->
+                <a href="@Url.Action("CreateContract", "Contract")" class=" ms-3" style="margin-left: 30px;">
+                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add User" />
+                </a>
+
             </div>
 
         </div>
@@ -180,13 +191,18 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.CT_CONTRACTREFERENCENUMBER).Titled("Ref No").SetWidth("100px");
-               columns.Add(c => c.FromDate).Titled("From Date").SetWidth("150px");
-               columns.Add(c => c.ToDate).Titled("To Date").SetWidth("150px");
-               columns.Add(c => c.CT_CONTRACTAMOUNT).Titled("Contract Amount").Css("text-right");
-               columns.Add(c => c.CT_TOTALPAIDAMOUNT).Titled("Total Paid Amount").Css("text-right");
-               columns.Add(c => c.CT_CONTRACTCREATEDBY).Titled("Contract Created By");
-               columns.Add(c => c.CT_CONTRACTAPPROVEDBY).Titled("Contract Approved By");
+               columns.Add(c => c.SerialNumber).Titled("S.No").Sortable(true).Css("text-right").SetWidth("80px");
+
+               columns.Add(c => c.CT_CODE).Titled("Code");
+
+               columns.Add(c => c.CT_CUSTOMERNAME).Titled("Customer Name");
+               columns.Add(c => c.CT_EMAIL).Titled("Email");
+               columns.Add(c => c.CT_MOBILE).Titled("Mobile");
+               columns.Add(c => c.TotalProductAmount).Titled("Contract Amount").Css("text-right");
+
+               //columns.Add(c => c.FromDate).Titled("From Date");
+               //columns.Add(c => c.ToDate).Titled("To Date");
+
                columns.Add(c => c.CT_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
 
                columns.Add().Titled("Action").SetWidth("150px")
@@ -194,25 +210,36 @@
                .Sanitized(false)
                .RenderValueAs(o =>
                {
-                   var Editurl = Url.Action("EditContract", "Contract", new { id=o.CT_RECID, Name=o.CT_CONTRACTREFERENCENUMBER,Precid=o.CT_PRECID });
-                   //   var Customerurl = Url.Action("List", "ContractInvoice", new { id = o.CT_RECID, Name = o.CT_CONTRACTREFERENCENUMBER, CT_PRECID = o.CT_PRECID, ContractAmount = o.CT_CONTRACTAMOUNT });
-                   var Customerurl = Url.Action("List", "AccountantCustomerInvoice", new { CU_CTRECID = o.CT_RECID, Name = o.CT_CONTRACTREFERENCENUMBER, CT_PRECID = o.CT_PRECID, CT_CONTRACTAMOUNT = o.CT_CONTRACTAMOUNT });
+                   var Editurl = Url.Action("EditContract", "Contract", new { CT_RECID = o.CT_RECID, CT_CONTRACTREFERENCENUMBER = o.CT_CUSTOMERNAME });
+                   var ServiceProductsurl = Url.Action("ContractProductList", "Contract", new { CT_RECID = o.CT_RECID, CT_PRECID = o.CT_PRECID, ProductName = o.ProductName, CT_URECID = o.CT_URECID, CT_EXISTINGUSER = o.CT_EXISTINGUSER });
                    var Deleteurl = Url.Action("DeleteContract", "Contract", new { id = o.CT_RECID });
 
 
                    var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
-                   var CUstomericonHtml = "<i class='bi bi-people bx-sm'></i> ";
+                   var ServiceProductsiconHtml = "<i class='bx bx-cart-alt bx-sm'></i> ";
                    var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
 
 
                    var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
-                   var CustomerlinkHtml = $"<a href='{Customerurl}' data-toggle='tooltip' data-placement='top' title='Customer'>{CUstomericonHtml}</a>";
+                   var ServiceProductslinkHtml = $"<a href='{ServiceProductsurl}' data-toggle='tooltip' data-placement='top' title='Services'>{ServiceProductsiconHtml}</a>";
                    var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
 
 
-                   var extraSpaces = "&nbsp;&nbsp;&nbsp;";
-                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{CustomerlinkHtml}");
+                   var Inclusionurl = Url.Action("List", "ContractInclusion", new { CT_RECID = o.CT_RECID, CT_CONTRACTREFERENCENUMBER = o.CT_CONTRACTREFERENCENUMBER }, null);
+                   var InclusioniconHtml = "<i class='bi bi-plus-circle-dotted'></i>";
+                   var InclusionlinkHtml = $"<a href='{Inclusionurl}' data-toggle='tooltip' data-placement='top' title='Inclusion'>{InclusioniconHtml}</a>";
+
+                   var Exclusionurl = Url.Action("List", "ContractExclusion", new { CT_RECID = o.CT_RECID, CT_CONTRACTREFERENCENUMBER = o.CT_CONTRACTREFERENCENUMBER }, null);
+                   var ExclusioniconHtml = "<i class='bi bi-dash-circle-dotted'></i>";
+                   var ExclusionlinkHtml = $"<a href='{Exclusionurl}' data-toggle='tooltip' data-placement='top' title='Exclusion'>{ExclusioniconHtml}</a>";
+
+                   var downloadpdfUrl = Url.Action("ContractInvoice", "Contract", new { CT_URECID = o.CT_URECID, CT_CRECID = o.CT_CRECID });
+                   var downloadpdfIconHtml = "<i class='bi bi-file-earmark-pdf fs-4 text-danger'></i>";
+                   var downloadpdflinkHtml = $"<a href='javascript:void(0);' onclick=\"downloadPdfAjax('{downloadpdfUrl}')\" data-toggle='tooltip' title='Download PDF'>{downloadpdfIconHtml}</a>";
+
+                   var extraSpaces = "&nbsp;&nbsp;";
+                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ServiceProductslinkHtml}{extraSpaces}{downloadpdflinkHtml}");
                });
 
            }).WithPaging(10).Sortable(true)
@@ -226,37 +253,31 @@
         </div>
 
         <footer>
-                <div class="footer">
-                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
+            <div class="footer">
+                <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
-                        <div class="flex-item mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
-                            </div>&nbsp;- Create
-                        </div>
-
-                        <div class="flex-item mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
-                            </div>
-                            &nbsp;- Edit
-                        </div>
-
-                        <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i class='bx bxs-trash bx-sm red'> </i>
-                            </div>
-                            &nbsp;- Delete
-                        </div>
-
-                        <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i class='bi bi-people bx-sm'></i>
-                            </div>
-                            &nbsp;- Customer
-                        </div>
-
+                    <div class="flex-item mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
+                        </div>&nbsp;- Create
                     </div>
+
+                    <div class="flex-item mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
+                        </div>
+                        &nbsp;- Edit
+                    </div>
+
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bx bxs-trash bx-sm red'> </i>
+                        </div>
+                        &nbsp;- Delete
+                    </div>
+
+
+                </div>
             </div>
         </footer>
 
@@ -280,12 +301,61 @@
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="~/Scripts/Fordelete.js"></script>
+    <script>
+        function downloadPdfAjax(url) {
+            // Show a SweetAlert2 loading popup
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Your PDF is being prepared.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
+            $.ajax({
+                url: url,
+                type: 'POST',
+                xhrFields: {
+                    responseType: 'blob' // important for PDF
+                },
+                success: function (data, status, xhr) {
+                    // Close the loading popup
+                    Swal.close();
+
+                    var blob = new Blob([data], { type: 'application/pdf' });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+
+                    // Optional: get filename from response header
+                    var disposition = xhr.getResponseHeader('Content-Disposition');
+                    var fileName = "Invoice.pdf";
+                    if (disposition && disposition.indexOf('filename=') !== -1) {
+                        fileName = disposition.split('filename=')[1].replace(/"/g, '');
+                    }
+
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                error: function () {
+                    // Close the loading popup and show error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Failed to download PDF.'
+                    });
+                }
+            });
+        }
+    </script>
 </body>
 </html>
 

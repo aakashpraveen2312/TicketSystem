@@ -24,7 +24,7 @@ namespace PSS_CMS.Models
         }
 
         [JsonProperty("TM_BILLABLE")]
-        private string tM_BILLABLED { get; set; }
+        public string tM_BILLABLED { get; set; }
 
 
         public string tM_DISABLE { get; set; }
@@ -38,6 +38,10 @@ namespace PSS_CMS.Models
         public decimal tM_PRICE { get; set; }
         [DisplayName("Quantity")]
         public int tM_QUANTITY { get; set; }
+        [DisplayName("Service Charges")]
+
+        public decimal tM_SERVICECHARGES { get; set; }
+
         [DisplayName("Discount (%)")]
         public int tM_DISCOUNT { get; set; }
         [DisplayName("Total Amount")]

@@ -75,10 +75,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -104,7 +116,7 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
+                    @*<li class="nav-link">
                         <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
                             <i class='bx bx-credit-card' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Product Finance</span>
@@ -115,7 +127,7 @@
                             <i class='bx bx-wallet' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
                         </a>
-                    </li>
+                    </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -157,10 +169,11 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>CONTRACTS AND USER</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">CONTRACT LIST</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "AccountantCustomerInvoice")">CUSTOMER(@Session["ContractName"])</a></li>
-                    <li>LIST</li>
+                    <li>WARRANTY PRODUCTS</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">@Session["P_NAME"].ToString().ToUpper()</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "AccountantCustomerInvoice")">SALES CUSTOMER(@Session["Customername"].ToString().ToUpper())</a></li>
+
+                    <li>FOLLOWUP</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
@@ -183,6 +196,7 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
+               columns.Add(c => c.SerialNumber).Titled("S.No").Sortable(true).Css("text-right").SetWidth("80px");
                columns.Add(c => c.CN_INVOICENO).Titled("Invoice No");
                columns.Add(c => c.Followupdate).Titled("Follow Up Date");
                columns.Add(c => c.CN_COMMENTS).Titled("Comments");
@@ -193,7 +207,7 @@
             .RenderValueAs(o =>
             {
 
-                var Editurl = Url.Action("Edit", "CustomerNotification", new { id = o.CN_RECID,  }, null);
+                var Editurl = Url.Action("Edit", "CustomerNotification", new { id = o.CN_RECID, CN_INVOICENO = o.CN_INVOICENO  }, null);
                 var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
@@ -210,7 +224,7 @@
             else
             {
                 <div class="alert alert-warning text-center">
-                    <b>No Customers Notification are available</b>
+                    <b>No Followups are available</b>
                 </div>}
             <footer>
                 <div class="footer">

@@ -75,10 +75,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -104,7 +116,7 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
+                    @*<li class="nav-link">
                         <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
                             <i class='bx bx-credit-card' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Product Finance</span>
@@ -115,7 +127,7 @@
                             <i class='bx bx-wallet' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
                         </a>
-                    </li>
+                    </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -157,10 +169,9 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>CONTRACTS AND USERS</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">PRODUCT(@Session["name"].ToString().ToUpper())</a></li>
-                    <li><a href="@Url.Action("ContractList", "Contract", new { Recid = Session["CT_PRECID"] ,name = Session["ContractName"] })">CONTRACT LIST</a></li>
-                    <li>CUSTOMER LIST</li>
+                    <li>WARRANTY PRODUCTS</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">@Session["P_NAME"].ToString().ToUpper()</a></li>
+                    <li>SALES CUSTOMER LIST</li>
 
                 </ul>
             </div>
@@ -178,6 +189,10 @@
                     <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add User" />
                 </a>
 
+                <a href="@Url.Action("ExcelUserDownload", "AccountantCustomerInvoice")" class="" title="Export as Excel" style="text-decoration:none;">
+                    <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
+                </a>
+
             </div>
 
         </div>
@@ -187,15 +202,18 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
+               columns.Add(c => c.SerialNumber).Titled("S.No").Css("text-right").SetWidth("20px");
                columns.Add()
      .Titled("Customer")
-     .SetWidth("200px")
+     .SetWidth("180px")
      .RenderValueAs(c => $"{c.CU_CODE} - {c.CU_NAME}");
-               columns.Add(c => c.CU_EMAIL).Titled("Email ID");
-               columns.Add(c => c.P_NAME).Titled("Product");
-               columns.Add(c => c.CU_MOBILENO).Titled("Mobile Number");
+               columns.Add(c => c.CU_EMAIL).Titled("Email ID").SetWidth("250px");
                columns.Add(c => c.CU_INVOICENO).Titled("Invoice Number");
-               columns.Add(c => c.CU_WARRANTYFREECALLS).Titled("Warranty Calls").Css("text-right");
+               columns.Add(c => c.CU_INVOICEAMOUNT)
+        .Titled("Invoice Amount")
+        .Css("text-right")
+       .RenderValueAs(c => String.Format("{0:N0}", c.CU_INVOICEAMOUNT));
+               columns.Add(c => c.CU_INVOICEDATEDATE).Titled("Invoice Date");
                columns.Add(c => c.CU_WARRANTYUPTODATE).Titled("Warranty Upto");
                columns.Add(c => c.WARRANTY_STATUS)
      .Titled("Status")
@@ -212,7 +230,7 @@
          item.WARRANTY_STATUS +
          "</span>"
      );
-               columns.Add(c => c.CU_SORTORDER).Titled("Sort").Css("text-right");
+
                columns.Add().Titled("Action")
               .Encoded(false)
                .Sanitized(false)
@@ -224,22 +242,32 @@
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
 
-
-                var Customerurl = Url.Action("List", "ContractInvoice", new { id = o.CU_RECID, Name = o.CU_NAME ,contractamount = Session["ContractAmount"] ,InvoiceNo = o.CU_INVOICENO,WarrantyDate=o.CU_WARRANTYUPTODATE});
-                var CustomerIconHtml = "<i class='bi bi-receipt bx-sm'></i>";
-                var CustomerlinkHtml = $"<a href='{Customerurl}' data-toggle='tooltip' data-placement='top' title='Contract Invoice'>{CustomerIconHtml}</a>";
-
-
                 var CustomerNotifyurl = Url.Action("List", "CustomerNotification", new { CustomerRecID = o.CU_RECID, Name = o.CU_NAME,InvoiceNo = o.CU_INVOICENO});
                 var CustomerNotifyIconHtml = "<i class='bi bi-bell bx-sm'></i>";
-                var CustomerNotifylinkHtml = $"<a href='{CustomerNotifyurl}' data-toggle='tooltip' data-placement='top' title='Follow Ups'>{CustomerNotifyIconHtml}</a>";
+                var CustomerNotifylinkHtml = $"<a href='{CustomerNotifyurl}' data-toggle='tooltip' data-placement='top' title='Follow-up'>{CustomerNotifyIconHtml}</a>";
 
                 var Deleteurl = Url.Action("Delete", "AccountantCustomerInvoice", new { Recid = o.CU_RECID }, null);
                 var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
                 var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
-                var extraSpaces2 = "&nbsp;&nbsp;&nbsp;";
-                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}{extraSpaces2}{CustomerlinkHtml}{extraSpaces2}{CustomerNotifylinkHtml}");
+                var PDFurl = Url.Action("WarrantyPDF", "AccountantCustomerInvoice", new { CU_RECID = o.CU_RECID }, null);
+                var PDFiconHtml = "<i class='bi bi-file-earmark-pdf-fill text-danger'></i>";
+                var PDFlinkHtml = $"<a href='javascript:void(0);' onclick='DownloadWarrantyPDF({o.CU_RECID})' title='Warranty PDF'>{PDFiconHtml}</a>";
+
+
+
+                var Emailurl = Url.Action("", "", new { Recid = o.CU_RECID, Email = o.CU_EMAIL }, null);
+                var EmailiconHtml = "<i class='bi bi-envelope-check text-primary'></i>";
+                var EmaillinkHtml = $"<a href='javascript:void(0);' onclick='SendWarrantyEmail({o.CU_RECID},\"{o.CU_EMAIL}\")' title='Email'>{EmailiconHtml}</a>";
+
+
+                var InvoicePDFurl = Url.Action("WarrantyPDF", "AccountantCustomerInvoice", new { CU_URECID = o.CU_URECID }, null);
+                var InvoicePDFiconHtml = "<i class='bi bi-file-earmark-pdf-fill text-danger'></i>";
+                var InvoicePDFlinkHtml = $"<a href='javascript:void(0);' onclick='DownloadInvoicePDF({o.CU_URECID})' title='Warranty PDF'>{InvoicePDFiconHtml}</a>";
+
+
+                var extraSpaces2 = "&nbsp;";
+                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}{extraSpaces2}{CustomerNotifylinkHtml}{extraSpaces2}{PDFlinkHtml}{extraSpaces2}{EmaillinkHtml}");
             });
 
            }).WithPaging(10).Sortable(false)
@@ -273,18 +301,30 @@
                         &nbsp;- Delete
                     </div> 
                     
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-receipt bx-sm '> </i>
-                        </div>
-                        &nbsp;- Contract Invoice
-                    </div>  
+                   
                     
                     <div class="flex-item  mt-1">
                         <div class="d-flex justify-content-center footerb">
                             <i class='bi bi-bell bx-sm '> </i>
                         </div>
                         &nbsp;- Follow Ups
+                    </div>  <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
+                        </div>
+                        &nbsp;- Warranty PDF
+                    </div>  
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-envelope-check text-primary bx-sm'> </i>
+                        </div>
+                        &nbsp;- Email (Warranty PDF)
+                    </div>  
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
+                        </div>
+                        &nbsp;- Excel Export
                     </div>
                 </div>
             </div>
@@ -319,7 +359,106 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="~/Scripts/Fordelete.js"></script>
+    <script>
+        function DownloadWarrantyPDF(id) {
 
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Generating Warranty PDF',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: '/AccountantCustomerInvoice/WarrantyPDF',
+                type: 'POST',
+                data: { CU_RECID: id },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data) {
+
+                    var blob = new Blob([data], { type: "application/pdf" });
+
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "Warranty.pdf";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    Swal.close();
+                },
+                error: function () {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to download PDF'
+                    });
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function SendWarrantyEmail(id, email) {
+
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Sending Warranty PDF to Email',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: '/AccountantCustomerInvoice/WarrantyPDFToEmail',
+                type: 'POST',
+                data: {
+                    CU_RECID: id,
+                    Email: email
+                },
+                success: function (response) {
+
+                    Swal.close();
+
+                    if (response.status === "Y") {
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message
+                        });
+
+                    } else {
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+
+                    }
+
+                },
+                error: function () {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong'
+                    });
+
+                }
+            });
+        }
+    </script>
 </body>
 </html>
 

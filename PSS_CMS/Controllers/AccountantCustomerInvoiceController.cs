@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,31 +21,35 @@ namespace PSS_CMS.Controllers
     {
 
         // GET: AccountantCustomerInvoice
-        public async Task<ActionResult> List(string searchPharse, int? CU_CTRECID,string Name,int? CT_PRECID,decimal? CT_CONTRACTAMOUNT)
+        public async Task<ActionResult> List(string searchPharse, int? P_RECID,string P_NAME,int? P_DURATION)
         {
+            Projectmaster objinclusion = new Projectmaster();
 
-            if (CU_CTRECID != null)
+            int SerialNo = objinclusion.SerialNumber;
+
+            if (SerialNo == 0)
             {
-                Session["RECID"] = CU_CTRECID;
-                Session["CU_CTRECID"] = CU_CTRECID;
-               
+                SerialNo = 1; // Initialize to 1 if it's 0
             }
-            if (Name != null)
+
+            if (P_NAME != null)
             {
-                Session["ContractName"] = Name;
+                Session["P_NAME"] = P_NAME;
               
             }
-            if (CT_PRECID != null)
+            if (P_RECID != null && P_RECID!=0)
             {
 
 
-                Session["CT_PRECID"] = CT_PRECID;
-            }
-            if (CT_CONTRACTAMOUNT != null )
+                Session["P_RECID"] = P_RECID;
+            } 
+            if (P_DURATION != null && P_DURATION != 0)
             {
-               
-                Session["ContractAmount"] = CT_CONTRACTAMOUNT;
+
+
+                Session["P_DURATION"] = P_DURATION;
             }
+           
            
             Projectmaster objprojectmaster = new Projectmaster();
 
@@ -56,7 +61,7 @@ namespace PSS_CMS.Controllers
 
             List<Projectmaster> projectmasterlist = new List<Projectmaster>();
 
-            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&ContractRecID="+ Session["RECID"];
+            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&ProductRecid=" + Session["P_RECID"];
             string url = Weburl + "?" + strparams;
 
             try
@@ -78,6 +83,14 @@ namespace PSS_CMS.Controllers
                             var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
                             projectmasterlist = rootObjects.Data;
 
+                            if (projectmasterlist.Count > 0)
+                            {
+                                // Assign serial numbers
+                                for (int i = 0; i < projectmasterlist.Count; i++)
+                                {
+                                    projectmasterlist[i].SerialNumber = i + 1;
+                                }
+                            }
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
                                 projectmasterlist = projectmasterlist
@@ -106,22 +119,21 @@ namespace PSS_CMS.Controllers
             }
             return View(projectmasterlist);
         }
-        public async Task<ActionResult> Create(int? CU_CTRECID, string Name, int? CT_PRECID, decimal? CT_CONTRACTAMOUNT)
+        public async Task<ActionResult> Create()
         {
-            if (CU_CTRECID != null && Name != null)
-            {
-                Session["RECID"] = CU_CTRECID;
-                Session["ContractName"] = Name;
-                Session["CT_PRECID"] = CT_PRECID;
-                Session["ContractAmount"] = CT_CONTRACTAMOUNT;
-            }
+            
+            var apiModel = await GetWarrantyDetails();
 
+            Projectmaster model = new Projectmaster();
 
-
+           
+            model.CU_WARRANTYFREECALLS = apiModel.Product.P_FREECALLS;
+            ViewBag.Inclusions = apiModel.Inclusions;
+            ViewBag.Exclusions = apiModel.Exclusions;
             await ComboProductSelection();
             await ComboUser();
             await LocationType();
-            return View();
+            return View(model);
         }
         [HttpPost]
         public async Task<ActionResult> Create(Projectmaster projectmaster)
@@ -131,6 +143,11 @@ namespace PSS_CMS.Controllers
                 var ProjectmasterPostURL = ConfigurationManager.AppSettings["CUSTOMERPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
+
+                DateTime invoiceDate = Convert.ToDateTime(projectmaster.CU_INVOICEDATE);
+                int durationMonths = Convert.ToInt32(Session["P_DURATION"]);
+                DateTime warrantyUpto = invoiceDate.AddMonths(durationMonths);
+                string warrantyUptoDate = warrantyUpto.ToString("yyyy-MM-dd");
 
                 var content = $@"{{           
             ""cU_CODE"": ""{projectmaster.CU_CODE}"",           
@@ -143,7 +160,9 @@ namespace PSS_CMS.Controllers
             ""cU_MOBILENO"": ""{ projectmaster.CU_MOBILENO}"",                    
             ""cU_URECID"": ""{ projectmaster.CU_URECID}"",                    
             ""cU_INVOICENO"": ""{ projectmaster.CU_INVOICENO}"",                    
-            ""cU_WARRANTYUPTO"": ""{ projectmaster.CU_WARRANTYUPTO}"",                    
+            ""cU_INVOICEAMOUNT"": ""{ projectmaster.CU_INVOICEAMOUNT}"",                    
+            ""cU_INVOICEDATE"": ""{ projectmaster.CU_INVOICEDATE}"",                    
+            ""cU_WARRANTYUPTO"": ""{warrantyUptoDate}"",                    
             ""cU_WARRANTYFREECALLS"": ""{ projectmaster.CU_WARRANTYFREECALLS}"",                    
             ""cU_ADDRESS"": ""{ projectmaster.CU_ADDRESS}"",                    
             ""cU_GST"": ""{ projectmaster.CU_GST}"",                    
@@ -168,7 +187,7 @@ namespace PSS_CMS.Controllers
                           
             ""cU_DISABLE"": ""{(projectmaster.IsDisabled ? "Y" : "N")}"",        
             ""cU_CRECID"": ""{Session["CompanyID"]}"",           
-            ""cU_CTRECID"": ""{Session["CU_CTRECID"]}""           
+            ""cU_CTRECID"": ""{"0"}""         
         }}";
 
                 // Create the HTTP request
@@ -235,6 +254,10 @@ namespace PSS_CMS.Controllers
         }
         public async Task<ActionResult> Edit(int? Recid, string Name)
         {
+            var apiModel = await GetWarrantyDetails();
+            ViewBag.Inclusions = apiModel.Inclusions;
+            ViewBag.Exclusions = apiModel.Exclusions;
+
             Session["Productrecid"] = Recid;
             Session["Name"] = Name;
             string WEBURLGETBYID = ConfigurationManager.AppSettings["CUSTOMERGETBYID"];
@@ -295,6 +318,11 @@ namespace PSS_CMS.Controllers
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
+                DateTime invoiceDate = Convert.ToDateTime(projectmaster.CU_INVOICEDATE);
+                int durationMonths = Convert.ToInt32(Session["P_DURATION"]);
+                DateTime warrantyUpto = invoiceDate.AddMonths(durationMonths);
+                string warrantyUptoDate = warrantyUpto.ToString("yyyy-MM-dd");
+
                 var content = $@"{{           
             ""cU_RECID"": ""{Session["Productrecid"]}"",        
             ""cU_ADMINRECID"": ""{projectmaster.CU_ADMINRECID}"",      
@@ -307,7 +335,9 @@ namespace PSS_CMS.Controllers
             ""cU_SPRECID"": ""{ projectmaster.CU_SPRECID}"",                    
             ""cU_LTRECID"": ""{ projectmaster.CU_LTRECID}"",    
             ""cU_INVOICENO"": ""{projectmaster.CU_INVOICENO}"",
-            ""cU_WARRANTYUPTO"": ""{projectmaster.CU_WARRANTYUPTO}"",
+            ""cU_INVOICEAMOUNT"": ""{ projectmaster.CU_INVOICEAMOUNT}"",                    
+            ""cU_INVOICEDATE"": ""{ projectmaster.CU_INVOICEDATE}"",       
+            ""cU_WARRANTYUPTO"": ""{warrantyUptoDate}"",
             ""cU_WARRANTYFREECALLS"": ""{projectmaster.CU_WARRANTYFREECALLS}"",
             ""cU_SORTORDER"": ""{projectmaster.CU_SORTORDER}"",
             ""cU_ADDRESS"": ""{ projectmaster.CU_ADDRESS}"",                    
@@ -331,7 +361,7 @@ namespace PSS_CMS.Controllers
             ""cU_CONTACTPERSONDESIGINATION3"": ""{ projectmaster.CU_CONTACTPERSONDESIGINATION3}"",                    
                           
             ""cU_CRECID"": ""{ Session["CompanyID"]}"",                              
-            ""cU_CTRECID"": ""{ Session["CU_CTRECID"]}""                              
+            ""cU_CTRECID"": ""{"0"}""                              
         }}";
 
                 // Create the HTTP request
@@ -466,7 +496,7 @@ namespace PSS_CMS.Controllers
             string webUrlGet = ConfigurationManager.AppSettings["GETCOMBOPRODUCTBASEDPRODUCT"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
-            string strparams = "cmprecid=" + Session["CompanyID"] + "&productrecid=" + Session["CT_PRECID"];
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&productrecid=" + Session["P_RECID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -519,7 +549,7 @@ namespace PSS_CMS.Controllers
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             //string strparams = "cmprecid=" + Session["CompanyID"] ;
-            string strparams = "cmprecid=" + Session["CompanyID"] + "&productrecid=" + Session["CT_PRECID"];
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&productrecid=" + Session["P_RECID"];
             string url = webUrlGet + "?" + strparams;
             try
             {
@@ -915,5 +945,202 @@ namespace PSS_CMS.Controllers
 
         }
 
+
+        public async Task<ViewlistRoot> GetWarrantyDetails()
+        {
+            ViewlistRoot model = new ViewlistRoot();
+
+            string Weburl = ConfigurationManager.AppSettings["VIEWLIST"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&Productid=" + Session["P_RECID"];
+            string url = Weburl + "?" + strparams;
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = await client.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonString = await response.Content.ReadAsStringAsync();
+
+                        var root = JsonConvert.DeserializeObject<ViewlistRoot>(jsonString);
+
+                        if (root != null)
+                        {
+                            model.Product = root.Product;
+
+                            model.Inclusions = root.Inclusions;
+                            model.Exclusions = root.Exclusions;
+                        }
+                    }
+                }
+            }
+
+            return model;
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> WarrantyPDF(Prioritywise prioritywise,int? CU_RECID)
+        {
+            List<Prioritywise> list = new List<Prioritywise>();
+
+            
+            string Weburl = ConfigurationManager.AppSettings["WARRANTYPDF"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+
+
+            string url = $"{Weburl}?cmprecid={Session["CompanyId"]}&cusrecid={CU_RECID}";
+
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = await client.GetAsync(url);
+                    if (!response.IsSuccessStatusCode)
+                        return Content("Error fetching data: " + response.ReasonPhrase);
+
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var rootObjects = JsonConvert.DeserializeObject<Prioritywisepdfobjects>(jsonString);
+
+                    if (rootObjects == null || rootObjects.Status != "Y")
+                        return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
+                  
+                        // The API already returns a PDF URL
+                        string pdfUrl = rootObjects.fileUrl;
+                        var fileBytes = await client.GetByteArrayAsync(pdfUrl);
+                        var fileName = Path.GetFileName(pdfUrl); 
+
+                        // Download
+                        return File(fileBytes, "application/pdf", fileName);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception occurred: " + ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> WarrantyPDFToEmail(int? CU_RECID, string Email)
+        {
+            try
+            {
+                string baseUrl = ConfigurationManager.AppSettings["WARRANTYPDFTOEMAIL"];
+                string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+                string APIKey = Session["APIKEY"]?.ToString();
+                string CompanyId = Session["CompanyId"]?.ToString();
+
+                string url = $"{baseUrl}?cmprecid={CompanyId}&cusrecid={CU_RECID}&cusmailid={Email}";
+
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                        // POST request (no body needed)
+                        var response = await client.PostAsync(url, null);
+
+                        var jsonString = await response.Content.ReadAsStringAsync();
+
+                        var result = JsonConvert.DeserializeObject<pdfdetail>(jsonString);
+
+                        return Json(new
+                        {
+                            status = result.Status,
+                            message = result.Message
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    status = "N",
+                    message = ex.Message
+                });
+            }
+        }
+
+
+
+        public async Task<ActionResult> ExcelUserDownload()
+        {
+            string Weburl = ConfigurationManager.AppSettings["ExcelCustomer"];
+
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            List<Projectmaster> projectmasterlist = new List<Projectmaster>();
+
+            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&ProductRecid=" + Session["P_RECID"];
+            string url = Weburl + "?" + strparams;
+
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+
+                            return File(fileBytes,
+                                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                        Session["UserRole"] + "-Tickets" + ".xlsx");
+                        }
+                        else
+                        {
+                            return Content("API Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception occurred: " + ex.Message);
+            }
+        }
+
+
+
     }
+
 }

@@ -267,6 +267,16 @@
                columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority Type");
                columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket Type");
                columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status");
+               columns.Add(c => c.P_Comprehensivewarranty)
+.Titled("Comprehensive Warranty")
+.Css("text-center")
+.Encoded(false)
+.Sanitized(false)
+.RenderValueAs(o =>
+{
+    var isChecked = o.P_Comprehensivewarranty ? "checked='checked'" : "";
+    return new HtmlString($"<input type='checkbox' {isChecked} />");
+});
                if (Session["UserRole"].ToString() == "Manager")
                {
                    columns.Add(c => c.U_ASSIGNEDUSERNAME).Titled("Assigned To");
@@ -302,12 +312,12 @@
          if ((Session["MaterialConsumptionFlag"]?.ToString() == "Y") && (o.TC_STATUS != "C"))
          {
              var mcUrl = Url.Action("List", "MaterialConsumption",
-                 new { TC_RECID = o.TC_RECID, Type = "Material", P_RECID = o.P_RECID });
+                 new { TC_RECID = o.TC_RECID, Type = "Material", P_RECID = o.P_RECID,P_NAME=o.P_NAME,Comprehensive=o.P_Comprehensivewarranty });
 
              actionHtml += $"<a href='{mcUrl}' data-toggle='tooltip' title='Job Card Items'><i class='bx bx-cart-alt'></i></a>";
 
              var serviceUrl = Url.Action("List", "MaterialConsumption",
-                 new { TC_RECID = o.TC_RECID, Type = "Service", P_RECID = o.P_RECID });
+                 new { TC_RECID = o.TC_RECID, Type = "Service", P_RECID = o.P_RECID, P_NAME = o.P_NAME, Comprehensive = o.P_Comprehensivewarranty });
 
              actionHtml += $"<a href='{serviceUrl}' data-toggle='tooltip' title='Services'><i class='bi bi-card-checklist'></i></a>";
          }

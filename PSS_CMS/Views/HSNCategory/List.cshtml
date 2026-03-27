@@ -95,7 +95,7 @@
                   var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
                   var HSNMaster = Url.Action("List", "HSNMaster", new { HSNC_RECID = o.HSNC_RECID, companyId = o.HSNC_CRECID, HSNC_CATEGORYNAME = o.HSNC_CATEGORYNAME.ToUpper() }, null);
-                  var HSNMastericon = "<i class='bx bx-collection'></i>";
+                  var HSNMastericon = "<i class='bi bi-basket2 bx-sm'></i>";
                   var HSNMasterlinkHtml = $"<a href='{HSNMaster}'data-toggle='tooltip' data-placement='top' title='HSN Master'>{HSNMastericon}</a>";
 
                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{HSNMasterlinkHtml}");

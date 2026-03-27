@@ -18,13 +18,15 @@ namespace PSS_CMS.Controllers
     public class MaterialConsumptionController : Controller
     {
         // GET: MaterialConsumption
-        public async Task<ActionResult> List(string searchPharse,int? TC_RECID,string Type,int? P_RECID)
+        public async Task<ActionResult> List(string searchPharse,int? TC_RECID,string Type,int? P_RECID,string P_NAME, string Comprehensive)
         {
-            if (TC_RECID!=null && Type!=null && P_RECID!=null)
+            if (TC_RECID!=null && Type!=null && P_RECID!=null && P_NAME!=null && Comprehensive!=null)
             {
                 Session["TC_RECID"] = TC_RECID;
                 Session["Type"] = Type;
                 Session["P_RECID"] = P_RECID;
+                Session["P_NAME"] = P_NAME;
+                Session["Comprehensive"] = Comprehensive;
             }
 
             Materialconsumption objmaterialconsumption = new Materialconsumption();
@@ -91,15 +93,32 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> Create()
         {
+            Materialconsumption model = new Materialconsumption();
+            //var ff = Session["Comprehensive"].ToString();
+            if (Session["Comprehensive"].ToString() != null && Session["Comprehensive"].ToString() == "False")
+            {
+                //model.tM_BILLABLE = true;
+                ViewBag.DisableBillable = true;
+            }
+            else
+            {
+                ViewBag.DisableBillable = false;
+            }
             await ItemGroupCombo();
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> Create(Materialconsumption materialcategory)
+        public async Task<ActionResult> Create(Materialconsumption materialcategory,string tM_BILLABLE)
         {
             try
             {
-                var MaterialPostURL = ConfigurationManager.AppSettings["MATERIALCONSUMPTIONPOST"];
+                if (Session["Comprehensive"].ToString() != null && Session["Comprehensive"].ToString() == "False")
+                {
+                    materialcategory.tM_BILLABLE = true;
+
+                }
+
+                    var MaterialPostURL = ConfigurationManager.AppSettings["MATERIALCONSUMPTIONPOST"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 

@@ -603,12 +603,22 @@ namespace PSS_CMS.Controllers
 
                             if (apiResponse?.Data != null)
                             {
+                                //customerResult = apiResponse.Data.Select(data => new
+                                //{
+                                //    Value = data.CU_RECID.ToString(),
+                                //    Text = data.CU_NAME,
+                                //    WarrantyUpto = data.CU_WARRANTYUPTO,
+                                //    WarrantyFreeCalls = data.CU_WARRANTYFREECALLS
+                                //}).ToList<object>();
                                 customerResult = apiResponse.Data.Select(data => new
                                 {
-                                    Value = data.CU_RECID.ToString(),
-                                    Text = data.CU_NAME,
+                                    Value = data.CU_RECID,
+                                    Text = data.CU_NAME + " (" + data.Type + ")",
+
                                     WarrantyUpto = data.CU_WARRANTYUPTO,
-                                    WarrantyFreeCalls = data.CU_WARRANTYFREECALLS
+                                    WarrantyFreeCalls = data.CU_WARRANTYFREECALLS,
+
+                                    Type = data.Type   // optional (for future use)
                                 }).ToList<object>();
                             }
                         }

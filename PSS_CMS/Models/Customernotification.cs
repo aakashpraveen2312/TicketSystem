@@ -9,11 +9,12 @@ namespace PSS_CMS.Models
     public class Customernotification
 {
 
+    public int SerialNumber { get; set; }
     public int CN_RECID { get; set; }
         [DisplayName("Invoice Number")]
 
         public string CN_INVOICENO { get; set; }
-        [DisplayName("Follow Up Date")]
+        [DisplayName("Follow-up Date")]
 
         public string CN_FOLLOWUPDATE { get; set; }
         public string Followupdate

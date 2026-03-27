@@ -34,9 +34,51 @@
     <link href="~/Content/Colors.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
     <style>
+        /* Pagination container */
+        #inclusionPagination,
+        #exclusionPagination {
+            margin-top: 10px;
+            
+        }
+
+            /* Pagination buttons */
+            #inclusionPagination button,
+            #exclusionPagination button {
+                border: 1px solid #ccc;
+                background-color: #fff;
+                color: #333;
+                padding: 5px 10px;
+                margin: 2px;
+                cursor: pointer;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+                /* Hover effect */
+                #inclusionPagination button:hover,
+                #exclusionPagination button:hover {
+                    background-color: #f0f0f0;
+                }
+
+                /* Active page */
+                #inclusionPagination button.active,
+                #exclusionPagination button.active {
+                    background-color: #0d6efd;
+                    color: #fff;
+                    border-color: #0d6efd;
+                }
+
+                /* Previous & Next styling */
+                #inclusionPagination button:first-child,
+                #exclusionPagination button:first-child,
+                #inclusionPagination button:last-child,
+                #exclusionPagination button:last-child {
+                    font-weight: bold;
+                }
         select#SelectedRole, select.form-select.textboxcolors {
             font-size: 13px;
         }
+       
 
         .swal-btn-continue {
             background-color: #6ed3d0 !important;
@@ -154,10 +196,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -183,7 +237,7 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
+                    @*<li class="nav-link">
                         <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
                             <i class='bx bx-credit-card' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Product Finance</span>
@@ -194,7 +248,7 @@
                             <i class='bx bx-wallet' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
                         </a>
-                    </li>
+                    </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -237,22 +291,83 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>CUSTOMER</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "AccountantCustomerInvoice")">LIST</a></li>
+                    <li>WARRANTY PRODUCTS</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">@Session["P_NAME"].ToString().ToUpper()</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "AccountantCustomerInvoice")">SALES CUSTOMER</a></li>
                     <li>CREATE</li>
+
                 </ul>
             </div>
         </div>
         <div class="tabs">
             <div class="tab-buttons">
                 <button class="active" onclick="showTab(0)">Main</button>
-                <button onclick="showTab(1)">Statutary</button>
-                <button onclick="showTab(2)">Contacts</button>
+                <button onclick="showTab(1)">Warranty</button>
+                <button onclick="showTab(2)">Statutary</button>
+                <button onclick="showTab(3)">Contacts</button>
             </div>
             @using (Html.BeginForm("Create", "AccountantCustomerInvoice", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
             {
 
                 <div class="tab-content active">
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_PRECID, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @if (ViewBag.Product != null)
+                            {
+                                var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
+
+                                if (ProductList != null && ProductList.Any())
+                                {
+                                    var modifiedProductList = new List<SelectListItem>(ProductList);
+
+                                    // If more than one product, add Select option
+                                    if (modifiedProductList.Count > 1)
+                                    {
+                                        modifiedProductList.Insert(0, new SelectListItem
+                                        {
+                                            Text = "-- Select Product --",
+                                            Value = ""
+                                        });
+                                    }
+                                    else
+                                    {
+                                        // If only one product, make it selected
+                                        modifiedProductList[0].Selected = true;
+                                    }
+
+                                    @Html.DropDownList("SelectedProduct",
+                                        modifiedProductList,
+                                        new { @class = "form-control textboxcolors", id = "SelectedProduct",@readonly="readonly" })
+                                }
+                                else
+                                {
+                                    <p>No Product's are available</p>
+                                }
+                            }
+                            else
+                            {
+                                <p>No Product's are available</p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_ADMINRECID,"Service Engineer", new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+
+
+                            <select id="AdminDropdown" class="form-select textboxcolors" disabled>
+                                <option value="">-- Select Admin --</option>
+                            </select>
+
+                            <input type="hidden" id="CU_ADMINRECID" name="CU_ADMINRECID" />
+                        </div>
+                    </div>
 
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
@@ -268,7 +383,7 @@
                                     var modifiedLocationList = new List<SelectListItem>(LocationList);
 
                                     // Add "--Select Project--" option only if more than one project is available
-                                    modifiedLocationList.Insert(0, new SelectListItem { Text = "-- Select Location Type --", Value = "" });
+                                    modifiedLocationList.Insert(0, new SelectListItem { Text = "-- Select Sales Source --", Value = "" });
 
                                     @Html.DropDownList("SelectedLocation",
                                                                  modifiedLocationList,
@@ -278,7 +393,7 @@
                                 {
                                     var modifiedLocationList = new List<SelectListItem>(LocationList);
                                     // Add "--Select Project--" option only if more than one project is available
-                                    modifiedLocationList.Insert(0, new SelectListItem { Text = "No Location's are available", Value = "" });
+                                    modifiedLocationList.Insert(0, new SelectListItem { Text = "No Sales Source's are available", Value = "" });
 
                                     @Html.DropDownList("SelectedLocation",
                                                                  modifiedLocationList,
@@ -286,7 +401,7 @@
                             }
                             else
                             {
-                                <p>No location's are available</p>}
+                                <p>No Sales Source's are available</p>}
                         </div>
                     </div>
 
@@ -307,7 +422,7 @@
                                 // Add default option
                                 modifiedLocationRefList.Insert(0, new SelectListItem
                                 {
-                                    Text = "-- Select Location Reference --",
+                                    Text = "-- Select Sales Location --",
                                     Value = ""
                                 });
 
@@ -322,7 +437,7 @@
                                 // Add "no data" option
                                 modifiedLocationRefList.Insert(0, new SelectListItem
                                 {
-                                    Text = "No Location Reference available",
+                                    Text = "No Sales Location available",
                                     Value = ""
                                 });
 
@@ -352,66 +467,22 @@
                             @Html.EditorFor(model => model.CU_INVOICENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
                         </div>
                     </div>
-
-
-
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.CU_PRECID, new { @class = "labels" })
+                            @Html.LabelFor(model => model.CU_INVOICEAMOUNT, new { @class = "labels" })
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
-                            @if (ViewBag.Product != null)
-                            {
-                                var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
-
-                                if (ProductList != null && ProductList.Any())
-                                {
-                                    var modifiedProductList = new List<SelectListItem>(ProductList);
-
-                                    // Add "--Select Project--" option only if more than one project is available
-                                    modifiedProductList.Insert(0, new SelectListItem { Text = "-- Select Product --", Value = "" });
-
-                                    @Html.DropDownList("SelectedProduct",
-                                                                 modifiedProductList,
-                                                                 new { @class = "form-select textboxcolors", id = "SelectedProduct" })
-                                }
-                                else
-                                {
-                                    var modifiedProductList = new List<SelectListItem>(ProductList);
-                                    // Add "--Select Project--" option only if more than one project is available
-                                    modifiedProductList.Insert(0, new SelectListItem { Text = "No Product's are available", Value = "" });
-
-                                    @Html.DropDownList("SelectedProduct",
-                                                                 modifiedProductList,
-                                                                 new { @class = "form-select textboxcolors", id = "" }) }
-                            }
-                            else
-                            {
-                                <p>No product's are available</p>}
+                            @Html.EditorFor(model => model.CU_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
                         </div>
                     </div>
-
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.CU_ADMINRECID, new { @class = "labels" })
+                            @Html.LabelFor(model => model.CU_INVOICEDATE, new { @class = "labels" })
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
-                            @*<select id="AdminDropdown" class="form-select textboxcolors" disabled>
-                                    <option value="">-- Select Admin --</option>
-                                </select>
-                                <input type="hidden" id="AdminRecId" name="AdminRecId" />*@
-
-                            <select id="AdminDropdown" class="form-select textboxcolors" disabled>
-                                <option value="">-- Select Admin --</option>
-                            </select>
-
-                            <input type="hidden" id="CU_ADMINRECID" name="CU_ADMINRECID" />
+                            @Html.EditorFor(model => model.CU_INVOICEDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
                         </div>
                     </div>
-
-
-
-
 
 
 
@@ -424,30 +495,6 @@
                         </div>
                     </div>
 
-                    @*<div class="row mb-3">
-                            <div class="col-lg-2 col-md-2 col-sm-12">
-                                @Html.LabelFor(model => model.CU_NAME, new { @class = "labels" })
-                                @Html.HiddenFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_NAME" } })
-
-                            </div>
-                            <div class="col-lg-5 col-md-5 col-sm-12">
-                                <select id="UserDropdown" class="form-select textboxcolors">
-                                    <option value="">-- Select User --</option>
-                                    @foreach (var user in ViewBag.User as List<PSS_CMS.Models.UserDropdownItem>)
-                                    {
-                                        <option value="@user.Value"
-                                                data-username="@user.Text"
-                                                data-email="@user.Email"
-                                                data-recid="@user.Recid"
-                                                data-mobile="@user.Mobile">
-                                            @user.Text
-                                        </option>
-                                    }
-                                </select>
-                                @Html.HiddenFor(model => model.CU_URECID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_URECID" } })
-
-                            </div>
-                        </div>*@
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
                             @Html.LabelFor(model => model.CU_EMAIL, new { @class = "labels" })
@@ -465,14 +512,7 @@
                             @Html.EditorFor(model => model.CU_MOBILENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_MOBILENO" } })
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.CU_WARRANTYUPTO, new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.EditorFor(model => model.CU_WARRANTYUPTO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "", type = "date" } })
-                        </div>
-                    </div>
+
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
                             @Html.LabelFor(model => model.CU_ADDRESS, new { @class = "labels" })
@@ -501,6 +541,97 @@
                     </div>
 
                 </div>
+
+                <div class="tab-content">
+                    @*<div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_WARRANTYUPTO, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_WARRANTYUPTO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                        </div>
+                    </div>*@
+
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_WARRANTYFREECALLS, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                        </div>
+                    </div>
+                    <div class="mb-3 d-flex justify-content-end">
+                        @*<input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />*@
+                        <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
+                        @*<input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />*@
+
+
+                    </div>
+                    <div class="row mt-4">
+
+                        <!-- Inclusions -->
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    Inclusions
+                                </div>
+
+                                <div class="card-body">
+
+                                    <ul id="inclusionList">
+                                        @if (ViewBag.Inclusions != null && ViewBag.Inclusions.Count > 0)
+                                        {
+                                            foreach (var item in ViewBag.Inclusions)
+                                            {
+                                                <li>@item.IN_DESCRIPTION</li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li class="text-muted">No Inclusions Available</li>
+}
+                                    </ul>
+
+                                    <div id="inclusionPagination"></div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Exclusions -->
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header bg-danger text-white">
+                                    Exclusions
+                                </div>
+
+                                <div class="card-body">
+
+                                    <ul id="exclusionList">
+                                        @if (ViewBag.Exclusions != null && ViewBag.Inclusions.Count > 0)
+                                        {
+                                            foreach (var item in ViewBag.Exclusions)
+                                            {
+                                                <li>@item.EX_DESCRIPTION</li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                    <li class="text-muted">No Exclusions Available</li>}
+                                    </ul>
+
+                                    <div id="exclusionPagination"></div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
                 <div class="tab-content">
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
@@ -532,15 +663,7 @@
 
 
 
-                    <div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.EditorFor(model => model.CU_WARRANTYFREECALLS, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
-                        </div>
-                    </div>
                     <div class="mb-3 d-flex justify-content-end">
                         <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
                         <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
@@ -549,6 +672,7 @@
 
                     </div>
                 </div>
+
                 <div class="tab-content">
                     <div class="row">
                         <!-- Contact Person 1 -->
@@ -615,22 +739,10 @@
                             <div class="mb-3 d-flex justify-content-end">
                                 <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
                                 <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
-                          
-                            
-        @*<input type="button"
-                                   value="Cancel"
-                                   class="cancelbuttons"
-                                   onclick="window.location.href='@Url.Action(
-           "List",
-           "AccountantCustomerInvoice",
-           new {
-               CU_CTRECID = cuCtrecid,
-               Name = contractName,
-               CT_PRECID = ctPrecid,
-               CT_CONTRACTAMOUNT = contractAmount
-           })'" />*@
-                            
-                            
+
+
+
+
                             </div>
 
                         </div>
@@ -700,22 +812,60 @@
     <script src="~/Scripts/Logoutjs.js"></script>
 
 
+    <script>
+        function paginateList(listId, paginationId, rowsPerPage = 3) {
 
-    @*<script>
-            document.getElementById("UserDropdown").addEventListener("change", function () {
-                var selected = this.options[this.selectedIndex];
-                var email = selected.getAttribute("data-email") || "";
-                var name = selected.getAttribute("data-username") || "";
-                var mobile = selected.getAttribute("data-mobile") || "";
-                var recid = selected.getAttribute("data-recid") || "";
+            const list = document.getElementById(listId);
+            const items = list.getElementsByTagName("li");
+            const pagination = document.getElementById(paginationId);
 
-                document.getElementById("CU_EMAIL").value = email;
-                document.getElementById("CU_NAME").value = name;
-                document.getElementById("CU_MOBILENO").value = mobile;
-                document.getElementById("CU_URECID").value = recid;
-            });
+            let currentPage = 1;
+            const totalPages = Math.ceil(items.length / rowsPerPage);
 
-        </script>*@
+            function showPage(page) {
+
+                currentPage = page;
+
+                for (let i = 0; i < items.length; i++) {
+                    items[i].style.display = "none";
+                }
+
+                let start = (page - 1) * rowsPerPage;
+                let end = start + rowsPerPage;
+
+                for (let i = start; i < end && i < items.length; i++) {
+                    items[i].style.display = "list-item";
+                }
+
+                renderPagination();
+            }
+
+            function renderPagination() {
+
+                pagination.innerHTML = "";
+
+                if (currentPage > 1) {
+                    pagination.innerHTML += `<button onclick="show${listId}(${currentPage - 1})">Previous</button>`;
+                }
+
+                for (let i = 1; i <= totalPages; i++) {
+                    pagination.innerHTML += `<button onclick="show${listId}(${i})">${i}</button>`;
+                }
+
+                if (currentPage < totalPages) {
+                    pagination.innerHTML += `<button onclick="show${listId}(${currentPage + 1})">Next</button>`;
+                }
+            }
+
+            window["show" + listId] = showPage;
+
+            showPage(1);
+        }
+
+        paginateList("inclusionList", "inclusionPagination");
+        paginateList("exclusionList", "exclusionPagination");
+    </script>
+
 
 
     <script>
@@ -736,17 +886,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-
-
-
-
     <script>
 $(document).ready(function () {
 
-    $("#SelectedProduct").on("change", function () {
-        console.log("Product changed:", $(this).val());
-        var precid = $(this).val();
+    function loadAdmins() {
+
+        var precid = $("#SelectedProduct").val();
         var cmprecid = '@Session["CompanyID"]';
 
         $("#AdminDropdown")
@@ -783,13 +928,9 @@ $(document).ready(function () {
                     $.each(res.data, function (i, admin) {
                         $("#AdminDropdown").append(
                             `<option value="${admin.u_RECID}">
-                    ${admin.u_USERNAME}
-                 </option>`
+                                ${admin.u_USERNAME}
+                            </option>`
                         );
-                    });
-                    //NEWLY ADDED
-                    $("#AdminDropdown").on("change", function () {
-                        $("#CU_ADMINRECID").val($(this).val());
                     });
 
                 } else {
@@ -805,25 +946,23 @@ $(document).ready(function () {
                     .prop("disabled", true);
             }
         });
+    }
+
+    // Load admins when page loads
+    loadAdmins();
+
+    // Optional: reload when product changes
+    $("#SelectedProduct").on("change", function () {
+        loadAdmins();
     });
 
     // Store selected admin RECID
     $("#AdminDropdown").on("change", function () {
-        $("#AdminRecId").val($(this).val());
+        $("#CU_ADMINRECID").val($(this).val());
     });
 
 });
     </script>
-
-
-
-
-
-
-
-
-
-
 
     @*Logout Pronptbox script*@
     <script>
@@ -955,12 +1094,12 @@ $(document).ready(function () {
                         $dropdown.empty(); // clear old options
 
                         if (result && result.length > 0) {
-                            $dropdown.append($("<option>").val("").text("-- Select Location Reference --"));
+                            $dropdown.append($("<option>").val("").text("-- Select Sales Location --"));
                             $.each(result, function (i, item) {
                                 $dropdown.append($("<option>").val(item.Value).text(item.Text));
                             });
                         } else {
-                            $dropdown.append($("<option>").val("").text("No Location Reference Available"));
+                            $dropdown.append($("<option>").val("").text("No Sales Location Available"));
                         }
                     },
                     error: function (xhr, status, error) {

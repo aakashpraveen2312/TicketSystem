@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -51,8 +52,16 @@ namespace PSS_CMS.Models
         public string TC_STATUS { get; set; }
         public string TC_TICKETTYPE { get; set; }
         public string TC_PRIORITYTYPE { get; set; }
-     
 
+       
+        public bool P_Comprehensivewarranty
+        {
+            get => PCOMPREHENSIVEWARRANTY == "Y";
+            set => PCOMPREHENSIVEWARRANTY = value ? "Y" : "N";
+        }
+
+        [JsonProperty("P_COMPREHENSIVEWARRANTY")]
+        private string PCOMPREHENSIVEWARRANTY { get; set; }
         public string TC_STATUS_DISPLAY
         {
             get

@@ -39,6 +39,11 @@
     <!-- Favicons -->
     <link href="~/assets/img/PSSlogo.png" rel="icon">
     <link href="~/assets/img/PSSlogo.png" rel="apple-touch-icon">
+    <style>
+        select#TC_ModeOfPayment, select#TC_PaymentStatus {
+            font-size: 13px;
+        }
+    </style>
 </head>
 
 <body>
@@ -76,10 +81,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                            <a href="@Url.Action("List", "Party")">
+                                <i class='bi bi-person-check' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Party</span>
+                            </a>
+                        </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -96,7 +113,7 @@
                     <li class="nav-link">
                         <a href="@Url.Action("Report", "FollowUpReport")">
                             <i class='bx bx-phone-call' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">FollowUp Report</span>
+                            <span class="text nav-text" style="margin-left:15px">Follow-up Report</span>
                         </a>
                     </li>
                     <li class="nav-link">
@@ -105,18 +122,18 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>
+                    @*<li class="nav-link">
+                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-wallet' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                            </a>
+                        </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -179,7 +196,7 @@
                         @Html.LabelFor(model => model.TC_ReferenceNo, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_ReferenceNo, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",@readonly="readonly" } })
+                        @Html.EditorFor(model => model.TC_ReferenceNo, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
                     </div>
                 </div>
 
@@ -197,7 +214,14 @@
                         @Html.LabelFor(model => model.TC_ModeOfPayment, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_ModeOfPayment, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.DropDownListFor(model => model.TC_ModeOfPayment,
+                            new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "Select Payment Mode", Value = "" },
+                                new SelectListItem { Text = "Cash", Value = "Cash" },
+                                new SelectListItem { Text = "UPI", Value = "UPI" }
+                            },
+                            new { @class = "form-select textboxcolors" })
                     </div>
                 </div>
 
@@ -207,19 +231,69 @@
                         @Html.LabelFor(model => model.TC_DateOfPayment, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_DateOfPayment, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",type="date" } })
+                        @Html.EditorFor(model => model.TC_DateOfPayment, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
                     </div>
                 </div>
-
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.TC_TotalAmount, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_TotalAmount, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",Value= @ViewBag.Amount, @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.TC_TotalAmount, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", Value = @ViewBag.Amount, @readonly = "readonly", id = "TotalAmount" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.TC_PaidAmount, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.TC_PaidAmount, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "PaidAmount", Placeholde = "0.00" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.TC_BalanceAmount, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.TC_BalanceAmount, new
+                        {
+                            htmlAttributes = new
+                            {
+                                @class = "form-control integerboxcolors",
+                                autocomplete = "off",
+                       id = "BalanceAmount",
+                       @readonly = "readonly"
+                   }
+                        })
                     </div>
                 </div>
 
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.TC_PaymentStatus, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.TC_PaymentStatus, new
+                   {
+                       htmlAttributes = new
+                       {
+                           @class = "form-control textboxcolors",
+                           autocomplete = "off",
+                           id = "PaymentStatus",
+                           @readonly = "readonly"
+                       }
+                   })
+                       
+                    </div>
+                </div>
+                @*<div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.TC_DueDate, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            @Html.EditorFor(model => model.TC_DueDate, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
+                        </div>
+                    </div>*@
 
                 <div class="row">
                     <div class="col-md-5 d-flex justify-content-end ms-1">
@@ -253,6 +327,23 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            $("#PaidAmount").on("input", function () {
+
+                var total = parseFloat($("#TotalAmount").val()) || 0;
+                var paid = parseFloat($(this).val()) || 0;
+
+                var balance = total - paid;
+
+                $("#BalanceAmount").val(balance.toFixed(2));
+            });
+
+        });
+
+    </script>
     <script>
 $(document).ready(function () {
     // Intercept form submission
@@ -308,7 +399,7 @@ $(document).ready(function () {
                             if (result.isConfirmed) {
                                 window.location.href = '@Url.Action("Index", "ServiceInvoice")';
                             } else {
-                                window.location.href = '@Url.Action("UpdatePayment", "ServiceInvoice")';
+                                window.location.href = '@Url.Action("Index", "ServiceInvoice")';
                             }
                         });
                     }, 1000); // 1 second delay
@@ -346,7 +437,60 @@ $(document).ready(function () {
 });
     </script>
 
+    <script>
+        $(document).ready(function () {
 
+            // Function to update Balance and Payment Status
+            function updatePaymentStatus() {
+                var total = parseFloat($("#TotalAmount").val()) || 0;
+                var paid = parseFloat($("#PaidAmount").val()) || 0;
+                var balance = total - paid;
+
+                // Update balance field
+                $("#BalanceAmount").val(balance.toFixed(2));
+
+                // Determine status text and color
+                var statusText = "";
+                var statusColor = "black"; // default color
+
+                if (paid === 0) {
+                    statusText = "";
+                    statusColor = "black";
+                }
+                else if (paid >= total) {
+                    statusText = "FULLY PAID";
+                    statusColor = "green";
+                }
+                else if (paid < total) {
+                    statusText = "PARTIALLY PAID";
+                    statusColor = "orange";
+                }
+
+                // Update Payment Status textbox
+                $("#PaymentStatus").val(statusText);
+                $("#PaymentStatus").css("color", statusColor);
+            }
+
+            // Trigger update on PaidAmount input
+            $("#PaidAmount").on("input", function () {
+                var total = parseFloat($("#TotalAmount").val()) || 0;
+                var paid = parseFloat($(this).val()) || 0;
+
+                // Prevent overpayment
+                if (paid > total) {
+                    alert("Paid amount cannot exceed Total Amount");
+                    $(this).val(total.toFixed(2));
+                    paid = total;
+                }
+
+                // Update balance and status
+                updatePaymentStatus();
+            });
+
+            // Trigger update on page load (edit mode)
+            updatePaymentStatus();
+        });
+    </script>
 
 
 </body>

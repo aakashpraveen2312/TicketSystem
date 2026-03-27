@@ -87,7 +87,7 @@
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">TICKETS</a></li>
-                    <li>LINE ITEM</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">@Session["P_NAME"].ToString().ToUpper()</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialConsumption")">@Session["Type"].ToString().ToUpper()</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "MaterialConsumption")">LIST</a></li>
                     <li>CREATE</li>
@@ -225,11 +225,18 @@
 
                     </div>
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.tM_BILLABLE, new { @class = "labels" })
+                        @if (ViewBag.DisableBillable == false)
+                        {
+                            @Html.LabelFor(model => model.tM_BILLABLE, new { @class = "labels" })
+
+                        }
                     </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.CheckBoxFor(model => model.tM_BILLABLE, new { @class = "form-check-input" })
-                    </div>
+                    @if (ViewBag.DisableBillable == false)
+                    {
+                        @Html.CheckBoxFor(model => model.tM_BILLABLE,
+                           new { @class = "form-check-input" })
+                    }
+
                 </div>
 
                 <div class="row mb-3">
@@ -600,7 +607,8 @@
         });
     });
     </script>
-
+ 
+    
 </body>
 </html>
 

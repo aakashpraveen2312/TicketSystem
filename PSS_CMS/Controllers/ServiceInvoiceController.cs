@@ -44,6 +44,14 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> Index(string searchPharse)
         {
+            ServiceInvoice objproduct = new ServiceInvoice();
+
+            int SerialNo = objproduct.SerialNumber;
+
+            if (SerialNo == 0)
+            {
+                SerialNo = 1; // Initialize to 1 if it's 0
+            }
             Projectmaster objprojectmaster = new Projectmaster();
 
             string Weburl = ConfigurationManager.AppSettings["SERVICEINVOICELIST"];
@@ -74,7 +82,14 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var rootObjects = JsonConvert.DeserializeObject<ServiceInvoiceRootObject>(jsonString);
                             ServiceInvoiceList = rootObjects.Data;
-
+                            if (ServiceInvoiceList.Count > 0)
+                            {
+                                // Assign serial numbers
+                                for (int i = 0; i < ServiceInvoiceList.Count; i++)
+                                {
+                                    ServiceInvoiceList[i].SerialNumber = i + 1;
+                                }
+                            }
                             //if (!string.IsNullOrEmpty(searchPharse))
                             //{
                             //    projectmasterlist = projectmasterlist
@@ -183,22 +198,23 @@ namespace PSS_CMS.Controllers
 
         //Download PDF
 
-        public async Task<ActionResult> DownaloadPDF()
+       // [HttpPost]
+        public async Task<ActionResult> DownaloadPDF(int? ticketRecID,int? TC_CRECID)
         {
             string Weburl = ConfigurationManager.AppSettings["DOWNLOADPDF"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
-            int companyId = Convert.ToInt32(Session["CompanyId"]);
-            int ticketId = Convert.ToInt32(Session["TicketRecID"]);
+            //int companyId = Convert.ToInt32(Session["CompanyId"]);
+            //int ticketId = Convert.ToInt32(Session["TicketRecID"]);
 
             try
             {
                 // Build the request body as per JSON structure
                 var requestBody = new
                 {
-                    companyRecID = companyId,
-                    ticketRecID = ticketId,
+                    companyRecID = TC_CRECID,
+                    ticketRecID = ticketRecID,
                     materialName = "", 
                     quantity =0,
                     price = 0,
@@ -239,20 +255,84 @@ namespace PSS_CMS.Controllers
                     var fileBytes = await client.GetByteArrayAsync(rootObjects.FileUrl);
                     var fileName = Path.GetFileName(rootObjects.FileUrl);
 
-                    return File(fileBytes, "application/pdf", fileName); // Forces download/open in browser
+                    return File(fileBytes, "application/pdf", fileName);// Forces download/open in browser
                 }
             }
             catch (Exception ex)
             {
                 return Content("Exception occurred: " + ex.Message);
             }
+            //return RedirectToAction("Index");
+        }
+
+
+        public async Task<ActionResult> GenerateInvoice()
+        {
+            string Weburl = ConfigurationManager.AppSettings["STATUSUPDATE"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+
+            int companyId = Convert.ToInt32(Session["CompanyId"]);
+            int ticketId = Convert.ToInt32(Session["TicketRecID"]);
+
+            try
+            {
+                // Build the request body as per JSON structure
+                var requestBody = new
+                {
+                    companyRecID = companyId,
+                    ticketRecID = ticketId,
+                    materialName = "",
+                    quantity = 0,
+                    price = 0,
+                    cgst = 0,
+                    sgst = 0,
+                    amount = 0,
+                    discount = 0,
+                    netAmount = 0,
+                    billableType = ""
+                };
+
+                using (HttpClientHandler handler = new HttpClientHandler())
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    // 🔑 Send POST request with JSON body
+                    var content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync(Weburl, content);
+
+                    if (!response.IsSuccessStatusCode)
+                        return Content("Error fetching data: " + response.ReasonPhrase);
+
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var rootObjects = JsonConvert.DeserializeObject<ApiPdfResponse>(jsonString);
+                    if (rootObjects.Status=="Y")
+                    {
+                        return RedirectToAction("Index");
+                    }
+                   
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception occurred: " + ex.Message);
+            }
+            return View();
         }
 
         [HttpGet]
-        public async Task<ActionResult> UpdatePayment(int? TC_Recid, decimal Amount)
+        public async Task<ActionResult> UpdatePayment(int? TC_Recid, decimal Amount,int? TC_URECID,int? TC_PRECID)
         {
             ViewBag.Amount = Amount;
             Session["tC_RECID"] = TC_Recid;
+            Session["TC_URECID"] = TC_URECID;
+            Session["TC_PRECID"] = TC_PRECID;
+
             string WEBURLGETBYID = ConfigurationManager.AppSettings["GETPAYMENT"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
@@ -302,6 +382,7 @@ namespace PSS_CMS.Controllers
         {
            
             Session["tC_RECID"] = TC_Recid;
+           
             string WEBURLGETBYID = ConfigurationManager.AppSettings["GETPAYMENT"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
@@ -364,7 +445,11 @@ namespace PSS_CMS.Controllers
     ""TC_ReferenceNo"": ""{paymentupdate.TC_ReferenceNo}"",
     ""TC_ModeOfPayment"": ""{paymentupdate.TC_ModeOfPayment}"",
     ""TC_DateOfPayment"": ""{paymentupdate.TC_DateOfPayment:yyyy-MM-ddTHH:mm:ss}"",
+    ""TC_DueDate"": ""{paymentupdate.TC_DueDate:yyyy-MM-ddTHH:mm:ss}"",
     ""TC_TotalAmount"": ""{paymentupdate.TC_TotalAmount}"",
+    ""TC_PaidAmount"": ""{paymentupdate.TC_PaidAmount}"",
+    ""TC_BalanceAmount"": ""{paymentupdate.TC_BalanceAmount}"",
+    ""TC_PaymentStatus"": ""{paymentupdate.TC_PaymentStatus}"",
     ""TC_SISTATUS"": ""PU""
 }}";
 
@@ -411,7 +496,7 @@ namespace PSS_CMS.Controllers
                     return Json(new
                     {
                         success = false,
-                        message = "Code, Name, Invoice Number, Email,Warranty Upto and Mobile Number fields are mandatory."
+                        message = "Please enter Mode of Payment and Date of Payment"
                     });
                 }
             }
@@ -421,6 +506,83 @@ namespace PSS_CMS.Controllers
             }
         }
 
-      
+
+
+
+        public async Task<ActionResult> ViewDetails(int ticketRecID)
+        {
+            ServiceInvoiceData invoiceData = new ServiceInvoiceData();
+
+            Session["TicketRecID"] = ticketRecID;
+
+            string Weburl = ConfigurationManager.AppSettings["VIEWDATA"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&ticketRecID=" + ticketRecID;
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+
+                            // Deserialize to your root object
+                            var rootObjects = JsonConvert.DeserializeObject<ServiceInvoiceRootObjects>(jsonString);
+
+                            if (rootObjects != null && rootObjects.Status == "Y")
+                            {
+                                // Billable and NonBillable materials
+                                var billable = rootObjects.Data?.BillableMaterials ?? new List<ServiceMaterials>();
+                                var nonBillable = rootObjects.Data?.NonBillableMaterials ?? new List<ServiceMaterials>();
+
+                                // Pass to View
+                                ViewBag.Billable = billable;
+                                ViewBag.NonBillable = nonBillable;
+
+                                // If you want to strongly bind whole object (instead of only ViewBag)
+                                return View(rootObjects.Data);
+                            }
+                            else
+                            {
+                                // API returned Status != "Y"
+                                ViewBag.Billable = new List<ServiceMaterials>();
+                                ViewBag.NonBillable = new List<ServiceMaterials>();
+                                return View(new ServiceInvoiceData());
+                            }
+                        }
+                        else
+                        {
+                            // API failure case
+                            ViewBag.Billable = new List<ServiceMaterials>();
+                            ViewBag.NonBillable = new List<ServiceMaterials>();
+                            return View(new ServiceInvoiceData());
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return View(invoiceData);
+        }
+
+
     }
 }

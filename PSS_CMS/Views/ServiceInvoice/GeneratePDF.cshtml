@@ -99,35 +99,71 @@
                 <ul class="menu-links" style="margin-left:20px">
                     <!-- ACCOUNTS ADMIN -->
                     <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/software-engineer.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 10px;" />
-                        <img src="~/assets/img/software-engineer.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 10px;" />
+                        <img src="~/assets/img/software-engineer.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
+                        <img src="~/assets/img/software-engineer.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
                         <span class="text nav-text" style="margin-left:15px">ACCOUNTS ADMIN</span>
                     </li>
                     <!-- Customer Accounts -->
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
-                            <i class='bx bxs-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">User Accounts</span>
+                            <i class='bx bx-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>*@
                     <li class="nav-link">
-                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
-                            <i class='bi bi-bag-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Invoice</span>
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
                         </a>
                     </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
-                            <i class='bi bi-list-columns-reverse' style="font-size:20px"></i>
+                            <i class='bx bx-receipt' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
                         </a>
                     </li>
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/ReportImage.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
+                        <img src="~/assets/img/ReportImage.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
+                        <span class="text nav-text" style="margin-left:15px">REPORTS</span>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="@Url.Action("Report", "FollowUpReport")">
+                            <i class='bx bx-phone-call' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Follow-up Report</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractexpiryReport", "ContractExpiryReport")">
+                            <i class='bx bx-time-five' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
+                        </a>
+                    </li>
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                            <i class='bx bx-credit-card' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                            <i class='bx bx-wallet' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                        </a>
+                    </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
-                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 5px;" />
+                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:5px;" />
                         <span class="text nav-text" style="margin-left:15px">SECURITY</span>
                     </li>
 
@@ -138,6 +174,7 @@
                             <span class="text nav-text" style="margin-left:15px">Change Password</span>
                         </a>
                     </li>
+
                     <!-- Logout -->
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
@@ -181,7 +218,7 @@
 
         </div>
         <div class="container ms-3">
-            @using (Html.BeginForm("DownaloadPDF", "ServiceInvoice", FormMethod.Post))
+            @using (Html.BeginForm("GenerateInvoice", "ServiceInvoice", FormMethod.Post))
             {
                 <ul class="nav nav-tabs" id="invoiceTabs" role="tablist">
                     <li class="nav-item">
@@ -193,9 +230,9 @@
                     <li class="nav-item">
                         <a class="nav-link" id="totals-tab" data-bs-toggle="tab" href="#totals" role="tab">Totals</a>
                     </li>
-                    <li class="nav-item">
+                    @*<li class="nav-item">
                         <a class="nav-link" id="bank-tab" data-bs-toggle="tab" href="#bank" role="tab">Bank Details</a>
-                    </li>
+                    </li>*@
                 </ul>
 
                 <div class="tab-content mt-3">
@@ -237,28 +274,32 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().GST)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().GST, new { @class = "form-control textboxcolors", @readonly = "readonly" })
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().ProductName)
+                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().ProductName, new { @class = "form-control textboxcolors", @readonly = "readonly" })
+
+                                @*@Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().GST)
+            @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().GST, new { @class = "form-control textboxcolors", @readonly = "readonly" })*@
                             </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().WarrantyUpto)
+
+                                @Html.TextBox(
+                                                            "TicketRaisedDate",
+                                                            string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.WarrantyUpto)
+                                                                ? ""
+                                                                : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().WarrantyUpto).ToString("dd/MM/yyyy"),
+                                                            new { @class = "form-control textboxcolors", @readonly = "readonly" }
+                                                        )
+
+                            </div>
+                           
+                        </div>
+                        <div class="row mb-3">
                             <div class="col-md-6">
                                 @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().Comments)
                                 @Html.TextAreaFor(m => m.BillableMaterials.FirstOrDefault().Comments, new { @class = "form-control textboxcolors", @readonly = "readonly" })
                             </div>
-                        </div>
-                        <div class="row mb-3">
                             <div class="col-md-6">
-                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().ProductName)
-                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().ProductName, new { @class = "form-control textboxcolors", @readonly = "readonly" })
-                            </div>
-                            <div class="col-md-6">
-                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().WarrantyUpto)
-                                @Html.TextBox(
-                                                           "TicketRaisedDate",
-                                                           string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.WarrantyUpto)
-                                                               ? ""
-                                                               : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().WarrantyUpto).ToString("dd/MM/yyyy"),
-                                                           new { @class = "form-control textboxcolors", @readonly = "readonly" }
-                                                       )
                             </div>
                         </div>
                     </div>

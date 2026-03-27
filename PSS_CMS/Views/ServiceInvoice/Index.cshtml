@@ -61,7 +61,8 @@
 
             <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
 
-        </header>  <div class="menu-bar">
+        </header>
+        <div class="menu-bar">
             <div class="menu">
                 <ul class="menu-links" style="margin-left:20px">
                     <!-- ACCOUNTS ADMIN -->
@@ -74,10 +75,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                            <a href="@Url.Action("List", "Party")">
+                                <i class='bi bi-person-check' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Party</span>
+                            </a>
+                        </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -94,7 +107,7 @@
                     <li class="nav-link">
                         <a href="@Url.Action("Report", "FollowUpReport")">
                             <i class='bx bx-phone-call' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">FollowUp Report</span>
+                            <span class="text nav-text" style="margin-left:15px">Follow-up Report</span>
                         </a>
                     </li>
                     <li class="nav-link">
@@ -103,18 +116,18 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>
+                    @*<li class="nav-link">
+                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-wallet' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                            </a>
+                        </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -139,10 +152,10 @@
                     </li>
                 </ul>
             </div>
-        </div>  
+        </div>
     </nav>
-  
-    
+
+
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
@@ -168,7 +181,7 @@
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
 
-            
+
             </div>
 
         </div>
@@ -178,26 +191,28 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
+               columns.Add(c => c.SerialNumber).Titled("S.No").Sortable(true).Css("text-right").SetWidth("20px");
                columns.Add(c => c.TC_INVOICENUMBER).Titled("Invoice No");
-               columns.Add(c => c.TC_INVOICEDATES).Titled("Invoice Date");
                columns.Add(c => c.TC_REQUEST_DATETIMES).Titled("Ticket Raised Date");
-               columns.Add(c => c.TC_REFERENCENO).Titled("Ticket Reference No");
+               columns.Add(c => c.TC_REFERENCENO).Titled("Ticket Ref No");
                columns.Add(c => c.TC_USERNAME).Titled("Customer Name");
-               columns.Add(c => c.TotalCGST).Titled("CGST(%)").Css("text-right");
-               columns.Add(c => c.TotalSGST).Titled("SGST(%)").Css("text-right");
+               columns.Add(c => c.ProductName).Titled("Product Name");
+               //columns.Add(c => c.TotalCGST).Titled("CGST(₹)").Css("text-right");
+               //columns.Add(c => c.TotalSGST).Titled("SGST(₹)").Css("text-right");
                columns.Add(c => c.TotalNetAmount).Titled("Amount").Css("text-right").Format("{0:N2}");
-               columns.Add(c => c.TC_SISTATUS)
+               columns.Add(c => c.TC_PaymentStatus)
        .Titled("Status")
        .Encoded(false)    // optional if you return HTML (badges)
        .Sanitized(false)  // optional
        .RenderValueAs(o =>
        {
-           switch ((o.TC_SISTATUS ?? "").ToUpper())
+           switch ((o.TC_PaymentStatus ?? "").ToUpper())
            {
-               case "YG": return "Yet to Generate";
+               case "PARTIALLY PAID": return "Partially Paid";
+               case "FULLY PAID": return "Fully Paid";
                case "IG": return "Invoice Generated";
-               case "PU": return "Updated Payment";
-               default: return o.Status ?? "";
+
+               default: return o.Status ?? "Yet to generate";
            }
        });
 
@@ -212,17 +227,17 @@
         {
             // Generate PDF icon
             var editUrl = Url.Action("GeneratePDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID });
-            var editIconHtml = "<i class='bi bi-file-earmark-pdf fs-4 text-danger'></i>";
-            linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Generate PDF'>{editIconHtml}</a>";
+            var editIconHtml = "<i class='bi bi-ticket-detailed fs-4 text-primary'></i>";
+            linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Invoice Details'>{editIconHtml}</a>";
         }
-        else if (o.TC_SISTATUS == "IG")
+        else if (o.TC_PaymentStatus == "PARTIALLY PAID")
         {
             // Update Payment icon
-            var editUrl = Url.Action("UpdatePayment", "ServiceInvoice", new { TC_RECID = o.TC_RECID,Amount=o.TotalNetAmount });
+            var editUrl = Url.Action("UpdatePayment", "ServiceInvoice", new { TC_RECID = o.TC_RECID, Amount = o.TotalNetAmount, TC_URECID = o.TC_URECID, TC_PRECID = o.TC_PRECID });
             var editIconHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
             linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Update Payment'>{editIconHtml}</a>";
         }
-        else if(o.TC_SISTATUS == "PU")
+        else if (o.TC_PaymentStatus == "FULLY PAID")
         {
             // Update Payment icon
             var editUrl = Url.Action("UpdatePaymentView", "ServiceInvoice", new { TC_RECID = o.TC_RECID });
@@ -232,10 +247,25 @@
         else
         {
             // Optional fallback if Status has other values
-            linkHtml = "<span class='text-muted'>N/A</span>";
+            // Update Payment icon
+            var editUrl = Url.Action("UpdatePayment", "ServiceInvoice", new { TC_RECID = o.TC_RECID, Amount = o.TotalNetAmount, TC_URECID = o.TC_URECID, TC_PRECID = o.TC_PRECID });
+            var editIconHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
+            linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Update Payment'>{editIconHtml}</a>";
         }
 
-        return MvcHtmlString.Create(linkHtml);
+        // View PDF icon
+        var viewUrl = Url.Action("ViewDetails", "ServiceInvoice", new { ticketRecID = o.TC_RECID });
+        var viewIconHtml = "<i class='bi bi-eye fs-4 text-primary'></i>";
+        var viewlinkHtml = $"<a href='{viewUrl}' data-toggle='tooltip' data-placement='top' title='Generate PDF'>{viewIconHtml}</a>";
+
+
+        var downloadpdfUrl = Url.Action("DownaloadPDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID, TC_CRECID = o.TC_CRECID });
+        var downloadpdfIconHtml = "<i class='bi bi-file-earmark-pdf fs-4 text-danger'></i>";
+        var downloadpdflinkHtml = $"<a href='javascript:void(0);' onclick=\"downloadPdfAjax('{downloadpdfUrl}')\" data-toggle='tooltip' title='Download PDF'>{downloadpdfIconHtml}</a>";
+
+        var finalHtml = linkHtml + " " + viewlinkHtml + " " + downloadpdflinkHtml;
+
+        return MvcHtmlString.Create(finalHtml);
     });
 
 
@@ -256,12 +286,12 @@
                             </div>
                             &nbsp;- Generate PDF
                         </div>
-                        
+
                         <div class="flex-item  mt-1">
                             <div class="d-flex justify-content-center footerb">
                                 <i class='bi bi-currency-rupee fs-4 text-success'></i>
                             </div>
-                            &nbsp;- Update Payment
+                            &nbsp;- Payment
                         </div>
                     </div>
                 </div>
@@ -287,7 +317,57 @@
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/Scripts/Fordelete.js"></script>
+    <script>
+        function downloadPdfAjax(url) {
+            // Show a SweetAlert2 loading popup
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Your PDF is being prepared.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                xhrFields: {
+                    responseType: 'blob' // important for PDF
+                },
+                success: function (data, status, xhr) {
+                    // Close the loading popup
+                    Swal.close();
+
+                    var blob = new Blob([data], { type: 'application/pdf' });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+
+                    // Optional: get filename from response header
+                    var disposition = xhr.getResponseHeader('Content-Disposition');
+                    var fileName = "Invoice.pdf";
+                    if (disposition && disposition.indexOf('filename=') !== -1) {
+                        fileName = disposition.split('filename=')[1].replace(/"/g, '');
+                    }
+
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                error: function () {
+                    // Close the loading popup and show error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Failed to download PDF.'
+                    });
+                }
+            });
+        }
+    </script>
 </body>
 </html>
 

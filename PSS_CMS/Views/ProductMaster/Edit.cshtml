@@ -48,7 +48,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>PRODUCT</li>
+                    <li>WARRANTY PRODUCTS</li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProductMaster")">LIST</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ProductMaster")">@Session["ProductName"].ToString().ToUpper()</a></li>
                     <li>EDIT</li>
@@ -76,12 +76,28 @@
 
             </div>
         </div>
-        <div class="row mb-3">
+        @*<div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.P_WARRANTYDATE, new { @class = "labels" })
+                @Html.LabelFor(model => model.P_FREECALLS, new { @class = "labels" })
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.P_WARRANTYDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",type="date" } })
+                @Html.EditorFor(model => model.P_FREECALLS, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+            </div>
+        </div>*@
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.P_DURATION, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.P_DURATION, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.P_Comprehensivewarranty, new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.CheckBoxFor(model => model.P_Comprehensivewarranty, new { @class = "form-check-input" })
             </div>
         </div>
         <div class="row mb-3">
@@ -93,6 +109,7 @@
 
             </div>
         </div>
+
         <div class="row mb-3">
             <div class="col-lg-2 col-md-2 col-sm-12">
                 @Html.LabelFor(model => model.P_ProductDisable, new { @class = "labels" })
@@ -101,6 +118,7 @@
                 @Html.CheckBoxFor(model => model.P_ProductDisable, new { @class = "form-check-input" })
             </div>
         </div>
+
 
         <div class="row ">
             <div class="col-lg-2">

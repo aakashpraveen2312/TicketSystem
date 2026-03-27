@@ -59,11 +59,13 @@ namespace PSS_CMS.Controllers
                             ViewBag.TotalContractAmount = contract.TotalContractAmount;
                             ViewBag.TotalPaidAmount = contract.TotalPaidAmount;
                             ViewBag.PendingAmount = contract.PendingAmount;
+                            ViewBag.ExtraPaidAmount = contract.ExtraPaidAmount;
 
 
                             ViewBag.TotalContractAmount1 = Convert.ToDecimal(contract.TotalContractAmount).ToString("N0");
                             ViewBag.TotalPaidAmount1 = Convert.ToDecimal(contract.TotalPaidAmount).ToString("N0");
                             ViewBag.PendingAmount1 = Convert.ToDecimal(contract.PendingAmount).ToString("N0");
+                            ViewBag.ExtraPaidAmount1 = Convert.ToDecimal(contract.ExtraPaidAmount).ToString("N0");
                         }
                         else
                         {
@@ -130,6 +132,14 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> CustomerList(string searchPharse)
         {
+            ProductMaster objproduct = new ProductMaster();
+
+            int SerialNo = objproduct.SerialNumber;
+
+            if (SerialNo == 0)
+            {
+                SerialNo = 1; // Initialize to 1 if it's 0
+            }
             //ProductMaster objproductmaster = new ProductMaster();
 
             string Weburl = ConfigurationManager.AppSettings["PRODUCTGET"];
@@ -160,6 +170,14 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
                             productmasterlist = rootObjects.Data;
+                            if (productmasterlist.Count > 0)
+                            {
+                                // Assign serial numbers
+                                for (int i = 0; i < productmasterlist.Count; i++)
+                                {
+                                    productmasterlist[i].SerialNumber = i + 1;
+                                }
+                            }
 
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
@@ -184,18 +202,18 @@ namespace PSS_CMS.Controllers
             return View(productmasterlist);
         }
 
-        public async Task<ActionResult> ContractList(int? Recid,string name,string searchPharse)
+        public async Task<ActionResult> ContractList(string searchPharse)
         {
-            if (Recid!=null)
+
+            Contract objproduct = new Contract();
+
+            int SerialNo = objproduct.SerialNumber;
+
+            if (SerialNo == 0)
             {
-                Session["ConRecid"] = Recid;
-               
+                SerialNo = 1; // Initialize to 1 if it's 0
             }
-            if (name != null)
-            {
-               
-                Session["name"] = name;
-            }
+
             string WEBURLGET = ConfigurationManager.AppSettings["CONTRACTGET"];
             string Authkey = ConfigurationManager.AppSettings["Authkey"];
 
@@ -205,7 +223,7 @@ namespace PSS_CMS.Controllers
             string APIKey = Session["APIKEY"].ToString();
 
 
-            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&Recid=" + Session["ConRecid"];
+            string strparams = "CompanyRecID=" + Session["CompanyID"];
             string finalurl = WEBURLGET + "?" + strparams;
             try
             {
@@ -233,7 +251,14 @@ namespace PSS_CMS.Controllers
                             var content = JsonConvert.DeserializeObject<RootObjectsContract>(jsonString);
                             contractsList = content.Data;
 
-
+                            if (contractsList.Count > 0)
+                            {
+                                // Assign serial numbers
+                                for (int i = 0; i < contractsList.Count; i++)
+                                {
+                                    contractsList[i].SerialNumber = i + 1;
+                                }
+                            }
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
                                 contractsList = contractsList
@@ -268,14 +293,17 @@ namespace PSS_CMS.Controllers
 
         }
 
-        public ActionResult CreateContract()
+        public async Task<ActionResult> CreateContract()
         {
+            //await ComboPartySelection();
+            await ComboCustomerSelection();
+            await ComboProductSelection();
             return View();
 
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateContract(Contract contract, HttpPostedFileBase Attachment)
+        public async Task<ActionResult> CreateContract(Contract contract, HttpPostedFileBase Attachment,string SelectedParty)
         {
          
                 try
@@ -299,17 +327,29 @@ namespace PSS_CMS.Controllers
                     attachmentBase64 = Convert.ToBase64String(fileBytes);
                 }
                 var content = $@"{{           
-            ""cT_PRECID"": ""{Session["ConRecid"]}"",           
+            ""cT_CODE"": ""{""}"",           
+            ""cT_PRECID"": ""{"0"}"",           
+            ""cT_PARECID"": ""{"0"}"",           
+            ""cT_CUSTOMERNAME"": ""{SelectedParty}"",           
+            ""cT_EMAIL"": ""{contract.CT_EMAIL}"",           
+            ""cT_MOBILE"": ""{contract.CT_MOBILE}"",           
+            ""cT_ADDRESS"": ""{contract.CT_ADDRESS}"",           
+            ""CT_TOTALPAIDAMOUNT"": ""{"0"}"",           
+            ""CT_URECID"": ""{"0"}"",           
+            ""cT_ADMINRECID"": ""{"0"}"",           
             ""cT_CONTRACTREFERENCENUMBER"": ""{contract.CT_CONTRACTREFERENCENUMBER}"",           
             ""cT_FROMDATE"": ""{contract.CT_FROMDATE}"",           
             ""cT_TODATE"": ""{ contract.CT_TODATE}"",                    
-            ""cT_CONTRACTAMOUNT"": ""{ contract.CT_CONTRACTAMOUNT}"",                                       
+            ""cT_FREECALLS"": ""{ "0"}"",                    
+            ""cT_CONTRACTAMOUNT"": ""{ "0.00"}"",                                       
             ""cT_CONTRACTCREATEDBY"": ""{ contract.CT_CONTRACTCREATEDBY}"",                    
             ""cT_CONTRACTAPPROVEDBY"": ""{ contract.CT_CONTRACTAPPROVEDBY}"",                    
             ""cT_CONTRACTAPPROVEDDATE"": ""{ contract.CT_CONTRACTAPPROVEDDATE}"",                    
             ""cT_ATTACHMENT"": ""{ attachmentBase64}"",                    
             ""cT_ANYREFERENCE"": ""{ contract.CT_ANYREFERENCE}"",                    
-            ""cT_SORTORDER"": ""{(contract.CT_SORTORDER)}"",        
+            ""cT_SORTORDER"": ""{(contract.CT_SORTORDER)}"",    
+            ""cT_EXISTINGUSER"": ""{(contract.EXISTINGUSER ? "Y" : "N")}"",        
+            ""cT_NEWUSER"": ""{(contract.NEWUSER ? "Y" : "N")}"",        
             ""cT_CRECID"": ""{Session["CompanyID"]}""           
         }}";
 
@@ -373,17 +413,17 @@ namespace PSS_CMS.Controllers
 
         }
 
-        public async Task<ActionResult> EditContract(int? id, string Name,int? Precid)
+        public async Task<ActionResult> EditContract(int? CT_RECID, string CT_CONTRACTREFERENCENUMBER)
         {
-            Session["Precid"] = Precid;
-            Session["Contractrecid"] = id;
-            Session["Name"] = Name;
+           
+            Session["CT_RECID"] = CT_RECID;
+            Session["CT_CONTRACTREFERENCENUMBER"] = CT_CONTRACTREFERENCENUMBER;
             string WEBURLGETBYID = ConfigurationManager.AppSettings["CONTRACTGETBYID"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
             Contract contract  = null;
 
-            string strparams = "Recid=" + id + "&companyId=" + Session["CompanyID"];
+            string strparams = "Recid=" + CT_RECID + "&companyId=" + Session["CompanyID"];
             string finalurl = WEBURLGETBYID + "?" + strparams;
 
             try
@@ -403,7 +443,9 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var content = JsonConvert.DeserializeObject<ContractMasterObject>(jsonString);
                             contract = content.Data;
-                           
+                            Session["CT_ATTACHMENT"] = content.Data.CT_ATTACHMENT;
+
+
                         }
                         else
                         {
@@ -419,31 +461,58 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
             }
+            int productid = contract.CT_PRECID;
+            await LoadProductCombo(contract.CT_PRECID);
+            await ComboPartySelectionEdit(contract.CT_PARECID);
+            await ComboCustomerSelection();
             return View(contract);
         }
         [HttpPost]
-        public async Task<ActionResult> EditContract(Contract contract)
+        public async Task<ActionResult> EditContract(Contract contract, HttpPostedFileBase Attachment)
         {
             try
             {
+                string attachmentBase64 = contract.CT_ATTACHMENT;
+
+                if (Attachment != null && Attachment.ContentLength > 0)
+                {
+                    using (var binaryReader = new BinaryReader(Attachment.InputStream))
+                    {
+                        byte[] fileBytes = binaryReader.ReadBytes(Attachment.ContentLength);
+                        attachmentBase64 = Convert.ToBase64String(fileBytes);
+                    }
+                }
+
                 var UpdateURL = ConfigurationManager.AppSettings["CONTRACTPUT"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
                 var content = $@"{{           
-            ""cT_RECID"": ""{Session["Contractrecid"]}"",           
-            ""cT_PRECID"": ""{Session["Precid"]}"",           
-            ""cT_CONTRACTREFERENCENUMBER"": ""{contract.CT_CONTRACTREFERENCENUMBER}"",
-            ""cT_FROMDATE"": ""{contract.CT_FROMDATE}"",
-            ""cT_TODATE"": ""{contract.CT_TODATE}"",
-            ""cT_CONTRACTAMOUNT"": ""{contract.CT_CONTRACTAMOUNT}"",
-            ""cT_TOTALPAIDAMOUNT"": ""{contract.CT_TOTALPAIDAMOUNT}"",
-            ""cT_CONTRACTCREATEDBY"": ""{contract.CT_CONTRACTCREATEDBY}"",
-            ""cT_CONTRACTAPPROVEDBY"": ""{contract.CT_CONTRACTAPPROVEDBY}"",
-            ""cT_CONTRACTAPPROVEDDATE"": ""{contract.CT_CONTRACTAPPROVEDDATE}"",
-            ""cT_ANYREFERENCE"": ""{(contract.CT_ANYREFERENCE)}"",                              
-            ""cT_SORTORDER"": ""{(contract.CT_SORTORDER)}"",                              
-            ""cT_CRECID"": ""{ Session["CompanyID"]}""                              
+            ""cT_RECID"": ""{Session["CT_RECID"]}"",           
+            ""cT_CODE"": ""{contract.CT_CODE}"",           
+            ""cT_PRECID"": ""{"0"}"",           
+            ""cT_PARECID"": ""{"0"}"",           
+            ""cT_CUSTOMERNAME"": ""{contract.CT_CUSTOMERNAME}"",           
+            ""cT_EMAIL"": ""{contract.CT_EMAIL}"",           
+            ""cT_MOBILE"": ""{contract.CT_MOBILE}"",           
+            ""cT_ADDRESS"": ""{contract.CT_ADDRESS}"",           
+            ""CT_TOTALPAIDAMOUNT"": ""{"0"}"",           
+            ""CT_URECID"": ""{"0"}"",           
+            ""cT_ADMINRECID"": ""{"0"}"",           
+            ""cT_CONTRACTREFERENCENUMBER"": ""{contract.CT_CONTRACTREFERENCENUMBER}"",           
+            ""cT_FROMDATE"": ""{contract.CT_FROMDATE}"",           
+            ""cT_TODATE"": ""{ contract.CT_TODATE}"",                    
+            ""cT_FREECALLS"": ""{ "0"}"",                    
+            ""cT_CONTRACTAMOUNT"": ""{ "0.00"}"",                                       
+            ""cT_CONTRACTCREATEDBY"": ""{ contract.CT_CONTRACTCREATEDBY}"",                    
+            ""cT_CONTRACTAPPROVEDBY"": ""{ contract.CT_CONTRACTAPPROVEDBY}"",                    
+            ""cT_CONTRACTAPPROVEDDATE"": ""{ contract.CT_CONTRACTAPPROVEDDATE}"",                    
+            ""cT_ATTACHMENT"": ""{ attachmentBase64}"",                    
+            ""cT_ANYREFERENCE"": ""{ contract.CT_ANYREFERENCE}"",                    
+            ""cT_SORTORDER"": ""{(contract.CT_SORTORDER)}"",    
+            ""cT_EXISTINGUSER"": ""{(contract.EXISTINGUSER ? "Y" : "N")}"",        
+            ""cT_NEWUSER"": ""{(contract.NEWUSER ? "Y" : "N")}"",        
+            ""cT_CRECID"": ""{Session["CompanyID"]}""           
         }}";
 
                 // Create the HTTP request
@@ -493,6 +562,7 @@ namespace PSS_CMS.Controllers
             {
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
+            
         }
 
         public async Task<ActionResult> DeleteContract(int id)
@@ -1063,6 +1133,995 @@ namespace PSS_CMS.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        public async Task<ActionResult> ViewList(string searchPharse, int? P_RECID, string P_NAME)
+        {
+            Viewlist objexclusion = new Viewlist();
+
+            int SerialNo = objexclusion.SerialNumber;
+
+            if (SerialNo == 0)
+            {
+                SerialNo = 1; // Initialize to 1 if it's 0
+            }
+            if (P_RECID != null && P_RECID != 0)
+            {
+                Session["P_RECID"] = P_RECID;
+
+            }
+            if (P_NAME != null)
+            {
+                Session["P_NAME"] = P_NAME;
+            }
+            
+            
+
+            string Weburl = ConfigurationManager.AppSettings["VIEWLIST"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            List<Viewlist> viewlist = new List<Viewlist>();
+
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&Productid=" + Session["P_RECID"];
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+
+                            var root = JsonConvert.DeserializeObject<ViewlistRoot>(jsonString);
+
+                            if (root != null)
+                            {
+                                int inclusionCount = root.Inclusions != null ? root.Inclusions.Count : 0;
+                                int exclusionCount = root.Exclusions != null ? root.Exclusions.Count : 0;
+
+                                int max = Math.Max(inclusionCount, exclusionCount);
+
+                                for (int i = 0; i < max; i++)
+                                {
+                                    viewlist.Add(new Viewlist
+                                    {
+                                        IN_DESCRIPTION = i < inclusionCount ? root.Inclusions[i].IN_DESCRIPTION : "",
+                                        EX_DESCRIPTION = i < exclusionCount ? root.Exclusions[i].EX_DESCRIPTION : ""
+                                    });
+                                }
+                                if (viewlist.Count > 0)
+                                {
+                                    // Assign serial numbers
+                                    for (int i = 0; i < viewlist.Count; i++)
+                                    {
+                                        viewlist[i].SerialNumber = i + 1;
+                                    }
+                                }
+
+                            }
+
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                searchPharse = searchPharse.ToLower();
+
+                                viewlist = viewlist.Where(x =>
+                                    (!string.IsNullOrEmpty(x.IN_DESCRIPTION) && x.IN_DESCRIPTION.ToLower().Contains(searchPharse)) ||
+                                    (!string.IsNullOrEmpty(x.EX_DESCRIPTION) && x.EX_DESCRIPTION.ToLower().Contains(searchPharse))
+                                ).ToList();
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Exception occurred: " + ex.Message);
+            }
+
+            return View(viewlist);
+        }
+
+
+        public async Task<ActionResult> ComboProductSelection()
+
+        {
+            List<SelectListItem> Product = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                Product = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.P_RECID.ToString(), // or the appropriate value field
+                                    Text = t.P_NAME,
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            // Assuming you are passing ticketTypes to the view
+            ViewBag.Product = Product;
+
+            return View();
+        }
+
+        public async Task LoadProductCombo(int ProductId)
+        {
+            List<SelectListItem> Product = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["PRODUCTGET"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                Product = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.P_RECID.ToString(),
+                                    Text = t.P_NAME,
+                                    Selected = (t.P_RECID == ProductId)
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            ViewBag.Product = Product;
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> GetProductAdmins(int cmprecid, int precid)
+        {
+            if (cmprecid == 0 || precid == 0)
+                return Json(new { Status = "N", Message = "Invalid data." });
+
+            string webUrlGet = ConfigurationManager.AppSettings["GETPRODUCTADMIN"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            //string url = $"{webUrlGet}?cmprecid={cmprecid}&precid={precid}";
+            string url = $"{webUrlGet}?cmprecid={cmprecid}&precid={precid}";
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = await client.GetAsync(url);
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    return Content(json, "application/json");
+                }
+            }
+
+
+
+        }
+
+        public async Task<ActionResult> ComboPartySelection()
+
+        {
+            List<SelectListItem> Party = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["PARTYGET"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "CompanyRecID=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<PartyObjects>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                Party = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.P_RECID.ToString(), // or the appropriate value field
+                                    Text = t.P_NAME,
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            // Assuming you are passing ticketTypes to the view
+            ViewBag.Party = Party;
+
+            return View();
+        }
+
+        public async Task<ActionResult> ComboPartySelectionEdit(int PartyId)
+        {
+            List<SelectListItem> Party = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["PARTYGET"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "CompanyRecID=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<PartyObjects>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                Party = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.P_RECID.ToString(),
+                                    Text = t.P_NAME
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
+            ViewBag.Party = Party;
+
+            Contract model = new Contract();
+            model.SelectedParty = PartyId;   // ⭐ Important
+
+            return View(model);
+        }
+
+        public ActionResult DownloadAttachment()
+        {
+            try
+            {
+                string base64 = Session["CT_ATTACHMENT"]?.ToString();
+
+                if (string.IsNullOrEmpty(base64))
+                {
+                    return Content("No file available");
+                }
+
+                byte[] fileBytes = Convert.FromBase64String(base64);
+
+                string extension = GetFileExtension(fileBytes);
+                string fileName = "ContractAttachment" + extension;
+                string contentType = GetContentType(extension);
+
+                return File(fileBytes, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                return Content("Error: " + ex.Message);
+            }
+        }
+        private string GetFileExtension(byte[] fileBytes)
+        {
+            if (fileBytes.Length > 4)
+            {
+                // PDF
+                if (fileBytes[0] == 0x25 && fileBytes[1] == 0x50 && fileBytes[2] == 0x44 && fileBytes[3] == 0x46)
+                    return ".pdf";
+
+                // JPG
+                if (fileBytes[0] == 0xFF && fileBytes[1] == 0xD8)
+                    return ".jpg";
+
+                // PNG
+                if (fileBytes[0] == 0x89 && fileBytes[1] == 0x50 && fileBytes[2] == 0x4E && fileBytes[3] == 0x47)
+                    return ".png";
+
+                // DOCX / XLSX / PPTX (ZIP format)
+                if (fileBytes[0] == 0x50 && fileBytes[1] == 0x4B)
+                    return ".docx";
+
+                // DOC
+                if (fileBytes[0] == 0xD0 && fileBytes[1] == 0xCF)
+                    return ".doc";
+            }
+
+            return ".bin";
+        }
+        private string GetContentType(string extension)
+        {
+            switch (extension)
+            {
+                case ".pdf":
+                    return "application/pdf";
+
+                case ".jpg":
+                case ".jpeg":
+                    return "image/jpeg";
+
+                case ".png":
+                    return "image/png";
+
+                case ".doc":
+                    return "application/msword";
+
+                case ".docx":
+                    return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+                default:
+                    return "application/octet-stream";
+            }
+        }
+
+
+        public async Task<ActionResult> ComboCustomerSelection()
+
+        {
+            List<SelectListItem> Customer = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["GETCOMBOCUSTOMER"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "CompanyRecID=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                Customer = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.CU_NAME, // or the appropriate value field
+                                    Text = t.CU_NAME,
+                                }).ToList();
+                                ViewBag.CustomerData = rootObjects.Data;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            // Assuming you are passing ticketTypes to the view
+           
+            ViewBag.Customer = Customer;
+
+            return View();
+        }
+
+        public async Task<ActionResult> ContractProductList(string searchPharse,int ? CT_RECID,string ProductName,int? CT_URECID,string CT_EXISTINGUSER)
+        {
+            if (CT_RECID != null)
+            {
+              
+                Session["CT_RECID"] = CT_RECID;
+            }if (CT_EXISTINGUSER != null)
+            {
+              
+                Session["CT_EXISTINGUSER"] = CT_EXISTINGUSER;
+            }
+            if (ProductName != null)
+            {
+                Session["ProductName"] = ProductName;
+              
+            }  if (CT_URECID != null)
+            {
+                Session["CT_URECID"] = CT_URECID;
+              
+            }
+
+            Contract objproduct = new Contract();
+
+            int SerialNo = objproduct.SerialNumber;
+
+            if (SerialNo == 0)
+            {
+                SerialNo = 1; // Initialize to 1 if it's 0
+            }
+
+            string WEBURLGET = ConfigurationManager.AppSettings["CONTRACTPRODUCTGET"];
+            string Authkey = ConfigurationManager.AppSettings["Authkey"];
+
+            List<Contract> contractsList = new List<Contract>();
+
+
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&Contractid=" + Session["CT_RECID"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            try
+            {
+
+
+                // Prepare header parameters as per RSGT inputs
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", Authkey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                        var response = await client.GetAsync(finalurl);
+
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            //GlobalVariables.ResponseStructure = jsonString;
+                            var content = JsonConvert.DeserializeObject<RootObjectsContract>(jsonString);
+                            contractsList = content.Data;
+
+                            if (contractsList.Count > 0)
+                            {
+                                // Assign serial numbers
+                                for (int i = 0; i < contractsList.Count; i++)
+                                {
+                                    contractsList[i].SerialNumber = i + 1;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                contractsList = contractsList
+                                    .Where(r => r.CP_CONTRACTREF.ToLower().Contains(searchPharse.ToLower()) ||
+                                 
+                                   r.CP_CONTRACTAMOUNT.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                  
+                                   r.CP_CONTRACTCREATEDBY.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.CP_CONTRACTAPPROVEDBY.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                  
+                                   r.CP_CONTRACTAPPROVEDDATE.ToString().ToLower().Contains(searchPharse.ToLower()))
+                                    .ToList();
+
+                            }
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            return View(contractsList);
+
+        }
+
+        public async Task<ActionResult> CreateContractProduct()
+        {
+            
+            await ComboCustomerSelection();
+            await ComboProductSelection();
+            return View();
+
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateContractProduct(Contract contract, HttpPostedFileBase Attachment)
+        {
+
+            try
+            {
+                await ComboProductSelection();
+                int selectedProductRecId = contract.SelectedProduct;
+
+                var productList = ViewBag.Product as List<SelectListItem>;
+
+                string productName = productList
+                    .FirstOrDefault(x => x.Value == contract.SelectedProduct.ToString())?.Text;
+
+                var ContractPostURL = ConfigurationManager.AppSettings["CONTRACTPRODUCTPOST"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                byte[] fileBytes = null;
+                string attachmentBase64 = null;
+
+                if (Attachment != null && Attachment.ContentLength > 0)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        await Attachment.InputStream.CopyToAsync(ms);
+                        fileBytes = ms.ToArray();
+                    }
+
+                    // Convert byte[] → Base64 for JSON
+                    attachmentBase64 = Convert.ToBase64String(fileBytes);
+                }
+                var content = $@"{{           
+            ""cP_CODE"": ""{""}"",           
+            ""cP_CTURECID"": ""{Session["CT_URECID"]}"",           
+            ""CP_USERTYPE"": ""{Session["CT_EXISTINGUSER"]}"",           
+            ""cP_PRECID"": ""{contract.SelectedProduct}"",           
+            ""cP_CTRECID"": ""{Session["CT_RECID"]}"",                  
+            ""cP_PRODUCTNAME"": ""{productName}"",                   
+            ""cP_ADMINRECID"": ""{contract.CU_ADMINRECID}"",           
+            ""cP_CONTRACTREF"": ""{contract.CT_CONTRACTREFERENCENUMBER}"",                             
+            ""cP_FROMDATE"": ""{contract.CT_FROMDATE}"",                    
+            ""cP_TODATE"": ""{contract.CT_TODATE}"",                    
+            ""cP_FREECALLS"": ""{contract.CT_FREECALLS}"",                    
+            ""cP_CONTRACTAMOUNT"": ""{ contract.CT_CONTRACTAMOUNT}"",                                       
+            ""cP_CONTRACTCREATEDBY"": ""{ contract.CT_CONTRACTCREATEDBY}"",                    
+            ""cP_CONTRACTAPPROVEDBY"": ""{ contract.CT_CONTRACTAPPROVEDBY}"",                    
+            ""cP_CONTRACTAPPROVEDDATE"": ""{ contract.CT_CONTRACTAPPROVEDDATE}"",                                    
+            ""cP_SORT"": ""{(contract.CT_SORTORDER)}"",         
+            ""cP_DISABLE"": ""{(contract.CPDISABLE ? "Y" : "N")}"",        
+            ""cP_CRECID"": ""{Session["CompanyID"]}"" ,          
+            ""cP_BALANACEAMOUNT"": ""{"0.00"}"",           
+            ""cP_TOTALAMOUNT"": ""{"0.00"}"",           
+            ""cP_PAIDAMOUNT"": ""{"0.00"}""           
+        }}";
+
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(ContractPostURL),
+                    Method = HttpMethod.Post,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ContractMasterObject>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { success = true, message = apiResponse.Message });
+                    }
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
+                    {
+                        return Json(new { success = false, message = apiResponse.Message });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "An unexpected status was returned." });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Error: " + response.ReasonPhrase });
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return View();
+
+        }
+
+        public async Task<ActionResult> EditContractProduct(int? CP_RECID, string ProductName,int? CT_CPRECID,int? CP_CTURECID,string CP_USERTYPE,decimal CP_PAIDAMOUNT,decimal CP_BALANACEAMOUNT,decimal CP_TOTALAMOUNT)
+        {
+
+            Session["CP_USERTYPE"] = CP_USERTYPE;
+            Session["CP_CTURECID"] = CP_CTURECID;
+            Session["CT_CPRECID"] = CT_CPRECID;
+            Session["CP_RECID"] = CP_RECID;
+            Session["ProductName"] = ProductName;
+            Session["CP_PAIDAMOUNT"] = CP_PAIDAMOUNT;
+            Session["CP_TOTALAMOUNT"] = CP_TOTALAMOUNT;
+            Session["CP_BALANACEAMOUNT"] = CP_BALANACEAMOUNT;
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["CONTRACTPRODUCTGETBYID"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            Contract contract = null;
+
+            string strparams = "recID=" + CP_RECID + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var content = JsonConvert.DeserializeObject<ContractMasterObject>(jsonString);
+                            contract = content.Data;
+                            Session["CT_ATTACHMENT"] = content.Data.CT_ATTACHMENT;
+
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }
+            int productid = contract.CP_PRECID;
+            await LoadProductCombo(contract.CP_PRECID);
+            await ComboCustomerSelection();
+            return View(contract);
+        }
+        [HttpPost]
+        public async Task<ActionResult> EditContractProduct(Contract contract, HttpPostedFileBase Attachment)
+        {
+            try
+            {
+                string attachmentBase64 = contract.CT_ATTACHMENT;
+
+                if (Attachment != null && Attachment.ContentLength > 0)
+                {
+                    using (var binaryReader = new BinaryReader(Attachment.InputStream))
+                    {
+                        byte[] fileBytes = binaryReader.ReadBytes(Attachment.ContentLength);
+                        attachmentBase64 = Convert.ToBase64String(fileBytes);
+                    }
+                }
+
+                var UpdateURL = ConfigurationManager.AppSettings["CONTRACTPRODUCTPUT"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{           
+            ""cP_RECID"": ""{ Session["CP_RECID"]}"",           
+            ""cP_USERTYPE"": ""{ Session["CP_USERTYPE"]}"",           
+            ""cP_CTURECID"": ""{Session["CP_CTURECID"]}"",           
+            ""cP_CODE"": ""{contract.CP_CODE}"",           
+            ""cP_PRECID"": ""{contract.CP_PRECID}"",           
+            ""cP_PRODUCTNAME"": ""{contract.CP_PRODUCTNAME}"",           
+            ""cP_CTRECID"": ""{Session["CT_CPRECID"]}"",                  
+            ""cP_ADMINRECID"": ""{contract.CP_ADMINRECID}"",           
+            ""cP_CONTRACTREF"": ""{contract.CP_CONTRACTREF}"",                             
+            ""cP_FROMDATE"": ""{contract.CP_FROMDATE}"",                    
+            ""cP_TODATE"": ""{contract.CP_TODATE}"",                    
+            ""cP_FREECALLS"": ""{contract.CP_FREECALLS}"",                    
+            ""cP_CONTRACTAMOUNT"": ""{contract.CP_CONTRACTAMOUNT}"",                                       
+            ""cP_CONTRACTCREATEDBY"": ""{ contract.CP_CONTRACTCREATEDBY}"",                    
+            ""cP_CONTRACTAPPROVEDBY"": ""{ contract.CP_CONTRACTAPPROVEDBY}"",                    
+            ""cP_CONTRACTAPPROVEDDATE"": ""{ contract.CP_CONTRACTAPPROVEDDATE}"",                                   
+            ""cP_SORT"": ""{(contract.CP_SORT)}"",          
+            ""cP_DISABLE"": ""{(contract.CPDISABLE ? "Y" : "N")}"",        
+            ""cP_CRECID"": ""{Session["CompanyID"]}"",
+""cP_PAIDAMOUNT"": ""{Session["CP_PAIDAMOUNT"]}"",
+ ""cP_BALANACEAMOUNT"": ""{Session["CP_BALANACEAMOUNT"]}"",           
+            ""cP_TOTALAMOUNT"": ""{Session["CP_TOTALAMOUNT"]}""       
+        }}";
+
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(UpdateURL),
+                    Method = HttpMethod.Put,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                // Send the request and await the response
+                var response = await client.SendAsync(request);
+                // Check if the response is successful
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ContractMasterObject>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { success = true, message = apiResponse.Message });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = apiResponse.Message });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Error: Something went wrong." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Exception: " + ex.Message });
+            }
+
+        }
+
+        public async Task<ActionResult> DeleteContractProduct(int? CP_RECID,int? CP_PRECID, int? CP_CTURECID, int? CP_ADMINRECID)
+
+        {
+
+            string WEBURLDELETE = ConfigurationManager.AppSettings["CONTRACTPRODUCTDELETE"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string strparams = "cmprecid=" + Session["CompanyID"] + "&RECID=" + CP_RECID+ "&userrecid="+ CP_CTURECID+ "&productrecid="+ CP_PRECID + "&adminrecid=" + CP_ADMINRECID;
+            string finalurl = WEBURLDELETE + "?" + strparams;
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                        var request = new HttpRequestMessage
+                        {
+                            Method = HttpMethod.Delete,
+                            RequestUri = new Uri(finalurl)
+                        };
+
+                        var response = await client.SendAsync(request);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            var apiResponse = JsonConvert.DeserializeObject<ContractMasterObject>(responseBody);
+
+                            if (apiResponse.Status == "Y")
+                            {
+
+                                string redirectUrl = Url.Action("ContractProductList", "Contract", new { });
+                                return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
+                            }
+                            else if (apiResponse.Status == "U")
+                            {
+                                return Json(new { status = "error", message = apiResponse.Message });
+                            }
+                            else if (apiResponse.Status == "N")
+                            {
+                                return Json(new { status = "error", message = apiResponse.Message });
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Failed to delete: {response.StatusCode} - {response.ReasonPhrase}");
+                        }
+                    }
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Console.WriteLine($"HTTP Request error occurred: {httpEx.Message}");
+            }
+            catch (TaskCanceledException tcEx)
+            {
+                Console.WriteLine($"Request timed out: {tcEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            return View();
+
+        }
+
+
+        public async Task<ActionResult> ContractInvoice(int? CT_URECID,int? CT_CRECID)
+        {
+            var Weburl = ConfigurationManager.AppSettings["CONTRACTINVOICEPDF"];
+
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+
+
+            string url = $"{Weburl}?cmprecid={CT_CRECID}&userid={CT_URECID}";
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = await client.GetAsync(url);
+                    if (!response.IsSuccessStatusCode)
+                        return Content("Error fetching data: " + response.ReasonPhrase);
+
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var rootObjects = JsonConvert.DeserializeObject<Prioritywisepdfobjects>(jsonString);
+
+                    if (rootObjects == null || rootObjects.Status != "Y")
+                        return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
+                   
+                   
+                        // The API already returns a PDF URL
+                        string pdfUrl = rootObjects.fileUrl;
+                        var fileBytes = await client.GetByteArrayAsync(pdfUrl);
+                        var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
+
+                        // Download
+                        return File(fileBytes, "application/pdf", fileName);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception occurred: " + ex.Message);
+            }
+        }
+
+
     }
 
 }

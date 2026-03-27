@@ -20,11 +20,20 @@ namespace PSS_CMS.Controllers
         // GET: CustomerNotification
         public async Task<ActionResult> List(int? CustomerRecID , string Name,string InvoiceNo)
         {
+            Customernotification objexclusion = new Customernotification();
+
+            int SerialNo = objexclusion.SerialNumber;
+
+            if (SerialNo == 0)
+            {
+                SerialNo = 1; // Initialize to 1 if it's 0
+            }
             if (CustomerRecID != null && Name != null)
             {
                 Session["CustomerRecID"] = CustomerRecID;
                 Session["Customername"] = Name;
                 Session["InvoiceNo"] = InvoiceNo;
+
             }
 
             string Weburl = ConfigurationManager.AppSettings["GetCustomerNotification"];
@@ -56,7 +65,14 @@ namespace PSS_CMS.Controllers
                             var rootObjects = JsonConvert.DeserializeObject<CustomernotificationRootObjects>(jsonString);
 
                             Customernotificationlist = rootObjects.Data;
-
+                            if (Customernotificationlist.Count > 0)
+                            {
+                                // Assign serial numbers
+                                for (int i = 0; i < Customernotificationlist.Count; i++)
+                                {
+                                    Customernotificationlist[i].SerialNumber = i + 1;
+                                }
+                            }
                         }
                         else
                         {
@@ -75,7 +91,7 @@ namespace PSS_CMS.Controllers
         public ActionResult Create(Customernotification customernotification)
         {
             customernotification.CN_INVOICENO = Session["InvoiceNo"].ToString();
-            return View();
+            return View(customernotification);
         }
 
         [HttpPost]
@@ -94,7 +110,7 @@ namespace PSS_CMS.Controllers
             ""cN_COMMENTS"": ""{ Customernotification.CN_COMMENTS}"",          
             ""cN_CURECID"": ""{Session["CustomerRecID"]}"",       
             ""cN_CRECID"": ""{Session["CompanyID"]}"",   
-            ""cN_CTRECID"": ""{Session["CU_CTRECID"]}""
+            ""cN_CTRECID"": ""{"0"}""
              
         }}";
 
@@ -161,9 +177,10 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> Edit(int? id)
+        public async Task<ActionResult> Edit(int? id,string CN_INVOICENO)
         {
             Session["CN_RECID"] = id;
+            Session["CN_INVOICENO"] = CN_INVOICENO;
 
             string WEBURLGETBYID = ConfigurationManager.AppSettings["GetCustomerNotificationbyId"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -225,7 +242,7 @@ namespace PSS_CMS.Controllers
             ""cN_STATUS"": ""{Customernotification.CN_STATUS}"",
             ""cN_COMMENTS"": ""{Customernotification.CN_COMMENTS}"",
             ""cN_CURECID"": ""{Session["CustomerRecID"]}"",
-            ""cN_CTRECID"": ""{Session["CU_CTRECID"]}"",                     
+            ""cN_CTRECID"": ""{"0"}"",                     
             ""cN_CRECID"": ""{Session["CompanyID"]}""                     
         }}";
 

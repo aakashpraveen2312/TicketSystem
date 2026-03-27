@@ -33,6 +33,7 @@ namespace PSS_CMS.Models
         public string TC_USERID { get; set; }
         public string TC_WARRANTYUPTO { get; set; }
         public string CU_WARRANTYUPTO { get; set; }
+        public string Type { get; set; }
         public string LatestPaymentDueDate { get; set; }
 
         public string TC_COMPANYID { get; set; }

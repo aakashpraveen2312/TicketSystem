@@ -29,7 +29,7 @@
     <link href="~/Content/Colors.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
     <!-- Favicons -->
-   
+
     <style>
         .swal-btn-continue {
             background-color: #6ed3d0 !important;
@@ -48,8 +48,10 @@
         }
 
         select.form-select {
-            font-size: 15px;
+            font-size: 13px;
         }
+
+ 
     </style>
 </head>
 <body>
@@ -87,10 +89,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -116,18 +130,7 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>
+                   
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -170,31 +173,88 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER ACCOUNTS</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">LIST</a></li>
-                    <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">CONTRACT LIST</a></li>
+                    <li>SERVICE CONTRACTS</li>
                     <li>CREATE</li>
                 </ul>
             </div>
         </div>
+
         @using (Html.BeginForm("CreateContract", "Contract", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
         {
+
+
             <div class="create ms-4 me-2 mt-3">
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CT_CONTRACTREFERENCENUMBER, new { @class = "labels" })
+                        @Html.LabelFor(model => model.SC_CODE, "Code", new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CT_CONTRACTREFERENCENUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        @Html.EditorFor(model => model.SC_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly", placeholder = "Auto-Code" } })
                     </div>
                 </div>
+
+
                 <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_PARTY, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                       
+                        <input list="partyList" id="SelectedParty" name="SelectedParty"
+                               class="form-control textboxcolors" placeholder="Select or type customer" />
+
+                        <datalist id="partyList">
+                            @if (ViewBag.CustomerData != null)
+                            { 
+                            foreach (var cust in ViewBag.CustomerData)
+                            {
+                                    <option value="@cust.CU_NAME"
+                                            data-email="@cust.CU_EMAIL"
+                                            data-mobile="@cust.CU_MOBILENO"
+                                            data-address="@cust.CU_ADDRESS">
+                                    </option>
+                                }
+                            }
+               
+                        </datalist>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_EMAIL, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_EMAIL, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CT_EMAIL" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_MOBILE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_MOBILE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CT_MOBILE" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_ADDRESS, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CT_ADDRESS" } })
+
+                    </div>
+                </div>
+                @*<div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.CT_FROMDATE, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.CT_FROMDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
-
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -203,130 +263,58 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.CT_TODATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
-
                     </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CT_CONTRACTAMOUNT, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CT_CONTRACTAMOUNT, new
- {
-     htmlAttributes = new
-     {
-         @class = "form-control integerboxcolors",
-         autocomplete = "off",
-         inputmode = "decimal",
-         oninput = "this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\\..*)\\./g,'$1')"
-     }
- })
-
-
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CT_CONTRACTCREATEDBY, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CT_CONTRACTCREATEDBY, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CT_CONTRACTAPPROVEDBY, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CT_CONTRACTAPPROVEDBY, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
-
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CT_CONTRACTAPPROVEDDATE, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CT_CONTRACTAPPROVEDDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
-
-                    </div>
-                </div>
-
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CT_ANYREFERENCE, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CT_ANYREFERENCE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CT_ATTACHMENT, new { @class = "labels"})
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        <input type="file"
-                               name="Attachment"
-                               class="form-control"
-                               id="attachment"
-                               accept=".pdf,.doc,.docx,.jpg,.png" />
-
-
-                    </div>
-                </div> 
-                
-                
-                
+                </div>*@
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.CT_SORTORDER, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.CT_SORTORDER, new
-                   {
-                       htmlAttributes = new
-                       {
-                           @class = "form-control integerboxcolors",
-                           autocomplete = "off",
-                           type="text",
-                           inputmode = "numeric",
-                           oninput = "this.value=this.value.replace(/[^0-9]/g,'')",
-                           placeholder = "0"
-                       }
-                   })
-
-
+                                           {
+                                               htmlAttributes = new
+                                               {
+                                                   @class = "form-control integerboxcolors",
+                                                   autocomplete = "off",
+                                                   type = "text",
+                                                   inputmode = "numeric",
+                                                   oninput = "this.value=this.value.replace(/[^0-9]/g,'')",
+                                                   placeholder = "0"
+                                               }
+                                           })
 
                     </div>
                 </div>
-
-                <div class="row mb-5 ">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.EXISTINGUSER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.CheckBoxFor(model => model.EXISTINGUSER, new { @class = "textboxcolors", autocomplete = "off", id = "existingUserCheckbox" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.NEWUSER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.CheckBoxFor(model => model.NEWUSER, new { @class = "textboxcolors", autocomplete = "off", id = "newUserCheckbox" })
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:50px;">
                     <div class="col-lg-2">
-                    
+
                     </div>
                     <div class="col-lg-3 d-flex justify-content-end">
-                        <a href="@Url.Action("DownloadContractPdf", "Contract")"
-                           class="me-3"
-                           data-bs-toggle="tooltip"
-                           title="Download Contract Template (PDF)">
-                            <i class="bi bi-file-earmark-pdf-fill"
-                               style="font-size:26px; color:#d9534f;"></i>
-
-                        </a>
-                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
                         <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("ContractList", "Contract")'" />
                     </div>
                 </div>
             </div>
+
         }
+
+
 
         <footer>
             <div class="footer">
@@ -370,7 +358,19 @@
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
 
+    <script>
+        document.getElementById('existingUserCheckbox').addEventListener('change', function () {
+            if (this.checked) {
+                document.getElementById('newUserCheckbox').checked = false;
+            }
+        });
 
+        document.getElementById('newUserCheckbox').addEventListener('change', function () {
+            if (this.checked) {
+                document.getElementById('existingUserCheckbox').checked = false;
+            }
+        });
+    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -405,7 +405,7 @@
 
             var formData = new FormData(this);
 
-          
+
 
             // Disable page interaction
             $("body").css("pointer-events", "none");
@@ -487,6 +487,55 @@
     });
     </script>
 
+   
+ 
+    <script>
+        $(document).ready(function () {
+
+            $("#SelectedParty").on("input", function () {
+
+                var enteredValue = $(this).val();
+
+                var found = false;
+
+                $("#partyList option").each(function () {
+
+                    if ($(this).val().toLowerCase() === enteredValue.toLowerCase()) {
+
+                        $("#CT_EMAIL").val($(this).data("email"));
+                        $("#CT_MOBILE").val($(this).data("mobile"));
+                        $("#CT_ADDRESS").val($(this).data("address"));
+
+                        found = true;
+                        return false;
+                    }
+
+                });
+
+                // If typed new name → clear fields
+                if (!found) {
+                    $("#CT_EMAIL").val("");
+                    $("#CT_MOBILE").val("");
+                    $("#CT_ADDRESS").val("");
+                }
+
+            });
+
+        });
+    </script>
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @*<script>
+            $(document).ready(function () {
+                $("#SelectedParty").select2({
+                    placeholder: "-- Select Customer --",
+                    allowClear: true,
+                    tags: true, // allows typing new value
+                    width: "100%"
+                });
+            });
+        </script>*@
 </body>
 
 </html>

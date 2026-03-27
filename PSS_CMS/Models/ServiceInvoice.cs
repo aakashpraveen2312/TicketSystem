@@ -9,9 +9,12 @@ namespace PSS_CMS.Models
 {
     public class ServiceInvoice
     {
+        public int SerialNumber { get; set; }
         public int InvoiceID { get; set; }
+      
         public string TC_INVOICENUMBER { get; set; }
         public string TC_SISTATUS { get; set; }
+        public string TC_PaymentStatus { get; set; }
         public DateTime? InvoiceDate { get; set; }
 
         public string TicketRef { get; set; }
@@ -156,7 +159,7 @@ namespace PSS_CMS.Models
         public string CustomerAddress { get; set; }
         [DisplayName("Ticket Rasied Date")]
         public string TicketRaisedDate { get; set; }
-        [DisplayName("Warrent Upto")]
+        [DisplayName("Warranty Upto")]
         public string WarrantyUpto { get; set; }
         [DisplayName("GST")]
         public string GST { get; set; }

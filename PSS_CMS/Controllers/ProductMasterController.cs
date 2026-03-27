@@ -21,7 +21,14 @@ namespace PSS_CMS.Controllers
         public async Task<ActionResult> List(string searchPharse)
         {
             //ProductMaster objproductmaster = new ProductMaster();
+            ProductMaster objproduct = new ProductMaster();
 
+            int SerialNo = objproduct.SerialNumber;
+
+            if (SerialNo == 0)
+            {
+                SerialNo = 1; // Initialize to 1 if it's 0
+            }
             string Weburl = ConfigurationManager.AppSettings["PRODUCTGET"];
 
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -50,6 +57,14 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
                             productmasterlist = rootObjects.Data;
+                            if (productmasterlist.Count > 0)
+                            {
+                                // Assign serial numbers
+                                for (int i = 0; i < productmasterlist.Count; i++)
+                                {
+                                    productmasterlist[i].SerialNumber = i + 1;
+                                }
+                            }
 
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
@@ -82,15 +97,7 @@ namespace PSS_CMS.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ProductMaster productmaster)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    // If ModelState is invalid, return validation errors
-            //    var errors = ModelState.Values.SelectMany(v => v.Errors)
-            //                                   .Select(e => e.ErrorMessage)
-            //                                   .ToList();
-
-            //    return Json(new { success = false, message = string.Join(" ", errors) });
-            //}
+            
             try
             {
                 var ProductmasterPostURL = ConfigurationManager.AppSettings["PRODUCTPOST"];
@@ -100,9 +107,10 @@ namespace PSS_CMS.Controllers
                 var content = $@"{{           
             ""p_CODE"": ""{productmaster.P_CODE}"",           
             ""p_NAME"": ""{productmaster.P_NAME}"",    
-            ""p_WARRANTYDATE"": ""{productmaster.P_WARRANTYDATE}"",   
-            ""p_GRACEPERIOD"": ""{3}"",           
+            ""p_FREECALLS"": ""{"0"}"",   
+            ""p_DURATION"": ""{productmaster.P_DURATION}"",            
             ""p_SORTORDER"": ""{ productmaster.P_SORTORDER}"",                    
+            ""P_COMPREHENSIVEWARRANTY"": ""{(productmaster.P_Comprehensivewarranty ? "Y" : "N")}"",                 
             ""p_DISABLE"": ""{(productmaster.P_ProductDisable ? "Y" : "N")}"",                    
             ""p_CRECID"": ""{Session["CompanyID"]}""           
         }}";
@@ -222,15 +230,7 @@ namespace PSS_CMS.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(ProductMaster productmaster)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    // If ModelState is invalid, return validation errors
-            //    var errors = ModelState.Values.SelectMany(v => v.Errors)
-            //                                   .Select(e => e.ErrorMessage)
-            //                                   .ToList();
-
-            //    return Json(new { success = false, message = string.Join(" ", errors) });
-            //}
+            
             try
             {
                 var ProducttmasterUpdateURL = ConfigurationManager.AppSettings["PRODUCTPUT"];
@@ -241,9 +241,10 @@ namespace PSS_CMS.Controllers
             ""p_RECID"": ""{Session["Productrecid"]}"",           
             ""p_CODE"": ""{productmaster.P_CODE}"",           
             ""p_NAME"": ""{productmaster.P_NAME}"",   
-            ""p_WARRANTYDATE"": ""{productmaster.P_WARRANTYDATE}"",   
-            ""p_GRACEPERIOD"": ""{3}"",
+            ""p_FREECALLS"": ""{"0"}"",   
+            ""p_DURATION"": ""{productmaster.P_DURATION}"",   
             ""p_SORTORDER"": ""{productmaster.P_SORTORDER}"",
+            ""P_COMPREHENSIVEWARRANTY"": ""{(productmaster.P_Comprehensivewarranty ? "Y" : "N")}"",
             ""p_DISABLE"": ""{(productmaster.P_ProductDisable ? "Y" : "N")}"",
             ""p_CRECID"": ""{ Session["CompanyID"]}""                              
         }}";

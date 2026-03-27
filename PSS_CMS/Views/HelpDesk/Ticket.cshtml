@@ -259,8 +259,8 @@
                     </div>
 
                     <div class="col-md-12 mt-2 mb-3 d-flex justify-content-lg-end justify-content-md-end justify-content-start">
-                        @Html.CheckBoxFor(model => model.paidservice, new { @class = "me-2", id = "termsCheckbox" })
-                        <label for="termsCheckbox" id="termsLabel" class="me-4 mt-2">I agree to proceed with this service as a paid request</label>
+                        @*@Html.CheckBoxFor(model => model.paidservice, new { @class = "me-2", id = "termsCheckbox" })
+                        <label for="termsCheckbox" id="termsLabel" class="me-4 mt-2">I agree to proceed with this service as a paid request</label>*@
                         <button type="submit" class="btncolorsubmit me-3" id="submitBtn" tabindex="9">Submit</button>
                         <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("Ticket_History","HelpDesk")'" tabindex="10">
                             Cancel
@@ -544,7 +544,8 @@
                             value: item.Value,
                             text: item.Text,
                             'data-warranty': item.WarrantyUpto,
-                            'data-warrantyfreecalls': item.WarrantyFreeCalls
+                            'data-warrantyfreecalls': item.WarrantyFreeCalls,
+                            'data-type': item.Type
                         }));
                     });
                 } else {
@@ -570,20 +571,28 @@
     @*If i chnage the customer it fills the waranty upto and warranty calls input box*@
     <script>
         $(document).on('change', '#CustomerDropdown', function () {
-            const selectedOption = $(this).find('option:selected');
-            const warrantyUpto = selectedOption.data('warranty');
-            const warrantyFreeCalls = selectedOption.data('warrantyfreecalls');
 
-            if (warrantyUpto) {
-                const date = new Date(warrantyUpto);
-                const formattedDate = ("0" + date.getDate()).slice(-2) + "-" +
+            const selected = $(this).find('option:selected');
+
+            const warranty = selected.data('warranty');
+            const freecalls = selected.data('warrantyfreecalls');
+
+            // ✅ Warranty
+            if (warranty) {
+                const date = new Date(warranty);
+
+                const formatted =
+                    ("0" + date.getDate()).slice(-2) + "-" +
                     ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
                     date.getFullYear();
-                $('#warranty').val(formattedDate);
-                $('#warrantyfreecalls').val(warrantyFreeCalls);
+
+                $('#warranty').val(formatted);
             } else {
                 $('#warranty').val('');
             }
+
+            // ✅ Free Calls
+            $('#warrantyfreecalls').val(freecalls || '');
         });
     </script>
 
@@ -597,14 +606,11 @@
 
                 const selectedOption = $(this).find('option:selected');
                 const warrantyUpto = selectedOption.data('warranty');
-                const warrantyFreeCalls = selectedOption.data('warrantyfreecalls') || 0;
-
-                // Set free calls field
-                $('#warrantyfreecalls').val(warrantyFreeCalls);
 
                 let disableCheckbox = true; // default state
 
                 if (warrantyUpto) {
+
                     const date = new Date(warrantyUpto);
 
                     const formattedDate =
@@ -618,8 +624,8 @@
                     currentDate.setHours(0, 0, 0, 0);
                     date.setHours(0, 0, 0, 0);
 
-                    // Enable checkbox ONLY if warranty expired AND free calls > 0
-                    if (date < currentDate && warrantyFreeCalls > 0) {
+                    // Enable checkbox ONLY if warranty expired
+                    if (date < currentDate) {
                         disableCheckbox = false;
                     }
 
@@ -627,11 +633,13 @@
                     $('#warranty').val('');
                 }
 
-                // Apply checkbox state once
+                // Apply checkbox state
                 $('#termsCheckbox')
                     .prop('checked', false)
                     .prop('disabled', disableCheckbox);
-                console.log("disableCheckbox", disableCheckbox);
+
+                console.log("disableCheckbox:", disableCheckbox);
+
                 if (disableCheckbox) {
                     $('#termsLabel').addClass('label-gray');
                 } else {
@@ -645,28 +653,20 @@
 
                 const warrantyDateStr = $('#warranty').val(); // DD-MM-YYYY
                 const isCheckboxChecked = $('#termsCheckbox').is(':checked');
-                const warrantyFreeCalls = parseInt($('#warrantyfreecalls').val(), 10) || 0;
-
-                // 🚫 Free calls exhausted → block immediately
-                if (warrantyFreeCalls === 0) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Free Calls Exhausted',
-                        text: 'You have already used all free service calls. Please contact the help desk to renew your plan.'
-                    });
-                    return;
-                }
 
                 if (warrantyDateStr) {
+
                     const parts = warrantyDateStr.split('-');
                     const warrantyDate = new Date(parts[2], parts[1] - 1, parts[0]);
+
                     const currentDate = new Date();
                     currentDate.setHours(0, 0, 0, 0);
 
-                    // 🚫 Warranty expired & checkbox not checked
+                    // Warranty expired & checkbox not checked
                     if (warrantyDate < currentDate && !isCheckboxChecked) {
+
                         e.preventDefault();
+
                         Swal.fire({
                             icon: 'warning',
                             title: 'Warranty Expired',
@@ -675,13 +675,11 @@
                         });
                     }
                 }
+
             });
 
         });
     </script>
-
-
-
 
     <script src="~/Scripts/Inactivitylogout.js"></script>
 </body>

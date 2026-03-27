@@ -10,6 +10,7 @@ namespace PSS_CMS.Models
 {
     public class ProductMaster
     {
+        public int SerialNumber { get; set; }
         public int P_RECID { get; set; }
         [DisplayName("Grace Period")]
         public int P_GRACEPERIOD { get; set; }
@@ -18,8 +19,10 @@ namespace PSS_CMS.Models
         public string P_CODE { get; set; }
         [DisplayName("Product Name")]
         public string P_NAME { get; set; } 
-        [DisplayName("Product Warranty Date")]
-        public string P_WARRANTYDATE { get; set; }
+        [DisplayName("Free Calls / Services")]
+        public int P_FREECALLS { get; set; } 
+        [DisplayName("Duration (In Months)")]
+        public int P_DURATION { get; set; }
         [DisplayName("Sort")]
         public int P_SORTORDER { get; set; }
 
@@ -32,6 +35,17 @@ namespace PSS_CMS.Models
 
         [JsonProperty("P_DISABLE")]
         private string ProductDisable { get; set; }
+    
+
+        [DisplayName("Comprehensive warranty with Spare / Material")]
+        public bool P_Comprehensivewarranty
+        {
+            get => PComprehensivewarranty == "Y";
+            set => PComprehensivewarranty = value ? "Y" : "N";
+        }
+
+        [JsonProperty("P_COMPREHENSIVEWARRANTY")]
+        private string PComprehensivewarranty { get; set; }
 
     }
     public class ProductMasterRootObject

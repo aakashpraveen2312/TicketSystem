@@ -145,7 +145,7 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @*@Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
-                        @Html.TextBoxFor(model => model.I_SGST, "{0:0.00}", new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "formatPrice(this)", placeholder = "0.00", @readonly = "readonly" })
+                        @Html.TextBoxFor(model => model.I_SGST, "{0:0.00}", new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "formatPrice(this)", placeholder = "0.00"})
                      
 
                     </div>
@@ -153,7 +153,7 @@
                         @Html.LabelFor(model => model.I_CGST, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.I_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly", type = "text" } })
+                        @Html.EditorFor(model => model.I_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
 
                     </div>
                 </div>
@@ -167,17 +167,18 @@
                                               model => model.I_CUOM,
                                               new SelectList(new List<string>
                                               {
-                                                  "pieces",
-                                                  "kilograms",
-                                                  "grams",
-                                                  "litre",
-                                                  "milli litre",
-                                                  "meter",
-                                                  "centimeter",
-                                                  "milli meter",
-                                                  "box",
-                                                  "packet",
-                                                  "set"
+                                                    "Pieces",
+                                                  "Kilograms",
+                                                  "Grams",
+                                                  "Litre",
+                                                  "Milli litre",
+                                                  "Meter",
+                                                  "Centimeter",
+                                                  "Milli meter",
+                                                  "Box",
+                                                  "Packet",
+                                                  "Set",
+                                                  "NOS"
                                               }),
                                               "-- Select UOM --",
                                               new

@@ -78,10 +78,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -107,7 +119,7 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
+                    @*<li class="nav-link">
                         <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
                             <i class='bx bx-credit-card' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Product Finance</span>
@@ -118,7 +130,7 @@
                             <i class='bx bx-wallet' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
                         </a>
-                    </li>
+                    </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -162,8 +174,8 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-7">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>CONTRACTS AND USERS</li>
-                    <li>PRODUCTS</li>
+                   
+                    <li>WARRANTY PRODUCTS</li>
                     <li>LIST</li>
                 </ul>
             </div>
@@ -181,21 +193,40 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
+               columns.Add(c => c.SerialNumber).Titled("S.No").Sortable(true).Css("text-right").SetWidth("80px");
                columns.Add(c => c.P_CODE).Titled("Code");
-               columns.Add(c => c.P_NAME).Titled("Product Name");
-               columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("100px").Css("text-right");
+               columns.Add(c => c.P_NAME).Titled("Product Names").SetWidth("400px");
+               //columns.Add(c => c.P_FREECALLS).Titled("Free Calls").Css("text-right");
+               columns.Add(c => c.P_DURATION).Titled("Duration (In months)").Css("text-right");
+               columns.Add(c => c.P_SORTORDER).Titled("Sort").Css("text-right");
+               columns.Add(c => c.P_Comprehensivewarranty)
+.Titled("Comprehensive Warranty")
+.Css("text-center")
+.Encoded(false)
+.Sanitized(false)
+.RenderValueAs(o =>
+{
+    var isChecked = o.P_Comprehensivewarranty ? "checked='checked'" : "";
+    return new HtmlString($"<input type='checkbox' {isChecked} />");
+});
                columns.Add().Titled("Action").SetWidth("100px")
               .Encoded(false)
                .Sanitized(false)
             .RenderValueAs(o =>
             {
 
-                var Contracturl = Url.Action("ContractList", "Contract", new { Recid = o.P_RECID, name = o.P_NAME }, null);
+                var Viewurl = Url.Action("ViewList", "Contract", new { P_RECID = o.P_RECID, P_NAME = o.P_NAME }, null);
+                var ViewiconHtml = "<i class='bi bi-eye'></i>";
+                var ViewlinkHtml = $"<a href='{Viewurl}' data-toggle='tooltip' data-placement='top' title='View'>{ViewiconHtml}</a>";
+
+
+                var Contracturl = Url.Action("List", "AccountantCustomerInvoice", new { P_RECID = o.P_RECID, P_NAME = o.P_NAME , P_DURATION = o.P_DURATION}, null);
                 var ContracticonHtml = "<i class='bx  bx-list-ul'></i>";
-                var ContractlinkHtml = $"<a href='{Contracturl}' data-toggle='tooltip' data-placement='top' title='Contract List'>{ContracticonHtml}</a>";
+                var ContractlinkHtml = $"<a href='{Contracturl}' data-toggle='tooltip' data-placement='top' title='Sales'>{ContracticonHtml}</a>";
+
 
                 var extraSpaces2 = "&nbsp;&nbsp;&nbsp;";
-                return MvcHtmlString.Create($"{ContractlinkHtml}");
+                return MvcHtmlString.Create($"{ViewlinkHtml}{extraSpaces2}{ContractlinkHtml}");
             });
 
            }).WithPaging(10).Sortable(false) }
@@ -233,9 +264,14 @@
 
                     <div class="flex-item  mt-1">
                         <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-eye'></i>
+                        </div>
+                        &nbsp;- View
+                    </div> <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
                             <i class='bx  bx-list-ul'></i>
                         </div>
-                        &nbsp;- Contract List
+                        &nbsp;- Sales
                     </div>
 
                 </div>

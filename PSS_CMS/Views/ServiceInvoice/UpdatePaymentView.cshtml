@@ -39,6 +39,11 @@
     <!-- Favicons -->
     <link href="~/assets/img/PSSlogo.png" rel="icon">
     <link href="~/assets/img/PSSlogo.png" rel="apple-touch-icon">
+    <style>
+        select#TC_ModeOfPayment, select#TC_PaymentStatus {
+            font-size: 13px;
+        }
+    </style>
 </head>
 
 <body>
@@ -76,10 +81,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -96,7 +113,7 @@
                     <li class="nav-link">
                         <a href="@Url.Action("Report", "FollowUpReport")">
                             <i class='bx bx-phone-call' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">FollowUp Report</span>
+                            <span class="text nav-text" style="margin-left:15px">Follow-up Report</span>
                         </a>
                     </li>
                     <li class="nav-link">
@@ -105,7 +122,7 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
+                    @*<li class="nav-link">
                         <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
                             <i class='bx bx-credit-card' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Product Finance</span>
@@ -116,7 +133,7 @@
                             <i class='bx bx-wallet' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
                         </a>
-                    </li>
+                    </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -171,53 +188,101 @@
         </div>
         <div class="container mt-3">
 
-           
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_ReferenceNo, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_ReferenceNo, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                    </div>
+
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.TC_ReferenceNo, new { @class = "labels" })
                 </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_InvoiceNumber, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_InvoiceNumber, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                    </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.TC_ReferenceNo, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
                 </div>
+            </div>
 
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_ModeOfPayment, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_ModeOfPayment, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                    </div>
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.TC_InvoiceNumber, new { @class = "labels" })
                 </div>
-
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_DateOfPayment, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_DateOfPayments, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                    </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.TC_InvoiceNumber, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
                 </div>
+            </div>
 
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_TotalAmount, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_TotalAmount, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                    </div>
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.TC_ModeOfPayment, new { @class = "labels" })
                 </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.TC_ModeOfPayment, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.TC_DateOfPayment, new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.TC_DateOfPayments, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.TC_TotalAmount, new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.TC_TotalAmount, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly", id = "TotalAmount" } })
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.TC_PaidAmount, new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.TC_PaidAmount, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "PaidAmount", @readonly = "readonly" } })
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.TC_BalanceAmount, new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.TC_BalanceAmount, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-control integerboxcolors",
+                            autocomplete = "off",
+                   id = "BalanceAmount",
+                   @readonly = "readonly"
+               }
+                    })
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.TC_PaymentStatus, new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.TC_PaymentStatus, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                </div>
+            </div>
+            @*<div class="row mb-3">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.TC_DueDate, new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.TC_DueDate, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date", @readonly = "readonly" } })
+                </div>
+            </div>*@
+            <div class="row">
+                <div class="col-md-5 d-flex justify-content-end ms-1">
+                    <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "ServiceInvoice")'" />
+
+                </div>
+            </div>
 
         </div>
     </div>

@@ -372,18 +372,24 @@
     <Compile Include="Controllers\CompanyInfoController.cs" />
     <Compile Include="Controllers\CompanyRegistrationController.cs" />
     <Compile Include="Controllers\ChangePasswordController.cs" />
+    <Compile Include="Controllers\ContractExclusionController.cs" />
     <Compile Include="Controllers\ContractExpiryReportController.cs" />
+    <Compile Include="Controllers\ContractInclusionController.cs" />
     <Compile Include="Controllers\ContractInvoiceController.cs" />
     <Compile Include="Controllers\CustomerNotificationController.cs" />
+    <Compile Include="Controllers\ExclusionController.cs" />
     <Compile Include="Controllers\FollowUpReportController.cs" />
     <Compile Include="Controllers\HSNCategoryController.cs" />
     <Compile Include="Controllers\HSNMasterController.cs" />
+    <Compile Include="Controllers\InclusionController.cs" />
     <Compile Include="Controllers\ItemCategoryController.cs" />
     <Compile Include="Controllers\ItemController.cs" />
     <Compile Include="Controllers\ItemGroupController.cs" />
     <Compile Include="Controllers\ManagerSubordinateReportController.cs" />
+    <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="Controllers\PriorityWiseReportController.cs" />
     <Compile Include="Controllers\ServiceInvoiceController.cs" />
+    <Compile Include="Controllers\ServiceMaterialConsumptionController.cs" />
     <Compile Include="Controllers\UserManagerController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\ForgotpasswordController.cs" />
@@ -412,6 +418,8 @@
     <Compile Include="Models\Changepassword.cs" />
     <Compile Include="Models\Companies.cs" />
     <Compile Include="Models\Contract.cs" />
+    <Compile Include="Models\ContractExclusion.cs" />
+    <Compile Include="Models\ContractInclusion.cs" />
     <Compile Include="Models\ContractInvoice.cs" />
     <Compile Include="Models\Customernotification.cs" />
     <Compile Include="Models\DashBoardList.cs" />
@@ -421,11 +429,13 @@
     <Compile Include="Models\DashboardSA.cs" />
     <Compile Include="Models\DashboardUser.cs" />
     <Compile Include="Models\Dashborardchart.cs" />
+    <Compile Include="Models\Exclusion.cs" />
     <Compile Include="Models\FaildItemCategoryItems.cs" />
     <Compile Include="Models\Faq.cs" />
     <Compile Include="Models\Forgotpassword.cs" />
     <Compile Include="Models\HSNCategory.cs" />
     <Compile Include="Models\HSNMaster.cs" />
+    <Compile Include="Models\Inclusion.cs" />
     <Compile Include="Models\ItemCategory.cs" />
     <Compile Include="Models\ItemGroup.cs" />
     <Compile Include="Models\Items.cs" />
@@ -437,6 +447,7 @@
     <Compile Include="Models\Materialcategory.cs" />
     <Compile Include="Models\Materialconsumption.cs" />
     <Compile Include="Models\MaterialProductmap.cs" />
+    <Compile Include="Models\Party.cs" />
     <Compile Include="Models\PaymentUpdate.cs" />
     <Compile Include="Models\PDFDetails.cs" />
     <Compile Include="Models\Prioritywise.cs" />
@@ -445,6 +456,7 @@
     <Compile Include="Models\Recenttickets.cs" />
     <Compile Include="Models\Reviewtickets.cs" />
     <Compile Include="Models\ServiceInvoice.cs" />
+    <Compile Include="Models\ServiceMaterialConsumption.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\TicketAgeingViewModel.cs" />
     <Compile Include="Models\TIcketagePdf.cs" />
@@ -455,6 +467,8 @@
     <Compile Include="Models\Useradminmap.cs" />
     <Compile Include="Models\UserDropdownItem.cs" />
     <Compile Include="Models\Usergroup.cs" />
+    <Compile Include="Models\Viewlist.cs" />
+    <Compile Include="Models\WarrantyViewModel.cs" />
     <Compile Include="Models\WhitePaper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -727,6 +741,29 @@
     <Content Include="Views\ContractExpiryReport\ServiceProductReport.cshtml" />
     <Content Include="Views\ManagerSubordinateReport\ManagersubordinateReport.cshtml" />
     <Content Include="Views\HelpDesk\PrioritywiseReport.cshtml" />
+    <Content Include="Views\Inclusion\List.cshtml" />
+    <Content Include="Views\Exclusion\List.cshtml" />
+    <Content Include="Views\Exclusion\Create.cshtml" />
+    <Content Include="Views\Exclusion\Edit.cshtml" />
+    <Content Include="Views\Inclusion\Create.cshtml" />
+    <Content Include="Views\Inclusion\Edit.cshtml" />
+    <Content Include="Views\Contract\ViewList.cshtml" />
+    <Content Include="Views\Party\List.cshtml" />
+    <Content Include="Views\Party\Edit.cshtml" />
+    <Content Include="Views\Party\Create.cshtml" />
+    <Content Include="Views\ServiceMaterialConsumption\List.cshtml" />
+    <Content Include="Views\ServiceMaterialConsumption\Create.cshtml" />
+    <Content Include="Views\ServiceMaterialConsumption\Edit.cshtml" />
+    <Content Include="Views\ContractInclusion\List.cshtml" />
+    <Content Include="Views\ContractInclusion\Create.cshtml" />
+    <Content Include="Views\ContractInclusion\Edit.cshtml" />
+    <Content Include="Views\ContractExclusion\List.cshtml" />
+    <Content Include="Views\ContractExclusion\Create.cshtml" />
+    <Content Include="Views\ContractExclusion\Edit.cshtml" />
+    <Content Include="Views\Contract\ContractProductList.cshtml" />
+    <Content Include="Views\Contract\CreateContractProduct.cshtml" />
+    <Content Include="Views\Contract\EditContractProduct.cshtml" />
+    <Content Include="Views\ServiceInvoice\ViewDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

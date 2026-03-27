@@ -96,7 +96,7 @@
                       var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
                       var ItemGroup = Url.Action("List", "Item", new { CategoryRecid = o.IC_RECID, CompanyId = Session["CompanyId"], ItemCatName = o.IC_DESCRIPTION.ToUpper() }, null);
-                      var ItemGroupicon = "<i class='bx bx-collection'></i>";
+                      var ItemGroupicon = "<i class='bi bi-basket'></i>";
                       var ItemlinkHtml = $"<a href='{ItemGroup}'data-toggle='tooltip' data-placement='top' title='Item'>{ItemGroupicon}</a>";
 
                       return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ItemlinkHtml}");
@@ -139,9 +139,9 @@
 
                         <div class="flex-item  mt-1">
                             <div class="d-flex justify-content-center footerb">
-                                <i style="color:#337ab7" class='bi bi-basket2 bx-sm mb-1'></i>
+                                <i style="color:#337ab7" class='bi bi-basket bx-sm mb-1'></i>
                             </div>
-                            &nbsp;- Materials
+                            &nbsp;- Item
                         </div>
 
                     </div>

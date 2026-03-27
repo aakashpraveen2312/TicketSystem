@@ -39,6 +39,12 @@
             padding: 8px 20px;
             font-weight: bold;
         }
+
+        select.form-select {
+            font-size: 15px;
+        }
+
+
     </style>
 </head>
 
@@ -77,10 +83,22 @@
                     <li class="nav-link">
                         <a href="@Url.Action("CustomerList", "Contract")">
                             <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contracts and Users</span>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
 
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "Party")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                        </a>
+                    </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
 
                     <li class="nav-link">
                         <a href="@Url.Action("Index", "ServiceInvoice")">
@@ -106,18 +124,7 @@
                             <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
                         </a>
                     </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>
+                   
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -158,10 +165,8 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>USER ACCOUNTS</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">LIST</a></li>
-                    <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">CONTRACT LIST</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">@Session["Name"].ToString().ToUpper()</a></li>
+                    <li>SERVICE CONTRACTS</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">@Session["CT_CONTRACTREFERENCENUMBER"].ToString().ToUpper()</a></li>
                     <li>EDIT</li>
                 </ul>
             </div>
@@ -170,150 +175,118 @@
 
         @using (Html.BeginForm("EditContract", "Contract", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
         {
-    <div class="create ms-4 me-2 mt-3">
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_CONTRACTREFERENCENUMBER, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_CONTRACTREFERENCENUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_FROMDATE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_FROMDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
+            <div class="create ms-4 me-2 mt-3">
 
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SC_CODE, "Code", new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly", placeholder = "Auto-Code" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_NAME, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_CUSTOMERNAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_EMAIL, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_EMAIL, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CT_EMAIL", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_MOBILE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_MOBILE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CT_MOBILE", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_ADDRESS, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CT_ADDRESS", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+                @*<div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_FROMDATE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_FROMDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_TODATE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_TODATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
+                    </div>
+                </div>*@
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_SORTORDER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CT_SORTORDER, new
+                                           {
+                                               htmlAttributes = new
+                                               {
+                                                   @class = "form-control integerboxcolors",
+                                                   autocomplete = "off",
+                                                   type = "text",
+                                                   inputmode = "numeric",
+                                                   oninput = "this.value=this.value.replace(/[^0-9]/g,'')",
+                                                   placeholder = "0"
+                                               }
+                                           })
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.EXISTINGUSER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.CheckBoxFor(model => model.EXISTINGUSER, new { @class = "textboxcolors", autocomplete = "off", id = "existingUserCheckbox", onclick = "return false;" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.NEWUSER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.CheckBoxFor(model => model.NEWUSER, new { @class = "textboxcolors", autocomplete = "off", id = "newUserCheckbox", onclick = "return false;" })
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:50px;">
+                    <div class="col-lg-2">
+
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("ContractList", "Contract")'" />
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_TODATE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_TODATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
 
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_CONTRACTAMOUNT, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_CONTRACTAMOUNT, new
-                {
-                    htmlAttributes = new
-                    {
-                        @class = "form-control integerboxcolors",
-                        autocomplete = "off",
-                        inputmode = "decimal",
-                        oninput = "this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\\..*)\\./g,'$1')"
-                    }
-                })
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_TOTALPAIDAMOUNT, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_TOTALPAIDAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text", @readonly = "true" } })
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_CONTRACTCREATEDBY, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_CONTRACTCREATEDBY, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_CONTRACTAPPROVEDBY, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_CONTRACTAPPROVEDBY, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-            </div>
-        </div>
-
-
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_CONTRACTAPPROVEDDATE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_CONTRACTAPPROVEDDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
-
-            </div>
-        </div>
-
-
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_ANYREFERENCE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_ANYREFERENCE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-            </div>
-        </div>
-
-
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_ATTACHMENT, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                <input type="file"
-                       name="Attachment"
-                       class="form-control"
-                       id="attachment"
-                       accept=".pdf,.doc,.docx,.jpg,.png" />
-
-
-            </div>
-        </div>
-
-
-
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.CT_SORTORDER, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.CT_SORTORDER, new
-           {
-               htmlAttributes = new
-               {
-                   @class = "form-control integerboxcolors",
-                   autocomplete = "off",
-                   type = "text",
-                   inputmode = "numeric",
-                   oninput = "this.value=this.value.replace(/[^0-9]/g,'')"
-               }
-           })
-            </div>
-        </div>
-
-
-
-        <div class="row mb-5 ">
-            <div class="col-lg-2">
-
-            </div>
-            <div class="col-lg-3 d-flex justify-content-end">
-                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
-                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("ContractList", "Contract")'" />
-            </div>
-        </div>
-    </div>
         }
 
 
@@ -469,19 +442,21 @@
         }
     });
     </script>
+
     <script>
-        function showTab(index) {
-            const contents = document.querySelectorAll('.tab-content');
-            const buttons = document.querySelectorAll('.tab-buttons button');
+        document.getElementById('existingUserCheckbox').addEventListener('change', function () {
+            if (this.checked) {
+                document.getElementById('newUserCheckbox').checked = false;
+            }
+        });
 
-            contents.forEach(c => c.classList.remove('active'));
-            buttons.forEach(b => b.classList.remove('active'));
-
-            contents[index].classList.add('active');
-            buttons[index].classList.add('active');
-        }
+        document.getElementById('newUserCheckbox').addEventListener('change', function () {
+            if (this.checked) {
+                document.getElementById('existingUserCheckbox').checked = false;
+            }
+        });
     </script>
-
+   
 </body>
 </html>
 

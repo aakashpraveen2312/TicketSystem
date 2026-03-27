@@ -51,7 +51,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>PRODUCT</li>
+                    <li>WARRANTY PRODUCTS</li>
                     <li>LIST</li>
                 </ul>
             </div>
@@ -72,10 +72,24 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
+               columns.Add(c => c.SerialNumber).Titled("S.No").Sortable(true).Css("text-right").SetWidth("50px");
+
                columns.Add(c => c.P_CODE).Titled("Code");
-               columns.Add(c => c.P_NAME).Titled("Product Names");
-               columns.Add(c => c.P_SORTORDER).Titled("Sort").SetWidth("100px").Css("text-right");
-               columns.Add().Titled("Action").SetWidth("100px")
+               columns.Add(c => c.P_NAME).Titled("Product Name").SetWidth("400px");
+               //columns.Add(c => c.P_FREECALLS).Titled("Free Calls").Css("text-right");
+               columns.Add(c => c.P_DURATION).Titled("Duration (In months)").Css("text-right");
+               columns.Add(c => c.P_SORTORDER).Titled("Sort").Css("text-right");
+               columns.Add(c => c.P_Comprehensivewarranty)
+.Titled("Comprehensive Warranty")
+.Css("text-center")
+.Encoded(false)
+.Sanitized(false)
+.RenderValueAs(o =>
+{
+    var isChecked = o.P_Comprehensivewarranty ? "checked='checked'" : "";
+    return new HtmlString($"<input type='checkbox' {isChecked} disabled='disabled' />");
+});
+               columns.Add().Titled("Action")
               .Encoded(false)
                .Sanitized(false)
             .RenderValueAs(o =>
@@ -93,8 +107,17 @@
                 var ViewiconHtml = "<i class='bx bx-user bx-sm'></i>";
                 var ViewlinkHtml = $"<a href='{Viewurl}' data-toggle='tooltip' data-placement='top' title='Product Mapped Customer'>{ViewiconHtml}</a>";
 
+
+                var Inclusionurl = Url.Action("List", "Inclusion", new { P_RECID = o.P_RECID, P_NAME = o.P_NAME }, null);
+                var InclusioniconHtml = "<i class='bi bi-plus-circle'></i>";
+                var InclusionlinkHtml = $"<a href='{Inclusionurl}' data-toggle='tooltip' data-placement='top' title='Inclusion'>{InclusioniconHtml}</a>";
+
+                var Exclusionurl = Url.Action("List", "Exclusion", new { P_RECID = o.P_RECID, P_NAME = o.P_NAME }, null);
+                var ExclusioniconHtml = "<i class='bi bi-dash-circle'></i>";
+                var ExclusionlinkHtml = $"<a href='{Exclusionurl}' data-toggle='tooltip' data-placement='top' title='Exclusion'>{ExclusioniconHtml}</a>";
+
                 var extraSpaces2 = "&nbsp;&nbsp;&nbsp;";
-                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}{extraSpaces2}{ViewlinkHtml}");
+                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}{extraSpaces2}{ViewlinkHtml}{extraSpaces2}{InclusionlinkHtml}{extraSpaces2}{ExclusionlinkHtml}");
             });
 
            }).WithPaging(10).Sortable(false) }
@@ -108,7 +131,7 @@
 
         <footer>
             <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+                <div class="flex-container" style="padding-bottom: 5px; padding-top: 5px; padding-left: 5px">
 
                     <div class="flex-item mt-1">
                         <div class="d-flex justify-content-center footerb">
@@ -135,6 +158,16 @@
                             <i style="color:#337ab7" class='bx bx-user bx-sm'> </i>
                         </div>
                         &nbsp;- Product Mapped Customer
+                    </div>  <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i style="color:#337ab7" class='bi bi-plus-circle'> </i>
+                        </div>
+                        &nbsp;- Inclusion
+                    </div>  <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i style="color:#337ab7" class='bi bi-dash-circle'> </i>
+                        </div>
+                        &nbsp;- Exclusion
                     </div>
 
                 </div>

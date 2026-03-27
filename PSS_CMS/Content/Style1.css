@@ -236,9 +236,14 @@ input.submitbuttons, button#savebutton {
     border: #f0a72d;
     border-radius: 5px;
 }
-input#IsDisabled, input#U_UserDisable, input#P_ProductDisable, input#IsDisable, input#U_UserManager {
+input#existingUserCheckbox, input#newUserCheckbox,input#IsDisabled, input#U_UserDisable, input#P_ProductDisable, input#IsDisable, input#U_UserManager, input#P_Comprehensivewarranty, input#IN_InclusionDisable, input#EX_ExclusionDisable, input#IsVERIFIEDEMAILDisabled, input#IsVERIFIEDWHATSAPPDisabled {
     width: 23px;
     height: 21px;
+}
+
+input#IsVERIFIEDEMAILDisabled, input#IsVERIFIEDWHATSAPPDisabled, input#IscustomerDisabled, input#IsSupplierDisabled, input#IsVendorDisabled, input#IsDistributorDisabled, input#IsEmployeeDisabled {
+    width: 15px;
+    height: 15px;
 }
 
 

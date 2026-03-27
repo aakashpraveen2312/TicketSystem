@@ -11,6 +11,7 @@ namespace PSS_CMS.Models
 {
     public class Projectmaster
     {
+        public int SerialNumber { get; set; }
         public int CU_RECID { get; set; }
         public int CU_URECID { get; set; }
         [DisplayName("Job Card Reference")]
@@ -29,6 +30,23 @@ namespace PSS_CMS.Models
         public int CU_PRECID { get; set; }
         [DisplayName("Invoice Number")]
         public string CU_INVOICENO { get; set; }
+        [DisplayName("Invoice Amount")]
+        public decimal CU_INVOICEAMOUNT { get; set; }
+        [DisplayName("Invoice Date")]
+        public string CU_INVOICEDATE { get; set; }
+
+        public string CU_INVOICEDATEDATE
+        {
+            get
+            {
+                if (DateTime.TryParse(CU_INVOICEDATE, out DateTime parsedDate))
+                {
+                    return parsedDate.ToString("dd-MM-yyyy");
+                }
+                return string.Empty; // Return an empty string or handle as needed if parsing fails
+            }
+        }
+
         [DisplayName("Warranty Upto")]
         public string CU_WARRANTYUPTO { get; set; }
         public string CU_WARRANTYUPTODATE
@@ -100,14 +118,14 @@ namespace PSS_CMS.Models
         public string CU_CONTACTPERSONMOBILE3 { get; set; }
         [DisplayName("Designation")]
         public string CU_CONTACTPERSONDESIGINATION3 { get; set; }
-        [DisplayName("Location Type")]
+        [DisplayName("Sales Source")]
         public int LT_RECID { get; set; }
-        [DisplayName("Location Reference")]
+        [DisplayName("Sales Location")]
         public int SP_RECID { get; set; }
 
-        [DisplayName("Location Type")]
+        [DisplayName("Sales Source")]
         public int CU_LTRECID { get; set; }
-        [DisplayName("Location Reference")]
+        [DisplayName("Sales Location")]
         public int CU_SPRECID { get; set; }
         [DisplayName("Assigned Admin")]
         public int CU_ADMINRECID { get; set; }

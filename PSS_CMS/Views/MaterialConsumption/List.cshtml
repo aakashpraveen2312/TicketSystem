@@ -51,8 +51,8 @@
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">TICKETS</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">@Session["P_NAME"].ToString().ToUpper()</a></li>
                     <li class="" style="color: #2888bb;text-decoration:none">@Session["Type"].ToString().ToUpper()</li>
-                    @*<li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">LINE ITEM</a></li>*@
                     <li>LIST</li>
                 </ul>
             </div>

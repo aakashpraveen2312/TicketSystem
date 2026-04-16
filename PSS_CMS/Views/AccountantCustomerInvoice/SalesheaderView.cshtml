@@ -1,0 +1,568 @@
+﻿@model PSS_CMS.Models.Salesheader
+@using GridMvc.Html
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
+    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
+    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+
+    @*Bootstrap Icons and Boxicons*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+
+    <script src="~/Scripts/Sidebarscript.js"></script>
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <link href="~/Content/Colors.css" rel="stylesheet" />
+    <style>
+        select#SelectedRole, select.form-select.textboxcolors {
+            font-size: 13px;
+        }
+
+        .swal-btn-continue {
+            background-color: #6ed3d0 !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        .swal-btn-back {
+            background-color: #f0a72d !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        select#TUG_NAME {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        }
+
+        .tabs {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px;
+            margin-bottom: 40px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            border-bottom: 2px solid #ccc;
+        }
+
+            .tab-buttons button {
+                flex: 1;
+                padding: 12px;
+                background-color: #eee;
+                border: none;
+                cursor: pointer;
+                transition: background 0.3s ease;
+                font-weight: bold;
+            }
+
+                .tab-buttons button:hover {
+                    background-color: #ddd;
+                }
+
+                .tab-buttons button.active {
+                    background-color: #004e92;
+                    color: white;
+                }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            background-color: white;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+    </style>
+</head>
+
+<body>
+    @*Sidebar*@
+    <nav class="sidebar close">
+        <header>
+            <div class="text logo-text" style="display:inline-block">
+
+                <a href="@Url.Action("ContractDashboard", "Contract")">
+
+
+                    @if (Session["Logo"] != null)
+                    {
+                        <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
+                    }
+
+                </a>
+
+
+            </div>
+
+            <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
+
+        </header>
+        <div class="menu-bar">
+            <div class="menu">
+                <ul class="menu-links" style="margin-left:20px">
+                    <!-- ACCOUNTS ADMIN -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/software-engineer.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
+                        <img src="~/assets/img/software-engineer.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
+                        <span class="text nav-text" style="margin-left:15px">ACCOUNTS ADMIN</span>
+                    </li>
+                    <!-- Customer Accounts -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("CustomerList", "Contract")">
+                            <i class='bx bx-file' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractList", "Contract")">
+                            <i class='bi bi-tools' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="@Url.Action("Index", "ServiceInvoice")">
+                            <i class='bx bx-receipt' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
+                        </a>
+                    </li>
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/ReportImage.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
+                        <img src="~/assets/img/ReportImage.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
+                        <span class="text nav-text" style="margin-left:15px">REPORTS</span>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="@Url.Action("Report", "FollowUpReport")">
+                            <i class='bx bx-phone-call' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Follow-up Report</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("ContractexpiryReport", "ContractExpiryReport")">
+                            <i class='bx bx-time-five' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
+                        </a>
+                    </li>
+                    @*<li class="nav-link">
+                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-wallet' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                            </a>
+                        </li>*@
+                    <!-- Settings Section -->
+                    <li class="nav-link openfold" style="margin-top:10px;">
+                        <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
+                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:5px;" />
+                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
+                    </li>
+
+                    @*Change Password*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("ChangePassword", "Contract")">
+                            <i class='bx bxs-key' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                        </a>
+                    </li>
+
+                    <!-- Logout -->
+                    <li class="nav-link">
+                        <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
+                            <i class='bx bx-log-out' style="font-size:24px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="content" style=" overflow-x: hidden!important;">
+        <nav class="nav d-flex">
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
+            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+                </a>
+            </div>
+
+        </nav>
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-12">
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    <li>CUSTOMER</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">LIST</a></li>
+                    <li>VIEW</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="tabs">
+            <div class="tab-buttons">
+                <button class="active" onclick="showTab(0)">Main</button>
+                <button onclick="showTab(1)">Customer</button>
+                <button onclick="showTab(2)">Satutary</button>
+                <button onclick="showTab(3)">Contacts</button>
+            </div>
+
+            <div class="tab-content active">
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIH_INVOICENO, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.SIH_INVOICENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIH_INVOICEAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIH_INVOICEDATE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.SIH_INVOICEDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date", @readonly = "readonly" } })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIH_LTRECID, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.DropDownListFor(model => model.SIH_LTRECID,
+                                              (IEnumerable<SelectListItem>)ViewBag.LocationType,
+                                              "-- Select Location Type --",
+                                              new { @class = "form-select textboxcolors", id = "SelectedLocation", disabled = "disabled" })
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIH_SPRECID, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.DropDownListFor(model => model.SIH_SPRECID,
+    (IEnumerable<SelectListItem>)ViewBag.LocationRef,
+    "-- Select Location Reference --",
+    new { @class = "form-select textboxcolors", id = "LocationRefDropdown", data_selected = Model.SIH_SPRECID, disabled = "disabled" })
+
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIH_SORTORDER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.SIH_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+                <div class="mb-3 d-flex justify-content-end">
+                    @*<input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />*@
+                    <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
+                    <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
+                </div>
+
+            </div>
+            <div class="tab-content">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CU_NAME, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_NAME", @readonly = "readonly" } })
+                        @*@Html.HiddenFor(model => model.CU_URECID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_URECID" } })*@
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CU_EMAIL, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.CU_EMAIL, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_EMAIL", @readonly = "readonly" } })
+                    </div>
+                </div>
+                <input type="hidden" id="HiddenCustomerRecid" name="HiddenCustomerRecid" />
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CU_MOBILENO, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.CU_MOBILENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_MOBILENO", @readonly = "readonly" } })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CU_ADDRESS, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.CU_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                    </div>
+                </div>
+                <div class="mb-3 d-flex justify-content-end">
+                    @*<input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />*@
+                    <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
+                    <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
+                </div>
+            </div>
+
+            <div class="tab-content">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CU_GST, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.CU_GST, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CU_PANNUMBER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.CU_PANNUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CU_TANNUMBER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.CU_TANNUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+
+
+
+
+                <div class="mb-3 d-flex justify-content-end">
+                    @*<input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />*@
+                    <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
+                    <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
+
+                </div>
+            </div>
+
+            <div class="tab-content">
+                <div class="row">
+                    <!-- Contact Person 1 -->
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <h5 class="bg-secondary text-white p-3 fw-bold">Contact Person 1</h5>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONNAME1, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONNAME1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONEMAILID1, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONEMAILID1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE1, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION1, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3 form-check">
+                            @Html.CheckBoxFor(model => model.CU_CONTACTACCESS1_BOOL, new { @class = "form-check-input", disabled = "disabled" })
+                            <label class="form-check-label">Access Credential</label>
+                        </div>
+                    </div>
+
+                    <!-- Contact Person 2 -->
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <h5 class="bg-secondary text-white p-3 fw-bold">Contact Person 2</h5>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONNAME2, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONNAME2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONEMAILID2, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONEMAILID2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE2, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION2, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3 form-check">
+                            @Html.CheckBoxFor(model => model.CU_CONTACTACCESS2_BOOL, new { @class = "form-check-input", disabled = "disabled" })
+                            <label class="form-check-label">Access Credential</label>
+                        </div>
+                    </div>
+
+                    <!-- Contact Person 3 -->
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <h5 class="bg-secondary text-white p-3 fw-bold">Contact Person 3</h5>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONNAME3, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONNAME3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONEMAILID3, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONEMAILID3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE3, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION3, new { @class = "labels" })
+                            @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                        </div>
+                        <div class="mb-3 form-check">
+                            @Html.CheckBoxFor(model => model.CU_CONTACTACCESS3_BOOL, new { @class = "form-check-input", disabled = "disabled" })
+                            <label class="form-check-label">Access Credential</label>
+                        </div>
+                        <div class="mb-3 d-flex justify-content-end">
+                            @*<input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />*@
+                            <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <footer>
+            <div class="footer">
+                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck1"></span>
+                            - Text Fields
+                        </div>
+                    </div>
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck2"></span>
+                            - Number Fields
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+            <h4>Are you sure you want to log out?</h4>
+        </div>
+        <div class="offcanvas-footer d-flex justify-content-center">
+            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+        </div>
+    </div>
+    <div id="preloader2"></div>
+    <script>
+        function showTab(index) {
+            const contents = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-buttons button');
+
+            contents.forEach(c => c.classList.remove('active'));
+            buttons.forEach(b => b.classList.remove('active'));
+
+            contents[index].classList.add('active');
+            buttons[index].classList.add('active');
+        }
+        function showNextTab() {
+            const contents = document.querySelectorAll('.tab-content');
+            let activeIndex = Array.from(contents).findIndex(c => c.classList.contains('active'));
+
+            if (activeIndex !== -1 && activeIndex < contents.length - 1) {
+                showTab(activeIndex + 1);
+            }
+        }
+    </script>
+</body>
+</html>
+
+

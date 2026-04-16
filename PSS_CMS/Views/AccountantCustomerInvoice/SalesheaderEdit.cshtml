@@ -1,12 +1,8 @@
-﻿@model PSS_CMS.Models.Projectmaster
+﻿@model PSS_CMS.Models.Salesheader
+@using GridMvc.Html
 @{
     Layout = null;
 }
-
-@{ var cuCtrecid = Session["RECID"]?.ToString();
-                var contractName = Session["ContractName"]?.ToString();
-                var ctPrecid = Session["CT_PRECID"]?.ToString();
-                var contractAmount = Session["ContractAmount"]?.ToString(); }
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,54 +27,12 @@
 
     <script src="~/Scripts/Sidebarscript.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Colors.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <link href="~/Content/Colors.css" rel="stylesheet" />
     <style>
-        /* Pagination container */
-        #inclusionPagination,
-        #exclusionPagination {
-            margin-top: 10px;
-            
-        }
-
-            /* Pagination buttons */
-            #inclusionPagination button,
-            #exclusionPagination button {
-                border: 1px solid #ccc;
-                background-color: #fff;
-                color: #333;
-                padding: 5px 10px;
-                margin: 2px;
-                cursor: pointer;
-                border-radius: 4px;
-                font-size: 14px;
-            }
-
-                /* Hover effect */
-                #inclusionPagination button:hover,
-                #exclusionPagination button:hover {
-                    background-color: #f0f0f0;
-                }
-
-                /* Active page */
-                #inclusionPagination button.active,
-                #exclusionPagination button.active {
-                    background-color: #0d6efd;
-                    color: #fff;
-                    border-color: #0d6efd;
-                }
-
-                /* Previous & Next styling */
-                #inclusionPagination button:first-child,
-                #exclusionPagination button:first-child,
-                #inclusionPagination button:last-child,
-                #exclusionPagination button:last-child {
-                    font-weight: bold;
-                }
         select#SelectedRole, select.form-select.textboxcolors {
             font-size: 13px;
         }
-       
 
         .swal-btn-continue {
             background-color: #6ed3d0 !important;
@@ -161,6 +115,7 @@
             }
     </style>
 </head>
+
 <body>
     @*Sidebar*@
     <nav class="sidebar close">
@@ -201,7 +156,7 @@
                     </li>
 
                     <li class="nav-link">
-                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                        <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">
                             <i class='bi bi-person-check' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
                         </a>
@@ -238,17 +193,17 @@
                         </a>
                     </li>
                     @*<li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>*@
+                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-wallet' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                            </a>
+                        </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -286,359 +241,150 @@
             </div>
 
         </nav>
-
-
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>WARRANTY PRODUCTS</li>
-                    @*<li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">@Session["P_NAME"].ToString().ToUpper()</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "AccountantCustomerInvoice")">SALES CUSTOMER</a></li>*@
-                    <li>CREATE</li>
-
+                    <li>CUSTOMER</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">LIST</a></li>
+                    <li>EDIT</li>
                 </ul>
             </div>
         </div>
+
+
         <div class="tabs">
             <div class="tab-buttons">
                 <button class="active" onclick="showTab(0)">Main</button>
-                <button onclick="showTab(1)">Warranty</button>
-                <button onclick="showTab(2)">Statutary</button>
+                <button onclick="showTab(1)">Customer</button>
+                <button onclick="showTab(2)">Satutary</button>
                 <button onclick="showTab(3)">Contacts</button>
             </div>
-            @using (Html.BeginForm("Create", "AccountantCustomerInvoice", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("SalesheaderEdit", "AccountantCustomerInvoice", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
             {
 
-        <div class="tab-content active">
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_PRECID, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @if (ViewBag.Product != null)
-                    {
-                        var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
+                <div class="tab-content active">
 
-                        if (ProductList != null && ProductList.Any())
-                        {
-                            var modifiedProductList = new List<SelectListItem>(ProductList);
-
-                            // If more than one product, add Select option
-                            if (modifiedProductList.Count > 1)
-                            {
-                                modifiedProductList.Insert(0, new SelectListItem
-                                {
-                                    Text = "-- Select Product --",
-                                    Value = ""
-                                });
-                            }
-                            else
-                            {
-                                // If only one product, make it selected
-                                modifiedProductList[0].Selected = true;
-                            }
-
-                            @Html.DropDownList("SelectedProduct",
-                                modifiedProductList,
-                                new { @class = "form-control textboxcolors", id = "SelectedProduct" })
-                        }
-                        else
-                        {
-                            <p>No Product's are available</p>
-                        }
-                    }
-                    else
-                    {
-                        <p>No Product's are available</p>
-                    }
-                    <input type="hidden" id="ProductDuration" name="ProductDuration" />
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_PRODUCTSERIALNUMBER,"Product Serial No", new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_PRODUCTSERIALNUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_ADMINRECID, "Service Engineer", new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-
-
-                    <select id="AdminDropdown" class="form-select textboxcolors" disabled>
-                        <option value="">-- Select Admin --</option>
-                    </select>
-
-                    <input type="hidden" id="CU_ADMINRECID" name="CU_ADMINRECID" />
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.LT_RECID, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @if (ViewBag.LocationType != null)
-                    {
-                        var LocationList = ViewBag.LocationType as IEnumerable<SelectListItem>;
-
-                        if (LocationList != null && LocationList.Any())
-                        {
-                            var modifiedLocationList = new List<SelectListItem>(LocationList);
-
-                            // Add "--Select Project--" option only if more than one project is available
-                            modifiedLocationList.Insert(0, new SelectListItem { Text = "-- Select Sales Source --", Value = "" });
-
-                            @Html.DropDownList("SelectedLocation",
-                                                         modifiedLocationList,
-                                                         new { @class = "form-select textboxcolors", id = "SelectedLocation" })
-                        }
-                        else
-                        {
-                            var modifiedLocationList = new List<SelectListItem>(LocationList);
-                            // Add "--Select Project--" option only if more than one project is available
-                            modifiedLocationList.Insert(0, new SelectListItem { Text = "No Sales Source's are available", Value = "" });
-
-                            @Html.DropDownList("SelectedLocation",
-                                                         modifiedLocationList,
-                                                         new { @class = "form-select textboxcolors", id = "" }) }
-                    }
-                    else
-                    {
-                        <p>No Sales Source's are available</p>}
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.SP_RECID, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-
-                    @{
-                        var LocationRefList = ViewBag.LocationRef as IEnumerable<SelectListItem>;
-                    }
-
-                    @if (LocationRefList != null && LocationRefList.Any())
-                    {
-                        var modifiedLocationRefList = new List<SelectListItem>(LocationRefList);
-
-                        // Add default option
-                        modifiedLocationRefList.Insert(0, new SelectListItem
-                        {
-                            Text = "-- Select Sales Location --",
-                            Value = ""
-                        });
-
-                        @Html.DropDownList("SelectedLocationRef",
-                            modifiedLocationRefList,
-                            new { @class = "form-select textboxcolors", id = "LocationRefDropdown" })
-                    }
-                    else
-                    {
-                        var modifiedLocationRefList = new List<SelectListItem>();
-
-                        // Add "no data" option
-                        modifiedLocationRefList.Insert(0, new SelectListItem
-                        {
-                            Text = "No Sales Location available",
-                            Value = ""
-                        });
-
-                        @Html.DropDownList("SelectedLocationRef",
-                            modifiedLocationRefList,
-                            new { @class = "form-select textboxcolors", id = "LocationRefDropdown" })
-                    }
-
-
-                </div>
-            </div>
-
-            @*<div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_CODE, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                </div>
-            </div>*@
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_INVOICENO, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_INVOICENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_INVOICEAMOUNT, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_INVOICEDATE, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_INVOICEDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
-                </div>
-            </div>
-
-
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_NAME, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_EMAIL" } })
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_EMAIL, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_EMAIL, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_EMAIL" } })
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_MOBILENO, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_MOBILENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_MOBILENO" } })
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_ADDRESS, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                </div>
-            </div>
-
-
-
-
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.CU_SORTORDER, new { @class = "labels" })
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-12">
-                    @Html.EditorFor(model => model.CU_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", placeholder = "0" } })
-
-                </div>
-            </div>
-            <div class="mb-3 d-flex justify-content-end">
-                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
-                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
-            </div>
-
-        </div>
-
-                <div class="tab-content">
-                    @*<div class="row mb-3">
+                    <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.CU_WARRANTYUPTO, new { @class = "labels" })
+                            @Html.LabelFor(model => model.SIH_INVOICENO, new { @class = "labels" })
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.EditorFor(model => model.CU_WARRANTYUPTO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-
+                            @Html.EditorFor(model => model.SIH_INVOICENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
                         </div>
-                    </div>*@
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.SIH_INVOICEAMOUNT, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.SIH_INVOICEDATE, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.SIH_INVOICEDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.SIH_LTRECID, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.DropDownListFor(model => model.SIH_LTRECID,
+                                                  (IEnumerable<SelectListItem>)ViewBag.LocationType,
+                                                  "-- Select Location Type --",
+                                                  new { @class = "form-select textboxcolors", id = "SelectedLocation" })
+                        </div>
+                    </div>
 
 
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, new { @class = "labels" })
+                            @Html.LabelFor(model => model.SIH_SPRECID, new { @class = "labels" })
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.EditorFor(model => model.CU_WARRANTYFREECALLS, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                            @Html.DropDownListFor(model => model.SIH_SPRECID,
+        (IEnumerable<SelectListItem>)ViewBag.LocationRef,
+        "-- Select Location Reference --",
+        new { @class = "form-select textboxcolors", id = "LocationRefDropdown", data_selected = Model.SIH_SPRECID })
+
+
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.SIH_SORTORDER, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.SIH_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
 
                         </div>
                     </div>
                     <div class="mb-3 d-flex justify-content-end">
                         @*<input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />*@
                         <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
-                        @*<input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />*@
-
-
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
                     </div>
-                    <div class="row mt-4">
 
-                        <!-- Inclusions -->
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="card-header bg-success text-white">
-                                    Inclusions
-                                </div>
-
-                                <div class="card-body">
-
-                                    <ul id="inclusionList">
-                                        @if (ViewBag.Inclusions != null && ViewBag.Inclusions.Count > 0)
-                                        {
-                                            foreach (var item in ViewBag.Inclusions)
-                                            {
-                                                <li>@item.IN_DESCRIPTION</li>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <li class="text-muted">No Inclusions Available</li>
-}
-                                    </ul>
-
-                                    <div id="inclusionPagination"></div>
-
-                                </div>
-                            </div>
+                </div>
+                <div class="tab-content">
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_NAME, new { @class = "labels" })
                         </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_NAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_NAME" } })
+                            @*@Html.HiddenFor(model => model.CU_URECID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_URECID" } })*@
 
-                        <!-- Exclusions -->
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="card-header bg-danger text-white">
-                                    Exclusions
-                                </div>
-
-                                <div class="card-body">
-
-                                    <ul id="exclusionList">
-                                        @if (ViewBag.Exclusions != null && ViewBag.Inclusions.Count > 0)
-                                        {
-                                            foreach (var item in ViewBag.Exclusions)
-                                            {
-                                                <li>@item.EX_DESCRIPTION</li>
-                                            }
-                                        }
-                                        else
-                                        {
-                                    <li class="text-muted">No Exclusions Available</li>}
-                                    </ul>
-
-                                    <div id="exclusionPagination"></div>
-
-                                </div>
-                            </div>
                         </div>
+                    </div>
 
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_EMAIL, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_EMAIL, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", id = "CU_EMAIL" } })
+                        </div>
+                    </div>
+                    <input type="hidden" id="HiddenCustomerRecid" name="HiddenCustomerRecid" />
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_MOBILENO, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_MOBILENO, new
+                            {
+                                htmlAttributes = new
+                                {
+                                    @class = "form-control textboxcolors",
+                                    autocomplete = "off",
+                                    id = "CU_MOBILENO",
+                                    maxlength = "10",
+                                    onkeypress = "return isNumberKey(event)"
+                                }
+                            })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.CU_ADDRESS, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.CU_ADDRESS, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                        </div>
+                    </div>
+                    <div class="mb-3 d-flex justify-content-end">
+                        @*<input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />*@
+                        <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
                     </div>
                 </div>
 
@@ -675,10 +421,9 @@
 
 
                     <div class="mb-3 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                        @*<input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />*@
                         <button type="button" class="nextbutton btn btn-secondary me-3" onclick="showNextTab()">Next</button>
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
-
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
 
                     </div>
                 </div>
@@ -698,11 +443,15 @@
                             </div>
                             <div class="mb-3">
                                 @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE1, new { @class = "labels" })
-                                @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
                             </div>
                             <div class="mb-3">
                                 @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION1, new { @class = "labels" })
                                 @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION1, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3 form-check">
+                                @Html.CheckBoxFor(model => model.CU_CONTACTACCESS1_BOOL, new { @class = "form-check-input" })
+                                <label class="form-check-label">Access Credential</label>
                             </div>
                         </div>
 
@@ -719,11 +468,15 @@
                             </div>
                             <div class="mb-3">
                                 @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE2, new { @class = "labels" })
-                                @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
                             </div>
                             <div class="mb-3">
                                 @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION2, new { @class = "labels" })
                                 @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION2, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3 form-check">
+                                @Html.CheckBoxFor(model => model.CU_CONTACTACCESS2_BOOL, new { @class = "form-check-input" })
+                                <label class="form-check-label">Access Credential</label>
                             </div>
                         </div>
 
@@ -740,25 +493,29 @@
                             </div>
                             <div class="mb-3">
                                 @Html.LabelFor(model => model.CU_CONTACTPERSONMOBILE3, new { @class = "labels" })
-                                @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                                @Html.EditorFor(model => model.CU_CONTACTPERSONMOBILE3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
                             </div>
                             <div class="mb-3">
                                 @Html.LabelFor(model => model.CU_CONTACTPERSONDESIGINATION3, new { @class = "labels" })
                                 @Html.EditorFor(model => model.CU_CONTACTPERSONDESIGINATION3, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
                             </div>
+                            <div class="mb-3 form-check">
+                                @Html.CheckBoxFor(model => model.CU_CONTACTACCESS3_BOOL, new { @class = "form-check-input" })
+                                <label class="form-check-label">Access Credential</label>
+                            </div>
                             <div class="mb-3 d-flex justify-content-end">
                                 <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
-
-
-
+                                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})'" />
 
                             </div>
 
                         </div>
                     </div>
-                </div>}
+                </div>
+            }
         </div>
+
+
         <footer>
             <div class="footer">
                 <div class="flex-container" style="padding-top:5px;padding-left:5px">
@@ -818,71 +575,19 @@
             }
         }
     </script>
+
+
+
+
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
-
-
     <script>
-        function paginateList(listId, paginationId, rowsPerPage = 3) {
-
-            const list = document.getElementById(listId);
-            const items = list.getElementsByTagName("li");
-            const pagination = document.getElementById(paginationId);
-
-            let currentPage = 1;
-            const totalPages = Math.ceil(items.length / rowsPerPage);
-
-            function showPage(page) {
-
-                currentPage = page;
-
-                for (let i = 0; i < items.length; i++) {
-                    items[i].style.display = "none";
-                }
-
-                let start = (page - 1) * rowsPerPage;
-                let end = start + rowsPerPage;
-
-                for (let i = start; i < end && i < items.length; i++) {
-                    items[i].style.display = "list-item";
-                }
-
-                renderPagination();
-            }
-
-            function renderPagination() {
-
-                pagination.innerHTML = "";
-
-                if (currentPage > 1) {
-                    pagination.innerHTML += `<button onclick="show${listId}(${currentPage - 1})">Previous</button>`;
-                }
-
-                for (let i = 1; i <= totalPages; i++) {
-                    pagination.innerHTML += `<button onclick="show${listId}(${i})">${i}</button>`;
-                }
-
-                if (currentPage < totalPages) {
-                    pagination.innerHTML += `<button onclick="show${listId}(${currentPage + 1})">Next</button>`;
-                }
-            }
-
-            window["show" + listId] = showPage;
-
-            showPage(1);
-        }
-
-        paginateList("inclusionList", "inclusionPagination");
-        paginateList("exclusionList", "exclusionPagination");
-    </script>
-
-
-
-    <script>
-        document.getElementById("AdminDropdown").addEventListener("change", function () {
+        document.getElementById("UserDropdown").addEventListener("change", function () {
             var selected = this.options[this.selectedIndex];
             var email = selected.getAttribute("data-email") || "";
             var name = selected.getAttribute("data-username") || "";
+            var mobile = selected.getAttribute("data-mobile") || "";
+            var recid = selected.getAttribute("data-recid") || "";
 
             document.getElementById("CU_EMAIL").value = email;
             document.getElementById("CU_NAME").value = name;
@@ -891,90 +596,9 @@
         });
 
     </script>
-
-
+    <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-$(document).ready(function () {
-
-    function loadAdmins() {
-
-        var precid = $("#SelectedProduct").val();
-        var cmprecid = '@Session["CompanyID"]';
-
-        $("#AdminDropdown")
-            .prop("disabled", true)
-            .empty()
-            .append('<option value="">Loading Service Engineer...</option>');
-
-        if (!precid) {
-            $("#AdminDropdown")
-                .empty()
-                .append('<option value="">-- Select Service Engineer --</option>');
-            return;
-        }
-
-        $.ajax({
-            url: '@Url.Action("GetProductAdmins", "AccountantCustomerInvoice")',
-            type: 'GET',
-            data: {
-                cmprecid: cmprecid,
-                precid: precid
-            },
-            success: function (res) {
-
-                console.log("API response:", res);
-
-                $("#AdminDropdown").empty();
-
-                if (res.status === "Y" && res.data && res.data.length > 0) {
-
-                    $("#AdminDropdown")
-                        .append('<option value="">-- Select Service Engineer --</option>')
-                        .prop("disabled", false);
-
-                    $.each(res.data, function (i, admin) {
-                        $("#AdminDropdown").append(
-                            `<option value="${admin.u_RECID}">
-                                ${admin.u_USERNAME}
-                            </option>`
-                        );
-                    });
-
-                } else {
-                    $("#AdminDropdown")
-                        .append('<option value="">No Service Engineer mapped to this product</option>')
-                        .prop("disabled", true);
-                }
-            },
-            error: function () {
-                $("#AdminDropdown")
-                    .empty()
-                    .append('<option value="">Error loading Service Engineer</option>')
-                    .prop("disabled", true);
-            }
-        });
-    }
-
-    // Load admins when page loads
-    loadAdmins();
-
-    // Optional: reload when product changes
-    $("#SelectedProduct").on("change", function () {
-        loadAdmins();
-    });
-
-    // Store selected admin RECID
-    $("#AdminDropdown").on("change", function () {
-        $("#CU_ADMINRECID").val($(this).val());
-    });
-
-});
-    </script>
-
-    @*Logout Pronptbox script*@
     <script>
     document.getElementById("logoutLink").addEventListener("click", function () {
         Swal.fire({
@@ -994,13 +618,16 @@ $(document).ready(function () {
     });
     </script>
 
+
+
+
+
     @*Toastr for created succesfully*@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- jQuery CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
     $(document).ready(function () {
-        $("#createform").submit(function (event) {
+        $("#editform").submit(function (event) {
             event.preventDefault();
 
             var submitBtn = $("#savebutton");
@@ -1012,7 +639,7 @@ $(document).ready(function () {
             $("body").css("pointer-events", "none");
 
             $.ajax({
-                url: '@Url.Action("Create", "AccountantCustomerInvoice")',
+                url: '@Url.Action("SalesheaderEdit", "AccountantCustomerInvoice")',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -1036,27 +663,23 @@ $(document).ready(function () {
                             title: "Success!",
                             text: response.message,
                             icon: "success",
-                            showCancelButton: true,
-                            confirmButtonText: "Continue",
-                            cancelButtonText: "Back to List",
-                            allowOutsideClick: false, // Prevent closing by clicking outside
-                            allowEscapeKey: false, // Prevent closing using Esc key
+                            confirmButtonText: "Ok",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
                             customClass: {
                                 confirmButton: "swal-btn-continue",
-                                cancelButton: "swal-btn-back"
                             },
                             didOpen: () => {
-                                // Allow interaction inside the alert only
                                 $(".swal2-container").css("pointer-events", "auto");
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                location.reload();
+                                window.location.href = '@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})';
                             } else {
-                                window.location.href = '@Url.Action("List", "AccountantCustomerInvoice", new {CU_CTRECID=Session["RECID"],Name=Session["ContractName"],CT_PRECID=Session["CT_PRECID"],CT_CONTRACTAMOUNT=Session["ContractAmount"]})';
+                                 window.location.href = '@Url.Action("SalesheaderCreate", "AccountantCustomerInvoice")';
                             }
                         });
-                    }, 1000); // 1 second delay for "Processing"
+                        }, 1000); // 1 second delay for "Processing"
                     } else {
                         Swal.fire({
                             title: "Message",
@@ -1083,17 +706,32 @@ $(document).ready(function () {
 
         function resetButton() {
             $("#savebutton").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto"); // Re-enable page interaction
+            $("body").css("pointer-events", "auto");
         }
     });
     </script>
+    <script>
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
 
+            // Allow only numbers (0-9)
+            if (charCode < 48 || charCode > 57) {
+                return false;
+            }
+            return true;
+        }
+
+        // Extra safety: prevent paste of non-numeric or more than 10 digits
+        document.getElementById("CU_MOBILENO").addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+    </script>
     @*Based on location Type fill the value in the locationref dropdown*@
     <script>
     $(document).ready(function () {
-        $("#SelectedLocation").change(function () {
-            var locationId = $(this).val();
 
+        // 🔹 Common function to load LocationRef
+        function loadLocationRef(locationId, preselectedId = null) {
             if (locationId) {
                 $.ajax({
                     url: '@Url.Action("LocationRef", "AccountantCustomerInvoice")',
@@ -1101,26 +739,48 @@ $(document).ready(function () {
                     data: { locationid: locationId },
                     success: function (result) {
                         var $dropdown = $("#LocationRefDropdown");
-                        $dropdown.empty(); // clear old options
+                        $dropdown.empty();
 
                         if (result && result.length > 0) {
-                            $dropdown.append($("<option>").val("").text("-- Select Sales Location --"));
+                            $dropdown.append($("<option>").val("").text("-- Select Location Reference --"));
                             $.each(result, function (i, item) {
-                                $dropdown.append($("<option>").val(item.Value).text(item.Text));
+                                var $opt = $("<option>").val(item.Value).text(item.Text);
+                                if (preselectedId && item.Value.toString() === preselectedId.toString()) {
+                                    $opt.prop("selected", true);
+                                }
+                                $dropdown.append($opt);
                             });
                         } else {
-                            $dropdown.append($("<option>").val("").text("No Sales Location Available"));
+                            $dropdown.append($("<option>").val("").text("No Location Reference Available"));
                         }
                     },
                     error: function (xhr, status, error) {
                         alert("Error fetching Location Ref: " + error);
                     }
                 });
+            } else {
+                // Clear if no location selected
+                $("#LocationRefDropdown").empty()
+                    .append($("<option>").val("").text("-- Select Location Reference --"));
             }
+        }
+
+        // 🔹 On change event
+        $("#SelectedLocation").change(function () {
+            var locationId = $(this).val();
+            loadLocationRef(locationId); // call helper
         });
+
+        // 🔹 On load (for edit mode with preselected value)
+        var initialLocationId = $("#SelectedLocation").val();
+        var preselectedRefId = $("#LocationRefDropdown").data("selected"); // Razor sets this
+        if (initialLocationId) {
+            loadLocationRef(initialLocationId, preselectedRefId);
+        }
     });
     </script>
 
 </body>
-
 </html>
+
+

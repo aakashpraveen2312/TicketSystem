@@ -21,7 +21,7 @@ namespace PSS_CMS.Models
         public string P_NAME { get; set; } 
         [DisplayName("Free Calls / Services")]
         public int P_FREECALLS { get; set; } 
-        [DisplayName("Duration (In Months)")]
+        [DisplayName("Warranty Duration (In Months)")]
         public int P_DURATION { get; set; }
         [DisplayName("Sort")]
         public int P_SORTORDER { get; set; }

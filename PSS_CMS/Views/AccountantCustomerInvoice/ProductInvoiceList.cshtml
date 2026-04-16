@@ -1,9 +1,8 @@
-﻿@model IEnumerable<PSS_CMS.Models.Projectmaster>
+﻿@model IEnumerable<PSS_CMS.Models.ProductInvoice>
 @using GridMvc.Html
 @{
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,10 +10,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-
     <link href="~/assets/img/bexlogo_wob.png" rel="icon">
     <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
     <title>BEYONDEXS - SERVICE MANAGEMENT</title>
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
     <link href="~/Content/ClientSide.css" rel="stylesheet" />
     <link href="~/Content/Style1.css" rel="stylesheet" />
     <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
@@ -22,7 +21,7 @@
     <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
     <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
+
     @*Bootstrap Icons and Boxicons and Fontawesome link*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
@@ -30,14 +29,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 
     <script src="~/Scripts/Sidebarscript.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Colors.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <!-- Favicons -->
-    <link href="~/assets/img/PSSlogo.png" rel="icon">
-    <link href="~/assets/img/PSSlogo.png" rel="apple-touch-icon">
+    <style>
+        i.bi.bi-eye.\-.fill {
+            font-size: 17px;
+        }
+    </style>
 </head>
 
 <body>
@@ -78,18 +80,19 @@
                             <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
-                            <i class='bi bi-person-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Sales Invoice Header</span>
-                        </a>
-                    </li>
+
                     @*<li class="nav-link">
-                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                            <a href="@Url.Action("List", "Party")">
+                                <i class='bi bi-person-check' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Party</span>
+                            </a>
+                        </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">
                             <i class='bi bi-person-check' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
                         </a>
-                    </li>*@
+                    </li>
                     <li class="nav-link">
                         <a href="@Url.Action("ContractList", "Contract")">
                             <i class='bi bi-tools' style="font-size:20px"></i>
@@ -122,17 +125,17 @@
                         </a>
                     </li>
                     @*<li class="nav-link">
-            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                <i class='bx bx-credit-card' style="font-size:20px"></i>
-                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-            </a>
-        </li>
-        <li class="nav-link">
-            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                <i class='bx bx-wallet' style="font-size:20px"></i>
-                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-            </a>
-        </li>*@
+                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-wallet' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                            </a>
+                        </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -159,6 +162,7 @@
             </div>
         </div>
     </nav>
+
     <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
@@ -174,168 +178,85 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>SALES INVOICE LIST</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">WARRANTY PRODUCTS</a></li>
+                    <li>PRODUCTS INVOICE LIST</li>
 
                 </ul>
-            </div>
-            <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "AccountantCustomerInvoice", FormMethod.Get, new { id = "searchForm" }))
-                {
-                    <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
-                }
-
-                <!-- Add button with icon -->
-                <a href="@Url.Action("Create", "AccountantCustomerInvoice", new { CU_CTRECID=Session["RECID"],
-							Name=Session["ContractName"],
-							CT_PRECID=Session["CT_PRECID"],
-							CT_CONTRACTAMOUNT=Session["ContractAmount"] })" class=" ms-3" style="margin-left: 30px;">
-                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add User" />
-                </a>
-
-                <a href="@Url.Action("ExcelUserDownload", "AccountantCustomerInvoice")" class="" title="Export as Excel" style="text-decoration:none;">
-                    <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
-                </a>
-
             </div>
 
         </div>
 
         <div class="table mt-3 ms-1 me-5" id="ticketTable1">
-            @if (Model != null)
-            {
-                @Html.Grid(Model).Columns(columns =>
-           {
-               columns.Add(c => c.SerialNumber).Titled("S.No").Css("text-right").SetWidth("20px");
-               columns.Add()
-     .Titled("Customer")
-     .SetWidth("180px")
-     .RenderValueAs(c => $"{c.CU_CODE} - {c.CU_NAME}");
-               columns.Add(c => c.CU_EMAIL).Titled("Email ID").SetWidth("200px");
-               columns.Add(c => c.CU_PRODUCTSERIALNUMBER).Titled("Product Serial Number");
-               columns.Add(c => c.CU_INVOICEAMOUNT)
-        .Titled("Invoice Amount")
-        .Css("text-right")
-       .RenderValueAs(c => String.Format("{0:N0}", c.CU_INVOICEAMOUNT));
-               columns.Add(c => c.CU_INVOICEDATEDATE).Titled("Invoice Date");
-               columns.Add(c => c.CU_WARRANTYUPTODATE).Titled("Warranty Upto");
-               columns.Add(c => c.WARRANTY_STATUS)
-     .Titled("Status")
-     .Encoded(false)
-     .Sanitized(false)
-     .RenderValueAs(item =>
-         "<span class='badge " +
-         (item.WARRANTY_TYPE == "Active"
-             ? "bg-success text-center"
-             : item.WARRANTY_TYPE == "Going to Expire"
-                 ? "bg-warning text-center"
-                 : "bg-danger text-center") +
-         "'>" +
-         item.WARRANTY_STATUS +
-         "</span>"
-     );
+            @Html.Grid(Model).Columns(columns =>
+       {
+           columns.Add(c => c.SerialNumber).Titled("S.No").Css("text-left").SetWidth("20px");
+           columns.Add(c => c.SIH_INVOICENO).Titled("Sales Invoice Number").SetWidth("180px");
+           columns.Add(c => c.SIH_INVOICEDATE)
+.Titled("Sales Invoice Date")
+.RenderValueAs(c =>
+   string.IsNullOrEmpty(c.SIH_INVOICEDATE)
+   ? ""
+   : Convert.ToDateTime(c.SIH_INVOICEDATE).ToString("dd-MM-yyyy")
+)
+.SetWidth("100px");
+           columns.Add(c => c.SIH_INVOICEAMOUNT)
+    .Titled("Sales Invoice Amount")
+    .SetWidth("180px")
+    .Css("text-right")
+   .RenderValueAs(c => String.Format("{0:N2}", c.SIH_INVOICEAMOUNT));
+           columns.Add(c => c.SIP_PRODUCTSERIALNUMBER).Titled("Product Serial No").SetWidth("180px").Css("text-center");
 
-               columns.Add().Titled("Action")
-              .Encoded(false)
-               .Sanitized(false)
-            .RenderValueAs(o =>
-            {
+       }).WithPaging(10).Sortable(false)
 
-                var Editurl = Url.Action("Edit", "AccountantCustomerInvoice", new { Recid = o.CU_RECID, Name = o.CU_NAME }, null);
-                var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
-                var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
+            <footer>
+                <div class="footer">
+                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
-
-                var CustomerNotifyurl = Url.Action("List", "CustomerNotification", new { CustomerRecID = o.CU_RECID, Name = o.CU_NAME,InvoiceNo = o.CU_INVOICENO});
-                var CustomerNotifyIconHtml = "<i class='bi bi-bell bx-sm'></i>";
-                var CustomerNotifylinkHtml = $"<a href='{CustomerNotifyurl}' data-toggle='tooltip' data-placement='top' title='Follow-up'>{CustomerNotifyIconHtml}</a>";
-
-                var Deleteurl = Url.Action("Delete", "AccountantCustomerInvoice", new { Recid = o.CU_RECID }, null);
-                var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
-                var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
-
-                var PDFurl = Url.Action("WarrantyPDF", "AccountantCustomerInvoice", new { CU_RECID = o.CU_RECID }, null);
-                var PDFiconHtml = "<i class='bi bi-file-earmark-pdf-fill text-danger'></i>";
-                var PDFlinkHtml = $"<a href='javascript:void(0);' onclick='DownloadWarrantyPDF({o.CU_RECID})' title='Warranty PDF'>{PDFiconHtml}</a>";
-
-
-
-                var Emailurl = Url.Action("", "", new { Recid = o.CU_RECID, Email = o.CU_EMAIL }, null);
-                var EmailiconHtml = "<i class='bi bi-envelope-check text-primary'></i>";
-                var EmaillinkHtml = $"<a href='javascript:void(0);' onclick='SendWarrantyEmail({o.CU_RECID},\"{o.CU_EMAIL}\")' title='Email'>{EmailiconHtml}</a>";
-
-
-                var InvoicePDFurl = Url.Action("WarrantyPDF", "AccountantCustomerInvoice", new { CU_URECID = o.CU_URECID }, null);
-                var InvoicePDFiconHtml = "<i class='bi bi-file-earmark-pdf-fill text-danger'></i>";
-                var InvoicePDFlinkHtml = $"<a href='javascript:void(0);' onclick='DownloadInvoicePDF({o.CU_URECID})' title='Warranty PDF'>{InvoicePDFiconHtml}</a>";
-
-
-                var extraSpaces2 = "&nbsp;";
-                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}{extraSpaces2}{CustomerNotifylinkHtml}{extraSpaces2}{PDFlinkHtml}{extraSpaces2}{EmaillinkHtml}");
-            });
-
-           }).WithPaging(10).Sortable(false)
-            }
-            else
-            {
-                <div class="alert alert-warning text-center">
-                    <b>No Customers are available</b>
-                </div>}
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
-
-                    <div class="flex-item mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
-                        </div>&nbsp;- Create
-                    </div>
-
-                    <div class="flex-item mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
+                        <div class="flex-item mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
+                            </div>&nbsp;- Create
                         </div>
-                        &nbsp;- Edit
-                    </div>
 
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bx bxs-trash bx-sm red mb-1'> </i>
+                        <div class="flex-item mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
+                            </div>
+                            &nbsp;- Edit
                         </div>
-                        &nbsp;- Delete
-                    </div> 
-                    
-                   
-                    
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-bell bx-sm '> </i>
+
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bxs-trash bx-sm red mb-1'> </i>
+                            </div>
+                            &nbsp;- Delete
                         </div>
-                        &nbsp;- Follow Ups
-                    </div>  <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
+
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-box-seam bx-sm'> </i>
+                            </div>
+                            &nbsp;- View Products
                         </div>
-                        &nbsp;- Warranty PDF
-                    </div>  
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-envelope-check text-primary bx-sm'> </i>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bx-check-circle bx-sm text-success'> </i>
+                            </div>
+                            &nbsp;- Process
                         </div>
-                        &nbsp;- Email (Warranty PDF)
-                    </div>  
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bx-show bx-sm text-success'> </i>
+                            </div>
+                            &nbsp;- View
                         </div>
-                        &nbsp;- Excel Export
                     </div>
                 </div>
-            </div>
-        </footer>
+            </footer>
         </div>
 
 
-      
+
 
     </div>
 
@@ -360,7 +281,62 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmProcess(url) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to process this invoice?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Process it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        }
 
+        function confirmUnlock(url) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to unlock this invoice?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Unlock it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        }
+    </script>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: '@TempData["SuccessMessage"]',
+            confirmButtonColor: '#3085d6'
+        });
+        </script>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '@TempData["ErrorMessage"]',
+            confirmButtonColor: '#d33'
+        });
+        </script>
+    }
     <script src="~/Scripts/Fordelete.js"></script>
     <script>
         function DownloadWarrantyPDF(id) {

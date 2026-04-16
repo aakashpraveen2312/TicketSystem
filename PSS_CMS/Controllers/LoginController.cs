@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
+using System.IO;
 
 namespace PSS_CMS.Controllers
 {
@@ -199,12 +200,33 @@ namespace PSS_CMS.Controllers
                 // client.DefaultRequestHeaders.Add("Authorization", AuthKey);
 
                 var responseTask = client.SendAsync(request).GetAwaiter().GetResult();
+                // Log Status Code
+                WriteLog("Status Code: " + responseTask.StatusCode);
                 if (responseTask.IsSuccessStatusCode)
                 {
                     var responseContent = responseTask.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    // Log Raw Response
+                    WriteLog("Raw Response: " + responseContent);
                     var Response = JsonConvert.DeserializeObject<APIResponseLogin>(responseContent);
+                    // Log Parsed Values
+                    if (Response != null)
+                    {
+                        WriteLog("Parsed Status: " + Response.Status);
+                        WriteLog("API Key: " + Response.APIkey);
+                        WriteLog("Expiry Warning: " + Response.expiryWarning);
 
+                        if (Response.Data != null && Response.Data.Count > 0)
+                        {
+                            var data = Response.Data[0];
+                            WriteLog("User: " + data.U_USERNAME);
+                            WriteLog("Email: " + data.U_EMAILID);
+                            WriteLog("Role: " + data.U_RCODE);
+                        }
+                    }
                     string errormessage = Response.expiryWarning;
+                    string errormessage1 = responseContent;
+
+
                     string Status = Response.Status;
                     Session["MaterialConsumptionFlag"] = Response.MaterialConsumption?.Replace(" ", "").Trim();
 
@@ -291,20 +313,76 @@ namespace PSS_CMS.Controllers
 
                     else
                     {
+                        
                         TempData["ErrorMessage"] = " Invalid User name or Password";
                     }
 
                 }
 
             }
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Exception occurred: {ex.Message}");
+            //    WriteLog("Exception: " + ex.Message);
+            //    WriteLog("StackTrace: " + ex.StackTrace);
+            //    //TempData["ErrorMessage"] = " Invalid User name or Password";
+            //    TempData["ErrorMessage"] = ex.Message;
+            //}
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception occurred: {ex.Message}");
-                TempData["ErrorMessage"] = " Invalid User name or Password";
+                WriteLog("Exception: " + ex.Message);
+
+                Exception inner = ex.InnerException;
+                int level = 1;
+
+                while (inner != null)
+                {
+                    WriteLog($"Inner Exception Level {level}: {inner.Message}");
+                    WriteLog($"StackTrace Level {level}: {inner.StackTrace}");
+
+                    inner = inner.InnerException;
+                    level++;
+                }
+
+                WriteLog("Final StackTrace: " + ex.StackTrace);
+
+                TempData["ErrorMessage"] = ex.Message;
             }
             return View();
 
         }
+
+
+
+
+        public void WriteLog(string message)
+        {
+            try
+            {
+                string logPath = Server.MapPath("~/Logs/API_Log.txt");
+
+                if (!Directory.Exists(Path.GetDirectoryName(logPath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(logPath));
+                }
+
+                using (StreamWriter writer = new StreamWriter(logPath, true))
+                {
+                    writer.WriteLine("--------------------------------------------------");
+                    writer.WriteLine("Date: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                    writer.WriteLine(message);
+                    writer.WriteLine("--------------------------------------------------");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Optional: handle logging failure
+            }
+        }
+
+
+
+
 
 
         public async Task<ActionResult> Info(int? companyid)

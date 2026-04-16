@@ -77,7 +77,7 @@
                columns.Add(c => c.P_CODE).Titled("Code");
                columns.Add(c => c.P_NAME).Titled("Product Name").SetWidth("400px");
                //columns.Add(c => c.P_FREECALLS).Titled("Free Calls").Css("text-right");
-               columns.Add(c => c.P_DURATION).Titled("Duration (In months)").Css("text-right");
+               columns.Add(c => c.P_DURATION).Titled("Warranty Duration (In months)").Css("text-right");
                columns.Add(c => c.P_SORTORDER).Titled("Sort").Css("text-right");
                columns.Add(c => c.P_Comprehensivewarranty)
 .Titled("Comprehensive Warranty")
@@ -101,7 +101,17 @@
 
                 var Deleteurl = Url.Action("Delete", "ProductMaster", new { Recid = o.P_RECID }, null);
                 var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
-                var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
+                //var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
+
+                var DeletelinkHtml = $@"
+<a href='{Deleteurl}' 
+   data-code='{o.P_CODE}' 
+   data-name='{o.P_NAME}'
+   data-toggle='tooltip' 
+   title='Delete' 
+   onclick='return confirmDeletes(this);'>
+   {DeleteiconHtml}
+</a>";
 
                 var Viewurl = Url.Action("View", "ProductMaster", new { Recid = o.P_RECID,prodname=o.P_NAME }, null);
                 var ViewiconHtml = "<i class='bx bx-user bx-sm'></i>";
@@ -215,7 +225,70 @@
         });
     });
     </script>
+    <script>
+        function confirmDeletes(element) {
 
+            var productCode = element.getAttribute('data-code');
+            var productName = element.getAttribute('data-name');
+
+            Swal.fire({
+                title: '<span style="font-size: 20px;">Are you sure?</span>',
+                html: `<div style="font-size:15px;">
+                 <b>Product Code:</b> ${productCode}<br/>
+                 <b>Product Name:</b> ${productName}
+               </div>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#6ED3D0',
+                cancelButtonColor: '#F0A72D',
+                confirmButtonText: '<span style="font-size: 15px;">Confirm</span>',
+                cancelButtonText: '<span style="font-size: 15px;">Cancel</span>',
+                customClass: {
+                    popup: 'my-swal-popup'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    var deleteUrl = element.getAttribute('href');
+
+                    $.ajax({
+                        url: deleteUrl,
+                        type: 'POST',
+                        success: function (response) {
+                            if (response.status === 'success') {
+                                Swal.fire({
+                                    title: '<span style="font-size: 18px;">Deleted</span>',
+                                    html: `<span style="font-size: 15px;">
+                                   ${productName} deleted successfully
+                                   </span>`,
+                                    icon: "success",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.href = response.redirectUrl;
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Something went wrong'
+                            });
+                        }
+                    });
+                }
+            });
+
+            return false;
+        }
+    </script>
     <script src="~/Scripts/Fordelete.js"></script>
 </body>
 </html>

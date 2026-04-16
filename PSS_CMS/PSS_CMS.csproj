@@ -388,6 +388,7 @@
     <Compile Include="Controllers\ManagerSubordinateReportController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="Controllers\PriorityWiseReportController.cs" />
+    <Compile Include="Controllers\SalesInvoiceProductController.cs" />
     <Compile Include="Controllers\ServiceInvoiceController.cs" />
     <Compile Include="Controllers\ServiceMaterialConsumptionController.cs" />
     <Compile Include="Controllers\UserManagerController.cs" />
@@ -451,10 +452,13 @@
     <Compile Include="Models\PaymentUpdate.cs" />
     <Compile Include="Models\PDFDetails.cs" />
     <Compile Include="Models\Prioritywise.cs" />
+    <Compile Include="Models\ProductInvoice.cs" />
     <Compile Include="Models\ProductMaster.cs" />
     <Compile Include="Models\Projectmaster.cs" />
     <Compile Include="Models\Recenttickets.cs" />
     <Compile Include="Models\Reviewtickets.cs" />
+    <Compile Include="Models\Salesheader.cs" />
+    <Compile Include="Models\SalesInvoiceProducts.cs" />
     <Compile Include="Models\ServiceInvoice.cs" />
     <Compile Include="Models\ServiceMaterialConsumption.cs" />
     <Compile Include="Models\Ticket.cs" />
@@ -764,6 +768,19 @@
     <Content Include="Views\Contract\CreateContractProduct.cshtml" />
     <Content Include="Views\Contract\EditContractProduct.cshtml" />
     <Content Include="Views\ServiceInvoice\ViewDetails.cshtml" />
+    <Content Include="Views\AccountantCustomerInvoice\SalesheaderList.cshtml" />
+    <Content Include="Views\AccountantCustomerInvoice\SalesheaderCreate.cshtml" />
+    <Content Include="Views\AccountantCustomerInvoice\SalesheaderEdit.cshtml" />
+    <Content Include="Views\SalesInvoiceProduct\List.cshtml" />
+    <Content Include="Views\SalesInvoiceProduct\Create.cshtml" />
+    <Content Include="Views\SalesInvoiceProduct\Edit.cshtml" />
+    <Content Include="Views\AccountantCustomerInvoice\SalesheaderView.cshtml" />
+    <Content Include="Views\AccountantCustomerInvoice\SalesheaderAdminListView.cshtml" />
+    <Content Include="Views\AccountantCustomerInvoice\SalesheaderAdminView.cshtml" />
+    <Content Include="Views\SalesInvoiceProduct\View.cshtml" />
+    <Content Include="Views\SalesInvoiceProduct\ProductAdminView.cshtml" />
+    <Content Include="Views\SalesInvoiceProduct\ProductDetailView.cshtml" />
+    <Content Include="Views\AccountantCustomerInvoice\ProductInvoiceList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

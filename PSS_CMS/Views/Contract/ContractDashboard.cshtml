@@ -106,12 +106,19 @@
                         </a>
                     </li>
 
-                    @*<li class="nav-link">
-                        <a href="@Url.Action("List", "Party")">
+                    <li class="nav-link">
+                        <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">
                             <i class='bi bi-person-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                            <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
                         </a>
-                    </li>*@ 
+                    </li>
+
+                    @*<li class="nav-link">
+                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
+                        </a>
+                    </li>*@
                     <li class="nav-link">
                         <a href="@Url.Action("ContractList", "Contract")">
                             <i class='bi bi-tools' style="font-size:20px"></i>
@@ -144,17 +151,17 @@
                         </a>
                     </li>
                     @*<li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>*@
+            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+            </a>
+        </li>
+        <li class="nav-link">
+            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                <i class='bx bx-wallet' style="font-size:20px"></i>
+                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+            </a>
+        </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />

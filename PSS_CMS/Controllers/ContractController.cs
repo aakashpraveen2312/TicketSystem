@@ -1134,7 +1134,7 @@ namespace PSS_CMS.Controllers
             }
         }
 
-        public async Task<ActionResult> ViewList(string searchPharse, int? P_RECID, string P_NAME)
+        public async Task<ActionResult> ViewList(string searchPharse, int? P_RECID, string P_NAME, string type)
         {
             Viewlist objexclusion = new Viewlist();
 
@@ -1187,18 +1187,27 @@ namespace PSS_CMS.Controllers
 
                             if (root != null)
                             {
-                                int inclusionCount = root.Inclusions != null ? root.Inclusions.Count : 0;
-                                int exclusionCount = root.Exclusions != null ? root.Exclusions.Count : 0;
-
-                                int max = Math.Max(inclusionCount, exclusionCount);
-
-                                for (int i = 0; i < max; i++)
+                                if (type == "IN") // Only Inclusions
                                 {
-                                    viewlist.Add(new Viewlist
+                                    if (root.Inclusions != null)
                                     {
-                                        IN_DESCRIPTION = i < inclusionCount ? root.Inclusions[i].IN_DESCRIPTION : "",
-                                        EX_DESCRIPTION = i < exclusionCount ? root.Exclusions[i].EX_DESCRIPTION : ""
-                                    });
+                                        viewlist = root.Inclusions.Select((x, index) => new Viewlist
+                                        {
+                                            SerialNumber = index + 1,
+                                            IN_DESCRIPTION = x.IN_DESCRIPTION
+                                        }).ToList();
+                                    }
+                                }
+                                else if (type == "EX") // Only Exclusions
+                                {
+                                    if (root.Exclusions != null)
+                                    {
+                                        viewlist = root.Exclusions.Select((x, index) => new Viewlist
+                                        {
+                                            SerialNumber = index + 1,
+                                            EX_DESCRIPTION = x.EX_DESCRIPTION
+                                        }).ToList();
+                                    }
                                 }
                                 if (viewlist.Count > 0)
                                 {

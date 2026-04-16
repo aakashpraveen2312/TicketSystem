@@ -34,6 +34,7 @@ namespace PSS_CMS.Models
         public decimal CU_INVOICEAMOUNT { get; set; }
         [DisplayName("Invoice Date")]
         public string CU_INVOICEDATE { get; set; }
+        public int CU_WARRANTYMONTHS { get; set; }
 
         public string CU_INVOICEDATEDATE
         {
@@ -130,6 +131,7 @@ namespace PSS_CMS.Models
         [DisplayName("Assigned Admin")]
         public int CU_ADMINRECID { get; set; }
        
+        public string CU_PRODUCTSERIALNUMBER { get; set; }
         public string LT_NAME { get; set; }
         public string SP_NAME { get; set; }
 

@@ -173,7 +173,7 @@
                             </a>
                         </li>
                     }
-                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa"||
+                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa" ||
                         Session["UserRole"].ToString().ToLower() == "manager")
                     {
                         <li class="nav-link report-item">
@@ -199,7 +199,7 @@
                         <li class="nav-link security-item">
                             <a href="@Url.Action("List", "UserGroup")">
                                 <i class='bx bx-user-circle' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">User Category</span>
+                                <span class="text nav-text" style="margin-left:15px">User Accounts</span>
                             </a>
                         </li>
 
@@ -210,7 +210,14 @@
                             </a>
                         </li>
 
-                       
+                        <li class="nav-link security-item">
+                            <a href="@Url.Action("SalesheaderAdminListView", "AccountantCustomerInvoice")">
+                                <i class='bi bi-person-check' style="font-size:24px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
+                            </a>
+                        </li>
+
+
                     }
                     @if ((Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa") && (Session["MaterialConsumptionFlag"] != null && Session["MaterialConsumptionFlag"].ToString().ToLower() == "y"))
                     {

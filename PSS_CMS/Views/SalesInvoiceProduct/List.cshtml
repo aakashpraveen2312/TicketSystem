@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PSS_CMS.Models.Projectmaster>
+﻿@model IEnumerable<PSS_CMS.Models.SalesInvoiceProducts>
 @using GridMvc.Html
 @{
     Layout = null;
@@ -79,17 +79,17 @@
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
-                            <i class='bi bi-person-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Sales Invoice Header</span>
-                        </a>
-                    </li>
-                    @*<li class="nav-link">
-                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                        <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">
                             <i class='bi bi-person-check' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
                         </a>
-                    </li>*@
+                    </li>
+                    @*<li class="nav-link">
+                            <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                                <i class='bi bi-person-check' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
+                            </a>
+                        </li>*@
                     <li class="nav-link">
                         <a href="@Url.Action("ContractList", "Contract")">
                             <i class='bi bi-tools' style="font-size:20px"></i>
@@ -122,17 +122,17 @@
                         </a>
                     </li>
                     @*<li class="nav-link">
-            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                <i class='bx bx-credit-card' style="font-size:20px"></i>
-                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-            </a>
-        </li>
-        <li class="nav-link">
-            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                <i class='bx bx-wallet' style="font-size:20px"></i>
-                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-            </a>
-        </li>*@
+                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-wallet' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                            </a>
+                        </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -174,27 +174,28 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>SALES INVOICE LIST</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">SALES INVOICE</a></li>
+                    <li>SALES PRODUCT LIST</li>
 
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "AccountantCustomerInvoice", FormMethod.Get, new { id = "searchForm" }))
+                @using (Html.BeginForm("List", "SalesInvoiceProduct", FormMethod.Get, new { id = "searchForm" }))
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
 
                 <!-- Add button with icon -->
-                <a href="@Url.Action("Create", "AccountantCustomerInvoice", new { CU_CTRECID=Session["RECID"],
-							Name=Session["ContractName"],
-							CT_PRECID=Session["CT_PRECID"],
-							CT_CONTRACTAMOUNT=Session["ContractAmount"] })" class=" ms-3" style="margin-left: 30px;">
-                    <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add User" />
-                </a>
-
-                <a href="@Url.Action("ExcelUserDownload", "AccountantCustomerInvoice")" class="" title="Export as Excel" style="text-decoration:none;">
-                    <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
-                </a>
+                @if (ViewBag.InvoiceStatus.ToString() == "U")
+                {
+                    <a href="@Url.Action("Create", "SalesInvoiceProduct", new {
+							SIP_PRECID=Session["SIP_PRECID"] })" class=" ms-3" style="margin-left: 30px;">
+                        <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add Product" />
+                    </a>
+                }
+                @*<a href="@Url.Action("ExcelUserDownload", "AccountantCustomerInvoice")" class="" title="Export as Excel" style="text-decoration:none;">
+                        <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
+                    </a>*@
 
             </div>
 
@@ -205,19 +206,17 @@
             {
                 @Html.Grid(Model).Columns(columns =>
            {
-               columns.Add(c => c.SerialNumber).Titled("S.No").Css("text-right").SetWidth("20px");
-               columns.Add()
-     .Titled("Customer")
-     .SetWidth("180px")
-     .RenderValueAs(c => $"{c.CU_CODE} - {c.CU_NAME}");
-               columns.Add(c => c.CU_EMAIL).Titled("Email ID").SetWidth("200px");
-               columns.Add(c => c.CU_PRODUCTSERIALNUMBER).Titled("Product Serial Number");
-               columns.Add(c => c.CU_INVOICEAMOUNT)
-        .Titled("Invoice Amount")
-        .Css("text-right")
-       .RenderValueAs(c => String.Format("{0:N0}", c.CU_INVOICEAMOUNT));
-               columns.Add(c => c.CU_INVOICEDATEDATE).Titled("Invoice Date");
-               columns.Add(c => c.CU_WARRANTYUPTODATE).Titled("Warranty Upto");
+               columns.Add(c => c.SerialNumber).Titled("S.No").Css("text-center").SetWidth("20px");
+               columns.Add(c => c.ProductName).Titled("Product Name");
+               columns.Add(c => c.SIP_PRODUCTSERIALNUMBER).Titled("Product Serial Number");
+               columns.Add(c => c.SIP_WARRANTYUPTO)
+    .Titled("Warranty Upto")
+    .RenderValueAs(c =>
+        string.IsNullOrEmpty(c.SIP_WARRANTYUPTO)
+        ? ""
+        : Convert.ToDateTime(c.SIP_WARRANTYUPTO).ToString("dd-MM-yyyy")
+    );
+               //columns.Add(c => c.SIP_WARRANTYFREECALLS).Titled("Warranty Free Calls");
                columns.Add(c => c.WARRANTY_STATUS)
      .Titled("Status")
      .Encoded(false)
@@ -240,37 +239,26 @@
             .RenderValueAs(o =>
             {
 
-                var Editurl = Url.Action("Edit", "AccountantCustomerInvoice", new { Recid = o.CU_RECID, Name = o.CU_NAME }, null);
+                var status = ViewBag.InvoiceStatus?.ToString();
+                var isProcessed = status == "P";
+
+                var Editurl = Url.Action("Edit", "SalesInvoiceProduct", new { Recid = o.SIP_RECID }, null);
                 var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
+                var Viewurl = Url.Action("View", "SalesInvoiceProduct", new { Recid = o.SIP_RECID }, null);
+                var ViewiconHtml = "<i class='bx bx-show bx-sm text-success'></i>";
+                var ViewlinkHtml = $"<a href='{Viewurl}' title='View'>{ViewiconHtml}</a>";
 
-                var CustomerNotifyurl = Url.Action("List", "CustomerNotification", new { CustomerRecID = o.CU_RECID, Name = o.CU_NAME,InvoiceNo = o.CU_INVOICENO});
-                var CustomerNotifyIconHtml = "<i class='bi bi-bell bx-sm'></i>";
-                var CustomerNotifylinkHtml = $"<a href='{CustomerNotifyurl}' data-toggle='tooltip' data-placement='top' title='Follow-up'>{CustomerNotifyIconHtml}</a>";
-
-                var Deleteurl = Url.Action("Delete", "AccountantCustomerInvoice", new { Recid = o.CU_RECID }, null);
+                var Deleteurl = Url.Action("Delete", "SalesInvoiceProduct", new { Recid = o.SIP_RECID }, null);
                 var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
                 var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
-                var PDFurl = Url.Action("WarrantyPDF", "AccountantCustomerInvoice", new { CU_RECID = o.CU_RECID }, null);
-                var PDFiconHtml = "<i class='bi bi-file-earmark-pdf-fill text-danger'></i>";
-                var PDFlinkHtml = $"<a href='javascript:void(0);' onclick='DownloadWarrantyPDF({o.CU_RECID})' title='Warranty PDF'>{PDFiconHtml}</a>";
-
-
-
-                var Emailurl = Url.Action("", "", new { Recid = o.CU_RECID, Email = o.CU_EMAIL }, null);
-                var EmailiconHtml = "<i class='bi bi-envelope-check text-primary'></i>";
-                var EmaillinkHtml = $"<a href='javascript:void(0);' onclick='SendWarrantyEmail({o.CU_RECID},\"{o.CU_EMAIL}\")' title='Email'>{EmailiconHtml}</a>";
-
-
-                var InvoicePDFurl = Url.Action("WarrantyPDF", "AccountantCustomerInvoice", new { CU_URECID = o.CU_URECID }, null);
-                var InvoicePDFiconHtml = "<i class='bi bi-file-earmark-pdf-fill text-danger'></i>";
-                var InvoicePDFlinkHtml = $"<a href='javascript:void(0);' onclick='DownloadInvoicePDF({o.CU_URECID})' title='Warranty PDF'>{InvoicePDFiconHtml}</a>";
-
-
                 var extraSpaces2 = "&nbsp;";
-                return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}{extraSpaces2}{CustomerNotifylinkHtml}{extraSpaces2}{PDFlinkHtml}{extraSpaces2}{EmaillinkHtml}");
+                var ActionIcons = isProcessed
+          ? $"{ViewlinkHtml}"  // Only view if processed
+          : $"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}"; // Edit + Delete if not processed
+                return MvcHtmlString.Create($"{ActionIcons}");
             });
 
            }).WithPaging(10).Sortable(false)
@@ -280,62 +268,68 @@
                 <div class="alert alert-warning text-center">
                     <b>No Customers are available</b>
                 </div>}
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+            <footer>
+                <div class="footer">
+                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
-                    <div class="flex-item mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
-                        </div>&nbsp;- Create
-                    </div>
+                        <div class="flex-item mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
+                            </div>&nbsp;- Create
+                        </div>
 
-                    <div class="flex-item mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
+                        <div class="flex-item mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
+                            </div>
+                            &nbsp;- Edit
                         </div>
-                        &nbsp;- Edit
-                    </div>
 
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bx bxs-trash bx-sm red mb-1'> </i>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bxs-trash bx-sm red mb-1'> </i>
+                            </div>
+                            &nbsp;- Delete
                         </div>
-                        &nbsp;- Delete
-                    </div> 
-                    
-                   
-                    
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-bell bx-sm '> </i>
+
+
+
+                        @*<div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-bell bx-sm '> </i>
+                            </div>
+                            &nbsp;- Follow Ups
+                        </div>  <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
+                            </div>
+                            &nbsp;- Warranty PDF
                         </div>
-                        &nbsp;- Follow Ups
-                    </div>  <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-envelope-check text-primary bx-sm'> </i>
+                            </div>
+                            &nbsp;- Email (Warranty PDF)
                         </div>
-                        &nbsp;- Warranty PDF
-                    </div>  
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-envelope-check text-primary bx-sm'> </i>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
+                            </div>
+                            &nbsp;- Excel Export
+                        </div>*@
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bx-show bx-sm text-success'> </i>
+                            </div>
+                            &nbsp;- View
                         </div>
-                        &nbsp;- Email (Warranty PDF)
-                    </div>  
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
-                        </div>
-                        &nbsp;- Excel Export
                     </div>
                 </div>
-            </div>
-        </footer>
+            </footer>
         </div>
 
 
-      
+
 
     </div>
 

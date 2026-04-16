@@ -83,11 +83,17 @@
                     </li>
 
                     @*<li class="nav-link">
-                        <a href="@Url.Action("List", "Party")">
+            <a href="@Url.Action("List", "Party")">
+                <i class='bi bi-person-check' style="font-size:20px"></i>
+                <span class="text nav-text" style="margin-left:15px">Party</span>
+            </a>
+        </li>*@
+                    <li class="nav-link">
+                        <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">
                             <i class='bi bi-person-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Party</span>
+                            <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
                         </a>
-                    </li>*@
+                    </li>
                     <li class="nav-link">
                         <a href="@Url.Action("ContractList", "Contract")">
                             <i class='bi bi-tools' style="font-size:20px"></i>
@@ -120,17 +126,17 @@
                         </a>
                     </li>
                     @*<li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>*@
+            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+            </a>
+        </li>
+        <li class="nav-link">
+            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                <i class='bx bx-wallet' style="font-size:20px"></i>
+                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+            </a>
+        </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -197,7 +203,7 @@
                columns.Add(c => c.P_CODE).Titled("Code");
                columns.Add(c => c.P_NAME).Titled("Product Names").SetWidth("400px");
                //columns.Add(c => c.P_FREECALLS).Titled("Free Calls").Css("text-right");
-               columns.Add(c => c.P_DURATION).Titled("Duration (In months)").Css("text-right");
+               columns.Add(c => c.P_DURATION).Titled("Warranty Duration (In months)").Css("text-right");
                columns.Add(c => c.P_SORTORDER).Titled("Sort").Css("text-right");
                columns.Add(c => c.P_Comprehensivewarranty)
 .Titled("Comprehensive Warranty")
@@ -219,14 +225,22 @@
                 var ViewiconHtml = "<i class='bi bi-eye'></i>";
                 var ViewlinkHtml = $"<a href='{Viewurl}' data-toggle='tooltip' data-placement='top' title='View'>{ViewiconHtml}</a>";
 
+                var Inclusionurl = Url.Action("ViewList", "Contract", new { P_RECID = o.P_RECID, P_NAME = o.P_NAME, type = "IN" }, null);
+                var InclusioniconHtml = "<i class='bi bi-plus-circle'></i>";
+                var InclusionlinkHtml = $"<a href='{Inclusionurl}' data-toggle='tooltip' data-placement='top' title='Inclusion'>{InclusioniconHtml}</a>";
 
-                var Contracturl = Url.Action("List", "AccountantCustomerInvoice", new { P_RECID = o.P_RECID, P_NAME = o.P_NAME , P_DURATION = o.P_DURATION}, null);
+                var Exclusionurl = Url.Action("ViewList", "Contract", new { P_RECID = o.P_RECID, P_NAME = o.P_NAME, type = "EX" }, null); 
+                var ExclusioniconHtml = "<i class='bi bi-dash-circle'></i>";
+                var ExclusionlinkHtml = $"<a href='{Exclusionurl}' data-toggle='tooltip' data-placement='top' title='Exclusion'>{ExclusioniconHtml}</a>";
+
+
+                var Contracturl = Url.Action("ProductInvoiceList", "AccountantCustomerInvoice", new { productid = o.P_RECID}, null);
                 var ContracticonHtml = "<i class='bx  bx-list-ul'></i>";
                 var ContractlinkHtml = $"<a href='{Contracturl}' data-toggle='tooltip' data-placement='top' title='Sales'>{ContracticonHtml}</a>";
 
 
-                var extraSpaces2 = "&nbsp;&nbsp;&nbsp;";
-                return MvcHtmlString.Create($"{ViewlinkHtml}{extraSpaces2}{ContractlinkHtml}");
+                var extraSpaces2 = "&nbsp;&nbsp;";
+                return MvcHtmlString.Create($"{InclusionlinkHtml}{extraSpaces2}{ExclusionlinkHtml}{extraSpaces2}{ContractlinkHtml}");
             });
 
            }).WithPaging(10).Sortable(false) }
@@ -262,16 +276,29 @@
                         &nbsp;- Delete
                     </div>
 
-                    <div class="flex-item  mt-1">
+                    @*<div class="flex-item  mt-1">
                         <div class="d-flex justify-content-center footerb">
                             <i class='bi bi-eye'></i>
                         </div>
                         &nbsp;- View
-                    </div> <div class="flex-item  mt-1">
+                    </div>*@
+                    <div class="flex-item  mt-1">
                         <div class="d-flex justify-content-center footerb">
                             <i class='bx  bx-list-ul'></i>
                         </div>
-                        &nbsp;- Sales
+                        &nbsp;- Sales of Invoices
+                    </div>
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-plus-circle'></i>
+                        </div>
+                        &nbsp;- Inclusion
+                    </div>
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-dash-circle'></i>
+                        </div>
+                        &nbsp;- Exclusion
                     </div>
 
                 </div>

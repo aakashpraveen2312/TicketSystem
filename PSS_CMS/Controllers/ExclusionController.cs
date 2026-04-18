@@ -68,7 +68,7 @@ namespace PSS_CMS.Controllers
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var rootObjects = JsonConvert.DeserializeObject<ExclusionRootObjects>(jsonString);
-                            Exclusionlist = rootObjects.Data;
+                            Exclusionlist = rootObjects.Data ?? new List<Exclusion>();
 
                             if (Exclusionlist.Count > 0)
                             {

@@ -1241,7 +1241,7 @@ namespace PSS_CMS.Controllers
             return View(productList);
         }
 
-        public async Task<ActionResult> ViewInvoicePdf(int invoiceRecid)
+        public async Task<ActionResult> ViewInvoicePdf(int invoiceRecid, bool isAnnexure = false)
         {
             string Weburl = ConfigurationManager.AppSettings["PROCESSINVOICEPDF"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -1262,7 +1262,8 @@ namespace PSS_CMS.Controllers
                         var requestData = new
                         {
                             CompanyRecID = Convert.ToInt32(Session["CompanyID"]),
-                            InvoiceRecid = invoiceRecid
+                            InvoiceRecid = invoiceRecid,
+                            IsAnnexure = isAnnexure
                         };
 
                         var json = JsonConvert.SerializeObject(requestData);

@@ -69,7 +69,7 @@ namespace PSS_CMS.Controllers
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var rootObjects = JsonConvert.DeserializeObject<InclusionRootObjects>(jsonString);
-                            Inclusionlist = rootObjects.Data;
+                            Inclusionlist = rootObjects.Data ?? new List<Inclusion>();
 
                             if (Inclusionlist.Count > 0)
                             {

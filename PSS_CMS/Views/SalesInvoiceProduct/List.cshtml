@@ -174,7 +174,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">SALES INVOICE</a></li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">SALES INVOICE ENTRY</a></li>
                     <li>SALES PRODUCT LIST</li>
 
                 </ul>
@@ -186,7 +186,7 @@
                 }
 
                 <!-- Add button with icon -->
-                @if (ViewBag.InvoiceStatus.ToString() == "U")
+                @if (ViewBag.InvoiceStatus.ToString() != "P")
                 {
                     <a href="@Url.Action("Create", "SalesInvoiceProduct", new {
 							SIP_PRECID=Session["SIP_PRECID"] })" class=" ms-3" style="margin-left: 30px;">

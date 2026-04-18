@@ -25,7 +25,7 @@ namespace PSS_CMS.Controllers
             {
                 Session["status"] = status;
             }
-            ViewBag.InvoiceStatus = Session["status"];
+            ViewBag.InvoiceStatus = status ?? "";
 
             int SerialNo = objexclusion.SerialNumber;
 

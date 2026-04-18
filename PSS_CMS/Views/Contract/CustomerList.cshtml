@@ -213,7 +213,7 @@
 .RenderValueAs(o =>
 {
     var isChecked = o.P_Comprehensivewarranty ? "checked='checked'" : "";
-    return new HtmlString($"<input type='checkbox' {isChecked} />");
+    return new HtmlString($"<input type='checkbox' {isChecked} disabled='disabled' />");
 });
                columns.Add().Titled("Action").SetWidth("100px")
               .Encoded(false)
@@ -229,7 +229,7 @@
                 var InclusioniconHtml = "<i class='bi bi-plus-circle'></i>";
                 var InclusionlinkHtml = $"<a href='{Inclusionurl}' data-toggle='tooltip' data-placement='top' title='Inclusion'>{InclusioniconHtml}</a>";
 
-                var Exclusionurl = Url.Action("ViewList", "Contract", new { P_RECID = o.P_RECID, P_NAME = o.P_NAME, type = "EX" }, null); 
+                var Exclusionurl = Url.Action("ViewList", "Contract", new { P_RECID = o.P_RECID, P_NAME = o.P_NAME, type = "EX" }, null);
                 var ExclusioniconHtml = "<i class='bi bi-dash-circle'></i>";
                 var ExclusionlinkHtml = $"<a href='{Exclusionurl}' data-toggle='tooltip' data-placement='top' title='Exclusion'>{ExclusioniconHtml}</a>";
 

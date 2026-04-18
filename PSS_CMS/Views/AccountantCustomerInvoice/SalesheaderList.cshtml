@@ -180,7 +180,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>SALES INVOICE LIST</li>
+                    <li>SALES INVOICE ENTRY LIST</li>
 
                 </ul>
             </div>
@@ -259,7 +259,8 @@
 
                 var Printurl = Url.Action("ViewInvoicePdf", "AccountantCustomerInvoice", new { invoiceRecid = o.SIH_RECID }, null);
                 var PrinticonHtml = "<i class='bx bx-printer bx-sm text-primary'></i>";
-                var PrintlinkHtml = $"<a href='{Printurl}' title='Print'>{PrinticonHtml}</a>";
+                var PrintlinkHtml = $"<a href='javascript:void(0);' onclick='openPrintPopup({o.SIH_RECID})' title='Print'>{PrinticonHtml}</a>";
+
 
                 var Deleteurl = Url.Action("SalesheaderDelete", "AccountantCustomerInvoice", new { Recid = o.SIH_RECID }, null);
                 var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
@@ -309,28 +310,28 @@
 
 
                         @*<div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i class='bi bi-bell bx-sm '> </i>
-                            </div>
-                            &nbsp;- Follow Ups
-                        </div>  <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
-                            </div>
-                            &nbsp;- Warranty PDF
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-bell bx-sm '> </i>
                         </div>
-                        <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i class='bi bi-envelope-check text-primary bx-sm'> </i>
-                            </div>
-                            &nbsp;- Email (Warranty PDF)
+                        &nbsp;- Follow Ups
+                    </div>  <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
                         </div>
-                        <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
-                            </div>
-                            &nbsp;- Excel Export
-                        </div>*@
+                        &nbsp;- Warranty PDF
+                    </div>
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-envelope-check text-primary bx-sm'> </i>
+                        </div>
+                        &nbsp;- Email (Warranty PDF)
+                    </div>
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
+                        </div>
+                        &nbsp;- Excel Export
+                    </div>*@
                         <div class="flex-item  mt-1">
                             <div class="d-flex justify-content-center footerb">
                                 <i class='bi bi-box-seam bx-sm'> </i>
@@ -409,6 +410,41 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = url;
+                }
+            });
+        }
+    </script>
+    <script>
+        var selectedRecid = 0;
+
+        function openPrintPopup(recid) {
+            selectedRecid = recid;
+
+            Swal.fire({
+                title: 'Print Invoice',
+                html: `
+        <div style="font-size:16px">
+            <label style="cursor:pointer">
+                <input type="checkbox" id="swalAnnexure" style="margin-right:8px"/>
+                Include Warranty Annexure
+            </label>
+        </div>
+        `,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Print',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#3085d6'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    // ✅ GET VALUE HERE
+                    var isAnnexure = document.getElementById('swalAnnexure').checked;
+
+                    var url = '/AccountantCustomerInvoice/ViewInvoicePdf?invoiceRecid='
+                        + selectedRecid + '&isAnnexure=' + isAnnexure;
+
+                    window.location.href = url; // ✅ same page
                 }
             });
         }

@@ -190,9 +190,18 @@
                         @Html.DropDownListFor(model => model.SelectedTicketType, Model.TicketCombo.TicketTypes, "Select Ticket Type", new { @class = "form-select", required = "required", tabindex = "6" })
 
                     </div>
-                    <div class="col-md-6 col-sm-12 tictypeticketres" style=" display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;">
+                    <div class="col-md-6 col-sm-12 tictypeticketres"
+                         style="display: flex; flex-direction: column; justify-content: flex-end; flex-wrap: wrap;align-content: flex-end;"
+                         id="freeCallsContainer">
+
                         @Html.LabelFor(model => model.CU_WARRANTYFREECALLS, "Free Services", new { @class = "pb-2" })
-                        @Html.TextBoxFor(model => model.CU_WARRANTYFREECALLS, new { @class = "form-control text-right", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
+                        @Html.TextBoxFor(model => model.CU_WARRANTYFREECALLS, new
+                        {
+                            @class = "form-control text-right",
+                            id = "warrantyfreecalls",
+                            @readonly = "readonly",
+                            tabindex = "7"
+                        })
                     </div>
                 </div>
 
@@ -660,6 +669,13 @@
 
                 $('#termsLabel')
                     .toggleClass('label-gray', disableCheckbox);
+
+                // Show/Hide Free Calls
+                if (isContractUser) {
+                    $('#freeCallsContainer').show();
+                } else {
+                    $('#freeCallsContainer').hide();
+                }
             });
 
 

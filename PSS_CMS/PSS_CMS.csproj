@@ -376,6 +376,7 @@
     <Compile Include="Controllers\ContractExpiryReportController.cs" />
     <Compile Include="Controllers\ContractInclusionController.cs" />
     <Compile Include="Controllers\ContractInvoiceController.cs" />
+    <Compile Include="Controllers\ContractProductController.cs" />
     <Compile Include="Controllers\CustomerNotificationController.cs" />
     <Compile Include="Controllers\ExclusionController.cs" />
     <Compile Include="Controllers\FollowUpReportController.cs" />
@@ -422,6 +423,7 @@
     <Compile Include="Models\ContractExclusion.cs" />
     <Compile Include="Models\ContractInclusion.cs" />
     <Compile Include="Models\ContractInvoice.cs" />
+    <Compile Include="Models\ContractServiceProduct.cs" />
     <Compile Include="Models\Customernotification.cs" />
     <Compile Include="Models\DashBoardList.cs" />
     <Compile Include="Models\CompanyInfo.cs" />
@@ -781,6 +783,9 @@
     <Content Include="Views\SalesInvoiceProduct\ProductAdminView.cshtml" />
     <Content Include="Views\SalesInvoiceProduct\ProductDetailView.cshtml" />
     <Content Include="Views\AccountantCustomerInvoice\ProductInvoiceList.cshtml" />
+    <Content Include="Views\ContractProduct\Create.cshtml" />
+    <Content Include="Views\ContractProduct\List.cshtml" />
+    <Content Include="Views\ContractProduct\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -17,7 +17,7 @@ namespace PSS_CMS.Controllers
     public class ContractInclusionController : Controller
     {
         // GET: ContractInclusion
-        public async Task<ActionResult> List(int? CP_PRECID, string CT_CONTRACTREFERENCENUMBER, string searchPharse)
+        public async Task<ActionResult> List(int? CP_PRECID, string CSP_PRODUCTNAME, string searchPharse)
         {
 
             ContractInclusion objinclusion = new ContractInclusion();
@@ -30,9 +30,9 @@ namespace PSS_CMS.Controllers
             }
 
 
-            if (CT_CONTRACTREFERENCENUMBER != null)
+            if (CSP_PRODUCTNAME != null)
             {
-                Session["CT_CONTRACTREFERENCENUMBER"] = CT_CONTRACTREFERENCENUMBER;
+                Session["CSP_PRODUCTNAME"] = CSP_PRODUCTNAME;
             }
             if (CP_PRECID != null && CP_PRECID != 0)
             {

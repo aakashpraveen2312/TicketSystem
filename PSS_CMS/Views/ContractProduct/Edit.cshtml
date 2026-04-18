@@ -1,8 +1,8 @@
-﻿@model PSS_CMS.Models.ContractInclusion
+﻿@model PSS_CMS.Models.ContractServiceProduct
+@using GridMvc.Html
 @{
     Layout = null;
 }
-@using GridMvc.Html
 <!DOCTYPE html>
 <html>
 <head>
@@ -43,49 +43,6 @@
         select.form-select {
             font-size: 15px;
         }
-
-        .tabs {
-            width: 100%;
-            max-width: 1200px;
-            margin: 20px;
-            margin-bottom: 40px;
-        }
-
-        .tab-buttons {
-            display: flex;
-            border-bottom: 2px solid #ccc;
-        }
-
-            .tab-buttons button {
-                flex: 1;
-                padding: 12px;
-                background-color: #eee;
-                border: none;
-                cursor: pointer;
-                transition: background 0.3s ease;
-                font-weight: bold;
-            }
-
-                .tab-buttons button:hover {
-                    background-color: #ddd;
-                }
-
-                .tab-buttons button.active {
-                    background-color: #004e92;
-                    color: white;
-                }
-
-        .tab-content {
-            display: none;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-top: none;
-            background-color: white;
-        }
-
-            .tab-content.active {
-                display: block;
-            }
     </style>
 </head>
 
@@ -224,60 +181,80 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    @*<li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">SERVICE CONTRACTS</a></li>
+        <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractProductList", "Contract")">CONTRACT PRODUCT(@Session["ProductName"].ToString().ToUpper())</a></li>*@
                     <li>PARTY</li>
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">@Session["CT_CUSTOMERNAME"].ToString().ToUpper()</a></li>
 
                     <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractProductList", "Contract")">CONTRACT(@Session["CP_CODE"].ToString().ToUpper())</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ContractProduct")">@Session["CSP_PRODUCTNAME"].ToString().ToUpper()</a></li>
+                    <li>PRODUCTS</li>
                     <li>EDIT</li>
                 </ul>
             </div>
         </div>
-        @using (Html.BeginForm("Edit", "ContractInclusion", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
+
+
+        @using (Html.BeginForm("Edit", "ContractProduct", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
         {
-            <div class="create ms-4 me-2 mt-3">
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CIN_DESCRIPTION, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CIN_DESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
+    <div class="create ms-4 me-2 mt-3">
 
 
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CIN_SORTORDER, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CIN_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CSP_PRODUCTNAME, "Product Name", new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CSP_PRODUCTNAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off",@readonly="readonly" } })
 
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CIN_InclusionDisable, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.CheckBoxFor(model => model.CIN_InclusionDisable, new { @class = "form-check-input" })
-                    </div>
-                </div>
+            </div>
+            @Html.HiddenFor(model => model.CSP_PRECID, new { id = "CSP_PRECID" })
+        </div>
 
 
-                <div class="row ">
-                    <div class="col-lg-2">
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CSP_ADMINNAME, "Service Engineer", new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CSP_ADMINNAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
 
-                    </div>
-                    <div class="col-lg-3 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ContractInclusion")'" />
-                    </div>
-                </div>
-            </div>}
+            </div>
+            @Html.HiddenFor(model => model.CSP_ARECID, new { id = "CSP_ARECID" })
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CSP_PRODUCTUNIQUENUMBER, "Product Serial Number", new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CSP_PRODUCTUNIQUENUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+
+            </div>
+        </div>
+
+
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.CSP_FREESERVICE,"Free Services", new { @class = "labels" })
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                @Html.EditorFor(model => model.CSP_FREESERVICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+
+            </div>
+        </div>
+        <div class="row" style="margin-bottom:50px;">
+            <div class="col-lg-2">
+
+            </div>
+            <div class="col-lg-3 d-flex justify-content-end">
+                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ContractProduct")'" />
+            </div>
+        </div>
+
+
+    </div>
+        }
 
         <footer>
             <div class="footer">
@@ -360,7 +337,7 @@
             $("body").css("pointer-events", "none");
 
             $.ajax({
-                url: '@Url.Action("Edit", "ContractInclusion")',
+                url: '@Url.Action("Edit", "ContractProduct")',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -378,7 +355,6 @@
                                 Swal.showLoading(); // show spinner
                             }
                         });
-
                         // ⏳ After small delay, show success popup
                         setTimeout(function () {
                         Swal.fire({
@@ -396,9 +372,9 @@
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = '@Url.Action("List", "ContractInclusion")';
+                                window.location.href = '@Url.Action("List", "ContractProduct")';
                             } else {
-                                 window.location.href = '@Url.Action("Create", "ContractInclusion")';
+                                 window.location.href = '@Url.Action("List", "ContractProduct")';
                             }
                         });
                         }, 1000); // 1 second delay for "Processing"
@@ -432,6 +408,12 @@
         }
     });
     </script>
+
+
+ 
+
+
+
 
 
 </body>

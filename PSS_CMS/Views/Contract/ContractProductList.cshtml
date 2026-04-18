@@ -77,6 +77,13 @@
                         </a>
                     </li>
 
+                    <li class="nav-link">
+                        <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">
+                            <i class='bi bi-person-check' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
+                        </a>
+                    </li>
+
                     @*<li class="nav-link">
                         <a href="@Url.Action("List", "Party")">
                             <i class='bi bi-person-check' style="font-size:20px"></i>
@@ -115,17 +122,17 @@
                         </a>
                     </li>
                     @*<li class="nav-link">
-                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                                <i class='bx bx-credit-card' style="font-size:20px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                            </a>
-                        </li>
-                        <li class="nav-link">
-                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                                <i class='bx bx-wallet' style="font-size:20px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                            </a>
-                        </li>*@
+                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                            <i class='bx bx-credit-card' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                            <i class='bx bx-wallet' style="font-size:20px"></i>
+                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                        </a>
+                    </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -167,9 +174,10 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">SERVICE CONTRACTS</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractProductList", "Contract")">CONTRACT PRODUCT LIST</a></li>
-
+                    @*<li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">SERVICE CONTRACTS</a></li>*@
+                    <li>PARTY</li>
+                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">@Session["CT_CUSTOMERNAME"].ToString().ToUpper()</a></li>
+                    <li>CONTRACTS</li>
                 </ul>
             </div>
             <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
@@ -196,18 +204,21 @@
 
                columns.Add(c => c.CP_CODE).Titled("Code");
 
-               //columns.Add(c => c.CP_CONTRACTREF).Titled("Contract Ref");
-               columns.Add(c => c.CP_PRODUCTNAME).Titled("Product Name");
+
+               //columns.Add(c => c.CP_PRODUCTNAME).Titled("Product Name");
                columns.Add(c => c.FORMATTEDCPFROMDATE).Titled("From Date");
                columns.Add(c => c.FORMATTEDCPTODATE).Titled("To Date");
-
+               //columns.Add(c => c.CP_CONTRACTREF).Titled("Contract Ref");
+               //columns.Add(c => c.CP_CONTRACTAPPROVEDBY).Titled("Contract approved by");
+               columns.Add(c => c.CP_CONTRACTCREATEDBY).Titled("Contract created by");
+               columns.Add(c => c.FORMATTEDCONTRACTAPPROVEDDATE).Titled("Contract approved date");
 
 
                columns.Add(c => c.CP_CONTRACTAMOUNT).Titled("Contract Amount").Css("text-right");
-               columns.Add(c => c.CP_TOTALAMOUNT).Titled("Invoice Amount").Css("text-right");
+               //columns.Add(c => c.CP_TOTALAMOUNT).Titled("Invoice Amount").Css("text-right");
                //columns.Add(c => c.CP_PAIDAMOUNT).Titled("Paid Amount").Css("text-right");
                //columns.Add(c => c.CP_BALANACEAMOUNT).Titled("Balance Amount").Css("text-right");
-               columns.Add(c => c.CP_FREECALLS).Titled("Free Calls").Css("text-right");
+               //columns.Add(c => c.CP_FREECALLS).Titled("Free Calls").Css("text-right");
 
 
                columns.Add(c => c.CP_SORT).Titled("Sort").SetWidth("80px").Css("text-right");
@@ -239,9 +250,13 @@
                    var ExclusionlinkHtml = $"<a href='{Exclusionurl}' data-toggle='tooltip' data-placement='top' title='Exclusion'>{ExclusioniconHtml}</a>";
 
 
+                   var Productsurl = Url.Action("List", "ContractProduct", new { ContractRecid = o.CP_RECID, CP_CODE = o.CP_CODE }, null);
+                   var ProductsiconHtml = "<i class='bi bi-bag-check'></i>";
+                   var ProductslinkHtml = $"<a href='{Productsurl}' data-toggle='tooltip' data-placement='top' title='Products'>{ProductsiconHtml}</a>";
+
 
                    var extraSpaces = "&nbsp;&nbsp;";
-                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{InclusionlinkHtml}{extraSpaces}{ExclusionlinkHtml}");
+                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ProductslinkHtml}");
                });
 
            }).WithPaging(10).Sortable(true)
@@ -276,6 +291,11 @@
                             <i class='bx bxs-trash bx-sm red'> </i>
                         </div>
                         &nbsp;- Delete
+                    </div>  <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-bag-check'> </i>
+                        </div>
+                        &nbsp;- Products
                     </div>
 
 

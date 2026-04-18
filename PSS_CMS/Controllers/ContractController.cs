@@ -1619,13 +1619,18 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
-        public async Task<ActionResult> ContractProductList(string searchPharse,int ? CT_RECID,string ProductName,int? CT_URECID,string CT_EXISTINGUSER)
+        public async Task<ActionResult> ContractProductList(string searchPharse,int ? CT_RECID,string ProductName,int? CT_URECID,string CT_EXISTINGUSER,string CT_CUSTOMERNAME)
         {
-            if (CT_RECID != null)
+            if (CT_CUSTOMERNAME != null)
+            {
+              
+                Session["CT_CUSTOMERNAME"] = CT_CUSTOMERNAME;
+            }  if (CT_RECID != null)
             {
               
                 Session["CT_RECID"] = CT_RECID;
-            }if (CT_EXISTINGUSER != null)
+            }
+            if (CT_EXISTINGUSER != null)
             {
               
                 Session["CT_EXISTINGUSER"] = CT_EXISTINGUSER;
@@ -1772,15 +1777,15 @@ namespace PSS_CMS.Controllers
             ""cP_CODE"": ""{""}"",           
             ""cP_CTURECID"": ""{Session["CT_URECID"]}"",           
             ""CP_USERTYPE"": ""{Session["CT_EXISTINGUSER"]}"",           
-            ""cP_PRECID"": ""{contract.SelectedProduct}"",           
+            ""cP_PRECID"": ""{0}"",           
             ""cP_CTRECID"": ""{Session["CT_RECID"]}"",                  
-            ""cP_PRODUCTNAME"": ""{productName}"",                   
-            ""cP_ADMINRECID"": ""{contract.CU_ADMINRECID}"",           
+            ""cP_PRODUCTNAME"": ""{""}"",                   
+            ""cP_ADMINRECID"": ""{0}"",           
             ""cP_CONTRACTREF"": ""{contract.CT_CONTRACTREFERENCENUMBER}"",                             
             ""cP_FROMDATE"": ""{contract.CT_FROMDATE}"",                    
             ""cP_TODATE"": ""{contract.CT_TODATE}"",                    
-            ""cP_FREECALLS"": ""{contract.CT_FREECALLS}"",                    
-            ""cP_CONTRACTAMOUNT"": ""{ contract.CT_CONTRACTAMOUNT}"",                                       
+            ""cP_FREECALLS"": ""{0}"",                    
+            ""cP_CONTRACTAMOUNT"": ""{contract.CT_CONTRACTAMOUNT}"",                                       
             ""cP_CONTRACTCREATEDBY"": ""{ contract.CT_CONTRACTCREATEDBY}"",                    
             ""cP_CONTRACTAPPROVEDBY"": ""{ contract.CT_CONTRACTAPPROVEDBY}"",                    
             ""cP_CONTRACTAPPROVEDDATE"": ""{ contract.CT_CONTRACTAPPROVEDDATE}"",                                    
@@ -1857,12 +1862,12 @@ namespace PSS_CMS.Controllers
 
             Session["CP_USERTYPE"] = CP_USERTYPE;
             Session["CP_CTURECID"] = CP_CTURECID;
-            Session["CT_CPRECID"] = CT_CPRECID;
+            //Session["CT_CPRECID"] = CT_CPRECID;
             Session["CP_RECID"] = CP_RECID;
-            Session["ProductName"] = ProductName;
-            Session["CP_PAIDAMOUNT"] = CP_PAIDAMOUNT;
-            Session["CP_TOTALAMOUNT"] = CP_TOTALAMOUNT;
-            Session["CP_BALANACEAMOUNT"] = CP_BALANACEAMOUNT;
+            //Session["ProductName"] = ProductName;
+            //Session["CP_PAIDAMOUNT"] = CP_PAIDAMOUNT;
+            //Session["CP_TOTALAMOUNT"] = CP_TOTALAMOUNT;
+            //Session["CP_BALANACEAMOUNT"] = CP_BALANACEAMOUNT;
             string WEBURLGETBYID = ConfigurationManager.AppSettings["CONTRACTPRODUCTGETBYID"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
@@ -1906,9 +1911,9 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
             }
-            int productid = contract.CP_PRECID;
-            await LoadProductCombo(contract.CP_PRECID);
-            await ComboCustomerSelection();
+            //int productid = contract.CP_PRECID;
+            //await LoadProductCombo(contract.CP_PRECID);
+            //await ComboCustomerSelection();
             return View(contract);
         }
         [HttpPost]
@@ -1936,14 +1941,14 @@ namespace PSS_CMS.Controllers
             ""cP_USERTYPE"": ""{ Session["CP_USERTYPE"]}"",           
             ""cP_CTURECID"": ""{Session["CP_CTURECID"]}"",           
             ""cP_CODE"": ""{contract.CP_CODE}"",           
-            ""cP_PRECID"": ""{contract.CP_PRECID}"",           
-            ""cP_PRODUCTNAME"": ""{contract.CP_PRODUCTNAME}"",           
-            ""cP_CTRECID"": ""{Session["CT_CPRECID"]}"",                  
-            ""cP_ADMINRECID"": ""{contract.CP_ADMINRECID}"",           
+            ""cP_PRECID"": ""{0}"",           
+            ""cP_PRODUCTNAME"": ""{""}"",           
+            ""cP_CTRECID"": ""{ Session["CT_RECID"]}"",                  
+            ""cP_ADMINRECID"": ""{0}"",           
             ""cP_CONTRACTREF"": ""{contract.CP_CONTRACTREF}"",                             
             ""cP_FROMDATE"": ""{contract.CP_FROMDATE}"",                    
             ""cP_TODATE"": ""{contract.CP_TODATE}"",                    
-            ""cP_FREECALLS"": ""{contract.CP_FREECALLS}"",                    
+            ""cP_FREECALLS"": ""{0}"",                    
             ""cP_CONTRACTAMOUNT"": ""{contract.CP_CONTRACTAMOUNT}"",                                       
             ""cP_CONTRACTCREATEDBY"": ""{ contract.CP_CONTRACTCREATEDBY}"",                    
             ""cP_CONTRACTAPPROVEDBY"": ""{ contract.CP_CONTRACTAPPROVEDBY}"",                    
@@ -1951,9 +1956,9 @@ namespace PSS_CMS.Controllers
             ""cP_SORT"": ""{(contract.CP_SORT)}"",          
             ""cP_DISABLE"": ""{(contract.CPDISABLE ? "Y" : "N")}"",        
             ""cP_CRECID"": ""{Session["CompanyID"]}"",
-""cP_PAIDAMOUNT"": ""{Session["CP_PAIDAMOUNT"]}"",
- ""cP_BALANACEAMOUNT"": ""{Session["CP_BALANACEAMOUNT"]}"",           
-            ""cP_TOTALAMOUNT"": ""{Session["CP_TOTALAMOUNT"]}""       
+ ""cP_BALANACEAMOUNT"": ""{"0.00"}"",           
+            ""cP_TOTALAMOUNT"": ""{"0.00"}"",           
+            ""cP_PAIDAMOUNT"": ""{"0.00"}""        
         }}";
 
                 // Create the HTTP request

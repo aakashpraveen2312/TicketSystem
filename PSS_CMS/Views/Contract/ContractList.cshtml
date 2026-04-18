@@ -174,7 +174,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-9">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>SERVICE CONTRACTS</li>
+                    <li>PARTY</li>
                     <li>LIST</li>
                 </ul>
             </div>
@@ -205,7 +205,7 @@
                columns.Add(c => c.CT_CUSTOMERNAME).Titled("Customer Name");
                columns.Add(c => c.CT_EMAIL).Titled("Email");
                columns.Add(c => c.CT_MOBILE).Titled("Mobile");
-               columns.Add(c => c.TotalProductAmount).Titled("Contract Amount").Css("text-right");
+               //columns.Add(c => c.TotalProductAmount).Titled("Contract Amount").Css("text-right");
 
                //columns.Add(c => c.FromDate).Titled("From Date");
                //columns.Add(c => c.ToDate).Titled("To Date");
@@ -218,17 +218,17 @@
                .RenderValueAs(o =>
                {
                    var Editurl = Url.Action("EditContract", "Contract", new { CT_RECID = o.CT_RECID, CT_CONTRACTREFERENCENUMBER = o.CT_CUSTOMERNAME });
-                   var ServiceProductsurl = Url.Action("ContractProductList", "Contract", new { CT_RECID = o.CT_RECID, CT_PRECID = o.CT_PRECID, ProductName = o.ProductName, CT_URECID = o.CT_URECID, CT_EXISTINGUSER = o.CT_EXISTINGUSER });
+                   var ServiceProductsurl = Url.Action("ContractProductList", "Contract", new { CT_CUSTOMERNAME=o.CT_CUSTOMERNAME, CT_RECID = o.CT_RECID, CT_PRECID = o.CT_PRECID, ProductName = o.ProductName, CT_URECID = o.CT_URECID, CT_EXISTINGUSER = o.CT_EXISTINGUSER });
                    var Deleteurl = Url.Action("DeleteContract", "Contract", new { id = o.CT_RECID });
 
 
                    var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
-                   var ServiceProductsiconHtml = "<i class='bx bx-cart-alt bx-sm'></i> ";
+                   var ServiceProductsiconHtml = "<i class='bi bi-card-text'></i> ";
                    var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
 
 
                    var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
-                   var ServiceProductslinkHtml = $"<a href='{ServiceProductsurl}' data-toggle='tooltip' data-placement='top' title='Services'>{ServiceProductsiconHtml}</a>";
+                   var ServiceProductslinkHtml = $"<a href='{ServiceProductsurl}' data-toggle='tooltip' data-placement='top' title='Contracts'>{ServiceProductsiconHtml}</a>";
                    var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
 
@@ -246,7 +246,7 @@
                    var downloadpdflinkHtml = $"<a href='javascript:void(0);' onclick=\"downloadPdfAjax('{downloadpdfUrl}')\" data-toggle='tooltip' title='Download PDF'>{downloadpdfIconHtml}</a>";
 
                    var extraSpaces = "&nbsp;&nbsp;";
-                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ServiceProductslinkHtml}{extraSpaces}{downloadpdflinkHtml}");
+                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ServiceProductslinkHtml}");
                });
 
            }).WithPaging(10).Sortable(true)
@@ -281,6 +281,12 @@
                             <i class='bx bxs-trash bx-sm red'> </i>
                         </div>
                         &nbsp;- Delete
+                    </div>  
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-card-text'> </i>
+                        </div>
+                        &nbsp;- Contract
                     </div>
 
 

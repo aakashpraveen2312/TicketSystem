@@ -3,6 +3,7 @@ using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -58,6 +59,7 @@ namespace PSS_CMS.Controllers
                     CSP_ARECID = contractserviceproduct.CSP_ARECID ?? 0,
                     CSP_ADMINNAME = "admin",
                     CSP_FREESERVICE = contractserviceproduct.CSP_FREESERVICE,
+                    CSP_PRODUCTAMOUNT = contractserviceproduct.CSP_PRODUCTAMOUNT,
                     CSP_PAIDAMOUNT = 0.00,
                     CSP_INVOICEAMOUNT = 0.00,
                     CSP_CRECID = Session["CompanyID"],
@@ -520,6 +522,7 @@ namespace PSS_CMS.Controllers
             ""csP_RECID"": ""{Session["CSP_RECID"]}"",           
             ""csP_PRECID"": ""{ Session["CSP_PRECID"]}"",           
             ""csP_PRODUCTNAME"": ""{contractServiceProduct.CSP_PRODUCTNAME}"",           
+            ""csP_PRODUCTAMOUNT"": ""{contractServiceProduct.CSP_PRODUCTAMOUNT}"",           
             ""csP_ARECID"": ""{Session["CSP_ARECID"]}"",           
             ""csP_ADMINNAME"": ""{contractServiceProduct.CSP_ADMINNAME}"",           
             ""csP_FREESERVICE"": ""{contractServiceProduct.CSP_FREESERVICE}"",           
@@ -580,6 +583,57 @@ namespace PSS_CMS.Controllers
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
 
+        }
+
+
+
+
+        public async Task<ActionResult> ContractPDF(int? CP_CTURECID, int? CP_CRECID)
+        {
+            var Weburl = ConfigurationManager.AppSettings["ContractPDF"];
+
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+
+
+            string url = $"{Weburl}?cmprecid={CP_CRECID}&userid={CP_CTURECID}";
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = await client.GetAsync(url);
+                    if (!response.IsSuccessStatusCode)
+                        return Content("Error fetching data: " + response.ReasonPhrase);
+
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var rootObjects = JsonConvert.DeserializeObject<Prioritywisepdfobjects>(jsonString);
+
+                    if (rootObjects == null || rootObjects.Status != "Y")
+                        return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
+
+
+                    // The API already returns a PDF URL
+                    string pdfUrl = rootObjects.fileUrl;
+                    var fileBytes = await client.GetByteArrayAsync(pdfUrl);
+                    var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
+
+                    // Download
+                    return File(fileBytes, "application/pdf", fileName);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception occurred: " + ex.Message);
+            }
         }
 
     }

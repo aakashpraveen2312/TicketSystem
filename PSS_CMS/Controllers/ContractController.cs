@@ -1785,7 +1785,7 @@ namespace PSS_CMS.Controllers
             ""cP_FROMDATE"": ""{contract.CT_FROMDATE}"",                    
             ""cP_TODATE"": ""{contract.CT_TODATE}"",                    
             ""cP_FREECALLS"": ""{0}"",                    
-            ""cP_CONTRACTAMOUNT"": ""{contract.CT_CONTRACTAMOUNT}"",                                       
+            ""cP_CONTRACTAMOUNT"": ""{"0.00"}"",                                       
             ""cP_CONTRACTCREATEDBY"": ""{ contract.CT_CONTRACTCREATEDBY}"",                    
             ""cP_CONTRACTAPPROVEDBY"": ""{ contract.CT_CONTRACTAPPROVEDBY}"",                    
             ""cP_CONTRACTAPPROVEDDATE"": ""{ contract.CT_CONTRACTAPPROVEDDATE}"",                                    
@@ -2087,15 +2087,15 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> ContractInvoice(int? CT_URECID,int? CT_CRECID)
+        public async Task<ActionResult> ContractInvoice(int? CP_CTURECID, int? CP_CRECID)
         {
-            var Weburl = ConfigurationManager.AppSettings["CONTRACTINVOICEPDF"];
+            var Weburl = ConfigurationManager.AppSettings["ContractPDF"];
 
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
 
-            string url = $"{Weburl}?cmprecid={CT_CRECID}&userid={CT_URECID}";
+            string url = $"{Weburl}?cmprecid={CP_CRECID}&userid={CP_CTURECID}";
 
             try
             {

@@ -85,11 +85,11 @@
                     </li>
 
                     @*<li class="nav-link">
-                        <a href="@Url.Action("List", "Party")">
-                            <i class='bi bi-person-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Party</span>
-                        </a>
-                    </li>*@
+                            <a href="@Url.Action("List", "Party")">
+                                <i class='bi bi-person-check' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Party</span>
+                            </a>
+                        </li>*@
                     <li class="nav-link">
                         <a href="@Url.Action("ContractList", "Contract")">
                             <i class='bi bi-tools' style="font-size:20px"></i>
@@ -122,17 +122,17 @@
                         </a>
                     </li>
                     @*<li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>*@
+                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-wallet' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                            </a>
+                        </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -214,7 +214,10 @@
                columns.Add(c => c.FORMATTEDCONTRACTAPPROVEDDATE).Titled("Contract approved date");
 
 
-               columns.Add(c => c.CP_CONTRACTAMOUNT).Titled("Contract Amount").Css("text-right");
+               columns.Add(c => c.CP_CONTRACTAMOUNT)
+        .Titled("Contract Amount")
+        .Format("{0:N2}")
+        .Css("text-right");
                //columns.Add(c => c.CP_TOTALAMOUNT).Titled("Invoice Amount").Css("text-right");
                //columns.Add(c => c.CP_PAIDAMOUNT).Titled("Paid Amount").Css("text-right");
                //columns.Add(c => c.CP_BALANACEAMOUNT).Titled("Balance Amount").Css("text-right");
@@ -228,8 +231,8 @@
                .Sanitized(false)
                .RenderValueAs(o =>
                {
-                   var Editurl = Url.Action("EditContractProduct", "Contract", new { CP_RECID = o.CP_RECID, ProductName = o.CP_PRODUCTNAME,CT_CPRECID=o.CP_CTRECID, CP_CTURECID=o.CP_CTURECID, CP_USERTYPE=o.CP_USERTYPE,CP_PAIDAMOUNT=o.CP_PAIDAMOUNT, CP_TOTALAMOUNT=o.CP_TOTALAMOUNT, CP_BALANACEAMOUNT=o.CP_BALANACEAMOUNT });
-                   var Deleteurl = Url.Action("DeleteContractProduct", "Contract", new { CP_RECID = o.CP_RECID , CP_PRECID = o.CP_PRECID, CP_CTURECID = o.CP_CTURECID, CP_ADMINRECID=o.CP_ADMINRECID });
+                   var Editurl = Url.Action("EditContractProduct", "Contract", new { CP_RECID = o.CP_RECID, ProductName = o.CP_PRODUCTNAME, CT_CPRECID = o.CP_CTRECID, CP_CTURECID = o.CP_CTURECID, CP_USERTYPE = o.CP_USERTYPE, CP_PAIDAMOUNT = o.CP_PAIDAMOUNT, CP_TOTALAMOUNT = o.CP_TOTALAMOUNT, CP_BALANACEAMOUNT = o.CP_BALANACEAMOUNT });
+                   var Deleteurl = Url.Action("DeleteContractProduct", "Contract", new { CP_RECID = o.CP_RECID, CP_PRECID = o.CP_PRECID, CP_CTURECID = o.CP_CTURECID, CP_ADMINRECID = o.CP_ADMINRECID });
 
 
                    var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
@@ -255,8 +258,14 @@
                    var ProductslinkHtml = $"<a href='{Productsurl}' data-toggle='tooltip' data-placement='top' title='Products'>{ProductsiconHtml}</a>";
 
 
+
+                   var downloadpdfUrl = Url.Action("ContractInvoice", "Contract", new { CP_CTURECID = o.CP_CTURECID, CP_CRECID = o.CP_CRECID });
+                   var downloadpdfIconHtml = "<i class='bi bi-file-earmark-pdf fs-4 text-danger'></i>";
+                   var downloadpdflinkHtml = $"<a href='javascript:void(0);' onclick=\"downloadPdfAjax('{downloadpdfUrl}')\" data-toggle='tooltip' title='Download PDF'>{downloadpdfIconHtml}</a>";
+
+
                    var extraSpaces = "&nbsp;&nbsp;";
-                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ProductslinkHtml}");
+                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ProductslinkHtml}{extraSpaces}{downloadpdflinkHtml}");
                });
 
            }).WithPaging(10).Sortable(true)
@@ -324,11 +333,59 @@
     <script src="~/Scripts/Logoutjs.js"></script>
 
 
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="~/Scripts/Fordelete.js"></script>
+    <script>
+        function downloadPdfAjax(url) {
+            // Show a SweetAlert2 loading popup
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Your PDF is being prepared.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
+            $.ajax({
+                url: url,
+                type: 'POST',
+                xhrFields: {
+                    responseType: 'blob' // important for PDF
+                },
+                success: function (data, status, xhr) {
+                    // Close the loading popup
+                    Swal.close();
+
+                    var blob = new Blob([data], { type: 'application/pdf' });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+
+                    // Optional: get filename from response header
+                    var disposition = xhr.getResponseHeader('Content-Disposition');
+                    var fileName = "Invoice.pdf";
+                    if (disposition && disposition.indexOf('filename=') !== -1) {
+                        fileName = disposition.split('filename=')[1].replace(/"/g, '');
+                    }
+
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                error: function () {
+                    // Close the loading popup and show error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Failed to download PDF.'
+                    });
+                }
+            });
+        }
+    </script>
 </body>
 </html>
 

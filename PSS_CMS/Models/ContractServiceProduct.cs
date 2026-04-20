@@ -32,6 +32,8 @@ namespace PSS_CMS.Models
 
         [DisplayName("Invoice Amount")]
         public decimal? CSP_INVOICEAMOUNT { get; set; }
+        [DisplayName("Product Amount")]
+        public decimal? CSP_PRODUCTAMOUNT { get; set; }
 
         [DisplayName("Paid Amount")]
         public decimal? CSP_PAIDAMOUNT { get; set; }

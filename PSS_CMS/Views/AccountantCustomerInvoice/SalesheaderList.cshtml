@@ -199,8 +199,8 @@
                 </a>
 
                 @*<a href="@Url.Action("ExcelUserDownload", "AccountantCustomerInvoice")" class="" title="Export as Excel" style="text-decoration:none;">
-                    <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
-                </a>*@
+                        <img src="~/assets/img/Excel image.png" alt="Add" width="30" height="30" />
+                    </a>*@
 
             </div>
 
@@ -222,7 +222,7 @@
    )
    .SetWidth("80px");
                columns.Add(c => c.SIH_INVOICEAMOUNT)
-        .Titled("Invoice Amount")
+        .Titled("Invoice Net Amount")
         .SetWidth("180px")
         .Css("text-right")
        .RenderValueAs(c => String.Format("{0:N2}", c.SIH_INVOICEAMOUNT));
@@ -252,7 +252,7 @@
                 var ProcesslinkHtml = $"<a href='javascript:void(0);' onclick='confirmProcess(\"{Processurl}\")' title='Process'>{ProcessiconHtml}</a>";
                 var UnlocklinkHtml = $"<a href='javascript:void(0);' onclick='confirmUnlock(\"{Unlockurl}\")' title='Unlock'>{UnlockiconHtml}</a>";
                 var ProductNotifyurl = Url.Action("List", "SalesInvoiceProduct",
-                    new { SalesinvoiceRecID = o.SIH_RECID, customerid = o.SIH_CURECID, status = o.SIH_STATUS });
+                    new { SalesinvoiceRecID = o.SIH_RECID, customerid = o.SIH_CURECID, status = o.SIH_STATUS ,invoicedate = o.SIH_INVOICEDATE});
 
                 var ProductNotifyIconHtml = "<i class='bi bi-box-seam bx-sm'></i>";
                 var ProductNotifylinkHtml = $"<a href='{ProductNotifyurl}' title='View Products'>{ProductNotifyIconHtml}</a>";
@@ -307,37 +307,6 @@
                             &nbsp;- Delete
                         </div>
 
-
-
-                        @*<div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-bell bx-sm '> </i>
-                        </div>
-                        &nbsp;- Follow Ups
-                    </div>  <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
-                        </div>
-                        &nbsp;- Warranty PDF
-                    </div>
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-envelope-check text-primary bx-sm'> </i>
-                        </div>
-                        &nbsp;- Email (Warranty PDF)
-                    </div>
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
-                        </div>
-                        &nbsp;- Excel Export
-                    </div>*@
-                        <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i class='bi bi-box-seam bx-sm'> </i>
-                            </div>
-                            &nbsp;- View Products
-                        </div>
                         <div class="flex-item  mt-1">
                             <div class="d-flex justify-content-center footerb">
                                 <i class='bx bx-check-circle bx-sm text-success'> </i>
@@ -349,6 +318,18 @@
                                 <i class='bx bx-show bx-sm text-success'> </i>
                             </div>
                             &nbsp;- View
+                        </div>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bx-printer bx-sm text-primary'> </i>
+                            </div>
+                            &nbsp;- Print
+                        </div>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-box-seam bx-sm'> </i>
+                            </div>
+                            &nbsp;- View Products
                         </div>
                     </div>
                 </div>
@@ -423,13 +404,13 @@
             Swal.fire({
                 title: 'Print Invoice',
                 html: `
-        <div style="font-size:16px">
-            <label style="cursor:pointer">
-                <input type="checkbox" id="swalAnnexure" style="margin-right:8px"/>
-                Include Warranty Annexure
-            </label>
-        </div>
-        `,
+            <div style="font-size:16px">
+                <label style="cursor:pointer">
+                    <input type="checkbox" id="swalAnnexure" style="margin-right:8px"/>
+                    Include Warranty Annexure
+                </label>
+            </div>
+            `,
                 icon: 'info',
                 showCancelButton: true,
                 confirmButtonText: 'Print',

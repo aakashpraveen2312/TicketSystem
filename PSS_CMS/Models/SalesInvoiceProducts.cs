@@ -26,6 +26,8 @@ namespace PSS_CMS.Models
         public string SIP_PRODUCTSERIALNUMBER { get; set; }
         [DisplayName("Sort")]
         public int SIP_SORTORDER { get; set; }
+        [DisplayName("Price(Inclusion of GST)")]
+        public decimal SIP_PRODUCTAMOUNT { get; set; }
 
         [DisplayName("Disable")]
         public bool IsDisabled

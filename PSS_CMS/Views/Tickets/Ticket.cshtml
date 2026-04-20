@@ -638,15 +638,15 @@ function loadMaterials(selectedRecId) {
             let latestWarrantyDate = null;
 
             // 🚫 Free calls exhausted → block immediately
-            if (warrantyFreeCalls === 0) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Free Calls Exhausted',
-                    text: 'You have already used all free service calls. Please contact the help desk to renew your plan.'
-                });
-                return;
-            }
+            //if (warrantyFreeCalls === 0) {
+            //    e.preventDefault();
+            //    Swal.fire({
+            //        icon: 'warning',
+            //        title: 'Free Calls Exhausted',
+            //        text: 'You have already used all free service calls. Please contact the help desk to renew your plan.'
+            //    });
+            //    return;
+            //}
 
             if (warrantyDateStr) {
                 const parts = warrantyDateStr.split('-');

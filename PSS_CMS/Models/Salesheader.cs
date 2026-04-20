@@ -19,7 +19,7 @@ namespace PSS_CMS.Models
         public string SIH_CODE { get; set; }
         [DisplayName("Invoice Number")]
         public string SIH_INVOICENO { get; set; }
-        [DisplayName("Invoice Amount")]
+        [DisplayName("Invoice Net Amount")]
         public decimal SIH_INVOICEAMOUNT { get; set; }
         [DisplayName("Invoice Date")]
         public string SIH_INVOICEDATE { get; set; }

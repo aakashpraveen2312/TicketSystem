@@ -17,7 +17,7 @@ namespace PSS_CMS.Controllers
     public class SalesInvoiceProductController : Controller
     {
         // GET: SalesInvoiceProduct
-        public async Task<ActionResult> List(int? SalesinvoiceRecID, int? customerid, string status)
+        public async Task<ActionResult> List(int? SalesinvoiceRecID, int? customerid, string status, string invoicedate)
         {
             SalesInvoiceProducts objexclusion = new SalesInvoiceProducts();
 
@@ -25,7 +25,12 @@ namespace PSS_CMS.Controllers
             {
                 Session["status"] = status;
             }
+            if (invoicedate != null)
+            {
+                Session["invoicedate"] = invoicedate;
+            }
             ViewBag.InvoiceStatus = status ?? "";
+            ViewBag.invoicedate = invoicedate ?? "";
 
             int SerialNo = objexclusion.SerialNumber;
 
@@ -223,7 +228,7 @@ namespace PSS_CMS.Controllers
         }
         public async Task<ActionResult> Create()
         {
-
+            ViewBag.invoicedate = Session["invoicedate"] ?? "";
             SalesInvoiceProducts model = new SalesInvoiceProducts();
             await ComboProductSelection();
             return View(model);
@@ -409,6 +414,7 @@ namespace PSS_CMS.Controllers
             ""sIP_WARRANTYUPTO"": ""{model.SIP_WARRANTYUPTO}"",           
             ""sIP_WARRANTYFREECALLS"": ""{model.SIP_WARRANTYFREECALLS}"",           
             ""sIP_SORTORDER"": ""{model.SIP_SORTORDER}"",           
+            ""sIP_PRODUCTAMOUNT"": ""{model.SIP_PRODUCTAMOUNT}"",           
             ""sIP_SIHRECID"": ""{Session["SalesinvoiceRecID"]}"",           
             ""sIP_DISABLE"": ""N"",           
             ""sIP_CRECID"": ""{Session["CompanyID"]}""         
@@ -647,6 +653,7 @@ namespace PSS_CMS.Controllers
         ""siP_WARRANTYUPTO"": ""{model.SIP_WARRANTYUPTO}"",
         ""siP_WARRANTYFREECALLS"": ""{model.SIP_WARRANTYFREECALLS}"",
         ""siP_SORTORDER"": ""{model.SIP_SORTORDER}"",
+        ""siP_PRODUCTAMOUNT"": ""{model.SIP_PRODUCTAMOUNT}"",
         ""siP_ADMINRECID"": ""{model.SIP_ADMINRECID}""    
     }}";
 

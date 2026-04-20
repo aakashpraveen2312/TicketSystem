@@ -277,7 +277,7 @@
                             @Html.LabelFor(model => model.SIH_INVOICEAMOUNT, new { @class = "labels" })
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.EditorFor(model => model.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+                            @Html.EditorFor(model => model.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })
                         </div>
                     </div>
                     <div class="row mb-3">

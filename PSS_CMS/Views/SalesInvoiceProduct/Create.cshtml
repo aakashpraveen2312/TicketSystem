@@ -355,7 +355,7 @@
                                             }
 
                                             <option value="@item.Value"
-                                                   data-duration="@duration.ToString()"
+                                                    data-duration="@duration.ToString()"
                                                     @(item.Selected ? "selected" : "")>
                                                 @item.Text
                                             </option>
@@ -426,6 +426,15 @@
 
                             </div>
                         </div>*@
+                    <div class="row mb-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            @Html.LabelFor(model => model.SIP_PRODUCTAMOUNT, new { @class = "labels" })
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            @Html.EditorFor(model => model.SIP_PRODUCTAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", placeholder = "0" } })
+
+                        </div>
+                    </div>
 
                     <div class="row mb-3">
                         <div class="col-lg-2 col-md-2 col-sm-12">
@@ -662,7 +671,7 @@
                 }
 
                 renderPagination();
-            }          
+            }
 
             function renderPagination() {
 
@@ -708,6 +717,9 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    var invoiceDateFromServer = '@ViewBag.invoicedate';
+    </script>
 
     <script>
 $(document).ready(function () {
@@ -784,7 +796,13 @@ $(document).ready(function () {
             return;
         }
 
-        var today = new Date();
+        var today;
+         var invoiceDateFromServer = '@ViewBag.invoicedate';
+        if (invoiceDateFromServer && invoiceDateFromServer !== "") {
+            today = new Date(invoiceDateFromServer);
+        } else {
+            today = new Date();
+        }
 
         today.setMonth(today.getMonth() + duration);
 

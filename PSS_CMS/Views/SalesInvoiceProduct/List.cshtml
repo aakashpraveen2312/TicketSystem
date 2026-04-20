@@ -216,22 +216,29 @@
         ? ""
         : Convert.ToDateTime(c.SIP_WARRANTYUPTO).ToString("dd-MM-yyyy")
     );
-               //columns.Add(c => c.SIP_WARRANTYFREECALLS).Titled("Warranty Free Calls");
+               columns.Add(c => c.SIP_PRODUCTAMOUNT)
+   .Titled("Price(Inclusion of GST)")
+   .Css("text-right")
+   .RenderValueAs(c =>
+       c.SIP_PRODUCTAMOUNT == null
+       ? "0.00"
+       : Convert.ToDecimal(c.SIP_PRODUCTAMOUNT).ToString("N2")
+   );
                columns.Add(c => c.WARRANTY_STATUS)
-     .Titled("Status")
-     .Encoded(false)
-     .Sanitized(false)
-     .RenderValueAs(item =>
-         "<span class='badge " +
-         (item.WARRANTY_TYPE == "Active"
-             ? "bg-success text-center"
-             : item.WARRANTY_TYPE == "Going to Expire"
-                 ? "bg-warning text-center"
-                 : "bg-danger text-center") +
-         "'>" +
-         item.WARRANTY_STATUS +
-         "</span>"
-     );
+      .Titled("Status")
+      .Encoded(false)
+      .Sanitized(false)
+      .RenderValueAs(item =>
+          "<span class='badge " +
+          (item.WARRANTY_TYPE == "Active"
+              ? "bg-success text-center"
+              : item.WARRANTY_TYPE == "Going to Expire"
+                  ? "bg-warning text-center"
+                  : "bg-danger text-center") +
+          "'>" +
+          item.WARRANTY_STATUS +
+          "</span>"
+      );
 
                columns.Add().Titled("Action")
               .Encoded(false)
@@ -265,9 +272,9 @@
             }
             else
             {
-                <div class="alert alert-warning text-center">
-                    <b>No Customers are available</b>
-                </div>}
+            <div class="alert alert-warning text-center">
+                <b>No Customers are available</b>
+            </div>}
             <footer>
                 <div class="footer">
                     <div class="flex-container" style="padding-top:5px;padding-left:5px">
@@ -295,28 +302,28 @@
 
 
                         @*<div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i class='bi bi-bell bx-sm '> </i>
-                            </div>
-                            &nbsp;- Follow Ups
-                        </div>  <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
-                            </div>
-                            &nbsp;- Warranty PDF
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-bell bx-sm '> </i>
                         </div>
-                        <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i class='bi bi-envelope-check text-primary bx-sm'> </i>
-                            </div>
-                            &nbsp;- Email (Warranty PDF)
+                        &nbsp;- Follow Ups
+                    </div>  <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
                         </div>
-                        <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
-                            </div>
-                            &nbsp;- Excel Export
-                        </div>*@
+                        &nbsp;- Warranty PDF
+                    </div>
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <i class='bi bi-envelope-check text-primary bx-sm'> </i>
+                        </div>
+                        &nbsp;- Email (Warranty PDF)
+                    </div>
+                    <div class="flex-item  mt-1">
+                        <div class="d-flex justify-content-center footerb">
+                            <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
+                        </div>
+                        &nbsp;- Excel Export
+                    </div>*@
                         <div class="flex-item  mt-1">
                             <div class="d-flex justify-content-center footerb">
                                 <i class='bx bx-show bx-sm text-success'> </i>

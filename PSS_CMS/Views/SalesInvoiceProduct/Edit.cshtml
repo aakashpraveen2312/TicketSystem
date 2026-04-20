@@ -309,129 +309,139 @@
             @using (Html.BeginForm("Edit", "SalesInvoiceProduct", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
             {
 
-                <div class="tab-content active">
-                    <div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.SIP_PRECID, new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12">
+            <div class="tab-content active">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIP_PRECID, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
 
-                            @{
-                                var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
-                                var durationMap = ViewBag.ProductDurationList as Dictionary<int, int>;
+                        @{
+                            var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
+                            var durationMap = ViewBag.ProductDurationList as Dictionary<int, int>;
+                        }
+
+                        @if (ProductList != null && ProductList.Any())
+                        {
+                            var modifiedProductList = new List<SelectListItem>(ProductList);
+
+                            // Add default option
+                            if (modifiedProductList.Count > 1)
+                            {
+                                modifiedProductList.Insert(0, new SelectListItem
+                                {
+                                    Text = "-- Select Product --",
+                                    Value = ""
+                                });
                             }
 
-                            @if (ProductList != null && ProductList.Any())
-                            {
-                                var modifiedProductList = new List<SelectListItem>(ProductList);
+                            <select id="SelectedProduct" name="SelectedProduct" class="form-select textboxcolors" required>
 
-                                // Add default option
-                                if (modifiedProductList.Count > 1)
+                                @foreach (var item in modifiedProductList)
                                 {
-                                    modifiedProductList.Insert(0, new SelectListItem
+                                    int duration = 0;
+
+                                    if (durationMap != null && !string.IsNullOrEmpty(item.Value))
                                     {
-                                        Text = "-- Select Product --",
-                                        Value = ""
-                                    });
-                                }
+                                        int key = Convert.ToInt32(item.Value);
 
-                                <select id="SelectedProduct" name="SelectedProduct" class="form-select textboxcolors" required>
-
-                                    @foreach (var item in modifiedProductList)
-                                    {
-                                        int duration = 0;
-
-                                        if (durationMap != null && !string.IsNullOrEmpty(item.Value))
+                                        if (durationMap.ContainsKey(key))
                                         {
-                                            int key = Convert.ToInt32(item.Value);
-
-                                            if (durationMap.ContainsKey(key))
-                                            {
-                                                duration = durationMap[key];
-                                            }
+                                            duration = durationMap[key];
                                         }
-
-                                        <option value="@item.Value"
-                                                data-duration="@duration"
-                                                @(item.Selected ? "selected" : "")>
-                                            @item.Text
-                                        </option>
                                     }
 
-                                </select>
-                            }
-                            else
-                            {
-                                <p>No product's are available</p>
-                            }
+                                    <option value="@item.Value"
+                                            data-duration="@duration"
+                                            @(item.Selected ? "selected" : "")>
+                                        @item.Text
+                                    </option>
+                                }
 
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.SIP_PRODUCTSERIALNUMBER, "Product Serial No", new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.EditorFor(model => model.SIP_PRODUCTSERIALNUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.SIP_ADMINRECID, "Service Engineer", new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12">
-                            @* @Html.EditorFor(model => model.AdminName, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
-                            <select id="AdminDropdown" class="form-select textboxcolors" disabled>
-                                <option value="">-- Select Admin --</option>
                             </select>
+                        }
+                        else
+                        {
+                            <p>No product's are available</p>
+                        }
 
-                            <input type="hidden" id="SIP_ADMINRECID" name="SIP_ADMINRECID" />
-                        </div>
                     </div>
-
-                    <div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.SIP_WARRANTYUPTO, new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.TextBoxFor(model => model.SIP_WARRANTYUPTO, new
-                       {
-                           @class = "form-control",
-                           type = "date",
-                           id = "SIP_WARRANTYUPTO",
-                           @readonly = "readonly"
-                       })
-                        </div>
-                    </div>
-
-                    @*<div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.SIP_WARRANTYFREECALLS, new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.EditorFor(model => model.SIP_WARRANTYFREECALLS, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-
-                        </div>
-                    </div>*@
-
-                    <div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.SIP_SORTORDER, new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12">
-                            @Html.EditorFor(model => model.SIP_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", placeholder = "0" } })
-
-                        </div>
-                    </div>
-
-                    <div class="mb-3 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "SalesInvoiceProduct", new {SalesinvoiceRecID=Session["SalesinvoiceRecID"], customerid = Session["customerid"]})'" />
-                    </div>
-
                 </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIP_PRODUCTSERIALNUMBER, "Product Serial No", new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.SIP_PRODUCTSERIALNUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIP_ADMINRECID, "Service Engineer", new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @* @Html.EditorFor(model => model.AdminName, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
+                        <select id="AdminDropdown" class="form-select textboxcolors" disabled>
+                            <option value="">-- Select Admin --</option>
+                        </select>
+
+                        <input type="hidden" id="SIP_ADMINRECID" name="SIP_ADMINRECID" />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIP_WARRANTYUPTO, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.TextBoxFor(model => model.SIP_WARRANTYUPTO, new
+                   {
+                       @class = "form-control",
+                       type = "date",
+                       id = "SIP_WARRANTYUPTO",
+                       @readonly = "readonly"
+                   })
+                    </div>
+                </div>
+
+                @*<div class="row mb-3">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                @Html.LabelFor(model => model.SIP_WARRANTYFREECALLS, new { @class = "labels" })
+            </div>
+            <div class="col-lg-5 col-md-5 col-sm-12">
+                @Html.EditorFor(model => model.SIP_WARRANTYFREECALLS, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
+
+            </div>
+        </div>*@
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIP_PRODUCTAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.SIP_PRODUCTAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", placeholder = "0" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SIP_SORTORDER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        @Html.EditorFor(model => model.SIP_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", placeholder = "0" } })
+
+                    </div>
+                </div>
+
+                <div class="mb-3 d-flex justify-content-end">
+                    <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                    <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "SalesInvoiceProduct", new {SalesinvoiceRecID=Session["SalesinvoiceRecID"], customerid = Session["customerid"]})'" />
+                </div>
+
+            </div>
 
             }
         </div>

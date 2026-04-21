@@ -587,9 +587,9 @@ function loadMaterials(selectedRecId) {
 }
 
         function updateCheckboxState() {
+
             const warrantyDateStr = $('#warranty').val();
             const latestWarrantyDateStr = $('#latestwarranty').val();
-            const warrantyFreeCalls = parseInt($('#warrantyfreecalls').val(), 10) || 0;
 
             const currentDate = new Date();
             currentDate.setHours(0, 0, 0, 0);
@@ -610,16 +610,13 @@ function loadMaterials(selectedRecId) {
             const customerExpired = warrantyDate && warrantyDate < currentDate;
             const productExpired = latestWarrantyDate && latestWarrantyDate < currentDate;
 
-            // 🚫 Free calls exhausted → checkbox MUST be disabled
-            if (warrantyFreeCalls === 0) {
-                $('#termsCheckbox').prop('checked', false).prop('disabled', true);
-                return;
-            }
-            // Enable checkbox only if any warranty is expired
+            // ✅ If ANY warranty expired → ENABLE checkbox (user can click)
             if (customerExpired || productExpired) {
-                $('#termsCheckbox').prop('disabled', false).prop('checked', false);
+                $('#termsCheckbox').prop('disabled', false);
                 $('#termsLabel').removeClass('label-gray');
-            } else {
+            }
+            else {
+                // ❌ Warranty valid → disable checkbox
                 $('#termsCheckbox').prop('disabled', true).prop('checked', false);
                 $('#termsLabel').addClass('label-gray');
             }

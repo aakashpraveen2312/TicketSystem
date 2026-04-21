@@ -261,6 +261,9 @@
                 var PrinticonHtml = "<i class='bx bx-printer bx-sm text-primary'></i>";
                 var PrintlinkHtml = $"<a href='javascript:void(0);' onclick='openPrintPopup({o.SIH_RECID})' title='Print'>{PrinticonHtml}</a>";
 
+                var Paymenturl = Url.Action("PaymentList", "SalesInvoiceProduct", new { SalesinvoiceRecID = o.SIH_RECID });
+                var PaymenticonHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
+                var PaymentlinkHtml = $"<a href='{Paymenturl}' title='Payment'>{PaymenticonHtml}</a>";
 
                 var Deleteurl = Url.Action("SalesheaderDelete", "AccountantCustomerInvoice", new { Recid = o.SIH_RECID }, null);
                 var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";

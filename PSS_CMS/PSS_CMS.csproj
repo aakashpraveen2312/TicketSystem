@@ -439,6 +439,7 @@
     <Compile Include="Models\HSNCategory.cs" />
     <Compile Include="Models\HSNMaster.cs" />
     <Compile Include="Models\Inclusion.cs" />
+    <Compile Include="Models\InvoicePayment.cs" />
     <Compile Include="Models\ItemCategory.cs" />
     <Compile Include="Models\ItemGroup.cs" />
     <Compile Include="Models\Items.cs" />
@@ -786,6 +787,8 @@
     <Content Include="Views\ContractProduct\Create.cshtml" />
     <Content Include="Views\ContractProduct\List.cshtml" />
     <Content Include="Views\ContractProduct\Edit.cshtml" />
+    <Content Include="Views\SalesInvoiceProduct\PaymentList.cshtml" />
+    <Content Include="Views\SalesInvoiceProduct\PaymentCreate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

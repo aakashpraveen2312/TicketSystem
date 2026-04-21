@@ -188,12 +188,13 @@
                 {
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
-
+                @if (Session["CP_STATUS"].ToString() == "U")
+                {
                 <!-- Add button with icon -->
                 <a href="@Url.Action("Create", "ContractProduct")" class=" ms-3" style="margin-left: 30px;">
                     <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add COntract" />
                 </a>
-
+                }
             </div>
 
         </div>
@@ -219,13 +220,10 @@
                .Sanitized(false)
                .RenderValueAs(o =>
                {
-                   var Editurl = Url.Action("Edit", "ContractProduct", new { CSP_RECID = o.CSP_RECID, CSP_CRECID = o.CSP_CRECID, CSP_CURECID = o.CSP_CURECID, CSP_PRECID = o.CSP_PRECID, CSP_ARECID = o.CSP_ARECID });
                    var Deleteurl = Url.Action("Delete", "ContractProduct", new { CSP_RECID = o.CSP_RECID, CSP_CRECID = o.CSP_CRECID, CSP_CURECID = o.CSP_CURECID, CSP_PRECID=o.CSP_PRECID, CSP_ARECID=o.CSP_ARECID });
 
-                   var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                    var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
 
-                   var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
                    var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
                    var Inclusionurl = Url.Action("List", "ContractInclusion", new { CP_PRECID = o.CSP_PRECID, CSP_PRODUCTNAME = o.CSP_PRODUCTNAME }, null);
@@ -236,8 +234,45 @@
                    var ExclusioniconHtml = "<i class='bi bi-dash-circle-dotted'></i>";
                    var ExclusionlinkHtml = $"<a href='{Exclusionurl}' data-toggle='tooltip' data-placement='top' title='Exclusion'>{ExclusioniconHtml}</a>";
 
+                   string EditlinkHtml = "";
+                   string ViewlinkHtml = "";
+
+                   var status = Session["CP_STATUS"]?.ToString();
+
+                   if (status == "U")
+                   {
+                       var Editurl = Url.Action("Edit", "ContractProduct", new
+                       {
+                           CSP_RECID = o.CSP_RECID,
+                           CSP_CRECID = o.CSP_CRECID,
+                           CSP_CURECID = o.CSP_CURECID,
+                           CSP_PRECID = o.CSP_PRECID,
+                           CSP_ARECID = o.CSP_ARECID
+                       });
+
+                       var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
+                       EditlinkHtml = $"<a href='{Editurl}' title='Edit'>{EditiconHtml}</a>";
+                   }
+                   else
+                   {
+                       var Viewurl = Url.Action("View", "ContractProduct", new
+                       {
+                           CSP_RECID = o.CSP_RECID,
+                           CSP_CRECID = o.CSP_CRECID,
+                           CSP_CURECID = o.CSP_CURECID,
+                           CSP_PRECID = o.CSP_PRECID,
+                           CSP_ARECID = o.CSP_ARECID
+                       });
+
+                       var ViewiconHtml = "<i class='bx bx-show bx-sm text-success'></i>";
+                       ViewlinkHtml = $"<a href='{Viewurl}' title='View'>{ViewiconHtml}</a>";
+                   }
+
                    var extraSpaces = "&nbsp;&nbsp;";
-                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{InclusionlinkHtml}{extraSpaces}{ExclusionlinkHtml}");
+
+                   return MvcHtmlString.Create(
+                       $"{EditlinkHtml}{extraSpaces}{ViewlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{InclusionlinkHtml}{extraSpaces}{ExclusionlinkHtml}"
+                   );
                });
 
            }).WithPaging(10).Sortable(true)

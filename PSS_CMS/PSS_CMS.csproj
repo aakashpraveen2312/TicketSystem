@@ -786,6 +786,10 @@
     <Content Include="Views\ContractProduct\Create.cshtml" />
     <Content Include="Views\ContractProduct\List.cshtml" />
     <Content Include="Views\ContractProduct\Edit.cshtml" />
+    <Content Include="Views\Contract\ViewContractProduct.cshtml" />
+    <Content Include="Views\Contract\ContractProductListView.cshtml" />
+    <Content Include="Views\Contract\ViewContractProductSA.cshtml" />
+    <Content Include="Views\ContractProduct\ListView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

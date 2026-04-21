@@ -231,15 +231,12 @@
                .Sanitized(false)
                .RenderValueAs(o =>
                {
-                   var Editurl = Url.Action("EditContractProduct", "Contract", new { CP_RECID = o.CP_RECID, ProductName = o.CP_PRODUCTNAME, CT_CPRECID = o.CP_CTRECID, CP_CTURECID = o.CP_CTURECID, CP_USERTYPE = o.CP_USERTYPE, CP_PAIDAMOUNT = o.CP_PAIDAMOUNT, CP_TOTALAMOUNT = o.CP_TOTALAMOUNT, CP_BALANACEAMOUNT = o.CP_BALANACEAMOUNT });
+
+
+
+
                    var Deleteurl = Url.Action("DeleteContractProduct", "Contract", new { CP_RECID = o.CP_RECID, CP_PRECID = o.CP_PRECID, CP_CTURECID = o.CP_CTURECID, CP_ADMINRECID = o.CP_ADMINRECID });
-
-
-                   var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
                    var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
-
-
-                   var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
                    var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
 
 
@@ -248,24 +245,68 @@
                    var InclusioniconHtml = "<i class='bi bi-plus-circle-dotted'></i>";
                    var InclusionlinkHtml = $"<a href='{Inclusionurl}' data-toggle='tooltip' data-placement='top' title='Inclusion'>{InclusioniconHtml}</a>";
 
+
                    var Exclusionurl = Url.Action("List", "ContractExclusion", new { CP_PRECID = o.CP_PRECID, CT_CONTRACTREFERENCENUMBER = o.CP_PRODUCTNAME }, null);
                    var ExclusioniconHtml = "<i class='bi bi-dash-circle-dotted'></i>";
                    var ExclusionlinkHtml = $"<a href='{Exclusionurl}' data-toggle='tooltip' data-placement='top' title='Exclusion'>{ExclusioniconHtml}</a>";
 
 
-                   var Productsurl = Url.Action("List", "ContractProduct", new { ContractRecid = o.CP_RECID, CP_CODE = o.CP_CODE }, null);
+                   var Productsurl = Url.Action("List", "ContractProduct", new { ContractRecid = o.CP_RECID, CP_CODE = o.CP_CODE, CP_STATUS = o.CP_STATUS }, null);
                    var ProductsiconHtml = "<i class='bi bi-bag-check'></i>";
                    var ProductslinkHtml = $"<a href='{Productsurl}' data-toggle='tooltip' data-placement='top' title='Products'>{ProductsiconHtml}</a>";
-
 
 
                    var downloadpdfUrl = Url.Action("ContractInvoice", "Contract", new { CP_CTURECID = o.CP_CTURECID, CP_CRECID = o.CP_CRECID });
                    var downloadpdfIconHtml = "<i class='bi bi-file-earmark-pdf fs-4 text-danger'></i>";
                    var downloadpdflinkHtml = $"<a href='javascript:void(0);' onclick=\"downloadPdfAjax('{downloadpdfUrl}')\" data-toggle='tooltip' title='Download PDF'>{downloadpdfIconHtml}</a>";
+                   string EditlinkHtml = "";
+                   string ViewlinkHtml = "";
+                   string ProcesslinkHtml = "";
 
+                   if (o.CP_STATUS == "P".Trim())
+                   {
+                       var Viewurl = Url.Action("ViewContractProduct", "Contract", new
+                       {
+                           CP_RECID = o.CP_RECID,
+                           ProductName = o.CP_PRODUCTNAME,
+                           CT_CPRECID = o.CP_CTRECID,
+                           CP_CTURECID = o.CP_CTURECID,
+                           CP_USERTYPE = o.CP_USERTYPE,
+                           CP_PAIDAMOUNT = o.CP_PAIDAMOUNT,
+                           CP_TOTALAMOUNT = o.CP_TOTALAMOUNT,
+                           CP_BALANACEAMOUNT = o.CP_BALANACEAMOUNT
+                       });
+
+                       var ViewiconHtml = "<i class='bx bx-show bx-sm text-success'></i>";
+                       ViewlinkHtml = $"<a href='{Viewurl}' title='View'>{ViewiconHtml}</a>";
+                   }
+                   else
+                   {
+                       var Editurl = Url.Action("EditContractProduct", "Contract", new
+                       {
+                           CP_RECID = o.CP_RECID,
+                           ProductName = o.CP_PRODUCTNAME,
+                           CT_CPRECID = o.CP_CTRECID,
+                           CP_CTURECID = o.CP_CTURECID,
+                           CP_USERTYPE = o.CP_USERTYPE,
+                           CP_PAIDAMOUNT = o.CP_PAIDAMOUNT,
+                           CP_TOTALAMOUNT = o.CP_TOTALAMOUNT,
+                           CP_BALANACEAMOUNT = o.CP_BALANACEAMOUNT
+                       });
+
+                       var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
+                       EditlinkHtml = $"<a href='{Editurl}' title='Edit'>{EditiconHtml}</a>";
+
+                       var Processurl = Url.Action("ContractProcessStatus", "Contract", new { Recid = o.CP_RECID });
+                       var ProcessiconHtml = "<i class='bx bx-check-circle bx-sm text-success'></i>";
+                       ProcesslinkHtml = $"<a href='javascript:void(0);' onclick='confirmProcess(\"{Processurl}\")' title='Process'>{ProcessiconHtml}</a>";
+                   }
 
                    var extraSpaces = "&nbsp;&nbsp;";
-                   return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ProductslinkHtml}{extraSpaces}{downloadpdflinkHtml}");
+
+                   return MvcHtmlString.Create(
+                       $"{EditlinkHtml}{extraSpaces}{ViewlinkHtml}{extraSpaces}{ProcesslinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{ProductslinkHtml}{extraSpaces}{downloadpdflinkHtml}"
+                   );
                });
 
            }).WithPaging(10).Sortable(true)
@@ -386,6 +427,31 @@
             });
         }
     </script>
+
+
+    <script>
+        function confirmProcess(url) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to process this contract?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Process it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        }
+
+        
+    </script>
+
+
+
+
 </body>
 </html>
 

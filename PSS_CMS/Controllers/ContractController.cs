@@ -2136,6 +2136,271 @@ namespace PSS_CMS.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<ActionResult> ContractProcessStatus(int? Recid)
+        {
+            try
+            {
+                
+
+                var UpdateURL = ConfigurationManager.AppSettings["Contractheaderprocess"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{           
+            ""cP_RECID"": ""{Recid}"",           
+            ""cP_CRECID"": ""{Session["CompanyID"]}""     
+        }}";
+
+                // Create the HTTP request
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(UpdateURL),
+                    Method = HttpMethod.Put,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                // Set up HTTP client with custom validation (for SSL certificates)
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                // Send the request and await the response
+                var response = await client.SendAsync(request);
+                // Check if the response is successful
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<dynamic>(result);
+
+                    TempData["SuccessMessage"] = apiResponse.Message;
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Process failed";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+
+            return RedirectToAction("ContractProductList", "Contract");
+        }
+
+
+
+        public async Task<ActionResult>ViewContractProduct(int? CP_RECID, string ProductName, int? CT_CPRECID, int? CP_CTURECID, string CP_USERTYPE, decimal CP_PAIDAMOUNT, decimal CP_BALANACEAMOUNT, decimal CP_TOTALAMOUNT)
+        {
+
+
+          
+            Session["CP_RECID"] = CP_RECID;
+           
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["CONTRACTPRODUCTGETBYID"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            Contract contract = null;
+
+            string strparams = "recID=" + CP_RECID + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var content = JsonConvert.DeserializeObject<ContractMasterObject>(jsonString);
+                            contract = content.Data;
+                           
+
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }
+           
+            return View(contract);
+        }
+
+
+
+        public async Task<ActionResult> ContractProductListView(string searchPharse)
+        {
+
+
+            Contract objproduct = new Contract();
+
+            int SerialNo = objproduct.SerialNumber;
+
+            if (SerialNo == 0)
+            {
+                SerialNo = 1; // Initialize to 1 if it's 0
+            }
+
+            string WEBURLGET = ConfigurationManager.AppSettings["ProductContractGetList"];
+            string Authkey = ConfigurationManager.AppSettings["Authkey"];
+
+            List<Contract> contractsList = new List<Contract>();
+
+
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            try
+            {
+
+
+                // Prepare header parameters as per RSGT inputs
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", Authkey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                        var response = await client.GetAsync(finalurl);
+
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            //GlobalVariables.ResponseStructure = jsonString;
+                            var content = JsonConvert.DeserializeObject<RootObjectsContract>(jsonString);
+                            contractsList = content.Data;
+
+                            if (contractsList.Count > 0)
+                            {
+                                // Assign serial numbers
+                                for (int i = 0; i < contractsList.Count; i++)
+                                {
+                                    contractsList[i].SerialNumber = i + 1;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                contractsList = contractsList
+                                    .Where(r => r.CP_CONTRACTREF.ToLower().Contains(searchPharse.ToLower()) ||
+
+                                   r.CP_CONTRACTAMOUNT.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+
+                                   r.CP_CONTRACTCREATEDBY.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.CP_CONTRACTAPPROVEDBY.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+
+                                   r.CP_CONTRACTAPPROVEDDATE.ToString().ToLower().Contains(searchPharse.ToLower()))
+                                    .ToList();
+
+                            }
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            return View(contractsList);
+
+        }
+
+        public async Task<ActionResult> ViewContractProductSA(int? CP_RECID, string ProductName, int? CT_CPRECID, int? CP_CTURECID, string CP_USERTYPE, decimal CP_PAIDAMOUNT, decimal CP_BALANACEAMOUNT, decimal CP_TOTALAMOUNT)
+        {
+
+
+
+            Session["CP_RECID"] = CP_RECID;
+
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["CONTRACTPRODUCTGETBYID"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            Contract contract = null;
+
+            string strparams = "recID=" + CP_RECID + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var content = JsonConvert.DeserializeObject<ContractMasterObject>(jsonString);
+                            contract = content.Data;
+
+
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }
+
+            return View(contract);
+        }
+
+
     }
 
 }

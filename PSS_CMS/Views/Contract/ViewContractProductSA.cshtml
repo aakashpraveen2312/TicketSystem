@@ -1,0 +1,472 @@
+﻿@model PSS_CMS.Models.Contract
+@using GridMvc.Html
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <link href="~/Content/ClientSide.css" rel="stylesheet" />
+    <link href="~/Content/Style1.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
+    @*Bootstrap Icons and Boxicons*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <script src="~/Scripts/Script.js"></script>
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+    <link href="~/Content/Colors.css" rel="stylesheet" />
+    <style>
+        .swal-btn-continue {
+            background-color: #6ed3d0 !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        .swal-btn-back {
+            background-color: #f0a72d !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+
+        select#TUG_NAME {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        }
+    </style>
+</head>
+
+<body>
+  
+    <div class="content" style=" overflow-x: hidden!important;">
+        <nav class="nav d-flex">
+            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
+            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
+                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+                </a>
+            </div>
+
+        </nav>
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-12">
+                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
+                    <li>CONTRACT</li>
+                    <li>VIEW</li>
+                </ul>
+            </div>
+        </div>
+
+
+        @using (Html.BeginForm("EditContractProduct", "Contract", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
+        {
+            <div class="create ms-4 me-2 mt-3">
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.SC_CODE, "Code", new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CP_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_CONTRACTREFERENCENUMBER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CP_CONTRACTREF, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+                    </div>
+                </div>
+
+
+
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_FROMDATE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CP_FROMDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_TODATE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CP_TODATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_CONTRACTAMOUNT, "Contract Amount", new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CP_CONTRACTAMOUNT, new
+                         {
+                             htmlAttributes = new
+                             {
+                                 @class = "form-control integerboxcolors",
+                                 autocomplete = "off",
+                                 inputmode = "decimal",
+                                 @readonly = "readonly",
+                                 oninput = "this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\\..*)\\./g,'$1')"
+                             }
+                         })
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_CONTRACTCREATEDBY, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CP_CONTRACTCREATEDBY, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_CONTRACTAPPROVEDBY, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CP_CONTRACTAPPROVEDBY, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_CONTRACTAPPROVEDDATE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CP_CONTRACTAPPROVEDDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date", @readonly = "readonly" } })
+
+                    </div>
+                </div>
+
+
+
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CT_SORTORDER, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.CP_SORT, new
+                   {
+                       htmlAttributes = new
+                       {
+                           @class = "form-control integerboxcolors",
+                           autocomplete = "off",
+                           type = "text",
+                           @readonly = "readonly",
+                           inputmode = "numeric",
+                           oninput = "this.value=this.value.replace(/[^0-9]/g,'')",
+                           placeholder = "0"
+                       }
+                   })
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.CPDISABLE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.CheckBoxFor(model => model.CPDISABLE, new { @class = "textboxcolors", autocomplete = "off", id = "newUserCheckbox", disabled = "disable" })
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom:50px;">
+                    <div class="col-lg-2">
+
+                    </div>
+                    <div class="col-lg-3 d-flex justify-content-end">
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("ContractProductListView", "Contract")'" />
+                    </div>
+                </div>
+
+
+            </div>
+        }
+
+        <footer>
+            <div class="footer">
+                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck1"></span>
+                            - Text Fields
+                        </div>
+                    </div>
+
+                    <div class="flex-item">
+                        <div class="d-flex justify-content-center footerb">
+                            <span class="minicheck minicheck2"></span>
+                            - Number Fields
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
+            <h4>Are you sure you want to log out?</h4>
+        </div>
+        <div class="offcanvas-footer d-flex justify-content-center">
+            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
+            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
+        </div>
+    </div>
+    <div id="preloader2"></div>
+    <!-- LogOut JS -->
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.getElementById("logoutLink").addEventListener("click", function () {
+        Swal.fire({
+            title: "Are you sure you want to log out?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirm",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#dc3545",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '@Url.Action("Logout", "Login")';
+            }
+        });
+    });
+    </script>
+    @*Toastr for created succesfully*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $("#editform").submit(function (event) {
+            event.preventDefault();
+
+            var submitBtn = $("#savebutton");
+            submitBtn.prop("disabled", true);
+
+            var formData = new FormData(this);
+
+            // Disable page interaction
+            $("body").css("pointer-events", "none");
+
+            $.ajax({
+                url: '@Url.Action("EditContractProduct", "Contract")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+
+                        // 🔹 Show SweetAlert loading dialog
+                        Swal.fire({
+                            title: "Processing...",
+                            html: "Please wait while we save your changes.",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading(); // show spinner
+                            }
+                        });
+                        // ⏳ After small delay, show success popup
+                        setTimeout(function () {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            confirmButtonText: "Ok",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            customClass: {
+                                confirmButton: "swal-btn-continue",
+                            },
+                            didOpen: () => {
+                                $(".swal2-container").css("pointer-events", "auto");
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '@Url.Action("ContractProductList", "Contract", new { CompanyRecID = Session["CompanyID"] })';
+                            } else {
+                                 window.location.href = '@Url.Action("ContractProductList", "Contract")';
+                            }
+                        });
+                        }, 1000); // 1 second delay for "Processing"
+                    } else {
+                        Swal.fire({
+                            title: "Message",
+                            text: response.message,
+                            icon: "info",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    resetButton();
+                }
+            });
+        });
+
+        function resetButton() {
+            $("#savebutton").prop("disabled", false).text("Submit");
+            $("body").css("pointer-events", "auto");
+        }
+    });
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+
+            // Set product name on page load
+            var productName = $("#SelectedProduct option:selected").text();
+            $("#CP_PRODUCTNAME").val(productName);
+
+            // Update product name when dropdown changes
+            $("#SelectedProduct").change(function () {
+                var productName = $("#SelectedProduct option:selected").text();
+                $("#CP_PRODUCTNAME").val(productName);
+            });
+
+        });
+    </script>
+
+
+    <script>
+$(document).ready(function () {
+    var selectedAdmin = '@Model.CP_ADMINRECID';
+    var cmprecid = '@Session["CompanyID"]';
+
+    function loadAdmins() {
+        var productId = $("#SelectedProduct").val();
+
+        if (!productId) {
+            $("#AdminDropdown").empty().append('<option value="">-- Select Admin --</option>').prop("disabled", true);
+            $("#CP_ADMINRECID").val('');
+            return;
+        }
+
+        $("#AdminDropdown").prop("disabled", true);
+        $("#AdminDropdown").html('<option>Loading admins...</option>');
+
+        $.ajax({
+            url: '@Url.Action("GetProductAdmins", "Contract")',
+            type: 'GET',
+            data: {
+                cmprecid: cmprecid,
+                precid: productId
+            },
+            success: function (res) {
+                $("#AdminDropdown").empty();
+
+                if (res.status === "Y" && Array.isArray(res.data) && res.data.length > 0) {
+                    $("#AdminDropdown").append('<option value="">-- Select Admin --</option>');
+
+                    $.each(res.data, function (index, admin) {
+                        var option = $('<option></option>')
+                            .val(admin.u_RECID)       // use u_RECID as value
+                            .text(admin.u_USERNAME);  // use u_USERNAME as text
+
+                        if (selectedAdmin && admin.u_RECID.toString() === selectedAdmin.toString()) {
+                            option.prop('selected', true);
+                            $("#CP_ADMINRECID").val(selectedAdmin);
+                        }
+
+                        $("#AdminDropdown").append(option);
+                    });
+
+                    $("#AdminDropdown").prop("disabled", false);
+                } else {
+                    $("#AdminDropdown").append('<option value="">No Admin Found</option>');
+                    $("#AdminDropdown").prop("disabled", true);
+                    $("#CP_ADMINRECID").val('');
+                }
+            },
+            error: function () {
+                $("#AdminDropdown").empty().append('<option value="">Error loading admins</option>').prop("disabled", true);
+                $("#CP_ADMINRECID").val('');
+            }
+        });
+    }
+
+    // When product changes, load admins
+    $("#SelectedProduct").on("change", function () {
+        loadAdmins();
+    });
+
+    // When admin dropdown changes, update hidden field
+    $("#AdminDropdown").on("change", function () {
+        $("#CP_ADMINRECID").val($(this).val());
+    });
+
+    // Initial load on page ready if product is pre-selected
+    if ($("#SelectedProduct").val()) {
+        loadAdmins();
+    }
+});
+    </script>
+
+
+</body>
+</html>
+
+

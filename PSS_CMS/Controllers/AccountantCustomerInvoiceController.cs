@@ -2127,7 +2127,57 @@ namespace PSS_CMS.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<ActionResult> UnlockContract(int Recid, string reason)
+        {
+            try
+            {
+                var url = ConfigurationManager.AppSettings["SalesContractheaderunlock"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"]?.ToString();
 
+                var content = $@"{{
+            ""SIH_RECID"": ""{Recid}"",
+            ""SIH_CRECID"": ""{Session["CompanyID"]}"",
+            ""LL_CRECID"": ""{Session["CompanyID"]}"",
+            ""LL_REASON"": ""{reason}"",
+            ""LL_UNLOCKBY"": ""{Session["UserRECID"]}""
+        }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(url),
+                    Method = HttpMethod.Put,
+                    Content = new StringContent(content, Encoding.UTF8, "application/json")
+                };
+
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Unlocked Successfully";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Unlock failed";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+
+            return RedirectToAction("ContractProductListView", "Contract");
+        }
 
     }
 

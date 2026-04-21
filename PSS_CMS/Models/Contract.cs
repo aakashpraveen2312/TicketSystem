@@ -148,6 +148,7 @@ namespace PSS_CMS.Models
         public string CP_CONTRACTREF { get; set; }
         public string CP_CONTRACTCREATEDBY { get; set; }
         public string CP_CONTRACTAPPROVEDBY { get; set; }
+        public string CP_STATUS { get; set; }
 
         public string CP_CONTRACTAPPROVEDDATE { get; set; }
         public string FORMATTEDCONTRACTAPPROVEDDATE

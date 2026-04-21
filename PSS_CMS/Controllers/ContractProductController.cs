@@ -133,12 +133,17 @@ namespace PSS_CMS.Controllers
 
         }
 
-        public async Task<ActionResult> List(int? ContractRecid, int? CustomerRecid,string CP_CODE)
+        public async Task<ActionResult> List(int? ContractRecid, int? CustomerRecid,string CP_CODE,string CP_STATUS)
         {
             if (CP_CODE != null)
             {
 
                 Session["CP_CODE"] = CP_CODE;
+            }
+            if (CP_STATUS != null)
+            {
+
+                Session["CP_STATUS"] = CP_STATUS;
             }
 
             ContractServiceProduct objproduct = new ContractServiceProduct();
@@ -635,6 +640,180 @@ namespace PSS_CMS.Controllers
                 return Content("Exception occurred: " + ex.Message);
             }
         }
+
+
+
+        public async Task<ActionResult> View(int? CSP_RECID)
+        {
+
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["GETContractProductById"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            ContractServiceProduct contractServiceProduct = null;
+
+            string strparams = "RecID=" + CSP_RECID + "&CompanyRecID=" + Session["CompanyID"];
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var content = JsonConvert.DeserializeObject<RootObjectContractServiceProduct>(jsonString);
+                            contractServiceProduct = content.Data;
+
+                            Session["CSP_RECID"] = content.Data.CSP_RECID;
+                            Session["CSP_PRECID"] = content.Data.CSP_PRECID;
+                            Session["CSP_ARECID"] = content.Data.CSP_ARECID;
+                            Session["CSP_INVOICEAMOUNT"] = content.Data.CSP_INVOICEAMOUNT;
+                            Session["CSP_PAIDAMOUNT"] = content.Data.CSP_PAIDAMOUNT;
+                            Session["CSP_USERTYPE"] = content.Data.CSP_USERTYPE;
+                            Session["csP_CTRECID"] = content.Data.CSP_CTRECID;
+                            Session["csP_CURECID"] = content.Data.CSP_CURECID;
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }
+            //await LoadProductCombo(contractServiceProduct?.CSP_PRECID ?? 0);
+
+            return View(contractServiceProduct);
+        }
+
+
+        public async Task<ActionResult> ListView(int? ContractRecid, int? CustomerRecid, string CP_CODE, string CP_STATUS)
+        {
+            if (CP_CODE != null)
+            {
+
+                Session["CP_CODE"] = CP_CODE;
+            }
+            if (CP_STATUS != null)
+            {
+
+                Session["CP_STATUS"] = CP_STATUS;
+            } if (CustomerRecid != null)
+            {
+
+                Session["CT_URECID"] = CustomerRecid;
+            }
+
+            ContractServiceProduct objproduct = new ContractServiceProduct();
+
+            //int SerialNo = objproduct.SerialNumber;
+
+            //if (SerialNo == 0)
+            //{
+            //    SerialNo = 1; // Initialize to 1 if it's 0
+            //}
+
+            string WEBURLGET = ConfigurationManager.AppSettings["GETContractProductList"];
+            string Authkey = ConfigurationManager.AppSettings["Authkey"];
+
+            List<ContractServiceProduct> ContractServiceProductList = new List<ContractServiceProduct>();
+
+
+            string APIKey = Session["APIKEY"].ToString();
+
+            if (ContractRecid != 0 && ContractRecid != null)
+            {
+                Session["CTS_RECID"] = ContractRecid.ToString();
+
+            }
+
+
+            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&ContractRecid=" + Session["CTS_RECID"] + "&CustomerRecid=" + Session["CT_URECID"];
+            //CompanyRecID=1&ContractRecid=1&CustomerRecid=1
+            string finalurl = WEBURLGET + "?" + strparams;
+            try
+            {
+
+
+                // Prepare header parameters as per RSGT inputs
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", Authkey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                        var response = await client.GetAsync(finalurl);
+
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            //GlobalVariables.ResponseStructure = jsonString;
+                            var content = JsonConvert.DeserializeObject<RootObjectsContractServiceProduct>(jsonString);
+                            ContractServiceProductList = content.Data;
+
+                            //if (ContractServiceProductList.Count > 0)
+                            //{
+                            //    // Assign serial numbers
+                            //    for (int i = 0; i < ContractServiceProductList.Count; i++)
+                            //    {
+                            //        ContractServiceProductList[i].SerialNumber = i + 1;
+                            //    }
+                            //}
+                            //if (!string.IsNullOrEmpty(searchPharse))
+                            //{
+                            //    contractsList = contractsList
+                            //        .Where(r => r.CT_CONTRACTREFERENCENUMBER.ToLower().Contains(searchPharse.ToLower()) ||
+                            //       r.CT_FROMDATE.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                            //       r.CT_TODATE.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                            //       r.CT_CONTRACTAMOUNT.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                            //       r.CT_TOTALPAIDAMOUNT.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                            //       r.CT_CONTRACTCREATEDBY.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                            //       r.CT_CONTRACTAPPROVEDBY.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                            //       r.CT_ANYREFERENCE.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                            //       r.CT_TOTALPAIDAMOUNT.ToString().ToLower().Contains(searchPharse.ToLower()))
+                            //        .ToList();
+
+                            //}
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            return View(ContractServiceProductList);
+        }
+
+
 
     }
 }

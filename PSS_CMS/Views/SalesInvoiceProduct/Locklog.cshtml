@@ -1,4 +1,4 @@
-﻿@model PSS_CMS.Models.Contract
+﻿@model IEnumerable<PSS_CMS.Models.LockLog>
 @using GridMvc.Html
 @{
     Layout = null;
@@ -10,9 +10,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <!-- Favicons -->
+
+
     <link href="~/assets/img/bexlogo_wob.png" rel="icon">
     <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
+    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
     <link href="~/Content/ClientSide.css" rel="stylesheet" />
     <link href="~/Content/Style1.css" rel="stylesheet" />
     <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
@@ -28,43 +30,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
 
     <script src="~/Scripts/Sidebarscript.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
     <link href="~/Content/Colors.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- JustGage (only if used) -->
-    <script src="https://cdn.jsdelivr.net/npm/raphael@2.1.4/raphael-min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/justgage@1.3.0/justgage.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-
-        <style>
-            body {
-                background-color: #f8f9fa;
-            }
-
-            .card {
-                border: none;
-                border-radius: 0.75rem;
-            }
-
-                .card h5 {
-                    color: #6c757d;
-                }
-
-            .dashboard-title {
-                margin-bottom: 30px;
-            }
-
-            canvas {
-                max-width: 100%;
-                height: auto;
-            }
-        </style>
+    <!-- Favicons -->
+    <link href="~/assets/img/PSSlogo.png" rel="icon">
+    <link href="~/assets/img/PSSlogo.png" rel="apple-touch-icon">
 </head>
 
 <body>
@@ -105,14 +78,12 @@
                             <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
                         </a>
                     </li>
-
                     <li class="nav-link">
                         <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">
                             <i class='bi bi-person-check' style="font-size:20px"></i>
                             <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
                         </a>
                     </li>
-
                     @*<li class="nav-link">
             <a href="@Url.Action("List", "AccountantCustomerInvoice")">
                 <i class='bi bi-person-check' style="font-size:20px"></i>
@@ -195,7 +166,7 @@
             </div>
         </div>
     </nav>
-    <div class="content" style=" overflow-x: hidden!important;margin-left:83px;">
+    <div class="content" style=" overflow-x: hidden!important;">
         <nav class="nav d-flex">
             <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
             <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
@@ -207,179 +178,117 @@
             </div>
 
         </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none">ACCOUNTANT DASHBOARD</li>
+        <div class="row align-items-center" style="margin-top:10px">
+
+            <!-- LEFT: Breadcrumb -->
+            <div class="col-lg-6">
+                <ul class="breadcrumb mt-1 mb-0">
+                    <li>LOCKLOG LIST</li>
                 </ul>
             </div>
 
-        </div>
+            <!-- RIGHT: Filter -->
+            <div class="col-lg-6 text-end">
+                <form method="get" action="@Url.Action("Locklog", "SalesInvoiceProduct")" class="d-inline-flex gap-2">
 
+                    <input type="date" name="fromDate"
+                           value="@ViewBag.FromDate"
+                           class="form-control form-control-sm" />
 
-        <!-- Accountant Dashboard -->
-        <div class="container">
+                    <input type="date" name="toDate"
+                           value="@ViewBag.ToDate"
+                           class="form-control form-control-sm" />
 
-            <div class="row mt-4 g-4">
-                <!-- Column A -->
-                <div class="col-md-6">
-                    <div class="card text-center shadow p-4 mb-4 bg-white">
-                        <div class="row align-items-center">
-                            <div class="col-md-6 text-start">
-                                <h5>Total Contract Amount</h5>
-                                <h2 class="text-primary fw-bold mb-0">₹ @ViewBag.TotalContractAmount1.00</h2>
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <h5>Expired Contract</h5>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Filter
+                    </button>
 
-                                <h2 class="text-primary fw-bold mb-0">@ViewBag.ExpiredContracts</h2>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card text-center shadow p-4 mb-4 bg-white">
-                        <div class="row align-items-center">
-                            <div class="col-md-6 text-start">
-                                <h5>Total Paid Amount</h5>
-                                <h2 class="text-success fw-bold mb-0">₹ @ViewBag.TotalPaidAmount1.00</h2>
-
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <h5>Yet to Expiry Contract</h5>
-
-                                <h2 class="text-success fw-bold mb-0">@ViewBag.YetToExpireContracts</h2>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card text-center shadow p-4 mb-4 bg-white">
-                        <div class="row align-items-center">
-                            <div class="col-md-6 text-start">
-                                <h5>Extra Paid Amount</h5>
-                                <h2 class="text-danger fw-bold mb-0">₹ @ViewBag.ExtraPaidAmount1.00</h2>
-
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <h5>Pending Amount</h5>
-
-                                <h2 class="text-warning fw-bold mb-0">₹ @ViewBag.PendingAmount1.00</h2>
-                            </div>
-                        </div>
-                    </div>
-
-                   
-                </div>
-
-                <!-- Column B -->
-                <div class="col-md-6 d-flex flex-column align-items-center justify-content-center">
-                    <div class="card shadow p-4 bg-white">
-                        <h5 class="text-center mb-4">Payment Progress</h5>
-                        <canvas id="paymentPieChart" width="350" height="350"></canvas>
-                    </div>
-                </div>
+                </form>
             </div>
 
-            <!--<div class="row mt-4 mb-4">
-                <div class="col-md-6">
-                    <div class="card shadow p-4 bg-white">
-                        <h5 class="text-center mb-4">Company Paid Vs Unpaid </h5>
-                        <canvas id="accoutantChart" height="350"></canvas>
-                    </div>
-                </div>-->
-                @*Prioritytype bar chart script*@
-                <!--<script>
-    const labels = @Html.Raw(ViewBag.CustomerNames); //It came in the array format
-
-    const data = {
-        labels: labels,
-        datasets: [
-
+        </div>
+        <div class="table mt-3 ms-1 me-5" id="ticketTable1">
+            @if (Model != null)
             {
-                label: 'Paid Amount',
-                data: @Html.Raw(ViewBag.PaidAmount ?? "[]"),
-                backgroundColor: '#008959 '
-            },
-            {
-                label: 'Unpaid Amount',
-                data: @Html.Raw(ViewBag.UnpaidAmount ?? "[]"),
-                backgroundColor: '#FFBE00'
+                @Html.Grid(Model).Columns(columns =>
+           {
+               columns.Add(c => c.SerialNumber).Titled("S.No").Css("text-center").SetWidth("20px");
+               columns.Add(c => c.LL_DATETIME)
+    .Titled("Date of Unlock")
+    .RenderValueAs(c =>
+        string.IsNullOrEmpty(c.LL_DATETIME)
+        ? ""
+        : Convert.ToDateTime(c.LL_DATETIME).ToString("dd-MM-yyyy")
+    );
+               columns.Add(c => c.LL_TRANSACTIONTYPE).Titled("Transaction Type");
+               columns.Add(c => c.UnlockUserName).Titled("Unlock By");
+               columns.Add(c => c.LL_REASON).Titled("Reason");
+
+           }).WithPaging(10).Sortable(false)
             }
 
-        ]
-    };
+            <footer>
+                <div class="footer">
+                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
-    const config = {
-        type: 'bar',
-        data: data,
-        options: {
-            scales: {
-                x: {
-                    stacked: true,
-                    ticks: {
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                y: {
-                    stacked: true,
-                }
-            }
-        }
-    };
+                        <div class="flex-item mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
+                            </div>&nbsp;- Create
+                        </div>
 
-                    new Chart(document.getElementById('accoutantChart'), config);
-                </script>-->
+                        <div class="flex-item mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
+                            </div>
+                            &nbsp;- Edit
+                        </div>
+
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bxs-trash bx-sm red mb-1'> </i>
+                            </div>
+                            &nbsp;- Delete
+                        </div>
 
 
-                @*<div class="col-md-6">
-                    <div class="card shadow p-4 bg-white">
-                        <h5 class="text-center mb-4">Yet to Invoice</h5>
 
-                        @if ((ViewBag.ExpiredCustomerWarrantyCount == null || ViewBag.ExpiredCustomerWarrantyCount == 0)
-                          && (ViewBag.ExpiredProductWarrantyCount == null || ViewBag.ExpiredProductWarrantyCount == 0))
-                        {
-                            <p class="text-center text-muted">No pending invoices</p>
-                        }
-                        else
-                        {
-                    <canvas id="invoiceChart" style="width:100%;max-width:600px;height:100%;max-height:350px"></canvas>
-                            //Yet to invoice chart script
-                    <script>
-                        const xValues = ["Customer", "Product"];
-                        const yValues = [ @Html.Raw(ViewBag.ExpiredCustomerWarrantyCount ?? "0"),
-                                @Html.Raw(ViewBag.ExpiredProductWarrantyCount ?? "0")];
-                        const barColors = [
-                            "#FFBE00",
-                            "#008959"
-                        ];
-
-                        new Chart("invoiceChart", {
-                            type: "pie",
-                            data: {
-                                labels: xValues,
-                                datasets: [{
-                                    backgroundColor: barColors,
-                                    data: yValues
-                                }]
-                            },
-                            options: {
-                                title: {
-                                    display: true,
-                                    text: "Yet to Invoice"
-                                }
-                            }
-                        });
-                    </script>
-                        }
+                        @*<div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-bell bx-sm '> </i>
+                            </div>
+                            &nbsp;- Follow Ups
+                        </div>  <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
+                            </div>
+                            &nbsp;- Warranty PDF
+                        </div>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-envelope-check text-primary bx-sm'> </i>
+                            </div>
+                            &nbsp;- Email (Warranty PDF)
+                        </div>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
+                            </div>
+                            &nbsp;- Excel Export
+                        </div>*@
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bx-show bx-sm text-success'> </i>
+                            </div>
+                            &nbsp;- View
+                        </div>
                     </div>
-                </div>*@
-
-            <!--</div>-->
+                </div>
+            </footer>
         </div>
 
 
-       
+
 
     </div>
 
@@ -404,59 +313,107 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="~/Scripts/Fordelete.js"></script>
     <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
-            }
-        });
-    });
+        function DownloadWarrantyPDF(id) {
+
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Generating Warranty PDF',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: '/AccountantCustomerInvoice/WarrantyPDF',
+                type: 'POST',
+                data: { CU_RECID: id },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data) {
+
+                    var blob = new Blob([data], { type: "application/pdf" });
+
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "Warranty.pdf";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    Swal.close();
+                },
+                error: function () {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to download PDF'
+                    });
+
+                }
+            });
+        }
     </script>
 
     <script>
-        const ctx = document.getElementById('paymentPieChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Paid', 'Pending'],
-                datasets: [{
-                    data: [@ViewBag.TotalPaidAmount, @ViewBag.PendingAmount],
-                    backgroundColor: ['#198754', '#ffc107'],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                cutout: '70%',
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                const label = context.label || '';
-                                const value = context.parsed;
-                                return `${label}: ₹ ${value.toLocaleString()}`;
-                            }
-                        }
-                    }
+        function SendWarrantyEmail(id, email) {
+
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Sending Warranty PDF to Email',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
                 }
-            }
-        });
+            });
+
+            $.ajax({
+                url: '/AccountantCustomerInvoice/WarrantyPDFToEmail',
+                type: 'POST',
+                data: {
+                    CU_RECID: id,
+                    Email: email
+                },
+                success: function (response) {
+
+                    Swal.close();
+
+                    if (response.status === "Y") {
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message
+                        });
+
+                    } else {
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+
+                    }
+
+                },
+                error: function () {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong'
+                    });
+
+                }
+            });
+        }
     </script>
 </body>
 </html>

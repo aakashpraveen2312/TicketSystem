@@ -185,7 +185,11 @@
                     <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
                 }
                 <a href="@Url.Action("PaymentCreate", "SalesInvoiceProduct", new {
-							SIP_PRECID=Session["SIP_PRECID"] })" class=" ms-3" style="margin-left: 30px;">
+    amount = Session["Invoiceamount"],
+    number = Session["Invoicenumber"],
+    date = Session["Invoicedate"],
+    invoiceRecID = Session["SalesinvoiceRecID"]
+})" class=" ms-3" style="margin-left: 30px;">
                     <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add Payment" />
                 </a>
             </div>
@@ -233,33 +237,7 @@
    );
                columns.Add(c => c.PP_PAYMENTSTATUS).Titled("Payment Status");
 
-               columns.Add().Titled("Action")
-              .Encoded(false)
-               .Sanitized(false)
-            .RenderValueAs(o =>
-            {
-
-                var status = ViewBag.InvoiceStatus?.ToString();
-                var isProcessed = status == "P";
-
-                var Editurl = Url.Action("Edit", "SalesInvoiceProduct", new { Recid = o.PP_RECID }, null);
-                var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
-                var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
-
-                var Viewurl = Url.Action("View", "SalesInvoiceProduct", new { Recid = o.PP_RECID }, null);
-                var ViewiconHtml = "<i class='bx bx-show bx-sm text-success'></i>";
-                var ViewlinkHtml = $"<a href='{Viewurl}' title='View'>{ViewiconHtml}</a>";
-
-                var Deleteurl = Url.Action("Delete", "SalesInvoiceProduct", new { Recid = o.PP_RECID }, null);
-                var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
-                var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
-
-                var extraSpaces2 = "&nbsp;";
-                var ActionIcons = isProcessed
-          ? $"{ViewlinkHtml}"  // Only view if processed
-          : $"{EditlinkHtml}{extraSpaces2}{DeletelinkHtml}"; // Edit + Delete if not processed
-                return MvcHtmlString.Create($"{ActionIcons}");
-            });
+               
 
            }).WithPaging(10).Sortable(false)
             }

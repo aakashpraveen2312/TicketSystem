@@ -291,7 +291,7 @@
         <div class="row" style="margin-top:10px">
             <div class="col-lg-12">
                 <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>SALES INVOICE PRODUCTS</li>
+                    <li>PAYMENT</li>
                     @*<li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("CustomerList", "Contract")">@Session["P_NAME"].ToString().ToUpper()</a></li>
                         <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "AccountantCustomerInvoice")">SALES CUSTOMER</a></li>*@
                     <li>CREATE</li>
@@ -305,13 +305,53 @@
             {
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.PP_INVOICEDATE, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.PP_INVOICEDATE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date", @readonly = "readonly" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.PP_INVOICENUMBER, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         @Html.EditorFor(model => model.PP_INVOICENUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
                     </div>
                 </div>
-
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.PP_TOTALAMOUNT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.PP_TOTALAMOUNT, new
+                        {
+     htmlAttributes = new
+                            {
+         @class = "form-control integerboxcolors",
+         autocomplete = "off",
+         @readonly = "readonly",
+         id = "TotalAmount"
+     }
+ })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.PP_DATEOFPAYMENT, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.PP_DATEOFPAYMENT, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.PP_SOFARPAID, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.PP_SOFARPAID, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", Placeholder = "0.00", @readonly = "readonly" } })
+                    </div>
+                </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.PP_MODEOFPAYMENT, new { @class = "labels" })
@@ -327,30 +367,30 @@
                             new { @class = "form-select textboxcolors" })
                     </div>
                 </div>
-
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.PP_DATEOFPAYMENT, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.PP_DATEOFPAYMENT, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.PP_TOTALAMOUNT, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.PP_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", Value = @ViewBag.Amount, @readonly = "readonly", id = "TotalAmount" } })
-                    </div>
-                </div>
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-sm-12">
                         @Html.LabelFor(model => model.PP_PAIDAMOUNT, new { @class = "labels" })
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.PP_PAIDAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "PaidAmount", Placeholde = "0.00" } })
+                        @Html.EditorFor(model => model.PP_PAIDAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "PaidAmount", Placeholder = "0.00" } })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        @Html.LabelFor(model => model.PP_PAYMENTSTATUS, new { @class = "labels" })
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        @Html.EditorFor(model => model.PP_PAYMENTSTATUS, new
+                   {
+                       htmlAttributes = new
+                       {
+                           @class = "form-control textboxcolors",
+                           autocomplete = "off",
+                           id = "PaymentStatus",
+                           @readonly = "readonly"
+                       }
+                   })
+
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -370,33 +410,14 @@
                         })
                     </div>
                 </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.PP_PAYMENTSTATUS, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.PP_PAYMENTSTATUS, new
-                   {
-                       htmlAttributes = new
-                       {
-                           @class = "form-control textboxcolors",
-                           autocomplete = "off",
-                           id = "PaymentStatus",
-                           @readonly = "readonly"
-                       }
-                   })
-
-                    </div>
-                </div>
                 @*<div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.TC_DueDate, new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12">
-                            @Html.EditorFor(model => model.TC_DueDate, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
-                        </div>
-                    </div>*@
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    @Html.LabelFor(model => model.TC_DueDate, new { @class = "labels" })
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    @Html.EditorFor(model => model.TC_DueDate, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
+                </div>
+            </div>*@
 
                 <div class="row">
                     <div class="col-md-5 d-flex justify-content-end ms-1">
@@ -591,7 +612,7 @@ $(document).ready(function () {
 });
     </script>
 
-    <script>
+    @*<script>
         $(document).ready(function () {
 
             // Function to update Balance and Payment Status
@@ -632,7 +653,13 @@ $(document).ready(function () {
 
                 // Prevent overpayment
                 if (paid > total) {
-                    alert("Paid amount cannot exceed Total Amount");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Amount',
+                        text: 'Paid amount cannot exceed Total Amount',
+                        confirmButtonText: 'OK'
+                    });
+
                     $(this).val(total.toFixed(2));
                     paid = total;
                 }
@@ -644,7 +671,64 @@ $(document).ready(function () {
             // Trigger update on page load (edit mode)
             updatePaymentStatus();
         });
-    </script>
+    </script>*@
+
+   <script>
+       $(document).ready(function () {
+
+           function updateCalculation() {
+
+               var total = parseFloat($("#TotalAmount").val()) || 0;
+               var soFar = parseFloat($("#PP_SOFARPAID").val()) || 0;
+               var paid = parseFloat($("#PaidAmount").val()) || 0;
+
+               var newSoFar = soFar + paid;
+               var balance = total - newSoFar;
+
+               // ✅ ONLY update balance (NOT soFar)
+               $("#BalanceAmount").val(balance.toFixed(2));
+
+               // Status
+               var status = "";
+               var color = "black";
+
+               if (newSoFar === 0) {
+                   status = "";
+               }
+               else if (newSoFar >= total) {
+                   status = "FULLY PAID";
+                   color = "green";
+               }
+               else {
+                   status = "PARTIALLY PAID";
+                   color = "orange";
+               }
+
+               $("#PaymentStatus").val(status).css("color", color);
+           }
+
+           $("#PaidAmount").on("input", function () {
+
+               var total = parseFloat($("#TotalAmount").val()) || 0;
+               var soFar = parseFloat($("#PP_SOFARPAID").val()) || 0;
+               var paid = parseFloat($(this).val()) || 0;
+
+               if ((soFar + paid) > total) {
+                   Swal.fire({
+                       icon: 'warning',
+                       title: 'Invalid Amount',
+                       text: 'Total paid cannot exceed invoice amount'
+                   });
+
+                   $(this).val("");
+                   return;
+               }
+
+               updateCalculation();
+           });
+
+       });
+   </script>
 
 </body>
 

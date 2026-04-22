@@ -836,7 +836,7 @@ namespace PSS_CMS.Controllers
             return View(paymentupdate);
         }
 
-        public async Task<ActionResult> PaymentList(int? SalesinvoiceRecID)
+        public async Task<ActionResult> PaymentList(int? SalesinvoiceRecID, decimal? Invoiceamount, string Invoicenumber, string Invoicedate)
         {
             InvoicePayment objexclusion = new InvoicePayment();
 
@@ -849,7 +849,19 @@ namespace PSS_CMS.Controllers
             if (SalesinvoiceRecID != null)
             {
                 Session["SalesinvoiceRecID"] = SalesinvoiceRecID;
-            } 
+            }
+            if (Invoiceamount != null)
+            {
+                Session["Invoiceamount"] = Invoiceamount;
+            }
+            if (Invoicenumber != null)
+            {
+                Session["Invoicenumber"] = Invoicenumber;
+            }
+            if (Invoicedate != null)
+            {
+                Session["Invoicedate"] = Invoicedate;
+            }
 
             string Weburl = ConfigurationManager.AppSettings["INVOICEPAYMENT"];
 
@@ -903,9 +915,72 @@ namespace PSS_CMS.Controllers
             return View(Customernotificationlist);
         }
 
-        public async Task<ActionResult> PaymentCreate()
+        public async Task<ActionResult> PaymentCreate(decimal? amount, string number, string date, int invoiceRecID)
         {
             InvoicePayment model = new InvoicePayment();
+
+            model.PP_TOTALAMOUNT = amount ?? 0;
+            model.PP_INVOICENUMBER = number;
+
+            if (!string.IsNullOrEmpty(date) && DateTime.TryParse(date, out DateTime d))
+            {
+                model.PP_INVOICEDATE = d.ToString("yyyy-MM-dd");
+            }
+
+            string Weburl = ConfigurationManager.AppSettings["INVOICEPAYMENT"]; // your GET API
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            decimal soFarPaid = 0;
+
+            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&InvoiceRecID=" + invoiceRecID;
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+
+                            // 🔹 Deserialize properly
+                            var root = JsonConvert.DeserializeObject<InvoicePaymentRootObjects>(jsonString);
+
+                            var paymentList = root?.Data ?? new List<InvoicePayment>();
+
+                            // 🔹 Calculate So Far Paid
+                            if (paymentList.Count > 0)
+                            {
+                                soFarPaid = paymentList.Sum(x => x.PP_PAIDAMOUNT);
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            // 🔹 Assign values
+            model.PP_SOFARPAID = soFarPaid;
+            model.PP_BALANCEAMOUNT = model.PP_TOTALAMOUNT - soFarPaid;
+
             return View(model);
         }
 
@@ -918,13 +993,44 @@ namespace PSS_CMS.Controllers
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
 
+                if (paymentupdate == null)
+                {
+                    return Json(new { success = false, message = "Invalid request data." });
+                }
+
+                if (string.IsNullOrWhiteSpace(paymentupdate.PP_MODEOFPAYMENT))
+                {
+                    return Json(new { success = false, message = "Mode of Payment is required." });
+                }
+
+                if (string.IsNullOrWhiteSpace(paymentupdate.PP_DATEOFPAYMENT))
+                {
+                    return Json(new { success = false, message = "Date of Payment is required." });
+                }
+
+                if (paymentupdate.PP_PAIDAMOUNT <= 0)
+                {
+                    return Json(new { success = false, message = "Paid Amount must be greater than 0." });
+                }
+
+                // ✅ Handle null safely
+                var previousSoFar = Convert.ToDecimal(paymentupdate.PP_SOFARPAID);
+                var paidAmount = Convert.ToDecimal(paymentupdate.PP_PAIDAMOUNT);
+
+                paymentupdate.PP_SOFARPAID = previousSoFar + paidAmount;
+
+                paymentupdate.PP_BALANCEAMOUNT =
+                    paymentupdate.PP_TOTALAMOUNT - paymentupdate.PP_SOFARPAID;
+
                 var content = $@"{{
     ""PP_CRECID"": ""{Session["CompanyID"]}"",
-    ""TC_InvoiceNumber"": ""{paymentupdate.PP_INVOICENUMBER}"",
+    ""PP_SIHRECID"": ""{Session["SalesinvoiceRecID"]}"",
+    ""PP_INVOICENUMBER"": ""{paymentupdate.PP_INVOICENUMBER}"",
     ""PP_MODEOFPAYMENT"": ""{paymentupdate.PP_MODEOFPAYMENT}"",
     ""PP_DATEOFPAYMENT"": ""{paymentupdate.PP_DATEOFPAYMENT:yyyy-MM-ddTHH:mm:ss}"",
     ""PP_TOTALAMOUNT"": ""{paymentupdate.PP_TOTALAMOUNT}"",
     ""PP_PAIDAMOUNT"": ""{paymentupdate.PP_PAIDAMOUNT}"",
+    ""PP_SOFARPAID"": ""{paymentupdate.PP_SOFARPAID}"",
     ""PP_BALANCEAMOUNT"": ""{paymentupdate.PP_BALANCEAMOUNT}"",
     ""PP_PAYMENTSTATUS"": ""{paymentupdate.PP_PAYMENTSTATUS}"",
     ""PP_INVOICEDATE"": ""{paymentupdate.PP_INVOICEDATE}""
@@ -934,7 +1040,7 @@ namespace PSS_CMS.Controllers
                 var request = new HttpRequestMessage
                 {
                     RequestUri = new Uri(UpdatePaymentURL),
-                    Method = HttpMethod.Put,
+                    Method = HttpMethod.Post,
                     Headers =
             {
                 { "X-Version", "1" },
@@ -981,6 +1087,60 @@ namespace PSS_CMS.Controllers
             {
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
+        }
+
+        public async Task<ActionResult> Locklog(DateTime? fromDate, DateTime? toDate)
+        {
+            string Weburl = ConfigurationManager.AppSettings["LOCKLOGGET"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            List<LockLog> list = new List<LockLog>();
+
+            // ✅ Default last 7 days
+            DateTime from = fromDate ?? DateTime.Now.AddDays(-7);
+            DateTime to = toDate ?? DateTime.Now;
+
+            string strparams = $"CompanyRecID={Session["CompanyID"]}&fromDate={from:yyyy-MM-dd}&toDate={to:yyyy-MM-dd}";
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var root = JsonConvert.DeserializeObject<LockLogRootObjects>(jsonString);
+
+                            list = root.Data ?? new List<LockLog>();
+
+                            for (int i = 0; i < list.Count; i++)
+                            {
+                                list[i].SerialNumber = i + 1;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+
+            ViewBag.FromDate = from.ToString("yyyy-MM-dd");
+            ViewBag.ToDate = to.ToString("yyyy-MM-dd");
+
+            return View(list);
         }
 
         [HttpGet]

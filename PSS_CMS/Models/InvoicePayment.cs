@@ -23,12 +23,14 @@ namespace PSS_CMS.Models
         public string PP_INVOICEDATE { get; set; }
         [DisplayName("Total Amount")]
         public decimal PP_TOTALAMOUNT { get; set; }
-        [DisplayName("Paid Amount")]
+        [DisplayName("Amount")]
         public decimal PP_PAIDAMOUNT { get; set; }
+        [DisplayName("So Far Paid")]
+        public decimal PP_SOFARPAID { get; set; }
         [DisplayName("Balance Amount")]
         public decimal PP_BALANCEAMOUNT { get; set; }
         [DisplayName("Payment Status")]
-        public decimal PP_PAYMENTSTATUS { get; set; }
+        public string PP_PAYMENTSTATUS { get; set; }
     }
 
     public class InvoicePaymentRootObjects

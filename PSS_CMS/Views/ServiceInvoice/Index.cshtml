@@ -219,61 +219,65 @@
                case "FULLY PAID": return "Fully Paid";
                case "IG": return "Invoice Generated";
 
-               default: return o.Status ?? "Yet to generate";
+               default:
+                   if (o.TotalNetAmount == 0m)
+                       return "Free Service";
+
+                   return o.Status ?? "Yet to generate";
            }
        });
 
                columns.Add().Titled("Action")
-    .Encoded(false)
-    .Sanitized(false)
-    .RenderValueAs(o =>
-    {
-        string linkHtml = string.Empty;
+               .Encoded(false)
+               .Sanitized(false)
+               .RenderValueAs(o =>
+               {
+                   // If amount is 0 → ONLY show PDF download icon
+                   if (o.TotalNetAmount == 0)
+                   {
+                       var downloadpdfUrl = Url.Action("DownaloadPDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID, TC_CRECID = o.TC_CRECID });
+                       var downloadpdfIconHtml = "<i class='bi bi-file-earmark-pdf fs-4 text-danger'></i>";
+                       var downloadpdflinkHtml = $"<a href='javascript:void(0);' onclick=\"downloadPdfAjax('{downloadpdfUrl}')\" title='Download PDF'>{downloadpdfIconHtml}</a>";
 
-        if (o.TC_SISTATUS == "YG")
-        {
-            // Generate PDF icon
-            var editUrl = Url.Action("GeneratePDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID });
-            var editIconHtml = "<i class='bi bi-ticket-detailed fs-4 text-primary'></i>";
-            linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Invoice Details'>{editIconHtml}</a>";
-        }
-        else if (o.TC_PaymentStatus == "PARTIALLY PAID")
-        {
-            // Update Payment icon
-            var editUrl = Url.Action("UpdatePayment", "ServiceInvoice", new { TC_RECID = o.TC_RECID, Amount = o.TotalNetAmount, TC_URECID = o.TC_URECID, TC_PRECID = o.TC_PRECID });
-            var editIconHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
-            linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Update Payment'>{editIconHtml}</a>";
-        }
-        else if (o.TC_PaymentStatus == "FULLY PAID")
-        {
-            // Update Payment icon
-            var editUrl = Url.Action("UpdatePaymentView", "ServiceInvoice", new { TC_RECID = o.TC_RECID });
-            var editIconHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
-            linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Update Payment'>{editIconHtml}</a>";
-        }
-        else
-        {
-            // Optional fallback if Status has other values
-            // Update Payment icon
-            var editUrl = Url.Action("UpdatePayment", "ServiceInvoice", new { TC_RECID = o.TC_RECID, Amount = o.TotalNetAmount, TC_URECID = o.TC_URECID, TC_PRECID = o.TC_PRECID });
-            var editIconHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
-            linkHtml = $"<a href='{editUrl}' data-toggle='tooltip' data-placement='top' title='Update Payment'>{editIconHtml}</a>";
-        }
+                       return MvcHtmlString.Create(downloadpdflinkHtml);
+                   }
 
-        // View PDF icon
-        var viewUrl = Url.Action("ViewDetails", "ServiceInvoice", new { ticketRecID = o.TC_RECID });
-        var viewIconHtml = "<i class='bi bi-eye fs-4 text-primary'></i>";
-        var viewlinkHtml = $"<a href='{viewUrl}' data-toggle='tooltip' data-placement='top' title='Generate PDF'>{viewIconHtml}</a>";
+                   string linkHtml = string.Empty;
 
+                   if (o.TC_SISTATUS == "YG")
+                   {
+                       var editUrl = Url.Action("GeneratePDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID });
+                       var editIconHtml = "<i class='bi bi-ticket-detailed fs-4 text-primary'></i>";
+                       linkHtml = $"<a href='{editUrl}' title='Invoice Details'>{editIconHtml}</a>";
+                   }
+                   else if (o.TC_PaymentStatus == "PARTIALLY PAID")
+                   {
+                       var editUrl = Url.Action("UpdatePayment", "ServiceInvoice", new { TC_RECID = o.TC_RECID, Amount = o.TotalNetAmount, TC_URECID = o.TC_URECID, TC_PRECID = o.TC_PRECID });
+                       var editIconHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
+                       linkHtml = $"<a href='{editUrl}' title='Update Payment'>{editIconHtml}</a>";
+                   }
+                   else if (o.TC_PaymentStatus == "FULLY PAID")
+                   {
+                       var editUrl = Url.Action("UpdatePaymentView", "ServiceInvoice", new { TC_RECID = o.TC_RECID });
+                       var editIconHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
+                       linkHtml = $"<a href='{editUrl}' title='Update Payment'>{editIconHtml}</a>";
+                   }
+                   else
+                   {
+                       var editUrl = Url.Action("UpdatePayment", "ServiceInvoice", new { TC_RECID = o.TC_RECID, Amount = o.TotalNetAmount, TC_URECID = o.TC_URECID, TC_PRECID = o.TC_PRECID });
+                       var editIconHtml = "<i class='bi bi-currency-rupee fs-4 text-success'></i>";
+                       linkHtml = $"<a href='{editUrl}' title='Update Payment'>{editIconHtml}</a>";
+                   }
 
-        var downloadpdfUrl = Url.Action("DownaloadPDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID, TC_CRECID = o.TC_CRECID });
-        var downloadpdfIconHtml = "<i class='bi bi-file-earmark-pdf fs-4 text-danger'></i>";
-        var downloadpdflinkHtml = $"<a href='javascript:void(0);' onclick=\"downloadPdfAjax('{downloadpdfUrl}')\" data-toggle='tooltip' title='Download PDF'>{downloadpdfIconHtml}</a>";
+                   // Always include download PDF (for non-zero cases)
+                   var downloadUrl = Url.Action("DownaloadPDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID, TC_CRECID = o.TC_CRECID });
+                   var downloadIcon = "<i class='bi bi-file-earmark-pdf fs-4 text-danger'></i>";
+                   var downloadLink = $"<a href='javascript:void(0);' onclick=\"downloadPdfAjax('{downloadUrl}')\" title='Download PDF'>{downloadIcon}</a>";
 
-        var finalHtml = linkHtml + " " + viewlinkHtml + " " + downloadpdflinkHtml;
+                   var finalHtml = linkHtml + " " + downloadLink;
 
-        return MvcHtmlString.Create(finalHtml);
-    });
+                   return MvcHtmlString.Create(finalHtml);
+               });
 
 
            }).WithPaging(10).Sortable(false)

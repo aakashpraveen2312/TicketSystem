@@ -420,6 +420,7 @@
     <Compile Include="Models\Changepassword.cs" />
     <Compile Include="Models\Companies.cs" />
     <Compile Include="Models\Contract.cs" />
+    <Compile Include="Models\ContractData.cs" />
     <Compile Include="Models\ContractExclusion.cs" />
     <Compile Include="Models\ContractInclusion.cs" />
     <Compile Include="Models\ContractInvoice.cs" />
@@ -455,6 +456,7 @@
     <Compile Include="Models\PaymentUpdate.cs" />
     <Compile Include="Models\PDFDetails.cs" />
     <Compile Include="Models\Prioritywise.cs" />
+    <Compile Include="Models\ProductData.cs" />
     <Compile Include="Models\ProductInvoice.cs" />
     <Compile Include="Models\ProductMaster.cs" />
     <Compile Include="Models\Projectmaster.cs" />

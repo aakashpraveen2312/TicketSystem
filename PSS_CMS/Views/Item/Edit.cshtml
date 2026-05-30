@@ -1,555 +1,432 @@
 ﻿@model PSS_CMS.Models.Items
-@using GridMvc.Html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
 
-    @*Bootstrap Icons and Boxicons*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <script src="~/Scripts/Script.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Colors.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <style>
-        .swal-btn-continue {
-            background-color: #6ed3d0 !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
-        }
+@{ ViewData["Title"] = "Edit Item";
+                ViewBag.PageTitle = "Edit Item";
+                Layout = "~/Views/Shared/_Layout.cshtml"; }
 
-        .swal-btn-back {
-            background-color: #f0a72d !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
-        }
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
 
-        select#MATERIAL {
-            display: block;
-            width: 100%;
-            height: 34px;
-            padding: 6px 12px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #555;
-            background-image: none;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-        }
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-box nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    @if (Session["ItemgroupName"] != null)
+    {
+<a href="@Url.Action("List","ItemGroup")">Item Group (@Session["ItemgroupName"].ToString())</a>
+                <i class="bi bi-chevron-right"></i>}
+    @if (Session["ItemCatName"] != null)
+    {
+<a href="@Url.Action("List","ItemCategory", new { IGRECID = Session["IGRECID"] })">Item Category (@Session["ItemCatName"].ToString())</a>
+                <i class="bi bi-chevron-right"></i>}
+    Item
+    <i class="bi bi-chevron-right"></i>
+    <span>Edit</span>
+</div>
 
-        select#MaterialDropdown, select#itemGroupDropdown, select#itemCategoryDropdown {
-            font-size: 15px;
-        }
+<!-- Main Card -->
+@using (Html.BeginForm("Edit", "Item", FormMethod.Post,
+    new { id = "editform", enctype = "multipart/form-data", @class = "no-preloader" }))
+{
+@Html.HiddenFor(m => m.I_HSNRECID)
 
-        input#tM_BILLABLE {
-            height: 20px;
-            width: 20px;
-        }
-    </style>
-</head>
+                <div class="page-card">
 
-<body>
-
-    <div class="content" style=" overflow-x: hidden!important;">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
-                </a>
-            </div>
-
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ItemGroup")">ITEM GROUP(@Session["ItemgroupName"])</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "ItemCategory",new {IGRECID= Session["IGRECID"]})">ITEM CATEGORY(@Session["ItemCatName"])</a></li>
-                    <li>ITEM</li>
-                    <li>EDIT</li>
-                </ul>
-            </div>
-        </div>
-        @using (Html.BeginForm("Edit", "Item", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
-        {
-
-
-            <div class="create ms-4 me-2 mt-3">
-
-
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.I_CODE, new { @class = "labels" })
+                    <!-- Header -->
+                    <div class="page-card-header">
+                        <h6 class="page-card-title">
+                            <span class="title-icon">
+                                <i class="bi bi-box"></i>
+                            </span>
+                            Edit Item
+                        </h6>
                     </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @*@Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
-                        @Html.EditorFor(model => model.I_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", placeholder = "Auto Code", @readonly = "readonly" } })
 
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.I_DESCRIPTION, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.I_DESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", oninput = "Netamount()", type = "text" } })
+                    <!-- Form body -->
+                    <div class="form-body">
 
-                    </div>
-                </div>
+                        <!-- ── Basic Info ─────────────────────── -->
+                        <p class="form-section-title">Item Information</p>
 
+                        <div class="form-grid">
 
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.I_PRICE, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @*@Html.EditorFor(model => model.tM_PRICE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
-                        @Html.EditorFor(model => model.I_PRICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()", placeholder = "0.00" } })
+                            <!-- Code (readonly) -->
+                            <div class="form-group">
+                                <label class="form-label" for="I_CODE">
+                                    @Html.DisplayNameFor(m => m.I_CODE)
+                                </label>
+                                @Html.TextBoxFor(m => m.I_CODE, new
+                                {
+                                    @class = "form-input-auto",
+                                    autocomplete = "off",
+                                    placeholder = "Auto Code",
+                                    @readonly = "readonly"
+                                })
+                                <span class="auto-badge"><i class="bi bi-lock"></i> Read-only — system generated</span>
+                            </div>
 
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.I_SMQUANTITY, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.I_SMQUANTITY, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "Netamount()", type = "text" } })
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label class="form-label" for="I_DESCRIPTION">
+                                    @Html.DisplayNameFor(m => m.I_DESCRIPTION)
+                                    <span class="req">*</span>
+                                </label>
+                                @Html.TextBoxFor(m => m.I_DESCRIPTION, new
+                                {
+                                    @class = "form-input-text",
+                                    autocomplete = "off",
+                                    oninput = "Netamount()",
+                                    type = "text",
+                                    placeholder = "Enter item description"
+                                })
+                                @Html.ValidationMessageFor(m => m.I_DESCRIPTION, "", new { @class = "text-danger", style = "font-size:11px" })
+                            </div>
 
-                    </div>
-                </div>
+                            <!-- UOM -->
+                            <div class="form-group">
+                                <label class="form-label" for="I_CUOM">
+                                    @Html.DisplayNameFor(m => m.I_CUOM)
+                                </label>
+                                @Html.DropDownListFor(
+                                         m => m.I_CUOM,
+                                         new SelectList(new List<string>
+                                         {
+                            "Pieces", "Kilograms", "Grams", "Litre",
+                            "Milli litre", "Meter", "Centimeter",
+                            "Milli meter", "Box", "Packet", "Set", "NOS"
+                         }),
+                                         "-- Select UOM --",
+                                         new { @class = "form-select", autocomplete = "off" }
+                                     )
+                            </div>
 
+                            <!-- Sort Order -->
+                            <div class="form-group">
+                                <label class="form-label" for="I_SORTORDER">
+                                    @Html.DisplayNameFor(m => m.I_SORTORDER)
+                                </label>
+                                @Html.TextBoxFor(m => m.I_SORTORDER, new
+                           {
+                               @class = "form-input-num",
+                               autocomplete = "off",
+                               type = "number",
+                               placeholder = "0"
+                           })
+                            </div>
 
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.I_SGST, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @*@Html.EditorFor(model => model.tM_SGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly" } })*@
-                        @Html.TextBoxFor(model => model.I_SGST, "{0:0.00}", new { @class = "form-control integerboxcolors", autocomplete = "off", oninput = "formatPrice(this)", placeholder = "0.00"})
-
-
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.I_CGST, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.I_CGST, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
-
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.I_CUOM, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.DropDownListFor(
-                                              model => model.I_CUOM,
-                                              new SelectList(new List<string>
-                                              {
-                                                  "Pieces",
-                                                  "Kilograms",
-                                                  "Grams",
-                                                  "Litre",
-                                                  "Milli litre",
-                                                  "Meter",
-                                                  "Centimeter",
-                                                  "Milli meter",
-                                                  "Box",
-                                                  "Packet",
-                                                  "Set",
-                                                  "NOS"
-                                              }),
-                                              "-- Select UOM --",
-                                              new
-                                              {
-                                                  @class = "form-control textboxcolors",
-                                                  autocomplete = "off"
-                                              }
-                                          )
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.I_SMTOTALAMOUNT, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.I_SMTOTALAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", @readonly = "readonly", placeholder = "0.00" } })
-                        @Html.HiddenFor(model => model.I_HSNRECID)
-
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-
-
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.I_SMNETAMOUNT, new { @class = "labels" })
-
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.I_SMNETAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text", @readonly = "readonly" } })
-
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.I_SORTORDER, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.I_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", type = "text" } })
-
-                    </div>
-                </div>
-
-
-                <div class="row mb-3">
-                    <div class="col-lg-2">
-
-                    </div>
-                    <div class="col-lg-3 d-flex justify-content-end">
-
-                    </div>
-                    <div class="col-lg-2">
-
-                    </div>
-                    <div class="col-lg-3 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "Item", new { })'" />
-                    </div>
-                </div>
-            </div>
-
-        }
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck1"></span>
-                            - Text Fields
                         </div>
-                    </div>
 
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck2"></span>
-                            - Number Fields
+                        <div class="form-divider"></div>
+
+                        <!-- ── Pricing & Tax ───────────────────── -->
+
+                        <div class="form-grid">
+
+                            <!-- Price -->
+                            <div class="form-group">
+                                <label class="form-label" for="I_PRICE">
+                                    @Html.DisplayNameFor(m => m.I_PRICE)
+                                    <span class="req">*</span>
+                                </label>
+                                @Html.TextBoxFor(m => m.I_PRICE, new
+                           {
+                               @class = "form-input-num",
+                               autocomplete = "off",
+                               type = "number",
+                               oninput = "Netamount()",
+                               placeholder = "0"
+                           })
+                            </div>
+
+                            <!-- Quantity -->
+                            <div class="form-group">
+                                <label class="form-label" for="I_SMQUANTITY">
+                                    @Html.DisplayNameFor(m => m.I_SMQUANTITY)
+                                </label>
+                                @Html.TextBoxFor(m => m.I_SMQUANTITY, new
+                           {
+                               @class = "form-input-num",
+                               autocomplete = "off",
+                               oninput = "Netamount()",
+                               type = "number"
+                           })
+                            </div>
+
+                            <!-- SGST -->
+                            <div class="form-group">
+                                <label class="form-label" for="I_SGST">
+                                    @Html.DisplayNameFor(m => m.I_SGST)
+                                </label>
+                                @Html.TextBoxFor(m => m.I_SGST, "{0:0.00}", new
+                                {
+                                    @class = "form-input-auto",
+                                    autocomplete = "off",
+                                    oninput = "formatPrice(this)",
+                                    placeholder = "0.00"
+                                })
+                                <span class="auto-badge"><i class="bi bi-lock"></i> From HSN master</span>
+                            </div>
+
+                            <!-- CGST -->
+                            <div class="form-group">
+                                <label class="form-label" for="I_CGST">
+                                    @Html.DisplayNameFor(m => m.I_CGST)
+                                </label>
+                                @Html.TextBoxFor(m => m.I_CGST, new
+                                {
+                                    @class = "form-input-auto",
+                                    autocomplete = "off",
+                                    type = "text"
+                                })
+                                <span class="auto-badge"><i class="bi bi-lock"></i> From HSN master</span>
+                            </div>
+
                         </div>
-                    </div>
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck3"></span>
-                            - Read Only
+
+                        <div class="form-divider"></div>
+
+                        <!-- ── Amount Summary ───────────────── -->
+
+                        <div class="form-grid">
+                            <div class="amount-summary">
+
+                                <div class="amount-item">
+                                    <span class="amount-label">
+                                        <i class="bi bi-calculator"></i>
+                                        @Html.DisplayNameFor(m => m.I_SMTOTALAMOUNT)
+                                    </span>
+                                    @Html.TextBoxFor(m => m.I_SMTOTALAMOUNT, new
+                                    {
+                                        @class = "form-input-calc",
+                                        autocomplete = "off",
+                                        @readonly = "readonly",
+                                        placeholder = "0.00"
+                                    })
+                                </div>
+
+                                <div class="amount-item">
+                                    <span class="amount-label">
+                                        <i class="bi bi-currency-rupee"></i>
+                                        @Html.DisplayNameFor(m => m.I_SMNETAMOUNT)
+                                    </span>
+                                    @Html.TextBoxFor(m => m.I_SMNETAMOUNT, new
+                                    {
+                                        @class = "form-input-calc",
+                                        autocomplete = "off",
+                                        type = "text",
+                                        @readonly = "readonly"
+                                    })
+                                </div>
+
+                            </div>
                         </div>
+
                     </div>
-                </div>
-            </div>
-        </footer>
 
-    </div>
+                    <!-- Legend bar — matches list view style -->
+                    <div class="legend-bar">
 
+                        <div class="legend-item">
+                            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#adb5bd;flex-shrink:0;"></span>
+                            <span>Read-only Field</span>
+                        </div>
 
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
-        </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-        </div>
-    </div>
-    <div id="preloader2"></div>
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
+                        <div class="legend-item">
+                            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+                            <span>Text Field</span>
+                        </div>
 
+                        <div class="legend-item">
+                            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
+                            <span>Number Field</span>
+                        </div>
 
+                        <div class="legend-item">
+                            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#BA7517;flex-shrink:0;"></span>
+                            <span>Calculated Field</span>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="form-actions">
+                        <a href="@Url.Action("List","Item")"
+                           class="btn-cancel">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                        <button type="submit"
+                                class="btn-save"
+                                id="savebutton">
+                            <i class="bi bi-floppy"></i> Update
+                        </button>
+                    </div>
+
+                </div>}
+
+@section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @*Logout Pronptbox script*@
+
     <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
+
+        /* ── Net Amount Calculation ───────────────── */
+        function Netamount() {
+            var price    = parseFloat($('#I_PRICE').val()) || 0;
+            var quantity = parseFloat($('#I_SMQUANTITY').val()) || 0;
+            var sgst     = parseFloat($('#I_SGST').val()) || 0;
+            var cgst     = parseFloat($('#I_CGST').val()) || 0;
+
+            var baseAmount = price * quantity;
+            var sgstAmount = baseAmount * (sgst / 100);
+            var cgstAmount = baseAmount * (cgst / 100);
+
+            $('#I_SMTOTALAMOUNT').val(baseAmount.toFixed(2));
+            $('#I_SMNETAMOUNT').val((baseAmount + sgstAmount + cgstAmount).toFixed(2));
+        }
+
+        /* Run on page load with existing values */
+        window.addEventListener("load", function () { Netamount(); });
+
+        /* ── Decimal formatter ───────────────────── */
+        function formatPrice(input) {
+            var digits = input.value.replace(/\D/g, '');
+            if (digits.length === 0)      { input.value = "0.00"; return; }
+            else if (digits.length === 1) { input.value = "0.0" + digits; }
+            else if (digits.length === 2) { input.value = "0." + digits; }
+            else {
+                input.value = parseInt(digits.slice(0, -2), 10) + "." + digits.slice(-2);
             }
-        });
-    });
-    </script>
+        }
 
-    @*Toastr for created succesfully*@
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- jQuery CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-    $(document).ready(function () {
-        $("#editform").submit(function (event) {
-            event.preventDefault();
+        /* ── Item Group → Category cascade ──────── */
+        $(document).ready(function () {
 
-            var submitBtn = $("#savebutton");
-            submitBtn.prop("disabled", true);
-
-            var formData = new FormData(this);
-
-
-            // Disable page interaction
-            $("body").css("pointer-events", "none");
-
-            $.ajax({
-                url: '@Url.Action("Edit", "Item")',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response.success) {
-                        // 🔹 First show processing bar
-                        Swal.fire({
-                            title: "Processing...",
-                            html: "Please wait while we save your changes.",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
-                        // ⏳ After small delay, show success popup
-                        setTimeout(function () {
-                        Swal.fire({
-                            title: "Success!",
-                            text: response.message,
-                            icon: "success",
-                            confirmButtonText: "Ok",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            customClass: {
-                                confirmButton: "swal-btn-continue",
-                            },
-                            didOpen: () => {
-                                $(".swal2-container").css("pointer-events", "auto");
-                            }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '@Url.Action("List", "Item")';
-                            } else {
-                                 window.location.href = '@Url.Action("Create", "Item")';
-                            }
-                        });
-                    }, 1000); // 1 second delay for "Processing"
-                    } else {
-                        Swal.fire({
-                            title: "Message",
-                            text: response.message,
-                            icon: "info",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                        resetButton();
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "An unexpected error occurred.",
-                        icon: "error",
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
+            $('#itemGroupDropdown').on('change', function () {
+                var grecid = $(this).val();
+                if (grecid) {
+                    $.ajax({
+                        url: '@Url.Action("ItemGroupCategoryCombo","MaterialConsumption")',
+                        type: 'GET',
+                        data: { Grouprecid: grecid },
+                        success: function (data) {
+                            var dd = $('#itemCategoryDropdown').empty();
+                            dd.append('<option value="">Select an Item Category</option>');
+                            $.each(data, function (i, item) {
+                                dd.append($('<option>', { value: item.IC_RECID, text: item.IC_DESCRIPTION }));
+                            });
+                        },
+                        error: function () { alert('Error loading categories.'); }
                     });
-                    resetButton();
+                } else {
+                    $('#itemCategoryDropdown').empty().append('<option value="">Select an Item Category</option>');
                 }
             });
-        });
 
-        function resetButton() {
-            $("#savebutton").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto");
-        }
-    });
-    </script>
+            /* ── Category → Item cascade ─────────── */
+            var materials = [];
 
+            $('#itemCategoryDropdown').on('change', function () {
+                var categoryRecId    = $(this).val();
+                var materialDropdown = $('#MaterialDropdown').empty();
+                materials = [];
 
-    <!-- Net Amount Calculation -->
-    <script>
-        function Netamount() {
+                if (!categoryRecId) {
+                    materialDropdown.append('<option value="">Select Item Category first</option>');
+                    return;
+                }
 
-            let price = parseFloat($('#I_PRICE').val()) || 0;
-            let quantity = parseFloat($('#I_SMQUANTITY').val()) || 0;
-
-            let sgstPercent = parseFloat($('#I_SGST').val()) || 0;
-            let cgstPercent = parseFloat($('#I_CGST').val()) || 0;
-
-            // 1️⃣ Base Amount
-            let baseAmount = price * quantity;
-
-            // 2️⃣ GST Calculation
-            let sgstAmount = baseAmount * (sgstPercent / 100);
-            let cgstAmount = baseAmount * (cgstPercent / 100);
-
-            // 3️⃣ Final Amounts
-            let totalAmount = baseAmount;
-            let netAmount = baseAmount + sgstAmount + cgstAmount;
-
-            // 4️⃣ Set values
-            $('#I_SMTOTALAMOUNT').val(totalAmount.toFixed(2));
-            $('#I_SMNETAMOUNT').val(netAmount.toFixed(2));
-        }
-    </script>
-
-    <!-- Decimal filed for price -->
-    <script>
-        function formatPrice(input) {
-            // Remove non-digit characters
-            let digits = input.value.replace(/\D/g, '');
-
-            if (digits.length === 0) {
-                input.value = "0.00";
-                return;
-            }
-
-            // If only 1 digit → treat as cents (0.0X)
-            if (digits.length === 1) {
-                input.value = "0.0" + digits;
-            }
-            // If only 2 digits → treat as cents (0.XX)
-            else if (digits.length === 2) {
-                input.value = "0." + digits;
-            }
-            // Otherwise → split into integer + decimal
-            else {
-                let integerPart = digits.slice(0, -2);
-                let decimalPart = digits.slice(-2);
-                input.value = parseInt(integerPart, 10) + "." + decimalPart;
-            }
-        }
-    </script>
-
-
-
-    @*Item Category function call*@
-    <script>
-    $(document).ready(function () {
-
-        $('#itemGroupDropdown').on('change', function () {
-
-            var grecid = $(this).val();
-
-            if (grecid) {
                 $.ajax({
-                    url: '@Url.Action("ItemGroupCategoryCombo", "MaterialConsumption")',
+                    url: '@Url.Action("ItemCombo","MaterialConsumption")',
                     type: 'GET',
-                    data: { Grouprecid: grecid },
+                    data: { Categoryrecid: categoryRecId },
                     success: function (data) {
-                        console.log("Category data:", data);
-                        var categoryDropdown = $('#itemCategoryDropdown');
-                        categoryDropdown.empty();
-                        categoryDropdown.append('<option value="">Select an Item Category</option>');
-
-                        $.each(data, function (index, item) {
-                            categoryDropdown.append(
-                                $('<option>', {
-                                    value: item.IC_RECID,
-                                    text: item.IC_DESCRIPTION
-                                })
-                            );
-                        });
+                        if (data && data.length > 0) {
+                            materialDropdown.append('<option value="">Select an Item</option>');
+                            materials = data;
+                            $.each(data, function (i, item) {
+                                materialDropdown.append($('<option>', { value: item.I_RECID, text: item.I_DESCRIPTION }));
+                            });
+                        } else {
+                            materialDropdown.append('<option disabled>No items available</option>');
+                        }
                     },
                     error: function () {
-                        alert('Error loading categories.');
+                        materialDropdown.append('<option disabled>Error loading items</option>');
                     }
                 });
-            } else {
-                $('#itemCategoryDropdown').empty()
-                    .append('<option value="">Select an Item Category</option>');
+            });
+
+            /* ── AJAX submit — processing spinner shows FIRST ── */
+            $("#editform").submit(function (e) {
+                e.preventDefault();
+
+                var btn      = $("#savebutton");
+                var formData = new FormData(this);
+
+                btn.prop("disabled", true);
+
+                Swal.fire({
+                    title: "Processing…",
+                    html: "Please wait while we save your changes.",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: function () {
+                        Swal.showLoading();
+
+                        $.ajax({
+                            url: '@Url.Action("Edit","Item")',
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                if (response.success) {
+                                    setTimeout(function () {
+                                        Swal.fire({
+                                            title: "Success!",
+                                            text: response.message,
+                                            icon: "success",
+                                            confirmButtonText: "Ok",
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false,
+                                            customClass: {
+                                                confirmButton: "swal-btn-continue"
+                                            }
+                                        }).then(function () {
+                                            window.location.href = '@Url.Action("List","Item")';
+                                        });
+                                    }, 800);
+                                } else {
+                                    Swal.fire({
+                                        title: "Message",
+                                        text: response.message,
+                                        icon: "info",
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    resetButton();
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: "An unexpected error occurred.",
+                                    icon: "error",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                resetButton();
+                            }
+                        });
+                    }
+                });
+            });
+
+            function resetButton() {
+                $("#savebutton").prop("disabled", false);
             }
-
         });
-
-    });
     </script>
-    @*Item dropdown data loading*@
-    <script>
-    var materials = []; // store items globally
-
-    $('#itemCategoryDropdown').on('change', function () {
-
-        var categoryRecId = $(this).val();
-        var materialDropdown = $('#MaterialDropdown');
-
-        materialDropdown.empty();
-        materials = [];
-
-        if (!categoryRecId) {
-            materialDropdown.append('<option value="">Select Item Category first</option>');
-            clearMaterialFields();
-            return;
-        }
-
-        $.ajax({
-            url: '@Url.Action("ItemCombo", "MaterialConsumption")',
-            type: 'GET',
-            data: { Categoryrecid: categoryRecId },
-            success: function (data) {
-                console.log("Item data:", data);
-                if (data && data.length > 0) {
-
-                    materialDropdown.append('<option value="">Select an Item</option>');
-
-                    materials = data; // store full object list
-
-                    $.each(data, function (i, item) {
-                        materialDropdown.append(
-                            $('<option>', {
-                                value: item.I_RECID,
-                                text: item.I_DESCRIPTION
-                            })
-                        );
-                    });
-                }
-                else {
-                    materialDropdown.append('<option disabled>No items are available</option>');
-                    clearMaterialFields();
-                }
-            },
-            error: function () {
-                materialDropdown.append('<option disabled>Error loading items</option>');
-                clearMaterialFields();
-            }
-        });
-    });
-    </script>
-
-</body>
-</html>
-
-
+}

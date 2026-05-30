@@ -1,163 +1,690 @@
 ﻿@model PSS_CMS.Models.Login
-@{
-    Layout = null;
-    var successMessage = TempData["SuccessMessage"];
-    var errorMessage = TempData["ErrorMessage"];
-}
+@{ Layout = null;
+                var successMessage = TempData["SuccessMessage"];
+                var errorMessage = TempData["ErrorMessage"]; }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
-    <!-- Bootstrap CDN -->
+    <title>TICKET SYSTEM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Add this in your layout file if not already added -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Custom Styles -->
-    <link href="~/Content/Login.css" rel="stylesheet" />
+    <link href="~/Content/UILogin.css" rel="stylesheet" />
+    <style>
+        #loginLoader {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.92);
+    display: none;                        /* hidden by default */
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+    animation: loaderFadeIn .25s ease both;
+}
+
+#loginLoader.active {
+    display: flex;
+}
+
+/* Spinner — identical to .loader */
+#loginLoader .loader {
+    width: 44px;
+    height: 44px;
+    border: 4px solid var(--purple-lt);
+    border-top-color: var(--purple);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+}
+
+/* "Signing in…" label below spinner */
+#loginLoader .loader-text {
+    font-family: 'Nunito', sans-serif;
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--purple);
+    letter-spacing: .4px;
+    animation: loaderTextPulse 1.4s ease-in-out infinite;
+}
+
+/* Dot trail */
+#loginLoader .loader-dots span {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--purple);
+    margin: 0 3px;
+    animation: dotBounce .9s ease-in-out infinite;
+}
+
+#loginLoader .loader-dots span:nth-child(2) { animation-delay: .18s; }
+#loginLoader .loader-dots span:nth-child(3) { animation-delay: .36s; }
+
+/* ── Keyframes ── */
+@@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@@keyframes loaderFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@@keyframes loaderTextPulse {
+    0%, 100% { opacity: .6; }
+    50%       { opacity: 1; }
+}
+
+@@keyframes dotBounce {
+    0%, 80%, 100% { transform: translateY(0);   opacity: .4; }
+    40%           { transform: translateY(-8px); opacity: 1;  }
+}
+
+        @@keyframes floatScene {
+            0%, 100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-12px)
+            }
+        }
+
+        @@keyframes cardBob0 {
+            0%, 100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-10px)
+            }
+        }
+
+        @@keyframes cardBob1 {
+            0%, 100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-8px)
+            }
+        }
+
+        @@keyframes cardBob2 {
+            0%, 100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-12px)
+            }
+        }
+
+        @@keyframes sparkPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: .65
+            }
+
+            50% {
+                transform: scale(1.4);
+                opacity: 1
+            }
+        }
+
+        @@keyframes monitorPulse {
+            0%, 100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.82
+            }
+        }
+
+        @@keyframes agentBob {
+            0%, 100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-5px)
+            }
+        }
+
+        @@keyframes headsetGlow {
+            0%, 100% {
+                opacity: 0.65
+            }
+
+            50% {
+                opacity: 1
+            }
+        }
+
+        @@keyframes rotateGear {
+            from {
+                transform: rotate(0deg)
+            }
+
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        @@keyframes dotBlink {
+            0%, 100% {
+                opacity: 0.35
+            }
+
+            50% {
+                opacity: 1
+            }
+        }
+
+        .scene {
+            animation: floatScene 5s ease-in-out infinite;
+            transform-origin: 340px 280px;
+        }
+
+        .card0 {
+            animation: cardBob0 4s ease-in-out infinite;
+            transform-origin: 70px 80px;
+        }
+
+        .card1 {
+            animation: cardBob1 4s ease-in-out infinite 1.2s;
+            transform-origin: 78px 135px;
+        }
+
+        .card2 {
+            animation: cardBob2 4.5s ease-in-out infinite 2.1s;
+            transform-origin: 530px 65px;
+        }
+
+        .sparkle {
+            animation: sparkPulse 2s ease-in-out infinite;
+            transform-origin: 530px 28px;
+        }
+
+        .monitor-screen {
+            animation: monitorPulse 3s ease-in-out infinite;
+        }
+
+        .agent1-body {
+            animation: agentBob 3s ease-in-out infinite;
+            transform-origin: 118px 255px;
+        }
+
+        .agent2-body {
+            animation: agentBob 3.4s ease-in-out infinite 0.8s;
+            transform-origin: 470px 230px;
+        }
+
+        .headset1 {
+            animation: headsetGlow 2.5s ease-in-out infinite;
+        }
+
+        .headset2 {
+            animation: headsetGlow 2.5s ease-in-out infinite 1.2s;
+        }
+
+        .gear {
+            animation: rotateGear 10s linear infinite;
+            transform-origin: 592px 96px;
+        }
+
+        .status-dot {
+            animation: dotBlink 2s ease-in-out infinite;
+        }
+    </style>
 
 </head>
-<body onload="hideLoadingScreen()">
-    <div id="loadingScreen">
+<body>
+    <div id="loginLoader">
         <div class="loader"></div>
+        <div class="loader-text">Signing in…</div>
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
     </div>
-    <!-- Centered Sign-in Form -->
-    <div class="container vh-100 d-flex justify-content-center align-items-center">
-        <div class="row">
-            <div class="col">
-                <div class="card login-container position-relative d-flex justify-content-center align-items-center">
-                    @{
-                        var message = TempData["SessionExpired"] as string;
-                        if (!string.IsNullOrEmpty(message))
-                        {
-                            <script>
-            Swal.fire({
-                icon: 'warning',
-                title: 'Session Expired',
-                text: '@message',
-                timer: 3000,
-                showConfirmButton: false
-            });
-                            </script>
-                        }
-                    }
-                    <!-- Logo -->
-                    <img src="~/assets/img/bexlogo_wob(bgremoved.png" alt="PSS Logo" class="logo">
+    @*<div id="loadingScreen"><div class="loader"></div></div>*@
 
-                    <!-- Header -->
-                    <h4 class="text-center mb-2">SERVICE MANAGEMENT</h4>
-                    <!-- Form -->
-                    @using (Html.BeginForm("IndexROle", "Login", FormMethod.Post, new { id = "form" }))
-                    {
+    @{ var sessionMsg = TempData["SessionExpired"] as string;
+        if (!string.IsNullOrEmpty(sessionMsg))
+        {
+<script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({ icon:'warning', title:'Session Expired',
+                        text:'@sessionMsg', timer:3000, showConfirmButton:false });
+                });
+</script>
+ } }
 
+    <div class="page-wrap">
+        <div class="login-card">
 
-                        <div class="form-group row mb-2">
-                            @Html.LabelFor(model => Model.U_EMAILID, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
-                            <div class="col-md-12">
-                                @Html.EditorFor(model => model.U_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "1", type = "text", id = "L_USERNAME", placeholder = "Email, Code or Mobile number"} })
-                                @Html.ValidationMessageFor(model => model.U_EMAILID, "", new { @class = "text-danger" })
-                            </div>
+            <!-- ════ LEFT ════ -->
+            <div class="left-panel">
+                <div class="scene-label">Support Ticket Management</div>
+                <div class="illus-wrap">
+                    <svg width="100%" viewBox="0 0 680 480" role="img" xmlns="http://www.w3.org/2000/svg">
+                        <title>Support Ticket Management</title>
+                        <desc>Two support agents at a desk with a dashboard monitor and floating ticket status cards</desc>
 
-                        </div>
-                        <div class="form-group row mb-2">
+                        <defs>
+                            <linearGradient id="deskGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="rgba(255,255,255,0.45)" />
+                                <stop offset="100%" stop-color="rgba(255,255,255,0.18)" />
+                            </linearGradient>
+                            <filter id="cardShadow" x="-10%" y="-10%" width="130%" height="150%">
+                                <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(40,20,120,0.22)" />
+                            </filter>
+                            <filter id="monitorGlow" x="-8%" y="-8%" width="116%" height="116%">
+                                <feDropShadow dx="0" dy="2" stdDeviation="8" flood-color="rgba(255,255,255,0.30)" />
+                            </filter>
+                        </defs>
 
-                            @Html.LabelFor(model => Model.U_PASSWORD, htmlAttributes: new { @class = "control-label col-md-4 label-align" })
-                            <div class="col-md-12">
-                                @Html.EditorFor(model => model.U_PASSWORD, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", type = "password", id = "L_PASSWORD", placeholder = "Password"} })
-                                @Html.ValidationMessageFor(model => model.U_PASSWORD, "", new { @class = "text-danger" })
-                            </div>
+                        <!-- ══════════════ SCENE (floats together) ══════════════ -->
+                        <g class="scene">
 
-                        </div>
-                      
+                            <!-- DESK surface -->
+                            <rect x="40" y="318" width="600" height="16" rx="6" fill="url(#deskGrad)" />
+                            <!-- Desk legs -->
+                            <rect x="65" y="334" width="16" height="76" rx="5" fill="rgba(255,255,255,0.20)" />
+                            <rect x="599" y="334" width="16" height="76" rx="5" fill="rgba(255,255,255,0.20)" />
 
-                        <!-- Forgot Password -->
-                <div class="forgot-password d-flex justify-content-between">
-                    <a href="@Url.Action("Index", "Login")" class="text-decoration-none">Customer Login</a>
+                            <!-- Monitor stand -->
+                            <rect x="329" y="304" width="12" height="18" rx="4" fill="rgba(255,255,255,0.45)" />
+                            <rect x="310" y="320" width="50" height="8" rx="4" fill="rgba(255,255,255,0.45)" />
 
-                    <a href="@Url.Action("Forgotpassword", "Forgotpassword")" class="text-decoration-none">Forgot Password?</a>
+                            <!-- Monitor body -->
+                            <rect x="162" y="134" width="346" height="188" rx="14"
+                                  fill="rgba(255,255,255,0.96)" filter="url(#monitorGlow)" />
+                            <!-- Screen -->
+                            <rect class="monitor-screen" x="174" y="146" width="320" height="164" rx="8" fill="#dbeafe" />
+
+                            <!-- Stat card — Orange / Open -->
+                            <rect x="184" y="154" width="86" height="56" rx="7" fill="white" />
+                            <circle cx="218" cy="174" r="13" fill="#fff0e6" />
+                            <circle cx="218" cy="174" r="8.5" fill="#f97316" />
+                            <rect x="193" y="193" width="66" height="7" rx="3" fill="#fed7aa" />
+                            <text x="227" y="212" font-family="sans-serif" font-size="8.5" fill="#f97316" font-weight="700">Open</text>
+
+                            <!-- Stat card — Teal / Active -->
+                            <rect x="280" y="154" width="86" height="56" rx="7" fill="white" />
+                            <circle cx="314" cy="174" r="13" fill="#e0f7f5" />
+                            <circle cx="314" cy="174" r="8.5" fill="#0d9488" />
+                            <rect x="289" y="193" width="66" height="7" rx="3" fill="#99f6e4" />
+                            <text x="323" y="212" font-family="sans-serif" font-size="8.5" fill="#0d9488" font-weight="700">Active</text>
+
+                            <!-- Stat card — Blue / Queue -->
+                            <rect x="376" y="154" width="86" height="56" rx="7" fill="white" />
+                            <circle cx="410" cy="174" r="13" fill="#dbeafe" />
+                            <circle cx="410" cy="174" r="8.5" fill="#3b82f6" />
+                            <rect x="385" y="193" width="66" height="7" rx="3" fill="#bfdbfe" />
+                            <text x="419" y="212" font-family="sans-serif" font-size="8.5" fill="#3b82f6" font-weight="700">Queue</text>
+
+                            <!-- Progress / table area -->
+                            <rect x="184" y="220" width="300" height="62" rx="7" fill="white" />
+                            <rect x="195" y="232" width="96" height="8" rx="3" fill="#c4b5fd" />
+                            <rect x="195" y="246" width="180" height="7" rx="3" fill="#e2e8f0" />
+                            <rect x="195" y="259" width="140" height="7" rx="3" fill="#e2e8f0" />
+                            <rect x="195" y="272" width="110" height="7" rx="3" fill="#e2e8f0" />
+
+                            <!-- ─── AGENT 1 — seated left ─── -->
+                            <g class="agent1-body">
+                                <!-- Chair seat + post -->
+                                <rect x="74" y="318" width="110" height="12" rx="5" fill="rgba(255,255,255,0.28)" />
+                                <rect x="117" y="330" width="18" height="48" rx="5" fill="rgba(255,255,255,0.18)" />
+                                <!-- Body -->
+                                <rect x="80" y="252" width="86" height="80" rx="16" fill="#4f46c8" />
+                                <!-- Arms -->
+                                <rect x="56" y="264" width="30" height="16" rx="8" fill="#3730a3" />
+                                <rect x="160" y="264" width="30" height="16" rx="8" fill="#3730a3" />
+                                <!-- Head -->
+                                <circle cx="123" cy="234" r="28" fill="#fde68a" />
+                                <!-- Hair -->
+                                <ellipse cx="123" cy="211" rx="26" ry="13" fill="#1e3a5f" />
+                                <path d="M98 226 Q123 207 148 226" stroke="#374151" stroke-width="4" fill="none" />
+                                <circle cx="98" cy="228" r="7" fill="#374151" />
+                                <circle cx="148" cy="228" r="7" fill="#374151" />
+                                <!-- Headset mic -->
+                                <g class="headset1">
+                                    <path d="M98 231 L85 243" stroke="#374151" stroke-width="3.5" stroke-linecap="round" />
+                                    <circle cx="83" cy="245" r="5.5" fill="#0d9488" />
+                                    <circle cx="83" cy="245" r="2.5" fill="#5eead4" />
+                                </g>
+                            </g>
+
+                            <!-- ─── AGENT 2 — standing right ─── -->
+                            <g class="agent2-body">
+                                <!-- Legs -->
+                                <rect x="452" y="302" width="22" height="72" rx="8" fill="#4f46c8" />
+                                <rect x="484" y="302" width="22" height="72" rx="8" fill="#4f46c8" />
+                                <!-- Body -->
+                                <rect x="444" y="198" width="70" height="118" rx="14" fill="#6c5ce7" />
+                                <!-- Arms -->
+                                <rect x="414" y="222" width="36" height="16" rx="8" fill="#4f46c8" />
+                                <rect x="508" y="226" width="30" height="16" rx="8" fill="#4f46c8" />
+                                <!-- Head -->
+                                <circle cx="479" cy="182" r="27" fill="#fde68a" />
+                                <!-- Hair -->
+                                <ellipse cx="479" cy="160" rx="25" ry="12" fill="#111827" />
+                                <path d="M455 176 Q479 161 503 176" stroke="#374151" stroke-width="4" fill="none" />
+                                <circle cx="455" cy="178" r="7" fill="#374151" />
+                                <circle cx="503" cy="178" r="7" fill="#374151" />
+                                <!-- Headset mic -->
+                                <g class="headset2">
+                                    <path d="M455 181 L442 194" stroke="#374151" stroke-width="3.5" stroke-linecap="round" />
+                                    <circle cx="440" cy="196" r="5.5" fill="#0d9488" />
+                                    <circle cx="440" cy="196" r="2.5" fill="#5eead4" />
+                                </g>
+                            </g>
+
+                            <!-- Magnifier bottom-left -->
+                            <circle cx="90" cy="418" r="28" fill="none" stroke="rgba(255,255,255,0.32)" stroke-width="6" />
+                            <line x1="112" y1="440" x2="132" y2="460"
+                                  stroke="rgba(255,255,255,0.32)" stroke-width="6" stroke-linecap="round" />
+
+                            <!-- Teal blob bottom-left -->
+                            <ellipse cx="44" cy="460" rx="82" ry="55"
+                                     fill="rgba(13,148,136,0.20)" transform="rotate(-20,44,460)" />
+
+                        </g><!-- /scene -->
+                        <!-- ══════════════ FLOATING CARDS (independent animation) ══════════════ -->
+                        <!-- Card 1 — Ticket #4821  Open / Critical -->
+                        <g class="card0" filter="url(#cardShadow)">
+                            <rect x="14" y="58" width="158" height="56" rx="11" fill="rgba(255,255,255,0.96)" />
+                            <rect x="24" y="69" width="48" height="17" rx="6" fill="#fff0e6" />
+                            <text x="48" y="81" text-anchor="middle" font-family="sans-serif" font-size="9.5" fill="#f97316" font-weight="700">Open</text>
+                            <rect x="76" y="69" width="56" height="17" rx="6" fill="#fde8e8" />
+                            <text x="104" y="81" text-anchor="middle" font-family="sans-serif" font-size="9.5" fill="#ef4444" font-weight="700">Critical</text>
+                            <text x="96" y="104" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#64748b">Ticket #4821</text>
+                            <circle class="status-dot" cx="158" cy="63" r="5.5" fill="#ef4444" />
+                        </g>
+
+                        <!-- Card 2 — Resolved / Urgent -->
+                        <g class="card1" filter="url(#cardShadow)">
+                            <rect x="22" y="122" width="162" height="46" rx="10" fill="rgba(255,255,255,0.90)" />
+                            <rect x="32" y="132" width="60" height="15" rx="5" fill="#e0f7f5" />
+                            <text x="62" y="143" text-anchor="middle" font-family="sans-serif" font-size="9.5" fill="#0d9488" font-weight="700">Resolved</text>
+                            <rect x="96" y="132" width="52" height="15" rx="5" fill="#fff0e6" />
+                            <text x="122" y="143" text-anchor="middle" font-family="sans-serif" font-size="9.5" fill="#f97316" font-weight="700">Urgent</text>
+                            <text x="103" y="159" text-anchor="middle" font-family="sans-serif" font-size="8.5" fill="#64748b">Refrigerator issue</text>
+                        </g>
+
+                        <!-- Card 3 — Closed (top right) -->
+                        <g class="card2" filter="url(#cardShadow)">
+                            <rect x="490" y="44" width="146" height="72" rx="10" fill="rgba(255,255,255,0.94)" />
+                            <rect x="500" y="56" width="68" height="8" rx="3" fill="#c4b5fd" />
+                            <rect x="500" y="69" width="114" height="6" rx="3" fill="#e2e8f0" />
+                            <rect x="500" y="80" width="90" height="6" rx="3" fill="#e2e8f0" />
+                            <rect x="500" y="92" width="48" height="14" rx="5" fill="#dcfce7" />
+                            <text x="524" y="103" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#22c55e" font-weight="700">Closed</text>
+                        </g>
+
+                        <!-- Sparkle ✦ top-right area -->
+                        <g class="sparkle">
+                            <circle cx="530" cy="28" r="13" fill="rgba(255,255,255,0.28)" />
+                            <text x="530" y="34" text-anchor="middle" font-size="15" fill="#fde68a">✦</text>
+                        </g>
+
+                        <!-- Gear — top far right -->
+                        <g class="gear">
+                            <circle cx="592" cy="96" r="17" fill="none" stroke="rgba(255,255,255,0.36)" stroke-width="3.5" />
+                            <circle cx="592" cy="96" r="7" fill="rgba(255,255,255,0.36)" />
+                            <line x1="592" y1="77" x2="592" y2="82" stroke="rgba(255,255,255,0.50)" stroke-width="3" stroke-linecap="round" />
+                            <line x1="592" y1="110" x2="592" y2="115" stroke="rgba(255,255,255,0.50)" stroke-width="3" stroke-linecap="round" />
+                            <line x1="573" y1="96" x2="578" y2="96" stroke="rgba(255,255,255,0.50)" stroke-width="3" stroke-linecap="round" />
+                            <line x1="606" y1="96" x2="611" y2="96" stroke="rgba(255,255,255,0.50)" stroke-width="3" stroke-linecap="round" />
+                        </g>
+
+                    </svg>
                 </div>
-                        <!-- Login Button -->
-                        <div class="d-flex justify-content-center mt-2 gap-3">
-                            <button type="submit" class="btn-login btn-sm" tabindex="4">Login</button>
+            </div>
 
+            <!-- ════ RIGHT ════ -->
+            <div class="right-panel">
+
+                <img src="~/assets/img/bexlogo_wob(bgremoved.png"
+                     alt="BeyondEXS Logo" class="brand-logo"
+                     onerror="this.style.display='none';document.getElementById('svgLogo').style.display='block'">
+
+                <svg id="svgLogo" style="display:none" class="brand-logo"
+                     viewBox="0 0 68 68" xmlns="http://www.w3.org/2000/svg" aria-label="BeyondEXS logo">
+                    <circle cx="34" cy="34" r="32" fill="#ede9ff" />
+                    <circle cx="34" cy="34" r="22" fill="none" stroke="#0d9488" stroke-width="3" />
+                    <ellipse cx="34" cy="34" rx="11" ry="22" fill="none" stroke="#0d9488" stroke-width="2.5" />
+                    <line x1="12" y1="34" x2="56" y2="34" stroke="#0d9488" stroke-width="2.5" />
+                    <text x="29" y="42" font-size="18" font-weight="800" fill="#6c5ce7" font-family="sans-serif">B</text>
+                    <path d="M44 18 L38 30 L43 30 L37 46 L48 30 L42 30 Z" fill="#f97316" />
+                </svg>
+
+                <h1>TICKET SYSTEM</h1>
+                <p class="subtitle">Welcome back! Please sign in to continue</p>
+                <div id="welcomeName"></div>
+
+                @using (Html.BeginForm("IndexRole", "Login", FormMethod.Post, new { id = "roleForm" }))
+                {
+    @Html.AntiForgeryToken()
+
+                    <div class="field-group">
+                        <label for="L_USERNAME">User ID</label>
+                        <div class="input-wrap">
+                            <span class="ico" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                            </span>
+                            @Html.EditorFor(m => m.U_EMAILID, new { htmlAttributes = new { @class = "form-control", tabindex = "1", type = "text", id = "L_USERNAME", placeholder = "Email, Code or Mobile number" } })
                         </div>
+                        @Html.ValidationMessageFor(m => m.U_EMAILID, "", new { @class = "text-danger" })
+                    </div>
 
-                        <!-- Validation Errors below the form fields -->
-                        <div>
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        </div>
+                                    <div class="field-group">
+                                        <label for="L_PASSWORD">Password</label>
+                                        <div class="input-wrap">
+                                            <span class="ico" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="3" y="11" width="18" height="11" rx="2" />
+                                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                                </svg>
+                                            </span>
+                                            @Html.EditorFor(m => m.U_PASSWORD, new { htmlAttributes = new { @class = "form-control", tabindex = "2", type = "password", id = "L_PASSWORD", placeholder = "Password" } })
+                                            <button type="button" class="eye-btn" onclick="togglePwd()" aria-label="Toggle password visibility">
+                                                <svg id="eyeIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                                    <circle cx="12" cy="12" r="3" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        @Html.ValidationMessageFor(m => m.U_PASSWORD, "", new { @class = "text-danger" })
+                                    </div>
 
 
-                    }
 
+                                                    <div class="form-foot">
+                                                        <label class="rem-label">
+                                                            <input type="checkbox" name="rememberMe" id="rememberMe"> Remember me
+                                                        </label>
+                                                        <a href="@Url.Action("Forgotpassword","Forgotpassword")" class="forgot-lnk">Forgot Password?</a>
+                                                    </div>
 
-                </div>
+                                                                    <button type="submit" class="btn-login" tabindex="4">
+                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                                                                            <polyline points="10 17 15 12 10 7" />
+                                                                            <line x1="15" y1="12" x2="3" y2="12" />
+                                                                        </svg>
+                                                                        Login
+                                                                    </button>
+
+                                                                                    @Html.ValidationSummary(true, "", new { @class = "text-danger mt-1" })}
+
+                <p class="role-row">
+                    Want customer-based access?
+                    <a href="@Url.Action("Index","Login")" class="customer-lnk">Customer-Based Login</a>
+                </p>
+
             </div>
         </div>
     </div>
 
-
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Link to SweetAlert2 library -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-        Swal.fire({
-            icon: 'info',
-
-            text: '@TempData["ErrorMessage"]',
-            showConfirmButton: true,
-            customClass: {
-                popup: 'swal2-popup', // Apply custom class to the popup
+    <script>
+        function togglePwd() {
+            var pw = document.getElementById('L_PASSWORD');
+            var ic = document.getElementById('eyeIco');
+            if (pw.type === 'password') {
+                pw.type = 'text';
+                ic.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+            } else {
+                pw.type = 'password';
+                ic.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
             }
-        }).then((result) => {
-            if (result.isConfirmed) {
-               // Show the preloader when the user confirms
-                showLoadingScreen();
-
-                // Redirect after showing the message
-                window.location.href = '@Url.Action("IndexROle", "Login")';
-            }
-        });
-        </script>
-    }
-
-
-    @*Preloader script*@
-    <script type="text/javascript">
-        function preventBack() {
-            window.history.forward();
         }
-        setTimeout("preventBack()", 0);
 
+        var typingTimer;
+        $('#L_USERNAME').on('keyup', function () {
+            clearTimeout(typingTimer);
+            var val = $(this).val();
+            if (val.length >= 3) {
+                typingTimer = setTimeout(function () {
+                    $.ajax({
+                        url: '@Url.Action("AutoNameFetch","Login")' + '?input=' + encodeURIComponent(val),
+                        type: 'GET',
+                        success: function (r) { $('#welcomeName').text(r.name ? 'Welcome! ' + r.name : ''); },
+                        error: function () {}
+                    });
+                }, 500);
+            } else { $('#welcomeName').text(''); }
+        });
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'info',
+                text: '@TempData["ErrorMessage"]',
+                showConfirmButton: true,
+                confirmButtonColor: '#6c5ce7'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    document.getElementById('loadingScreen').style.display = 'flex';
+                    window.location.href = '@Url.Action("IndexRole", "Login")';
+                }
+            });
+            </text>
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('loadingScreen').style.display = 'flex';
+        });
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }, 450);
+        });
+
+        setTimeout(function () { window.history.forward(); }, 0);
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            showLoadingScreen();
+        // Push current page to history stack
+        history.pushState(null, null, location.href);
 
+        // Disable browser back
+        window.onpopstate = function () {
+            history.go(1);
+        };
+
+        // Prevent page from loading from cache
+        window.onload = function () {
+            window.history.forward();
+
+            // Extra protection for browser cache
+            if (performance.navigation.type === 2) {
+                location.reload(true);
+            }
+        };
+
+        // Disable backspace browser navigation outside inputs
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Backspace") {
+                var d = e.target.tagName.toLowerCase();
+
+                if (d !== 'input' && d !== 'textarea') {
+                    e.preventDefault();
+                }
+            }
         });
-
-        window.addEventListener('load', function () {
-            // Delay hiding the preloader to ensure it's displayed even on fast loads
-            setTimeout(hideLoadingScreen, 500); // 500ms delay before hiding
-        });
-
-        function showLoadingScreen() {
-            document.getElementById('loadingScreen').style.display = 'flex';
-        }
-
-        function hideLoadingScreen() {
-            document.getElementById('loadingScreen').style.display = 'none';
-        }
     </script>
-    @*Preloader script*@
+
+    <script>
+        // Load remembered credentials
+        window.onload = function () {
+
+            var remember = localStorage.getItem("rememberMe");
+
+            if (remember === "true") {
+
+                document.getElementById("rememberMe").checked = true;
+
+                document.getElementById("L_USERNAME").value =
+                    localStorage.getItem("username") || "";
+
+                document.getElementById("L_PASSWORD").value =
+                    localStorage.getItem("password") || "";
+
+                document.getElementById("L_DOMAIN").value =
+                    localStorage.getItem("domain") || "";
+            }
+        };
+
+        // Save credentials on form submit
+        document.getElementById("roleForm").addEventListener("submit", function () {
+
+            if (document.getElementById("rememberMe").checked) {
+
+                localStorage.setItem(
+                    "username",
+                    document.getElementById("L_USERNAME").value
+                );
+
+                localStorage.setItem(
+                    "password",
+                    document.getElementById("L_PASSWORD").value
+                );
+
+                localStorage.setItem(
+                    "domain",
+                    document.getElementById("L_DOMAIN").value
+                );
+
+                localStorage.setItem("rememberMe", "true");
+
+            } else {
+
+                localStorage.removeItem("username");
+                localStorage.removeItem("password");
+                localStorage.removeItem("domain");
+                localStorage.removeItem("rememberMe");
+            }
+        });
+    </script>
+    <script>
+        document.getElementById('roleForm').addEventListener('submit', function () {
+            document.getElementById('loginLoader').classList.add('active');
+        });
+    </script>
 </body>
 </html>

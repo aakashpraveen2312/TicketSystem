@@ -57,6 +57,7 @@ namespace PSS_CMS.Models
 
         [DisplayName("Total Amount")]
         public decimal? TC_TotalAmount { get; set; }
+        public decimal? SINP_SOFARPAID { get; set; }
 
         [DisplayName("Paid Amount")]
         public decimal? TC_PaidAmount { get; set; }

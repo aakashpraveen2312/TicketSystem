@@ -14,8 +14,10 @@ using System.Web.Mvc;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class ContractExclusionController : Controller
     {
+       
         // GET: ContractExclusion
         public async Task<ActionResult> List(int? CP_PRECID, string CT_CONTRACTREFERENCENUMBER, string searchPharse)
         {
@@ -115,7 +117,7 @@ namespace PSS_CMS.Controllers
 
                 var content = $@"{{           
             ""cEX_PRECID"": ""{Session["CP_PRECID"]}"",           
-            ""cEX_DESCRIPTION"": ""{exclusion.CEX_DESCRIPTION}"",    
+            ""cEX_DESCRIPTION"": ""{HttpUtility.JavaScriptStringEncode(exclusion.CEX_DESCRIPTION)}"",    
             ""cEX_SORTORDER"": ""{exclusion.CEX_SORTORDER}"",                   
             ""cEX_DISABLE"": ""{(exclusion.CEX_ExclusionDisable ? "Y" : "N")}"",                    
             ""cEX_CRECID"": ""{Session["CompanyID"]}""           

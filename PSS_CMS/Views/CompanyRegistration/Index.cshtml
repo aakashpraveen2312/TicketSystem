@@ -1,273 +1,1107 @@
 ﻿@model PSS_CMS.Models.Companies
-@{
-    Layout = null;
-}
+@{ Layout = null; }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REGISTRATION FORM</title>
+    <title>Registration Form – Ticket System</title>
 
-    @*Bootstrap Link*@
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-    @*CSS LINK*@
-    <link href="~/Content/Companies.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <link href="~/assets/img/bexlogo_wob (1).png" rel="icon" />
-    <link href="~/assets/img/bexlogo_wob (1).png" rel="apple-touch-icon" />
-    @*Toastr*@
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link href="~/Content/Companies.css" rel="stylesheet" />
+
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            min-height: 100%;
+            font-family: 'Nunito', sans-serif;
+            background: #f0f2f9;
+            color: #1a2340;
+        }
+
+        /* ── TOP NAV ── */
+        .top-nav {
+            background: #fff;
+            border-bottom: 1px solid #e8edf5;
+            padding: .7rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #ede9ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-brand-icon i { font-size: 19px; color: #6c5ce7; }
+
+        .nav-brand-text .name { font-size: 15px; font-weight: 700; color: #1a2340; }
+        .nav-brand-text .sub  { font-size: 11.5px; color: #9ba8c0; }
+
+        .nav-logo { height: 40px; object-fit: contain; }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #0d9488;
+            font-weight: 600;
+        }
+
+        .secure-badge i { font-size: 15px; }
+
+        /* ── PAGE WRAPPER ── */
+        .page-wrap {
+            max-width: 1100px;
+            margin: 2.5rem auto;
+            padding: 0 2rem 3rem;
+        }
+
+        /* ── PAGE HEADING ── */
+        .page-heading {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        .page-heading h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1a2340;
+            margin-bottom: .3rem;
+        }
+
+        .page-heading p {
+            font-size: .92rem;
+            color: #9ba8c0;
+        }
+
+        .page-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: #ede9ff;
+            color: #6c5ce7;
+            margin-top: .5rem;
+        }
+
+        /* ── PROGRESS STEPS ── */
+        .steps-row {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 1.6rem;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: .78rem;
+            font-weight: 700;
+            color: #c5cfe0;
+        }
+
+        .step-item.active { color: #6c5ce7; }
+        .step-item.done   { color: #0d9488; }
+
+        .step-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            border: 2px solid #e2e8f5;
+            background: #fff;
+            color: #c5cfe0;
+            flex-shrink: 0;
+        }
+
+        .step-item.active .step-dot {
+            background: #6c5ce7;
+            border-color: #6c5ce7;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(108,92,231,.3);
+        }
+
+        .step-item.done .step-dot {
+            background: #0d9488;
+            border-color: #0d9488;
+            color: #fff;
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: #e2e8f5;
+            margin: 0 .5rem;
+        }
+
+        /* ── MAIN CARD ── */
+        .reg-card {
+            background: #fff;
+            border-radius: 18px;
+            border: 1px solid #e8edf5;
+            box-shadow: 0 8px 36px rgba(108,92,231,.07);
+            overflow: hidden;
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 1.2rem 2rem 1rem;
+            background: #fafaff;
+            border-bottom: 1px solid #e8edf5;
+        }
+
+        .section-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .section-icon.purple { background: #ede9ff; }
+        .section-icon.teal   { background: #e0f7f5; }
+        .section-icon.blue   { background: #dbeafe; }
+
+        .section-icon.purple i { color: #6c5ce7; }
+        .section-icon.teal   i { color: #0d9488; }
+        .section-icon.blue   i { color: #3b82f6; }
+
+        .section-icon i { font-size: 20px; }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a2340;
+        }
+
+        .section-sub {
+            font-size: .8rem;
+            color: #9ba8c0;
+            margin-top: 2px;
+        }
+
+        /* ── FORM BODY ── */
+        .form-body {
+            padding: 2rem 2rem 1.5rem;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.4rem 2.2rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .field-row.full { grid-template-columns: 1fr; }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .field-group label {
+            font-size: .82rem;
+            font-weight: 700;
+            color: #5a6480;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: .2px;
+        }
+
+        .field-group label i {
+            font-size: 16px;
+            color: #9ba8c0;
+        }
+
+        .field-group label .req {
+            color: #ef4444;
+            font-size: 12px;
+            margin-left: 2px;
+        }
+
+        .field-group input,
+        .field-group select {
+            height: 52px;
+            border: 1.5px solid #e2e8f5;
+            border-radius: 11px;
+            background: #f8faff;
+            font-family: 'Nunito', sans-serif;
+            font-size: .95rem;
+            color: #1a2340;
+            padding: 0 16px;
+            width: 100%;
+            outline: none;
+            transition: border-color .18s, box-shadow .18s, background .18s;
+        }
+
+        .field-group input::placeholder { color: #c5cfe0; }
+
+        .field-group input:focus,
+        .field-group select:focus {
+            border-color: #6c5ce7;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(108,92,231,.10);
+        }
+
+        .field-hint {
+            font-size: .75rem;
+            color: #9ba8c0;
+        }
+
+        .text-danger {
+            font-size: .75rem;
+            color: #ef4444;
+        }
+
+        /* ── INDUSTRY PICKER ── */
+        .industry-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .industry-opt {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 1.1rem 1.25rem;
+            border: 1.5px solid #e2e8f5;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: border-color .18s, background .18s;
+            background: #f8faff;
+        }
+
+        .industry-opt:hover { border-color: #6c5ce7; }
+
+        .industry-opt input[type="radio"] { display: none; }
+
+        .industry-opt.selected {
+            border-color: #6c5ce7;
+            background: #f3f0ff;
+        }
+
+        .industry-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .industry-icon.purple { background: #ede9ff; }
+        .industry-icon.teal   { background: #e0f7f5; }
+        .industry-icon.purple i { color: #6c5ce7; font-size: 20px; }
+        .industry-icon.teal   i { color: #0d9488; font-size: 20px; }
+
+        .industry-label { font-size: .9rem; font-weight: 700; color: #1a2340; }
+        .industry-sub   { font-size: .75rem; color: #9ba8c0; margin-top: 2px; }
+
+        /* ── DIVIDER ── */
+        .section-divider { border: none; border-top: 1px solid #e8edf5; margin: 0; }
+
+        /* ── FOOTER ── */
+        .form-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 2rem;
+            background: #fafaff;
+            border-top: 1px solid #e8edf5;
+        }
+
+        .footer-note {
+            font-size: .82rem;
+            color: #9ba8c0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-note i { font-size: 17px; color: #0d9488; }
+
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: .75rem 2.2rem;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #6c5ce7 0%, #818cf8 100%);
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-size: .95rem;
+            font-weight: 700;
+            letter-spacing: .3px;
+            cursor: pointer;
+            transition: opacity .18s, transform .12s;
+            box-shadow: 0 6px 20px rgba(108,92,231,.28);
+        }
+
+        .btn-submit:hover   { opacity: .88; }
+        .btn-submit:active  { transform: scale(.97); }
+        .btn-submit i       { font-size: 17px; }
+
+        /* ── RESPONSIVE ── */
+        @@media (max-width: 768px) {
+            .field-row       { grid-template-columns: 1fr; }
+            .industry-grid   { grid-template-columns: 1fr; }
+            .form-footer     { flex-direction: column; gap: .75rem; align-items: flex-start; }
+            .btn-submit      { width: 100%; justify-content: center; }
+            .page-wrap       { padding: 0 1rem 2rem; }
+            .top-nav         { padding: .7rem 1rem; }
+            .form-body       { padding: 1.5rem 1.25rem; }
+            .section-header  { padding: 1rem 1.25rem .8rem; }
+            .form-footer     { padding: 1rem 1.25rem; }
+        }
+
+        /* swal custom */
         .swal-btn-continue {
-            background-color: #6ed3d0 !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
+            background-color: #6c5ce7 !important;
+            color: #fff !important;
+            border-radius: 8px;
+            padding: 8px 22px;
+            font-weight: 700;
         }
-        input#IsDisabled {
-            width: 16px;
-            height: 18px;        
+
+        /* ══════════════════════════════════════
+           ANIMATIONS
+        ══════════════════════════════════════ */
+
+        /* Page load — fade + slide up */
+        @@keyframes fadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
+
+        /* Fade in from left */
+        @@keyframes fadeLeft {
+            from { opacity: 0; transform: translateX(-22px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Fade in from right */
+        @@keyframes fadeRight {
+            from { opacity: 0; transform: translateX(22px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Subtle scale-in for cards */
+       @@keyframes scaleIn {
+            from { opacity: 0; transform: scale(.96); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        /* Nav slide down */
+        @@keyframes navSlide {
+            from { opacity: 0; transform: translateY(-100%); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Progress step pop */
+        @@keyframes stepPop {
+            0%   { transform: scale(0.5); opacity: 0; }
+            70%  { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Continuous pulse ring for active step */
+        @@keyframes pulseRing {
+            0%   { box-shadow: 0 0 0 0 rgba(108,92,231,.4); }
+            70%  { box-shadow: 0 0 0 8px rgba(108,92,231,0); }
+            100% { box-shadow: 0 0 0 0 rgba(108,92,231,0); }
+        }
+
+        /* Input focus shimmer */
+        @@keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* Floating label lift */
+        @@keyframes labelFloat {
+            from { transform: translateY(2px); opacity: .7; }
+            to   { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Spin for loader */
+        @@keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Section header slide-in */
+        @@keyframes sectionReveal {
+            from { opacity: 0; transform: translateX(-16px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Badge bounce */
+        @@keyframes badgeBounce {
+            0%, 100% { transform: translateY(0); }
+            40%       { transform: translateY(-5px); }
+            60%       { transform: translateY(-2px); }
+        }
+
+        /* Button shine sweep */
+        @@keyframes btnShine {
+            0%   { left: -80%; }
+            100% { left: 130%; }
+        }
+
+        /* ── Apply page load animations ── */
+        .top-nav {
+            animation: navSlide .5s cubic-bezier(.22,1,.36,1) both;
+        }
+
+        .page-heading {
+            animation: fadeUp .6s .1s cubic-bezier(.22,1,.36,1) both;
+        }
+
+        .page-badge {
+            animation: badgeBounce 2.8s 1.2s ease-in-out infinite;
+        }
+
+        .steps-row {
+            animation: fadeUp .6s .2s cubic-bezier(.22,1,.36,1) both;
+        }
+
+        .step-dot {
+            animation: stepPop .5s cubic-bezier(.34,1.56,.64,1) both;
+        }
+
+        .step-item:nth-child(1) .step-dot { animation-delay: .3s; }
+        .step-item:nth-child(3) .step-dot { animation-delay: .45s; }
+        .step-item:nth-child(5) .step-dot { animation-delay: .6s; }
+
+        .step-item.active .step-dot {
+            animation: stepPop .5s .3s cubic-bezier(.34,1.56,.64,1) both,
+                        pulseRing 2s 1.2s ease-out infinite;
+        }
+
+        .reg-card {
+            animation: scaleIn .65s .25s cubic-bezier(.22,1,.36,1) both;
+        }
+
+        /* ── Section headers reveal on scroll (.revealed added by JS) ── */
+        .section-header {
+            opacity: 0;
+            transform: translateX(-16px);
+            transition: opacity .5s ease, transform .5s ease;
+        }
+
+        .section-header.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ── Field groups stagger on scroll ── */
+        .field-group {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity .45s ease, transform .45s ease;
+        }
+
+        .field-group.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Industry options stagger ── */
+        .industry-opt {
+            opacity: 0;
+            transform: translateY(14px) scale(.98);
+            transition: opacity .4s ease, transform .4s ease,
+                        border-color .18s, background .18s;
+        }
+
+        .industry-opt.revealed {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* ── Inputs: ripple border on focus ── */
+        .field-group input,
+        .field-group select {
+            transition: border-color .22s, box-shadow .22s, background .22s, transform .15s;
+        }
+
+        .field-group input:focus,
+        .field-group select:focus {
+            transform: translateY(-1px);
+        }
+
+        /* ── Label animate when sibling input is focused ── */
+        .field-group:focus-within label {
+            color: #6c5ce7;
+            transition: color .2s ease;
+        }
+
+        .field-group:focus-within label i {
+            color: #6c5ce7;
+            transition: color .2s ease;
+        }
+
+        /* ── Submit button shine effect ── */
+        .btn-submit {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -80%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+            transform: skewX(-20deg);
+        }
+
+        .btn-submit:hover::after {
+            animation: btnShine .65s ease forwards;
+        }
+
+        .btn-submit:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(108,92,231,.38);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .btn-submit:active {
+            transform: scale(.97) translateY(0);
+        }
+
+        /* ── Nav brand icon spin on hover ── */
+        .nav-brand-icon {
+            transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+        }
+
+        .nav-brand-icon:hover {
+            transform: rotate(15deg) scale(1.12);
+        }
+
+        /* ── Section icon bounce on hover ── */
+        .section-icon {
+            transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+        }
+
+        .section-header:hover .section-icon {
+            transform: scale(1.15) rotate(-6deg);
+        }
+
+        /* ── Industry opt hover lift ── */
+        .industry-opt:hover {
+            border-color: #6c5ce7;
+            transform: translateY(-3px) scale(1.01) !important;
+            box-shadow: 0 6px 20px rgba(108,92,231,.12);
+        }
+
+        .industry-opt.selected {
+            border-color: #6c5ce7;
+            background: #f3f0ff;
+            transform: translateY(-2px) scale(1.005) !important;
+            box-shadow: 0 4px 16px rgba(108,92,231,.15);
+        }
+
+        /* ── Card hover: faint lift ── */
+        .reg-card {
+            transition: box-shadow .3s ease;
+        }
+
+        /* ── Input icon color transition ── */
+        .field-group label i {
+            transition: color .2s ease, transform .25s cubic-bezier(.34,1.56,.64,1);
+        }
+
+        .field-group:focus-within label i {
+            transform: scale(1.2);
+        }
+
+        /* ── Step line fill animation ── */
+        .step-line {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-line::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #0d9488, #6c5ce7);
+            border-radius: 2px;
+            transition: width .8s .6s ease;
+        }
+
+        .steps-row.revealed .step-line::after {
+            width: 100%;
+        }
+
+        /* ── Footer reveal ── */
+        .form-footer {
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity .5s ease, transform .5s ease;
+        }
+
+        .form-footer.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
     </style>
 </head>
 <body>
-    <div class="container-fluid pb-2" id="navbar">
-        <div class="row" id="rownav">
-            <div class="col-md-6 col-sm-12 d-flex justify-content-md-start d-flex justify-content-sm-center justify-content-center align-items-center" id="navhead">
-                <h2 class="navbar-brand text-center" href="#" id="title">SERVICE MANAGEMENT</h2>
-            </div>
-            <div class="col-md-6 col-sm-12 d-flex justify-content-md-end justify-content-sm-center justify-content-center" id="imgcol">
-                <img src="~/assets/img/bexlogo_wob.png" id="navimg" class="GSTimg" />
 
+    <!-- ── TOP NAV ── -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <div class="nav-brand-icon">
+                <i class="bi bi-ticket-perforated-fill"></i>
+            </div>
+            <div class="nav-brand-text">
+                <div class="name">Ticket System</div>
+                <div class="sub">BeyondEXS Platform</div>
             </div>
         </div>
-    </div>
 
-    <div class="container my-3">
-        <h3 class="text-center spanheadingGST fw-semibold" id="formname">Prospective Customer Registration Form <span id="mainspan">(Service Management)</span></h3>
-        <div class="card mt-3">
+        <img src="~/assets/img/bexlogo_wob.png" class="nav-logo" alt="BeyondEXS Logo"
+             onerror="this.style.display='none'" />
+
+        <div class="secure-badge">
+            <i class="bi bi-shield-check"></i>
+            Secure Registration
+        </div>
+    </nav>
+
+    <!-- ── PAGE ── -->
+    <div class="page-wrap">
+
+        <!-- heading -->
+        <div class="page-heading">
+            <h1>Prospective Customer Registration</h1>
+            <p>Create your organisation account to access the support ticket system.</p>
+            <div class="page-badge">
+                <i class="bi bi-building" style="font-size:13px"></i>
+                Ticket System Onboarding
+            </div>
+        </div>
+
+        <!-- progress steps -->
+        <div class="steps-row">
+            <div class="step-item done">
+                <div class="step-dot"><i class="bi bi-check" style="font-size:13px"></i></div>
+                <span>Organisation</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item active">
+                <div class="step-dot">2</div>
+                <span>Contact</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item">
+                <div class="step-dot">3</div>
+                <span>Credentials</span>
+            </div>
+        </div>
+
+        <!-- main card -->
+        <div class="reg-card">
+
             @using (Html.BeginForm("Index", "CompanyRegistration", FormMethod.Post, new { id = "regform", enctype = "multipart/form-data" }))
             {
-                @Html.AntiForgeryToken()
-                <div class="p-3">
-                    <div class="row my-3 ms-2">
-                        @Html.LabelFor(model => model.C_CODE, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_CODE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "1",required= "required" } })
-                                @Html.ValidationMessageFor(model => model.C_CODE, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        @Html.LabelFor(model => model.C_WEB, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_WEB, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", required = "required" } })
-                                @Html.ValidationMessageFor(model => model.C_WEB, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                    </div>
+@Html.AntiForgeryToken() <!-- ── SECTION 1: Organisation ── -->
+                                <div class="section-header">
+                                    <div class="section-icon purple"><i class="bi bi-building"></i></div>
+                                    <div>
+                                        <div class="section-title">Organisation details</div>
+                                        <div class="section-sub">Basic info about your company</div>
+                                    </div>
+                                </div>
 
-                    <div class="row my-3 ms-2">
-                        @Html.LabelFor(model => model.C_NAME, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_NAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "3", required = "required" } })
-                                @Html.ValidationMessageFor(model => model.C_NAME, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        @Html.LabelFor(model => model.C_APPUSERNAME, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_APPUSERNAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "4", required = "required" } })
-                                @Html.ValidationMessageFor(model => model.C_APPUSERNAME, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                    </div>
+                                                <div class="form-body">
+                                                    <div class="field-row">
+                                                        <div class="field-group">
+                                                            <label for="C_CODE"><i class="bi bi-hash"></i> Company code <span class="req">*</span></label>
+                                                            <div>
+                                                                @Html.EditorFor(m => m.C_CODE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "1", required = "required", placeholder = "e.g. COMP001" } })
+                                                                @Html.ValidationMessageFor(m => m.C_CODE, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="field-group">
+                                                            <label for="C_WEB"><i class="bi bi-globe2"></i> Website <span class="req">*</span></label>
+                                                            <div>
+                                                                @Html.EditorFor(m => m.C_WEB, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "2", required = "required", placeholder = "https://yourcompany.com" } })
+                                                                @Html.ValidationMessageFor(m => m.C_WEB, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-                    <div class="row my-3 ms-2">
-                        @Html.LabelFor(model => model.C_ADDRESS, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_ADDRESS, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "5", required = "required" } })
-                                @Html.ValidationMessageFor(model => model.C_ADDRESS, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        @Html.LabelFor(model => model.C_EMAILID, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "6", required = "required" } })
-                                @Html.ValidationMessageFor(model => model.C_EMAILID, "", new { @class = "text-danger" })
-                                @if (ViewBag.Errormessage != null)
-                                {
-                                    <span class="text-danger mb-0">@ViewBag.Errormessage</span>
-                                }
-                            </div>
-                        </div>
-                    </div>
+                                                    <div class="field-row">
+                                                        <div class="field-group">
+                                                            <label for="C_NAME"><i class="bi bi-briefcase"></i> Company name <span class="req">*</span></label>
+                                                            <div>
+                                                                @Html.EditorFor(m => m.C_NAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "3", required = "required", placeholder = "Acme Corp Pvt. Ltd." } })
+                                                                @Html.ValidationMessageFor(m => m.C_NAME, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="field-group">
+                                                            <label for="C_APPUSERNAME"><i class="bi bi-person"></i> App username <span class="req">*</span></label>
+                                                            <div>
+                                                                @Html.EditorFor(m => m.C_APPUSERNAME, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "4", required = "required", placeholder = "admin_user" } })
+                                                                @Html.ValidationMessageFor(m => m.C_APPUSERNAME, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                    <div class="row my-3 ms-2">
-                        @Html.LabelFor(model => model.C_COUNTRY, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_COUNTRY, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "7", required = "required" } })
-                                @Html.ValidationMessageFor(model => model.C_COUNTRY, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        @Html.LabelFor(model => model.C_GST, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex justify-content-center flex-column">
-                                @Html.EditorFor(model => model.C_GST, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "8", required = "required" } })
-                                @Html.ValidationMessageFor(model => model.C_GST, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                    </div>
+                                                                <hr class="section-divider" /> <!-- ── SECTION 2: Location ── -->
+                                                                                                <div class="section-header">
+                                                                                                    <div class="section-icon teal"><i class="bi bi-geo-alt"></i></div>
+                                                                                                    <div>
+                                                                                                        <div class="section-title">Location &amp; address</div>
+                                                                                                        <div class="section-sub">Your registered address</div>
+                                                                                                    </div>
+                                                                                                </div>
 
-                    <div class="row my-3 ms-2">
-                        @Html.LabelFor(model => model.C_PINCODE, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_PINCODE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "9", required = "required" } })
-                                @Html.ValidationMessageFor(model => model.C_PINCODE, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        @Html.LabelFor(model => model.C_Domain, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_Domain, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "10", id = "domainName" } })
-                                @Html.ValidationMessageFor(model => model.C_Domain, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                    </div>
+                                                                                                                <div class="form-body">
+                                                                                                                    <div class="field-row full">
+                                                                                                                        <div class="field-group">
+                                                                                                                            <label for="C_ADDRESS"><i class="bi bi-house"></i> Address <span class="req">*</span></label>
+                                                                                                                            <div>
+                                                                                                                                @Html.EditorFor(m => m.C_ADDRESS, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "5", required = "required", placeholder = "Street, area, district" } })
+                                                                                                                                @Html.ValidationMessageFor(m => m.C_ADDRESS, "", new { @class = "text-danger" })
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                    <div class="field-row">
+                                                                                                                        <div class="field-group">
+                                                                                                                            <label for="C_COUNTRY"><i class="bi bi-flag"></i> Country <span class="req">*</span></label>
+                                                                                                                            <div>
+                                                                                                                                @Html.EditorFor(m => m.C_COUNTRY, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "6", required = "required", placeholder = "India" } })
+                                                                                                                                @Html.ValidationMessageFor(m => m.C_COUNTRY, "", new { @class = "text-danger" })
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                        <div class="field-group">
+                                                                                                                            <label for="C_PINCODE"><i class="bi bi-mailbox"></i> Pincode <span class="req">*</span></label>
+                                                                                                                            <div>
+                                                                                                                                @Html.EditorFor(m => m.C_PINCODE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "7", required = "required", placeholder = "600001" } })
+                                                                                                                                @Html.ValidationMessageFor(m => m.C_PINCODE, "", new { @class = "text-danger" })
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
 
-                    <div class="row my-3 ms-2">
-                        @Html.LabelFor(model => model.C_PHONE, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.EditorFor(model => model.C_PHONE, new { htmlAttributes = new { @class = "form-control", value = Guid.NewGuid().ToString(), autocomplete = "off", tabindex = "11", required = "required" } })
-                                @Html.ValidationMessageFor(model => model.C_PHONE, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        @Html.LabelFor(model => model.IsDisabled, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-4">
-                            <div class="d-flex flex-column">
-                                @Html.DropDownListFor(
-                                    model => model.IsDisabled,
-                                    new List<SelectListItem>
-                                    {
-                                        new SelectListItem { Text = "IT-Industries", Value = "false" },
-                                        new SelectListItem { Text = "Non IT-Industries", Value = "true" }
-                                    },
-                                    new { @class = "form-control", tabindex = "12" }
-                                )
-                            </div>
-                        </div>
-                    </div>
+                                                                                                                                <hr class="section-divider" /> <!-- ── SECTION 3: Contact & Compliance ── -->
+                                                                                                                                                                <div class="section-header">
+                                                                                                                                                                    <div class="section-icon blue"><i class="bi bi-person-badge"></i></div>
+                                                                                                                                                                    <div>
+                                                                                                                                                                        <div class="section-title">Contact &amp; compliance</div>
+                                                                                                                                                                        <div class="section-sub">Email, phone and GST details</div>
+                                                                                                                                                                    </div>
+                                                                                                                                                                </div>
 
-                    <div class="d-flex justify-content-end mt-2">
-                        <button type="submit" class="btn" id="submitbtn" tabindex="13">Submit</button>
-                    </div>
+                                                                                                                                                                                <div class="form-body">
+                                                                                                                                                                                    <div class="field-row">
+                                                                                                                                                                                        <div class="field-group">
+                                                                                                                                                                                            <label for="C_EMAILID"><i class="bi bi-envelope"></i> Email address <span class="req">*</span></label>
+                                                                                                                                                                                            <div>
+                                                                                                                                                                                                @Html.EditorFor(m => m.C_EMAILID, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "8", required = "required", placeholder = "admin@company.com" } })
+                                                                                                                                                                                                @Html.ValidationMessageFor(m => m.C_EMAILID, "", new { @class = "text-danger" })
+                                                                                                                                                                                                @if (ViewBag.Errormessage != null)
+                                                                                                                                                                                                {
+                                                                                                                                                                                <span class="text-danger">@ViewBag.Errormessage</span>}
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                        <div class="field-group">
+                                                                                                                                                                                            <label for="C_PHONE"><i class="bi bi-telephone"></i> Phone number <span class="req">*</span></label>
+                                                                                                                                                                                            <div>
+                                                                                                                                                                                                @Html.EditorFor(m => m.C_PHONE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "9", required = "required", placeholder = "+91 98765 43210" } })
+                                                                                                                                                                                                @Html.ValidationMessageFor(m => m.C_PHONE, "", new { @class = "text-danger" })
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                    </div>
 
-                </div>
-            }
+                                                                                                                                                                                    <div class="field-row">
+                                                                                                                                                                                        <div class="field-group">
+                                                                                                                                                                                            <label for="C_GST"><i class="bi bi-receipt"></i> GST number <span class="req">*</span></label>
+                                                                                                                                                                                            <div>
+                                                                                                                                                                                                @Html.EditorFor(m => m.C_GST, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "10", required = "required", placeholder = "22AAAAA0000A1Z5" } })
+                                                                                                                                                                                                @Html.ValidationMessageFor(m => m.C_GST, "", new { @class = "text-danger" })
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                        <div class="field-group">
+                                                                                                                                                                                            <label for="C_Domain"><i class="bi bi-layers"></i> Domain</label>
+                                                                                                                                                                                            <div>
+                                                                                                                                                                                                @Html.EditorFor(m => m.C_Domain, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", tabindex = "11", id = "domainName", placeholder = "smarthomeappliances" } })
+                                                                                                                                                                                                @Html.ValidationMessageFor(m => m.C_Domain, "", new { @class = "text-danger" })
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                            <span class="field-hint">Used to identify your organisation in the system</span>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                    </div>
+
+                                                                                                                                                                                    <!-- Industry Type Picker -->
+                                                                                                                                                                                    <div style="margin-top:.25rem">
+                                                                                                                                                                                        <label style="font-size:.82rem;font-weight:700;color:#5a6480;display:flex;align-items:center;gap:6px;margin-bottom:.8rem">
+                                                                                                                                                                                            <i class="bi bi-grid" style="font-size:16px;color:#9ba8c0"></i> Industry type
+                                                                                                                                                                                        </label>
+                                                                                                                                                                                        <div class="industry-grid" id="industryGrid">
+                                                                                                                                                                                            <label class="industry-opt selected" id="opt-it">
+                                                                                                                                                                                                @Html.RadioButtonFor(m => m.IsDisabled, "false", new { tabindex = "12", id = "radio-it" })
+                                                                                                                                                                                                <div class="industry-icon purple"><i class="bi bi-cpu"></i></div>
+                                                                                                                                                                                                <div>
+                                                                                                                                                                                                    <div class="industry-label">IT industries</div>
+                                                                                                                                                                                                    <div class="industry-sub">Software, SaaS, Tech</div>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                            </label>
+                                                                                                                                                                                            <label class="industry-opt" id="opt-nonit">
+                                                                                                                                                                                                @Html.RadioButtonFor(m => m.IsDisabled, "true", new { tabindex = "13", id = "radio-nonit" })
+                                                                                                                                                                                                <div class="industry-icon teal"><i class="bi bi-building-gear"></i></div>
+                                                                                                                                                                                                <div>
+                                                                                                                                                                                                    <div class="industry-label">Non-IT industries</div>
+                                                                                                                                                                                                    <div class="industry-sub">Manufacturing, Retail, FMCG</div>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                            </label>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                </div> <!-- ── FOOTER ── -->
+                                                                                                                                                                                                                <div class="form-footer">
+                                                                                                                                                                                                                    <div class="footer-note">
+                                                                                                                                                                                                                        <i class="bi bi-shield-check"></i>
+                                                                                                                                                                                                                        All data is encrypted and securely stored
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                    <button type="submit" class="btn-submit" id="submitbtn" tabindex="14">
+                                                                                                                                                                                                                        <i class="bi bi-send"></i>
+                                                                                                                                                                                                                        Submit Registration
+                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                </div>            }
         </div>
     </div>
-    @*Toastr for created succesfully*@
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- jQuery CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-    $(document).ready(function () {
-        $("#regform").submit(function (event) {
-            event.preventDefault();
 
-            var submitBtn = $("#submitbtn");
-            submitBtn.prop("disabled", true);
-
-            var formData = new FormData(this);
-
-            // Disable page interaction
-            $("body").css("pointer-events", "none");
-
-            $.ajax({
-                url: '@Url.Action("Index", "CompanyRegistration")',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response.success) {
-                        // 🔹 Show SweetAlert loading dialog
-                        Swal.fire({
-                            title: "Processing...",
-                            html: "Please wait while we save your changes.",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            didOpen: () => {
-                                Swal.showLoading(); // show spinner
-                            }
-                        });
-                        // ⏳ After small delay, show success popup
-                        setTimeout(function () {
-                        Swal.fire({
-                            title: "Success!",
-                            text: response.message,
-                            icon: "success",
-                            confirmButtonText: "Ok",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            customClass: {
-                                confirmButton: "swal-btn-continue",
-                            },
-                            didOpen: () => {
-                                $(".swal2-container").css("pointer-events", "auto");
-                            }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '@Url.Action("Index", "Login")';
-                            } 
-                        });
-                    }, 1000); // 1 second delay for "Processing"
-                    } else {
-                        Swal.fire({
-                            title: "Message",
-                            text: response.message,
-                            icon: "info",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                        resetButton();
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "An unexpected error occurred.",
-                        icon: "error",
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                    });
-                    resetButton();
-                }
-            });
-        });
-
-        function resetButton() {
-            $("#submitbtn").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto");
-        }
-    });
-    </script>
-  
     <script src="~/Scripts/jquery-3.4.1.js"></script>
     <script src="~/Scripts/jquery.validate.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
 
+    <script>
+        // Industry radio picker highlight
+        document.querySelectorAll('.industry-opt').forEach(function (opt) {
+            opt.addEventListener('click', function () {
+                document.querySelectorAll('.industry-opt').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Form submit via AJAX
+        $(document).ready(function () {
+            $("#regform").submit(function (event) {
+                event.preventDefault();
+
+                var submitBtn = $("#submitbtn");
+                submitBtn.prop("disabled", true).html('<i class="bi bi-arrow-repeat" style="animation:spin .7s linear infinite;font-size:16px"></i> Processing...');
+
+                $("body").css("pointer-events", "none");
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '@Url.Action("Index", "CompanyRegistration")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: "Processing...",
+                                html: "Please wait while we save your changes.",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                didOpen: () => { Swal.showLoading(); }
+                            });
+                            setTimeout(function () {
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: response.message,
+                                    icon: "success",
+                                    confirmButtonText: "Continue",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    customClass: { confirmButton: "swal-btn-continue" },
+                                    didOpen: () => { $(".swal2-container").css("pointer-events", "auto"); }
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = '@Url.Action("Index", "Login")';
+                                    }
+                                });
+                            }, 1000);
+                        } else {
+                            Swal.fire({
+                                title: "Notice",
+                                text: response.message,
+                                icon: "info",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+                            resetButton();
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: "Error",
+                            text: "An unexpected error occurred. Please try again.",
+                            icon: "error"
+                        });
+                        resetButton();
+                    }
+                });
+            });
+
+            function resetButton() {
+                $("#submitbtn").prop("disabled", false).html('<i class="bi bi-send"></i> Submit Registration');
+                $("body").css("pointer-events", "auto");
+            }
+        });
+    </script>
+
+    <script>
+        /* ══════════════════════════════════════
+           SCROLL-TRIGGERED REVEAL (IntersectionObserver)
+        ══════════════════════════════════════ */
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+
+            // Observe section headers
+            document.querySelectorAll('.section-header').forEach(function (el) {
+                observer.observe(el);
+            });
+
+            // Observe field groups with stagger delay
+            document.querySelectorAll('.field-group').forEach(function (el, i) {
+                el.style.transitionDelay = (i * 0.07) + 's';
+                observer.observe(el);
+            });
+
+            // Observe industry options with stagger
+            document.querySelectorAll('.industry-opt').forEach(function (el, i) {
+                el.style.transitionDelay = (i * 0.12) + 's';
+                observer.observe(el);
+            });
+
+            // Observe footer
+            document.querySelectorAll('.form-footer').forEach(function (el) {
+                observer.observe(el);
+            });
+
+            // Trigger step-line fill after short delay
+            setTimeout(function () {
+                document.querySelector('.steps-row').classList.add('revealed');
+            }, 700);
+
+            /* Input focus micro-interactions */
+            document.querySelectorAll('.field-group input, .field-group select').forEach(function (input) {
+                input.addEventListener('focus', function () {
+                    this.closest('.field-group').querySelector('label').style.transform = 'translateY(-1px)';
+                });
+                input.addEventListener('blur', function () {
+                    this.closest('.field-group').querySelector('label').style.transform = '';
+                });
+            });
+
+            /* Ripple effect on button click */
+            var btn = document.getElementById('submitbtn');
+            if (btn) {
+                btn.addEventListener('click', function (e) {
+                    var ripple = document.createElement('span');
+                    var rect = btn.getBoundingClientRect();
+                    var size = Math.max(rect.width, rect.height);
+                    ripple.style.cssText = [
+                        'position:absolute',
+                        'border-radius:50%',
+                        'background:rgba(255,255,255,.35)',
+                        'width:' + size + 'px',
+                        'height:' + size + 'px',
+                        'top:' + (e.clientY - rect.top - size / 2) + 'px',
+                        'left:' + (e.clientX - rect.left - size / 2) + 'px',
+                        'transform:scale(0)',
+                        'animation:rippleExpand .55s ease forwards',
+                        'pointer-events:none'
+                    ].join(';');
+                    btn.appendChild(ripple);
+                    setTimeout(function () { ripple.remove(); }, 600);
+                });
+            }
+        });
+    </script>
+
+    <style>
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @@keyframes rippleExpand {
+            to {
+                transform: scale(2.4);
+                opacity: 0;
+            }
+        }
+    </style>
 </body>
 </html>

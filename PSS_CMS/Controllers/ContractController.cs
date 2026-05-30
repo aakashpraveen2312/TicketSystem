@@ -2182,11 +2182,11 @@ namespace PSS_CMS.Controllers
                     var result = await response.Content.ReadAsStringAsync();
                     var apiResponse = JsonConvert.DeserializeObject<dynamic>(result);
 
-                    TempData["SuccessMessage"] = apiResponse.Message;
+                    //TempData["SuccessMessage"] = apiResponse.Message;
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Process failed";
+                    //TempData["ErrorMessage"] = "Process failed";
                 }
             }
             catch (Exception ex)

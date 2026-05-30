@@ -65,10 +65,10 @@ function setupEvents() {
     const configItems = document.querySelectorAll('.menu-links .nav-link:nth-child(2),.menu-links .nav-link:nth-child(3),.menu-links .nav-link:nth-child(4),.menu-links .nav-link:nth-child(5)');
 
     const configMenu1 = document.querySelector('.menu-links .nav-link:nth-child(6)');
-    const configItems1 = document.querySelectorAll('.menu-links .nav-link:nth-child(7),.menu-links .nav-link:nth-child(8)');
+    const configItems1 = document.querySelectorAll('.menu-links .nav-link:nth-child(7)');
 
-    const configMenu2 = document.querySelector('.menu-links .nav-link:nth-child(9)');
-    const configItems2 = document.querySelectorAll('.menu-links .nav-link:nth-child(10),.menu-links .nav-link:nth-child(11)');
+    const configMenu2 = document.querySelector('.menu-links .nav-link:nth-child(8)');
+    const configItems2 = document.querySelectorAll('.menu-links .nav-link:nth-child(9),.menu-links .nav-link:nth-child(10),.menu-links .nav-link:nth-child(11)');
     // Settings menu and submenu items
     //const settingsMenu = document.querySelector('.menu-links .nav-link:nth-child(12)');
     //const settingsItems = document.querySelectorAll('.menu-links .nav-link:nth-child(13), .menu-links .nav-link:nth-child(14), .menu-links .nav-link:nth-child(15)');

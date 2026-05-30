@@ -11,6 +11,7 @@ namespace PSS_CMS.Models
     {
         public int SerialNumber { get; set; }
         public int SIH_RECID { get; set; }
+        public int SIH_URECID { get; set; }
         public string SIH_STATUS { get; set; }
         public int CU_RECID { get; set; }
         public int SIH_CURECID { get; set; }

@@ -298,7 +298,7 @@ namespace PSS_CMS.Controllers
             }
             return View();
         }
-
+        [HttpPost]
         public async Task<ActionResult> Delete(int? Recid)
         {
             string ProductmasterDeleteUrl = ConfigurationManager.AppSettings["PRODUCTDELETE"];

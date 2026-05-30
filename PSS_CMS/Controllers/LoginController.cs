@@ -492,5 +492,78 @@ namespace PSS_CMS.Controllers
 
             return View();
         }
+
+        //public async Task<JsonResult> AutoNameFetch(string input)
+        //{
+        //    string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+        //    string baseUrl = ConfigurationManager.AppSettings["LOGINWELCOMENAME"];
+        //    string finalurl = baseUrl + "?input=" + input;
+
+        //    try
+        //    {
+        //        using (HttpClientHandler handler = new HttpClientHandler())
+        //        {
+        //            handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+        //            using (HttpClient client = new HttpClient(handler))
+        //            {
+        //                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //                var response = await client.GetAsync(finalurl);
+
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    var jsonString = await response.Content.ReadAsStringAsync();
+        //                    var result = JsonConvert.DeserializeObject<APIResponseLogin>(jsonString);
+        //                    if (result.Status == "Y")
+        //                    {
+        //                        string roleName = "";
+
+        //                        switch (result.U_RCODE)
+        //                        {
+        //                            case "SA":
+        //                                roleName = "Super Admin";
+        //                                break;
+
+        //                            case "User":
+        //                                roleName = "Customer";
+        //                                break;
+
+        //                            case "Admin":
+        //                                roleName = "Service Engineer";
+        //                                break;
+
+        //                            case "HelpDesk":
+        //                                roleName = "Help Desk";
+        //                                break;
+                                    
+        //                            case "Manager":
+        //                                roleName = "Manager";
+        //                                break;
+
+        //                            case "Accountant":
+        //                                roleName = "Accountant";
+        //                                break;
+
+        //                            default:
+        //                                roleName = "";
+        //                                break;
+        //                        }
+
+        //                        return Json(new { name = roleName }, JsonRequestBehavior.AllowGet);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { name = "", error = ex.Message }, JsonRequestBehavior.AllowGet);
+        //    }
+
+        //    return Json(new { name = "" }, JsonRequestBehavior.AllowGet);
+        //}
+
     }
 }

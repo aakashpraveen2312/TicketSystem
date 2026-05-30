@@ -90,6 +90,9 @@ namespace PSS_CMS.Models
         public string P_NAME { get; set; }
         public string CU_NAME { get; set; }
         public string CU_MOBILENO { get; set; }
+        public string TC_CUSTOMERTYPE { get; set; }
+        public string TC_PRODUCTSERIALNUMBER { get; set; }
+        public int TC_URECID { get; set; }
         public int P_RECID { get; set; }
         public int IG_RECID { get; set; }
         public string IG_DESCRIPTION { get; set; } 

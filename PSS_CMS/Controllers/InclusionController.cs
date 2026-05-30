@@ -304,6 +304,7 @@ namespace PSS_CMS.Controllers
             }
             return View();
         }
+        [HttpPost]
         public async Task<ActionResult> Delete(int IN_RECID)
         {
             string DeleteUrl = ConfigurationManager.AppSettings["INCLUSIONDELETE"];

@@ -1,213 +1,732 @@
 ﻿@model PSS_CMS.Models.Forgotpassword
-@{
-    Layout = null;
-}
+@{ Layout = null; }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password – Ticket System</title>
     <link href="~/assets/img/bexlogo_wob.png" rel="icon">
-    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
-    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
-    <!-- Bootstrap CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <link href="~/Content/Forgot.css" rel="stylesheet" />
+        :root {
+            --purple:    #6c5ce7;
+            --purple-lt: #ede9ff;
+            --purple-dk: #4f46c8;
+            --teal:      #0d9488;
+            --teal-lt:   #e0f7f5;
+            --orange:    #f97316;
+            --text-dark: #1a2340;
+            --text-mid:  #5a6480;
+            --text-muted:#9ba8c0;
+            --border:    #e2e8f5;
+        }
 
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+            background: #dce8f5;
+        }
+
+        /* ── LOADING ── */
+        #loadingScreen {
+            position: fixed; inset: 0;
+            background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+            transition: opacity .4s ease;
+        }
+        .loader {
+            width: 40px; height: 40px;
+            border: 4px solid var(--purple-lt);
+            border-top-color: var(--purple);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        /* ── LAYOUT ── */
+        .page-wrap {
+            width: 100vw; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .login-card {
+            width: 100%; height: 100%;
+            max-height: 620px;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0 16px 50px rgba(108,92,231,.16);
+            display: flex;
+            animation: cardReveal .7s .1s cubic-bezier(.22,1,.36,1) both;
+        }
+
+        /* ════ LEFT PANEL ════ */
+        .left-panel {
+            flex: 2.2;
+            background: linear-gradient(150deg, #a78bfa 0%, #818cf8 28%, #6c5ce7 55%, #4f46c8 80%, #3b60d4 100%);
+            position: relative;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            overflow: hidden; gap: .8rem;
+        }
+
+        .left-panel::before {
+            content: '';
+            position: absolute; top: 28px; right: 28px;
+            width: 130px; height: 130px;
+            background-image: radial-gradient(circle, rgba(255,255,255,.35) 1.5px, transparent 1.5px);
+            background-size: 13px 13px;
+            border-radius: 6px;
+            animation: dotPulse 4s ease-in-out infinite;
+        }
+
+        .left-panel::after {
+            content: '';
+            position: absolute; bottom: -30px; left: -45px;
+            width: 280px; height: 200px;
+            background: rgba(13,148,136,.30);
+            border-radius: 50% 60% 40% 70% / 60% 40% 70% 50%;
+            animation: blobMorph 8s ease-in-out infinite;
+        }
+
+        .blob2 {
+            position: absolute; top: -40px; left: -30px;
+            width: 200px; height: 170px;
+            background: rgba(255,255,255,.08);
+            border-radius: 60% 40% 70% 30% / 40% 60% 30% 70%;
+            animation: blobMorph2 10s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .blob3 {
+            position: absolute; bottom: 40px; right: -50px;
+            width: 160px; height: 140px;
+            background: rgba(59,96,212,.25);
+            border-radius: 40% 60% 50% 70% / 60% 40% 70% 30%;
+            animation: blobMorph 12s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        .scene-label {
+            position: relative; z-index: 2;
+            font-size: 1rem; font-weight: 800;
+            color: rgba(255,255,255,.95);
+            letter-spacing: .8px; text-align: center;
+            text-transform: uppercase; padding: 0 1rem;
+            text-shadow: 0 2px 12px rgba(0,0,0,.2);
+            animation: fadeUp .7s .4s both;
+        }
+        .scene-label::after {
+            content: '';
+            display: block; width: 40px; height: 3px;
+            background: rgba(255,255,255,.6);
+            border-radius: 2px; margin: 6px auto 0;
+            animation: lineExpand 3s ease-in-out infinite;
+        }
+
+        .illus-wrap {
+            position: relative; z-index: 2;
+            width: 92%; max-width: 420px;
+            animation: floatScene 5s ease-in-out infinite, fadeUp .8s .3s both;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,.18));
+        }
+        .illus-wrap svg { width: 100%; height: auto; display: block; }
+
+        /* ════ RIGHT PANEL ════ */
+        .right-panel {
+            flex: 1.25;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 2rem 3rem;
+            background: #fff;
+            min-width: 360px;
+          /*  overflow-y: auto;*/
+        }
+
+        .brand-logo {
+            width: 62px; height: 62px;
+            object-fit: contain; margin-bottom: .55rem;
+            animation: logoBounce 3s ease-in-out infinite, fadeUp .6s .5s both;
+        }
+
+        .right-panel h1 {
+            font-size: 1.45rem; font-weight: 800;
+            color: var(--text-dark); letter-spacing: .5px;
+            margin-bottom: .18rem; text-align: center;
+            animation: fadeUp .6s .55s both;
+        }
+
+        .subtitle {
+            font-size: .78rem; color: var(--text-muted);
+            margin-bottom: 1.2rem; text-align: center;
+            max-width: 280px; line-height: 1.5;
+            animation: fadeUp .6s .6s both;
+        }
+
+        /* ── Step indicator ── */
+        .otp-steps {
+            display: flex; align-items: center;
+            width: 100%; max-width: 320px;
+            margin-bottom: 1.2rem;
+            animation: fadeUp .6s .62s both;
+        }
+        .otp-step {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 4px;
+            font-size: .65rem; font-weight: 700;
+            color: var(--text-muted);
+        }
+        .otp-step.done   { color: var(--teal); }
+        .otp-step.active { color: var(--purple); }
+
+        .otp-step-dot {
+            width: 26px; height: 26px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700;
+            border: 2px solid var(--border);
+            background: #fff; color: var(--text-muted);
+        }
+        .otp-step.done .otp-step-dot {
+            background: var(--teal); border-color: var(--teal); color: #fff;
+        }
+        .otp-step.active .otp-step-dot {
+            background: var(--purple); border-color: var(--purple); color: #fff;
+            animation: pulseRing 2s 1s ease-out infinite;
+        }
+        .otp-step-line {
+            flex: 1; height: 2px;
+            background: var(--border); margin: 0 6px; margin-bottom: 18px;
+        }
+        .otp-step-line.filled { background: linear-gradient(90deg, var(--teal), var(--purple)); }
+
+        /* ── Form ── */
+        #createform { width: 100%; max-width: 340px; animation: fadeUp .6s .68s both; }
+
+        .field-group { width: 100%; margin-bottom: .85rem; }
+
+        .field-group label {
+            display: flex; align-items: center; gap: 6px;
+            font-size: .73rem; font-weight: 700;
+            color: var(--text-mid); margin-bottom: .3rem;
+            letter-spacing: .2px; transition: color .2s;
+        }
+        .field-group label i {
+            font-size: 14px; color: var(--text-muted);
+            transition: color .2s, transform .25s cubic-bezier(.34,1.56,.64,1);
+        }
+        .field-group:focus-within label     { color: var(--purple); }
+        .field-group:focus-within label i   { color: var(--purple); transform: scale(1.2); }
+
+        .input-wrap { position: relative; display: flex; align-items: center; }
+
+        .input-wrap .ico {
+            position: absolute; left: 12px;
+            color: var(--text-muted); font-size: 15px;
+            display: flex; pointer-events: none;
+            transition: color .2s;
+        }
+        .field-group:focus-within .ico { color: var(--purple); }
+
+        .input-wrap input {
+            width: 100%; height: 48px;
+            padding: 0 2.8rem 0 2.6rem;
+            border: 1.5px solid var(--border); border-radius: 11px;
+            font-family: 'Nunito', sans-serif; font-size: .88rem;
+            color: var(--text-dark); background: #f8faff;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s, background .2s, transform .15s;
+        }
+        .input-wrap input::placeholder { color: var(--text-muted); }
+        .input-wrap input:focus {
+            border-color: var(--purple); background: #fff;
+            box-shadow: 0 0 0 4px rgba(108,92,231,.10);
+            transform: translateY(-1px);
+        }
+
+        /* eye toggle */
+        .eye-btn {
+            position: absolute; right: 10px;
+            background: none; border: none; cursor: pointer;
+            color: var(--text-muted); display: flex; padding: 0;
+            font-size: 16px; transition: color .2s;
+        }
+        .eye-btn:hover { color: var(--purple); }
+
+        /* OTP input special styling */
+        .otp-input-wrap input {
+            letter-spacing: .35rem;
+            font-size: 1.1rem; font-weight: 700;
+            text-align: center;
+        }
+
+        /* Password strength bar */
+        .strength-bar-wrap {
+            display: flex; gap: 4px; margin-top: 6px;
+        }
+        .strength-seg {
+            flex: 1; height: 3px; border-radius: 2px;
+            background: var(--border);
+            transition: background .3s;
+        }
+        .strength-label {
+            font-size: .68rem; color: var(--text-muted);
+    text-align: right;
+
+        }
+
+        .text-danger { font-size: .7rem; color: #ef4444; margin-top: 3px; display: block; }
+
+        /* ── Info hint ── */
+        .hint-box {
+            display: flex; align-items: flex-start; gap: 8px;
+            background: #fffbeb; border: 1px solid #fde68a;
+            border-radius: 9px; padding: .6rem .9rem;
+            margin-bottom: .9rem;
+            font-size: .72rem; color: #92400e; line-height: 1.45;
+            animation: fadeUp .5s .72s both;
+        }
+        .hint-box i { font-size: 15px; color: var(--orange); flex-shrink: 0; margin-top: 1px; }
+
+        /* ── Buttons ── */
+        .btn-row { display: flex; gap: .65rem; width: 100%; margin-top: .3rem; }
+
+        .btn-submit {
+            flex: 1; height: 48px;
+            border: none; border-radius: 11px;
+            background: linear-gradient(90deg, var(--purple) 0%, #818cf8 100%);
+            color: #fff; font-family: 'Nunito', sans-serif;
+            font-size: .88rem; font-weight: 700; letter-spacing: .3px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 7px;
+            position: relative; overflow: hidden;
+            transition: transform .2s, box-shadow .2s;
+            box-shadow: 0 6px 20px rgba(108,92,231,.28);
+        }
+        .btn-submit::after {
+            content: '';
+            position: absolute; top: 0; left: -80%;
+            width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+            transform: skewX(-20deg);
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(108,92,231,.38); }
+        .btn-submit:hover::after { animation: btnShine .65s ease forwards; }
+        .btn-submit:active { transform: scale(.97); }
+        .btn-submit i { font-size: 16px; }
+
+        .btn-cancel {
+            height: 48px; padding: 0 1.1rem;
+            border: 1.5px solid var(--border); border-radius: 11px;
+            background: #fff; color: var(--text-mid);
+            font-family: 'Nunito', sans-serif; font-size: .88rem; font-weight: 700;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            transition: border-color .2s, background .2s, color .2s, transform .15s;
+        }
+        .btn-cancel:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-lt); transform: translateY(-1px); }
+        .btn-cancel:active { transform: scale(.97); }
+        .btn-cancel i { font-size: 15px; }
+
+        .back-link {
+            margin-top: 1rem; font-size: .72rem;
+            color: var(--text-muted); text-align: center;
+            animation: fadeUp .5s .9s both;
+        }
+        .back-link a { color: var(--purple); font-weight: 700; text-decoration: none; }
+       
+
+        /* ══ KEYFRAMES ══ */
+        @@keyframes spin        { to { transform: rotate(360deg); } }
+        @@keyframes cardReveal  { from { opacity:0; transform:scale(.97); } to { opacity:1; transform:scale(1); } }
+        @@keyframes fadeUp      { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @@keyframes floatScene  { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-12px); } }
+        @@keyframes logoBounce  { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-4px); } }
+        @@keyframes blobMorph   { 0%,100%{border-radius:50% 60% 40% 70%/60% 40% 70% 50%;}33%{border-radius:70% 40% 60% 50%/40% 70% 30% 60%;}66%{border-radius:40% 70% 50% 60%/70% 30% 60% 40%;} }
+        @@keyframes blobMorph2  { 0%,100%{border-radius:60% 40% 70% 30%/40% 60% 30% 70%;}50%{border-radius:30% 70% 40% 60%/60% 40% 70% 30%;} }
+        @@keyframes dotPulse    { 0%,100%{opacity:.8;transform:scale(1);}50%{opacity:1;transform:scale(1.05);} }
+        @@keyframes lineExpand  { 0%,100%{width:40px;opacity:.6;}50%{width:70px;opacity:1;} }
+        @@keyframes pulseRing   { 0%{box-shadow:0 0 0 0 rgba(108,92,231,.4);}70%{box-shadow:0 0 0 8px rgba(108,92,231,0);}100%{box-shadow:0 0 0 0 rgba(108,92,231,0);} }
+        @@keyframes btnShine    { 0%{left:-80%;}100%{left:130%;} }
+        @@keyframes rippleExp   { to { transform:scale(2.4); opacity:0; } }
+
+        .anim-float  { animation: floatScene 5s ease-in-out infinite; }
+        .anim-float2 { animation: floatScene 4.5s 1s ease-in-out infinite; }
+        .anim-float3 { animation: floatScene 5.5s .5s ease-in-out infinite; }
+        .anim-pulse  { animation: dotPulse 2.5s ease-in-out infinite; }
+        .anim-spin   { animation: spin 10s linear infinite; transform-origin: center; transform-box: fill-box; }
+
+        /* swal */
+        .swal-ok-btn {
+            background-color: #6c5ce7 !important; color: #fff !important;
+            border-radius: 8px !important; padding: 8px 22px !important; font-weight: 700 !important;
+        }
+
+        @@media (max-width: 700px) {
+            html, body { overflow: auto; }
+            .page-wrap  { height: auto; padding: 1rem; align-items: flex-start; }
+            .login-card { flex-direction: column; max-height: none; height: auto; border-radius: 18px; }
+            .left-panel { min-height: 220px; justify-content: flex-end; }
+            .right-panel { padding: 1.8rem 1.5rem; min-width: unset; }
+        }
+    </style>
 </head>
-<body onload="hideLoadingScreen()">
-    <div id="loadingScreen">
-        <div class="loader"></div>
-    </div>
-    <!-- Centered Sign-in Form -->
-    <div class="container vh-100 d-flex justify-content-center align-items-center">
-        <div class="row">
-            <div class="col">
-                <div class="card login-container position-relative d-flex justify-content-center align-items-center">
-                    <!-- Logo -->
-                    <img src="~/assets/img/bexlogo_wob(bgremoved.png" alt="PSS Logo" class="logo">
+<body>
 
-                    <!-- Header -->
-                    <h5 class="text-center mb-3">FORGOT PASSWORD</h5>
-                    <!-- Form -->
-                    @using (Html.BeginForm("FortgotOTPVerify", "Forgotpassword", FormMethod.Post, new { id = "createform" }))
-                    {
-                        <div class="create">
-                            <div class="row mb-3">
-                                <div class="col-md-12 col-sm-12">
-                                    @Html.LabelFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
+    <div id="loadingScreen"><div class="loader"></div></div>
 
-                                </div>
-                                <div class="col-md-12 col-sm-12">
-                                    @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "",placeholder="Email"} })
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-12 col-sm-12">
-                                    @Html.LabelFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control" } })
+    <div class="page-wrap">
+        <div class="login-card">
 
-                                </div>
-                                <div class="col-md-12 col-sm-12">
-                                    @Html.EditorFor(model => model.newPassword, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", placeholder = "New Password" } })
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-12 col-sm-12">
-                                    @Html.LabelFor(model => model.otp, new { htmlAttributes = new { @class = "form-control" } })
+            <!-- ════ LEFT PANEL ════ -->
+            <div class="left-panel">
+                <div class="blob2"></div>
+                <div class="blob3"></div>
 
-                                </div>
-                                <div class="col-md-12 col-sm-12">
-                                    @Html.EditorFor(model => model.otp, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", id = "", placeholder = "OTP" } })
-                                </div>
-                            </div>
+                <div class="scene-label">Reset Your Password</div>
 
-                            <div class="row ">
-                                <div class="col-md-12">
+                <div class="illus-wrap">
+                    <svg viewBox="0 0 460 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 
-                                </div>
-                                <div class="col-md-12 d-flex justify-content-end">
-                                    <input type="submit" value="Submit" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                                    <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "Login", new { })'" />
-                                </div>
-                            </div>
-                        </div>
-                    }
+                        <!-- ── Main lock card ── -->
+                        <g class="anim-float" style="transform-origin:230px 165px">
+                            <ellipse cx="230" cy="240" rx="105" ry="11" fill="rgba(0,0,0,.11)" />
+                            <!-- Card -->
+                            <rect x="95" y="80" width="270" height="175" rx="18" fill="rgba(255,255,255,.95)" />
+                            <!-- Card top bar -->
+                            <rect x="95" y="80" width="270" height="46" rx="18" fill="#6c5ce7" />
+                            <rect x="95" y="107" width="270" height="19" fill="#6c5ce7" />
+                            <!-- Bar text dots -->
+                            <circle cx="116" cy="103" r="5" fill="rgba(255,255,255,.5)" />
+                            <circle cx="132" cy="103" r="5" fill="rgba(255,255,255,.5)" />
+                            <circle cx="148" cy="103" r="5" fill="rgba(255,255,255,.5)" />
 
+                            <!-- Lock body -->
+                            <rect x="178" y="148" width="104" height="74" rx="12" fill="#ede9ff" />
+                            <!-- Lock shackle -->
+                            <path d="M200 148 L200 134 Q200 116 230 116 Q260 116 260 134 L260 148" fill="none" stroke="#6c5ce7" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+                            <!-- Keyhole -->
+                            <circle cx="230" cy="176" r="12" fill="#6c5ce7" />
+                            <rect x="225" y="184" width="10" height="14" rx="3" fill="#6c5ce7" />
+                            <!-- Stars inside lock area -->
+                            <circle cx="195" cy="195" r="3" fill="#c4b5fd" class="anim-pulse" />
+                            <circle cx="265" cy="195" r="3" fill="#c4b5fd" class="anim-pulse" style="animation-delay:.6s" />
+                        </g>
+
+                        <!-- ── OTP digit badge ── -->
+                        <g class="anim-float2" style="transform-origin:60px 105px">
+                            <rect x="8" y="68" width="110" height="56" rx="11" fill="rgba(255,255,255,.93)" />
+                            <text x="63" y="89" text-anchor="middle" font-size="8" fill="#9ba8c0" font-family="sans-serif" font-weight="700">YOUR OTP</text>
+                            <text x="63" y="113" text-anchor="middle" font-size="22" fill="#6c5ce7" font-family="monospace" font-weight="800" letter-spacing="5">• • •</text>
+                        </g>
+
+                        <!-- ── Password badge ── -->
+                        <g class="anim-float3" style="transform-origin:390px 115px">
+                            <rect x="342" y="72" width="114" height="58" rx="11" fill="rgba(255,255,255,.93)" />
+                            <text x="399" y="95" text-anchor="middle" font-size="8" fill="#9ba8c0" font-family="sans-serif">NEW PASSWORD</text>
+                            <!-- Strength bar -->
+                            <rect x="354" y="103" width="90" height="6" rx="3" fill="#e2e8f0" />
+                            <rect x="354" y="103" width="72" height="6" rx="3" fill="#22c55e" />
+                            <text x="399" y="120" text-anchor="middle" font-size="7.5" fill="#22c55e" font-family="sans-serif" font-weight="700">Strong ✓</text>
+                        </g>
+
+                        <!-- ── Checkmark success badge (bottom-left) ── -->
+                        <g class="anim-float" style="transform-origin:62px 240px; animation-delay:.9s">
+                            <rect x="10" y="208" width="104" height="46" rx="10" fill="rgba(255,255,255,.90)" />
+                            <circle cx="34" cy="231" r="14" fill="#e0f7f5" />
+                            <text x="34" y="237" text-anchor="middle" font-size="14" fill="#0d9488" font-family="sans-serif">✓</text>
+                            <rect x="56" y="221" width="46" height="5" rx="2.5" fill="#c4b5fd" />
+                            <rect x="56" y="231" width="34" height="5" rx="2.5" fill="#e2e8f0" />
+                        </g>
+
+                        <!-- ── Alert badge top-right ── -->
+                        <g class="anim-float2" style="transform-origin:408px 50px; animation-delay:.4s">
+                            <rect x="348" y="24" width="108" height="36" rx="9" fill="rgba(255,255,255,.90)" />
+                            <rect x="356" y="33" width="38" height="11" rx="5" fill="#fde8e8" />
+                            <text x="375" y="42" text-anchor="middle" font-size="7.5" fill="#ef4444" font-family="sans-serif" font-weight="700">Secure</text>
+                            <rect x="398" y="33" width="42" height="11" rx="5" fill="#dcfce7" />
+                            <text x="419" y="42" text-anchor="middle" font-size="7.5" fill="#22c55e" font-family="sans-serif" font-weight="700">Verified</text>
+                        </g>
+
+                        <!-- ── Sparkles ── -->
+                        <g class="anim-pulse" style="transform-origin:46px 40px">
+                            <circle cx="46" cy="40" r="12" fill="rgba(255,255,255,.28)" />
+                            <text x="46" y="46" text-anchor="middle" font-size="13" fill="#fde68a">✦</text>
+                        </g>
+                        <g class="anim-pulse" style="transform-origin:420px 200px; animation-delay:.8s">
+                            <circle cx="420" cy="200" r="9" fill="rgba(255,255,255,.22)" />
+                            <text x="420" y="205" text-anchor="middle" font-size="10" fill="#fde68a">✦</text>
+                        </g>
+                        <g class="anim-pulse" style="transform-origin:336px 30px; animation-delay:1.3s">
+                            <circle cx="336" cy="30" r="6" fill="rgba(255,255,255,.18)" />
+                            <text x="336" y="35" text-anchor="middle" font-size="8" fill="#fde68a">✦</text>
+                        </g>
+
+                        <!-- ── Gear bottom-right ── -->
+                        <g class="anim-spin" style="transform-origin:426px 278px">
+                            <circle cx="426" cy="278" r="18" fill="none" stroke="rgba(255,255,255,.34)" stroke-width="4" />
+                            <circle cx="426" cy="278" r="7" fill="rgba(255,255,255,.34)" />
+                            <line x1="426" y1="255" x2="426" y2="260" stroke="rgba(255,255,255,.34)" stroke-width="5" stroke-linecap="round" />
+                            <line x1="426" y1="296" x2="426" y2="301" stroke="rgba(255,255,255,.34)" stroke-width="5" stroke-linecap="round" />
+                            <line x1="403" y1="278" x2="408" y2="278" stroke="rgba(255,255,255,.34)" stroke-width="5" stroke-linecap="round" />
+                            <line x1="444" y1="278" x2="449" y2="278" stroke="rgba(255,255,255,.34)" stroke-width="5" stroke-linecap="round" />
+                        </g>
+
+                        <!-- ── Magnifier bottom-left ── -->
+                        <g style="opacity:.45">
+                            <circle cx="44" cy="292" r="20" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="5" />
+                            <line x1="60" y1="308" x2="74" y2="322" stroke="rgba(255,255,255,.42)" stroke-width="5" stroke-linecap="round" />
+                        </g>
+
+                        <!-- Decorative dots -->
+                        <circle cx="198" cy="36" r="4" fill="rgba(255,255,255,.35)" class="anim-pulse" />
+                        <circle cx="216" cy="26" r="3" fill="rgba(255,255,255,.26)" class="anim-pulse" style="animation-delay:.5s" />
+                        <circle cx="234" cy="34" r="2.5" fill="rgba(255,255,255,.20)" class="anim-pulse" style="animation-delay:.9s" />
+
+                    </svg>
                 </div>
+            </div>
+
+            <!-- ════ RIGHT PANEL ════ -->
+            <div class="right-panel">
+
+                @*<img src="~/assets/img/bexlogo_wob(bgremoved.png"
+                     alt="BeyondEXS Logo" class="brand-logo"
+                     onerror="this.style.display='none';document.getElementById('svgLogo').style.display='block'">*@
+
+                <svg id="svgLogo" style="display:none" class="brand-logo"
+                     viewBox="0 0 68 68" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="34" cy="34" r="32" fill="#ede9ff" />
+                    <circle cx="34" cy="34" r="22" fill="none" stroke="#0d9488" stroke-width="3" />
+                    <ellipse cx="34" cy="34" rx="11" ry="22" fill="none" stroke="#0d9488" stroke-width="2.5" />
+                    <line x1="12" y1="34" x2="56" y2="34" stroke="#0d9488" stroke-width="2.5" />
+                    <text x="29" y="42" font-size="18" font-weight="800" fill="#6c5ce7" font-family="sans-serif">B</text>
+                    <path d="M44 18 L38 30 L43 30 L37 46 L48 30 L42 30 Z" fill="#f97316" />
+                </svg>
+
+                <h1>Reset Password</h1>
+                <p class="subtitle">Enter your email, new password and the OTP sent to your inbox.</p>
+
+               
+
+                <!-- Hint box -->
+                <div class="hint-box">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>OTP expires in <strong>10 minutes</strong>. Check your spam folder if not received.</span>
+                </div>
+
+                @using (Html.BeginForm("FortgotOTPVerify", "Forgotpassword", FormMethod.Post, new { id = "createform" }))
+                {
+    @Html.AntiForgeryToken() <!-- Email -->
+                                    <div class="field-group">
+                                        <label><i class="bi bi-envelope"></i> Email Address</label>
+                                        <div class="input-wrap">
+                                            <i class="ico bi bi-envelope"></i>
+                                            @Html.EditorFor(m => m.Username, new { htmlAttributes = new { autocomplete = "off", placeholder = "Enter your email", type = "email" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                                    </div> <!-- New Password -->
+                                                                    <div class="field-group">
+                                                                        <label><i class="bi bi-lock"></i> New Password</label>
+                                                                        <div class="input-wrap">
+                                                                            <i class="ico bi bi-lock"></i>
+                                                                            @Html.EditorFor(m => m.newPassword, new { htmlAttributes = new { autocomplete = "off", placeholder = "Min 8 characters", id = "newPwd", type = "password" } })
+                                                                            <button type="button" class="eye-btn" onclick="togglePwd('newPwd','eyeNew')" aria-label="Toggle password">
+                                                                                <i id="eyeNew" class="bi bi-eye"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                        @Html.ValidationMessageFor(m => m.newPassword, "", new { @class = "text-danger" })
+                                                                        <!-- Strength bar -->
+                                                                        <div class="strength-bar-wrap">
+                                                                            <div class="strength-seg" id="seg1"></div>
+                                                                            <div class="strength-seg" id="seg2"></div>
+                                                                            <div class="strength-seg" id="seg3"></div>
+                                                                            <div class="strength-seg" id="seg4"></div>
+                                                                        </div>
+                                                                        <div class="strength-label" id="strengthLabel"></div>
+                                                                    </div> <!-- OTP -->
+                                                                                                    <div class="field-group">
+                                                                                                        <label><i class="bi bi-shield-lock"></i> One-Time Password (OTP)</label>
+                                                                                                        <div class="input-wrap otp-input-wrap">
+                                                                                                            <i class="ico bi bi-shield-lock"></i>
+                                                                                                            @Html.EditorFor(m => m.otp, new { htmlAttributes = new { autocomplete = "off", placeholder = "● ● ● ● ● ●", maxlength = "6", id = "otpField" } })
+                                                                                                        </div>
+                                                                                                        @Html.ValidationMessageFor(m => m.otp, "", new { @class = "text-danger" })
+                                                                                                    </div>
+
+                                                                                                                    <div class="btn-row">
+                                                                                                                        <button type="submit" class="btn-submit" id="savebutton">
+                                                                                                                            <i class="bi bi-arrow-repeat"></i>
+                                                                                                                            Reset Password
+                                                                                                                        </button>
+                                                                                                                        <button type="button" class="btn-cancel" onclick="window.location.href='@Url.Action("Index","Login")'">
+                                                                                                                            <i class="bi bi-x-lg"></i>
+                                                                                                                            Cancel
+                                                                                                                        </button>
+                                                                                                                    </div>
+
+                                                                                                                                    @Html.ValidationSummary(true, "", new { @class = "text-danger mt-1" })}
+
+                <p class="back-link">
+                    Remember your password? <a href="@Url.Action("Index","Login")">Back to Login</a>
+                </p>
+
             </div>
         </div>
     </div>
 
-
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Link to SweetAlert2 library -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @*Preloader script*@
-    <script type="text/javascript">
-        function preventBack() {
-            window.history.forward();
-        }
-        setTimeout("preventBack()", 0);
-
-    </script>
     <script>
+        /* ── Loading screen ── */
         document.addEventListener('DOMContentLoaded', function () {
-            showLoadingScreen();
-
-        });
-
-        window.addEventListener('load', function () {
-            // Delay hiding the preloader to ensure it's displayed even on fast loads
-            setTimeout(hideLoadingScreen, 500); // 500ms delay before hiding
-        });
-
-        function showLoadingScreen() {
             document.getElementById('loadingScreen').style.display = 'flex';
+        });
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                var ls = document.getElementById('loadingScreen');
+                ls.style.opacity = '0';
+                setTimeout(function () { ls.style.display = 'none'; }, 400);
+            }, 450);
+        });
+
+        /* ── Toggle password visibility ── */
+        function togglePwd(inputId, iconId) {
+            var inp  = document.getElementById(inputId);
+            var icon = document.getElementById(iconId);
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                inp.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
         }
 
-        function hideLoadingScreen() {
-            document.getElementById('loadingScreen').style.display = 'none';
-        }
-    </script>
-    @*Preloader script*@
+        /* ── Password strength meter ── */
+        document.getElementById('newPwd').addEventListener('input', function () {
+            var v = this.value;
+            var score = 0;
+            if (v.length >= 8)            score++;
+            if (/[A-Z]/.test(v))          score++;
+            if (/[0-9]/.test(v))          score++;
+            if (/[^A-Za-z0-9]/.test(v))   score++;
 
+            var colors = ['', '#ef4444', '#f97316', '#f59e0b', '#22c55e'];
+            var labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+            var segs   = [document.getElementById('seg1'), document.getElementById('seg2'),
+                          document.getElementById('seg3'), document.getElementById('seg4')];
 
-    @*Toastr for created succesfully*@
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- jQuery CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-    $(document).ready(function () {
-        $("#createform").submit(function (event) {
-            event.preventDefault();
+            segs.forEach(function (s, i) {
+                s.style.background = i < score ? colors[score] : 'var(--border)';
+            });
+            document.getElementById('strengthLabel').textContent = v.length ? labels[score] : '';
+            document.getElementById('strengthLabel').style.color = colors[score] || 'var(--text-muted)';
+        });
 
-            var submitBtn = $("#savebutton");
-            submitBtn.prop("disabled", true);
+        /* ── OTP: digits only ── */
+        document.getElementById('otpField').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 6);
+        });
 
-            var formData = new FormData(this);
+        /* ── Form AJAX submit ── */
+        $(document).ready(function () {
+            $('#createform').submit(function (event) {
+                event.preventDefault();
 
-          
+                var btn = $('#savebutton');
+                btn.prop('disabled', true)
+                   .html('<i class="bi bi-hourglass-split" style="animation:spin .7s linear infinite;display:inline-block;font-size:15px"></i> Processing...');
+                $('body').css('pointer-events', 'none');
 
-            // Disable page interaction
-            $("body").css("pointer-events", "none");
+                var formData = new FormData(this);
 
-            $.ajax({
-                url: '@Url.Action("FortgotOTPVerify", "Forgotpassword")',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response.success) {
-                        // 🔹 First show processing bar
-                        Swal.fire({
-                            title: "Processing...",
-                            html: "Please wait while we save your changes.",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
-                        // ⏳ After small delay, show success popup
-                        setTimeout(function () {
-                        Swal.fire({
-                            title: "Success!",
-                            text: response.message,
-                            icon: "success",
-                            confirmButtonText: "Ok",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            customClass: {
-                                confirmButton: "swal-btn-continue",
-                            },
-                            didOpen: () => {
-                                $(".swal2-container").css("pointer-events", "auto");
-                            }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '@Url.Action("Index", "Login")';
-                            }
-                        });
-                    }, 1000); // 1 second delay for "Processing"
-                    } else {
-                        Swal.fire({
-                            title: "Message",
-                            text: response.message,
-                            icon: "info",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                        resetButton();
+                $.ajax({
+                    url: '@Url.Action("FortgotOTPVerify", "Forgotpassword")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Processing…',
+                                html: 'Please wait while we update your password.',
+                                allowOutsideClick: false, allowEscapeKey: false,
+                                didOpen: () => { Swal.showLoading(); }
+                            });
+                            setTimeout(function () {
+                                Swal.fire({
+                                    title: 'Password Reset!',
+                                    text: response.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'Go to Login',
+                                    allowOutsideClick: false, allowEscapeKey: false,
+                                    customClass: { confirmButton: 'swal-ok-btn' },
+                                    didOpen: () => { $('.swal2-container').css('pointer-events', 'auto'); }
+                                }).then(function (result) {
+                                    if (result.isConfirmed) {
+                                        window.location.href = '@Url.Action("Index", "Login")';
+                                    }
+                                });
+                            }, 1000);
+                        } else {
+                            Swal.fire({
+                                title: 'Notice', text: response.message,
+                                icon: 'info', allowOutsideClick: false, allowEscapeKey: false
+                            });
+                            resetBtn();
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({ title: 'Error', text: 'An unexpected error occurred.', icon: 'error' });
+                        resetBtn();
                     }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "An unexpected error occurred.",
-                        icon: "error",
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                    });
-                    resetButton();
-                }
+                });
+            });
+
+            function resetBtn() {
+                $('#savebutton').prop('disabled', false)
+                    .html('<i class="bi bi-arrow-repeat"></i> Reset Password');
+                $('body').css('pointer-events', 'auto');
+            }
+
+            /* Ripple on button */
+            document.getElementById('savebutton').addEventListener('click', function (e) {
+                var btn  = this, rect = btn.getBoundingClientRect();
+                var size = Math.max(rect.width, rect.height);
+                var rpl  = document.createElement('span');
+                rpl.style.cssText = [
+                    'position:absolute','border-radius:50%',
+                    'background:rgba(255,255,255,.32)',
+                    'width:' + size + 'px','height:' + size + 'px',
+                    'top:'  + (e.clientY - rect.top  - size/2) + 'px',
+                    'left:' + (e.clientX - rect.left - size/2) + 'px',
+                    'transform:scale(0)',
+                    'animation:rippleExp .55s ease forwards',
+                    'pointer-events:none'
+                ].join(';');
+                btn.appendChild(rpl);
+                setTimeout(function () { rpl.remove(); }, 600);
             });
         });
 
-        function resetButton() {
-            $("#savebutton").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto");
-        }
-    });
+        /* Back nav prevention */
+        setTimeout(function () { window.history.forward(); }, 0);
     </script>
 
-
+    <style>
+        @@keyframes spin       { to { transform: rotate(360deg); } }
+        @@keyframes rippleExp  { to { transform: scale(2.4); opacity: 0; } }
+        .swal-ok-btn {
+            background-color: #6c5ce7 !important; color: #fff !important;
+            border-radius: 8px !important; padding: 8px 22px !important; font-weight: 700 !important;
+        }
+    </style>
 </body>
 </html>

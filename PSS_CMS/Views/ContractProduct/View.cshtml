@@ -1,0 +1,94 @@
+﻿@model PSS_CMS.Models.ContractServiceProduct
+
+@{ ViewData["Title"] = "Contract Product View";
+    ViewBag.PageTitle = "Contract Product View";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-tools nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("ContractList", "Contract")">@Session["CT_CUSTOMERNAME"].ToString()</a>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("ContractProductList", "Contract")">Contract (@Session["CP_CODE"].ToString()</a>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("List", "ContractProduct")">Products</a>
+    <i class="bi bi-chevron-right"></i>
+    <span>View</span>
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-box-seam" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            Contract Product Details
+        </h6>
+    </div>
+
+    <div style="padding:24px 20px 8px;">
+
+        <p class="form-section-title">Product Information</p>
+        <div class="form-grid" style="margin-bottom:24px;">
+
+            <!-- Product Name -->
+            <div class="form-group">
+                @Html.LabelFor(m => m.CSP_PRODUCTNAME, "Product Name", new { @class = "form-label" })
+                @Html.EditorFor(m => m.CSP_PRODUCTNAME, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+            </div>
+
+            <!-- Service Engineer -->
+            <div class="form-group">
+                @Html.LabelFor(m => m.CSP_ADMINNAME, "Service Engineer", new { @class = "form-label" })
+                @Html.EditorFor(m => m.CSP_ADMINNAME, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+            </div>
+
+            <!-- Product Serial Number -->
+            <div class="form-group">
+                @Html.LabelFor(m => m.CSP_PRODUCTUNIQUENUMBER, "Product Serial Number", new { @class = "form-label" })
+                @Html.EditorFor(m => m.CSP_PRODUCTUNIQUENUMBER, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+            </div>
+
+            <!-- Contract Product Amount -->
+            <div class="form-group">
+                @Html.LabelFor(m => m.CSP_PRODUCTAMOUNT, "Contract Product Amount", new { @class = "form-label" })
+                @Html.EditorFor(m => m.CSP_PRODUCTAMOUNT, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+            </div>
+
+            <!-- Free Services -->
+            <div class="form-group">
+                @Html.LabelFor(m => m.CSP_FREESERVICE, "Free Services", new { @class = "form-label" })
+                @Html.EditorFor(m => m.CSP_FREESERVICE, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+            </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+            <a href="@Url.Action("List", "ContractProduct")" class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+        </div>
+
+    </div>
+
+</div><!-- /page-card -->
+<!-- Legend bar -->
+<div class="legend-bar">
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#adb5bd;flex-shrink:0;"></span>
+        <span>Read-only Field</span>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Scripts/Logoutjs.js"></script>
+}

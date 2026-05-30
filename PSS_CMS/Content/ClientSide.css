@@ -8,7 +8,7 @@
     height: 52px;
     background-color: var(--navbar-color);
     display: flex;
-    justify-content: space-between;
+ 
 }
 
     .nav .p-2 {

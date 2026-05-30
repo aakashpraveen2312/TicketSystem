@@ -22,6 +22,7 @@ using PSS_CMS.Models;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class PartyController : Controller
     {
         // GET: Party

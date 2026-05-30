@@ -14,6 +14,7 @@ using System.Web.Mvc;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class ContractInclusionController : Controller
     {
         // GET: ContractInclusion

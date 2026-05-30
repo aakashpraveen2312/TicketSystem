@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PSS_CMS.Fillter;
 using PSS_CMS.Models;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Web.Mvc;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class SalesInvoiceProductController : Controller
     {
         // GET: SalesInvoiceProduct
@@ -463,6 +465,7 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> Edit(int? Recid)
         {
+            ViewBag.invoicedate = Session["invoicedate"] ?? "";
             Session["Productrecid"] = Recid;
             string apiUrl = ConfigurationManager.AppSettings["GETSALESPRODUCTWITHCUSTOMER"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
@@ -654,7 +657,8 @@ namespace PSS_CMS.Controllers
         ""siP_WARRANTYFREECALLS"": ""{model.SIP_WARRANTYFREECALLS}"",
         ""siP_SORTORDER"": ""{model.SIP_SORTORDER}"",
         ""siP_PRODUCTAMOUNT"": ""{model.SIP_PRODUCTAMOUNT}"",
-        ""siP_ADMINRECID"": ""{model.SIP_ADMINRECID}""    
+        ""siP_ADMINRECID"": ""{model.SIP_ADMINRECID}"",
+        ""siP_CRECID"": ""{Session["CompanyID"]}""    
     }}";
 
                 // =========================
@@ -892,6 +896,16 @@ namespace PSS_CMS.Controllers
                             var rootObjects = JsonConvert.DeserializeObject<InvoicePaymentRootObjects>(jsonString);
 
                             Customernotificationlist = rootObjects.Data ?? new List<InvoicePayment>();
+
+                            if (Customernotificationlist.Count > 0)
+                            {
+                                Session["Paymentstatus"] = Customernotificationlist[0].PP_PAYMENTSTATUS ?? "";
+                            }
+                            else
+                            {
+                                Session["Paymentstatus"] = ""; // no data → allow create
+                            }
+
                             if (Customernotificationlist.Count > 0)
                             {
                                 // Assign serial numbers
@@ -1349,5 +1363,6 @@ namespace PSS_CMS.Controllers
         public string Status { get; set; }
         public string Message { get; set; }
         public int? CustomerRecid { get; set; }
+        public int? CU_URECID { get; set; }
     }
 }

@@ -1,62 +1,141 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Prioritywise>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@{ ViewData["Title"] = "Service Product Report";
+                ViewBag.PageTitle = "Service Product Report";
+                Layout = "~/Views/Shared/_Layout.cshtml"; }
 
-    @*Bootstrap Icons and Boxicons and Fontawesome link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <script src="~/Scripts/Script.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
     <style>
-        .card {
-            max-width: 100% !important;
-            height: 40vh;
-            overflow: visible;
+
+        /* ── Filter Card ─────────────────────────────── */
+        .filter-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            padding: 20px 22px;
+            margin-bottom: 18px;
         }
 
+        .filter-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+            .filter-title i {
+                color: var(--primary);
+            }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        @@media (max-width: 1024px) {
+            .filter-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+        }
+
+        @@media (max-width: 640px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        /* ── Shared input style ──────────────────────── */
+        .filter-input {
+            width: 100%;
+            background: var(--body-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 9px;
+            padding: 7px 12px;
+            font-size: 12.5px;
+            font-family: inherit;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color .15s, box-shadow .15s;
+        }
+
+            .filter-input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(108,92,231,.1);
+            }
+
+        /* ── Custom multi-select dropdown ───────────── */
         .dropdown-check-list {
             position: relative;
         }
 
             .dropdown-check-list .anchor {
                 cursor: pointer;
-                display: inline-block;
-                padding: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
                 width: 100%;
-                border: 1px solid #ccc;
-                background: #fff;
+                background: var(--body-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 9px;
+                padding: 7px 12px;
+                font-size: 12.5px;
+                font-family: inherit;
+                color: var(--text-muted);
+                user-select: none;
+                transition: border-color .15s;
             }
+
+                .dropdown-check-list .anchor::after {
+                    content: "\F229";
+                    font-family: "bootstrap-icons";
+                    font-size: 11px;
+                    flex-shrink: 0;
+                    margin-left: 6px;
+                    transition: transform .2s;
+                }
+
+            .dropdown-check-list.visible .anchor {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(108,92,231,.1);
+                color: var(--text-dark);
+            }
+
+                .dropdown-check-list.visible .anchor::after {
+                    transform: rotate(180deg);
+                }
 
             .dropdown-check-list ul.items {
                 position: absolute;
-                top: 100%;
+                top: calc(100% + 4px);
                 left: 0;
                 width: 100%;
                 z-index: 9999;
                 background: #fff;
-                border: 1px solid #ccc;
-                max-height: 250px;
+                border: 1px solid var(--border-color);
+                border-radius: 9px;
+                box-shadow: var(--shadow-md);
+                max-height: 220px;
                 overflow-y: auto;
                 display: none;
                 list-style: none;
+                padding: 6px 0;
+                margin: 0;
             }
 
             .dropdown-check-list.visible ul.items {
@@ -64,430 +143,436 @@
             }
 
             .dropdown-check-list ul.items li {
-                padding: 6px 10px;
+                padding: 6px 12px;
+                font-size: 12.5px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                transition: background .1s;
             }
 
-        .contents {
-            padding: 0 16px 0 25px !important;
-            min-height: 250px !important;
-            margin-left: 65px !important;
-            background-color: #e4e9f7 !important;
+                .dropdown-check-list ul.items li:hover {
+                    background: var(--body-bg);
+                }
+
+                .dropdown-check-list ul.items li strong {
+                    font-weight: 600;
+                }
+
+            .dropdown-check-list ul.items input[type=checkbox] {
+                accent-color: var(--primary);
+                width: 13px;
+                height: 13px;
+                flex-shrink: 0;
+            }
+
+        /* ── Filter actions ──────────────────────────── */
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .btn-filter {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 7px 18px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+            .btn-filter:hover {
+                background: #5a4bd1;
+            }
+
+        .btn-pdf {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 7px 18px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+            .btn-pdf:hover {
+                background: #c0392b;
+            }
+
+        /* ── Record badge ────────────────────────────── */
+        .record-badge {
+            background: #f3f0ff;
+            color: #5a4bd1;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 9px;
+            border-radius: 20px;
+            margin-left: 6px;
+        }
+
+        /* ── Type badge ──────────────────────────────── */
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .t-billable {
+            background: #e8faf6;
+            color: #00916e;
+        }
+
+        .t-nonbillable {
+            background: #ffeaea;
+            color: #e74c3c;
+        }
+
+        .t-default {
+            background: #f3f0ff;
+            color: #5a4bd1;
         }
     </style>
-</head>
+}
 
-<body>
-    <div class="contents">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-file-earmark-bar-graph"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Report</span>
+    <i class="bi bi-chevron-right"></i>
+    <span>Service Product Report</span>
+</div>
 
-                </a>
-            </div>
+<!-- Filter Card -->
+<div class="filter-card">
 
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>SERVICE PRODUCT REPORT</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="container mt-5 card shadow p-4 rounded-3">
-            <h3 class="mb-4 text-center">Service Product Report</h3>
-
-            <!-- ✅ Form starts here -->
-            <form method="post" id="financeForm" action="@Url.Action("ServiceProductReport", "ContractExpiryReport")">
-
-                <input type="hidden" id="ItemGroupRecid" name="Productrecid" />
-                <input type="hidden" id="ItemCategoryRecid" name="contractrecid" />
-                <input type="hidden" id="MaterialRecid" name="Materialrecid" />
-
-
-
-
-                <div class="row g-3">
-
-                    <!-- Product Combo -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Customers</label>
-
-                        <div id="itemGroupDropdown" class="dropdown-check-list" tabindex="100">
-                            <span class="anchor">-- Select Customer --</span>
-                            <ul class="items" id="itemGroupList">
-                                <li>
-                                    <label>
-                                        <input type="checkbox" id="selectAllItemGroups">
-                                        <strong>Select All</strong>
-                                    </label>
-                                </li>
-                                @if (ViewBag.Customer != null)
-                                {
-                                    foreach (var g in ViewBag.Customer)
-                                    {
-                                        <li>
-                                            <input type="checkbox" class="itemGroupCheck" value="@g.Value" />
-                                            @g.Text
-                                        </li>
-                                    }
-                                }
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- To Date -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Products</label>
-
-                        <div id="itemCategoryDropdown" class="dropdown-check-list">
-                            <span class="anchor">-- Select Product --</span>
-                            <ul class="items" id="itemCategoryList"></ul>
-                        </div>
-                    </div>
-                    <!-- Material Combo -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Material</label>
-
-                        <div id="materialDropdown" class="dropdown-check-list" tabindex="100">
-                            <span class="anchor">-- Select Material --</span>
-                            <ul class="items" id="materialList">
-                                <li>
-                                    <label>
-                                        <input type="checkbox" id="selectMaterials">
-                                        <strong>Select All</strong>
-                                    </label>
-                                </li>
-                                @if (ViewBag.Material != null)
-                                {
-                                    foreach (var g in ViewBag.Material)
-                                    {
-                                        <li>
-                                            <input type="checkbox" class="materialCheck" value="@g.Value" />
-                                            @g.Text
-                                        </li>
-                                    }
-                                }
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Priority type Combo Box -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Select Type</label>
-                        <select id="comboBox" name="Type" class="form-select" style="font-size:15px;">
-                            <option value="">-- Select Type --</option>
-                            <option value="Billable">Billable</option>
-                            <option value="Non Billable">Non Billable</option>
-
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="text-center mt-5">
-                    <button type="submit"
-                            name="ActionType"
-                            value="Filter"
-                            class="btn btn-warning px-4 me-3">
-                        Fillter
-                    </button>
-
-                    <button type="submit"
-                            name="ActionType"
-                            value="PDF"
-                            class="btn btn-danger px-4 me-3">
-                        PDF
-                    </button>
-
-                </div>
-
-            </form>
-            <!-- ✅ Form ends here -->
-        </div>
-
-        <!-- Report Table -->
-        <div class="card report-card mt-5 ms-3  mb-5">
-            <div class="card-body table-responsive">
-
-                <table class="table table-bordered table-hover">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>Ticket No</th>
-                            <th>Customer Name</th>
-                            <th>Product Name</th>
-                            <th>Material Name</th>
-                            <th>Qty Used</th>
-                            <th>Type</th>
-                            <th>Service Engineer</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@item.TicketNo</td>
-                                    <td>@item.customerName</td>
-                                    <td>@item.ProductName</td>
-                                    <td>@item.MaterialName</td>
-                                    <td>@item.QtyUsed</td>   <!-- FIXED -->
-                                    <td>@item.Type</td>
-                                    <td>@item.ServiceEngineer</td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="7" class="text-muted">
-                                    No records found
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-
-                </table>
-                <div class="d-flex justify-content-start mt-3">
-                    <button id="prevBtn" class="btn btn-primary me-2">Previous</button>
-                    <span id="pageInfo" class="mt-2"></span>
-                    <button id="nextBtn" class="btn btn-primary ms-2">Next</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-                <h4>Are you sure you want to log out?</h4>
-            </div>
-            <div class="offcanvas-footer d-flex justify-content-center">
-                <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-                <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-            </div>
-        </div>
+    <div class="filter-title">
+        <i class="bi bi-funnel"></i>
+        Service Product Report — Filters
     </div>
-    <script src="~/Scripts/Logoutjs.js"></script>
+
+    <form method="post"
+          id="financeForm"
+          action="@Url.Action("ServiceProductReport","ContractExpiryReport")"
+          class="no-preloader">
+
+        <input type="hidden" id="ItemGroupRecid" name="Productrecid" />
+        <input type="hidden" id="ItemCategoryRecid" name="contractrecid" />
+        <input type="hidden" id="MaterialRecid" name="Materialrecid" />
+
+        <div class="filter-grid">
+
+            <!-- Customers multi-select -->
+            <div class="form-group">
+                <label>Customers</label>
+                <div id="itemGroupDropdown" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor">-- Select Customer --</span>
+                    <ul class="items" id="itemGroupList">
+                        <li>
+                            <input type="checkbox" id="selectAllItemGroups" />
+                            <strong>Select All</strong>
+                        </li>
+                        @if (ViewBag.Customer != null)
+                        {
+                            foreach (var g in ViewBag.Customer)
+                            {
+            <li>
+                <input type="checkbox" class="itemGroupCheck" value="@g.Value" />
+                @g.Text
+            </li>}
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Products multi-select (loaded dynamically) -->
+            <div class="form-group">
+                <label>Products</label>
+                <div id="itemCategoryDropdown" class="dropdown-check-list">
+                    <span class="anchor">-- Select Product --</span>
+                    <ul class="items" id="itemCategoryList"></ul>
+                </div>
+            </div>
+
+            <!-- Material multi-select -->
+            <div class="form-group">
+                <label>Material</label>
+                <div id="materialDropdown" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor">-- Select Material --</span>
+                    <ul class="items" id="materialList">
+                        <li>
+                            <input type="checkbox" id="selectMaterials" />
+                            <strong>Select All</strong>
+                        </li>
+                        @if (ViewBag.Material != null)
+                        {
+                            foreach (var g in ViewBag.Material)
+                            {
+            <li>
+                <input type="checkbox" class="materialCheck" value="@g.Value" />
+                @g.Text
+            </li>}
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Type select -->
+            <div class="form-group">
+                <label>Select Type</label>
+                <select id="comboBox" name="Type" class="filter-input">
+                    <option value="">-- Select Type --</option>
+                    <option value="Billable">Billable</option>
+                    <option value="Non Billable">Non Billable</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" name="ActionType" value="Filter" class="btn-filter">
+                <i class="bi bi-funnel"></i> Filter
+            </button>
+            <button type="submit" name="ActionType" value="PDF" class="btn-pdf">
+                <i class="bi bi-file-earmark-pdf"></i> PDF
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+<!-- Report Table -->
+<div class="page-card">
+
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <i class="bi bi-file-earmark-bar-graph" style="color:var(--primary)"></i>
+            Service Product Report
+            <span class="record-badge">
+                @(Model != null ? Model.Count() : 0) records
+            </span>
+        </h6>
+    </div>
+
+    <div class="grid-wrap table-responsive">
+
+        @if (Model != null && Model.Any())
+        {
+<table class="table align-middle mb-0 tickets-table">
+    <thead>
+        <tr>
+            <th>Ticket No</th>
+            <th>Customer Name</th>
+            <th>Product Name</th>
+            <th>Material Name</th>
+            <th>Qty Used</th>
+            <th>Type</th>
+            <th>Service Engineer</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var typeClass =
+                item.Type == "Billable" ? "t-billable" :
+                item.Type == "Non Billable" ? "t-nonbillable" :
+                                              "t-default";
+<tr>
+    <td><span class="ref-code">@item.TicketNo</span></td>
+    <td>@item.customerName</td>
+    <td>@item.ProductName</td>
+    <td>@item.MaterialName</td>
+    <td>@item.QtyUsed</td>
+    <td>
+        <span class="type-badge @typeClass">@item.Type</span>
+    </td>
+    <td>@item.ServiceEngineer</td>
+</tr>}
+    </tbody>
+</table>
+
+                <div class="table-pagination">
+                    <button id="prevBtn" class="page-btn">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </button>
+                    <span id="pageInfo" class="page-info"></span>
+                    <button id="nextBtn" class="page-btn">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div> }
+                            else
+                            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox" style="font-size:40px;color:var(--text-muted)"></i>
+                    <p class="mt-2 text-muted fw-semibold">No records found</p>
+                </div>}
+
+    </div>
+</div>
+
+@section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            const rowsPerPage = 10;
-            const rows = document.querySelectorAll("tbody tr");
-            const totalRows = rows.length;
-            const totalPages = Math.ceil(totalRows / rowsPerPage);
-
-            let currentPage = 1;
-
-            function showPage(page) {
-                currentPage = page;
-
-                rows.forEach((row, index) => {
-                    row.style.display =
-                        (index >= (page - 1) * rowsPerPage &&
-                            index < page * rowsPerPage)
-                            ? ""
-                            : "none";
-                });
-
-                document.getElementById("pageInfo").innerText =
-                    "Page " + currentPage + " of " + totalPages;
-            }
-
-            document.getElementById("prevBtn").addEventListener("click", function () {
-                if (currentPage > 1) showPage(currentPage - 1);
-            });
-
-            document.getElementById("nextBtn").addEventListener("click", function () {
-                if (currentPage < totalPages) showPage(currentPage + 1);
-            });
-
-            showPage(1);
-        });
-    </script>
-    <script>
-$(document).ready(function () {
+    <script src="~/Scripts/UIPagination.js"></script>
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <text>
-            Swal.fire({
-                icon: 'info',
-                title: 'Message',
-                text: '@TempData["ErrorMessage"]',
-                confirmButtonColor: '#034CAE',
-                confirmButtonText: 'OK'
+<script>
+            $(document).ready(function () {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Message',
+                    text: '@TempData["ErrorMessage"]',
+                    confirmButtonColor: '#6c5ce7',
+                    confirmButtonText: 'OK'
+                });
             });
-        </text>
-    }
-
-});
-    </script>
+</script>}
 
     <script>
-$(document).ready(function () {
+    $(document).ready(function () {
 
-    /* ================= DROPDOWN OPEN/CLOSE ================= */
-    /* ================= DROPDOWN OPEN/CLOSE ================= */
-
-    $(".dropdown-check-list .anchor").click(function (e) {
-        e.stopPropagation();
-        $(".dropdown-check-list").not($(this).parent()).removeClass("visible"); // close others
-        $(this).parent().toggleClass('visible');
-    });
-
-    // Prevent closing when clicking inside dropdown
-    $(document).on("click", ".dropdown-check-list", function (e) {
-        e.stopPropagation();
-    });
-
-    // Close only when clicking outside
-    $(document).click(function () {
-        $('.dropdown-check-list').removeClass('visible');
-    });
-
-
-    /* ================= SELECT ALL PRODUCT ================= */
-    $(document).on("change", "#selectAllItemGroups", function () {
-        $(".itemGroupCheck").prop("checked", this.checked);
-        loadContracts();
-    });
-
-    $(document).on("change", ".itemGroupCheck", function () {
-
-        $("#selectAllItemGroups").prop(
-            "checked",
-            $(".itemGroupCheck").length === $(".itemGroupCheck:checked").length
-        );
-
-        loadContracts();
-    });
-
-    /* ================= SELECT ALL CONTRACT ================= */
-    $(document).on("change", "#selectAllCategories", function () {
-        $(".categoryCheck").prop("checked", this.checked);
-    });
-
-    $(document).on("change", ".categoryCheck", function () {
-        $("#selectAllCategories").prop(
-            "checked",
-            $(".categoryCheck").length === $(".categoryCheck:checked").length
-        );
-    });
-
-  /*  ================= SELECT ALL MATERIAL =================*/
-    $(document).on("change", "#selectMaterials", function () {
-        $(".materialCheck").prop("checked", this.checked);
-    });
-
-    $(document).on("change", ".materialCheck", function () {
-        $("#selectMaterials").prop(
-            "checked",
-            $(".materialCheck").length === $(".materialCheck:checked").length
-        );
-    });
-
-    /* ================= LOAD CONTRACT BASED ON PRODUCT ================= */
-    function loadContracts() {
-
-        var selectedProducts = [];
-
-        $(".itemGroupCheck:checked").each(function () {
-            selectedProducts.push($(this).val());
+        /* ── Dropdown open / close ───────────────────── */
+        $(".dropdown-check-list .anchor").click(function (e) {
+            e.stopPropagation();
+            $(".dropdown-check-list").not($(this).parent()).removeClass("visible");
+            $(this).parent().toggleClass("visible");
         });
 
-        $("#itemCategoryList").empty();
+        $(document).on("click", ".dropdown-check-list", function (e) {
+            e.stopPropagation();
+        });
 
-        if (selectedProducts.length === 0)
-            return;
+        $(document).click(function () {
+            $(".dropdown-check-list").removeClass("visible");
+        });
 
-        $("#itemCategoryList").html("<li>Loading...</li>");
+        /* ── Select All — Customers ──────────────────── */
+        $(document).on("change", "#selectAllItemGroups", function () {
+            $(".itemGroupCheck").prop("checked", this.checked);
+            loadProducts();
+        });
 
-        $.getJSON('@Url.Action("CustomerBasedProduct", "ContractExpiryReport")',
-            { ProductRecid: selectedProducts.join(",") },
-            function (response) {
+        $(document).on("change", ".itemGroupCheck", function () {
+            $("#selectAllItemGroups").prop(
+                "checked",
+                $(".itemGroupCheck").length === $(".itemGroupCheck:checked").length
+            );
+            loadProducts();
+        });
 
-                $("#itemCategoryList").empty();
+        /* ── Select All — Products ───────────────────── */
+        $(document).on("change", "#selectAllCategories", function () {
+            $(".categoryCheck").prop("checked", this.checked);
+        });
 
-                $("#itemCategoryList").append(`
-                    <li>
-                        <label>
-                            <input type="checkbox" id="selectAllCategories">
-                            <strong>Select All</strong>
-                        </label>
-                    </li>
-                `);
+        $(document).on("change", ".categoryCheck", function () {
+            $("#selectAllCategories").prop(
+                "checked",
+                $(".categoryCheck").length === $(".categoryCheck:checked").length
+            );
+        });
 
-                $.each(response.data, function (i, contract) {
+        /* ── Select All — Materials ──────────────────── */
+        $(document).on("change", "#selectMaterials", function () {
+            $(".materialCheck").prop("checked", this.checked);
+        });
+
+        $(document).on("change", ".materialCheck", function () {
+            $("#selectMaterials").prop(
+                "checked",
+                $(".materialCheck").length === $(".materialCheck:checked").length
+            );
+        });
+
+        /* ── Load Products based on selected Customers ─ */
+        function loadProducts() {
+            var selected = [];
+            $(".itemGroupCheck:checked").each(function () {
+                selected.push($(this).val());
+            });
+
+            $("#itemCategoryList").empty();
+            if (selected.length === 0) return;
+
+            $("#itemCategoryList").html("<li style='padding:8px 12px;color:var(--text-muted)'>Loading…</li>");
+
+            $.getJSON(
+                '@Url.Action("CustomerBasedProduct","ContractExpiryReport")',
+                { ProductRecid: selected.join(",") },
+                function (response) {
+                    $("#itemCategoryList").empty();
                     $("#itemCategoryList").append(`
                         <li>
-                            <input type="checkbox" class="categoryCheck" value="${contract.Value}" />
-                            ${contract.Text}
+                            <input type="checkbox" id="selectAllCategories" />
+                            <strong>Select All</strong>
                         </li>
                     `);
-                });
-
-            }).fail(function () {
-                $("#itemCategoryList").html("<li>Error loading contracts</li>");
+                    $.each(response.data, function (i, item) {
+                        $("#itemCategoryList").append(`
+                            <li>
+                                <input type="checkbox" class="categoryCheck" value="${item.Value}" />
+                                ${item.Text}
+                            </li>
+                        `);
+                    });
+                }
+            ).fail(function () {
+                $("#itemCategoryList").html(
+                    "<li style='padding:8px 12px;color:#e74c3c'>Error loading products</li>"
+                );
             });
-    }
-
-    /* ================= FORM SUBMIT ================= */
-    $("#financeForm").submit(function (e) {
-
-        var selectedProducts = [];
-
-        var selectedContracts = [];
-        var selectedMaterials = [];
-
-        $(".itemGroupCheck:checked").each(function () {
-            selectedProducts.push($(this).val());
-        });
-
-        $(".categoryCheck:checked").each(function () {
-            selectedContracts.push($(this).val());
-        });
-
-
-        $(".materialCheck:checked").each(function () {
-            selectedMaterials.push($(this).val());
-        });
-
-
-        var paymentType = $("#Type").val();
-
-        // At least one filter must be selected
-        if (selectedProducts.length === 0 &&
-            selectedContracts.length === 0 &&
-            paymentType === "") {
-
-            e.preventDefault();
-            Swal.fire("Please select at least one filter");
-            return;
         }
 
+        /* ── Form submit ─────────────────────────────── */
+        $("#financeForm").submit(function (e) {
+            var customers  = [];
+            var products   = [];
+            var materials  = [];
 
-        $("#ItemGroupRecid").val(selectedProducts.join(","));
-        $("#ItemCategoryRecid").val(selectedContracts.join(","));
-        $("#MaterialRecid").val(selectedMaterials.join(","));
+            $(".itemGroupCheck:checked").each(function () { customers.push($(this).val()); });
+            $(".categoryCheck:checked").each(function ()  { products.push($(this).val()); });
+            $(".materialCheck:checked").each(function ()  { materials.push($(this).val()); });
 
+            var type = $("#comboBox").val();
+
+            if (customers.length === 0 && products.length === 0 && type === "") {
+                e.preventDefault();
+                Swal.fire({
+                    icon: "warning",
+                    title: "Filter Required",
+                    text: "Please select at least one filter before proceeding.",
+                    confirmButtonColor: "#6c5ce7",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
+            $("#ItemGroupRecid").val(customers.join(","));
+            $("#ItemCategoryRecid").val(products.join(","));
+            $("#MaterialRecid").val(materials.join(","));
+        });
 
     });
-
-});
     </script>
-
-
-</body>
-</html>
-
-
+}

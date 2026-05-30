@@ -21,6 +21,10 @@ namespace PSS_CMS.Controllers
     [ApiKeyAuthorize]
     public class HelpDeskController : Controller
     {
+        public ActionResult RefreshCaptcha()
+        {
+            return PartialView("_CaptchaPartial");
+        }
         // GET: HelpDesk
         public async Task<ActionResult> HDDashboard()
         {
@@ -307,7 +311,10 @@ namespace PSS_CMS.Controllers
             ""tC_REFERENCETRECID"": ""{0}"",
             ""tC_HFLAG"": ""{"Y"}"",
 ""tC_ASSIGNFLAG"": ""{"N"}"",
-""tC_PICKFLAG"": ""{"N"}""
+""tC_PICKFLAG"": ""{"N"}"",
+""tC_PRODUCTSERIALNUMBER"": ""{tickets.P_SERIALNUMBER}"",
+""tC_CUSTOMERTYPE"": ""{tickets.CustomerType}""
+
         }}";
 
                 // Create the HTTP request 
@@ -333,9 +340,42 @@ namespace PSS_CMS.Controllers
                 client.DefaultRequestHeaders.Add("ApiKey", APIKey);
                 client.DefaultRequestHeaders.Add("Authorization", AuthKey);
 
-                if (this.IsCaptchaValid("Captcha is not valid"))
+                if (tickets.SelectedProjectType == null || tickets.SelectedProjectType == "0")
                 {
-                    var response = await client.SendAsync(request);
+                    return Json(new { status = "error", Message = "Please select the Product" });
+                }
+
+                if (string.IsNullOrWhiteSpace(tickets.TC_SUBJECT))
+                {
+                    return Json(new { status = "error", Message = "Please enter the Subject" });
+                }
+
+                if (string.IsNullOrWhiteSpace(tickets.TC_PRIORITYTYPE))
+                {
+                    return Json(new { status = "error", Message = "Please select the Priority Type" });
+                }
+
+                if (string.IsNullOrWhiteSpace(tickets.SelectedTicketType))
+                {
+                    return Json(new { status = "error", Message = "Please select the Ticket Type" });
+                }
+
+                if (string.IsNullOrWhiteSpace(tickets.TC_COMMENTS))
+                {
+                    return Json(new { status = "error", Message = "Please enter the Comments" });
+                }
+
+                // CAPTCHA VALIDATION AFTER SUCCESS
+                if (string.IsNullOrWhiteSpace(Request["CaptchaInputText"]))
+                {
+                    return Json(new { status = "error", Message = "Please enter the Captcha." });
+                }
+
+                if (!this.IsCaptchaValid("Invalid captcha"))
+                {
+                    return Json(new { status = "error", Message = "Invalid Captcha." });
+                }
+                var response = await client.SendAsync(request);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -359,11 +399,7 @@ namespace PSS_CMS.Controllers
                     {
                         return Json(new { status = "error", message = "Error: " + response.ReasonPhrase });
                     }
-                }
-                else
-                {
-                    return Json(new { status = "error", message = "Captcha is not valid." });
-                }
+              
             }
             catch (Exception ex)
             {
@@ -613,10 +649,11 @@ namespace PSS_CMS.Controllers
                                 customerResult = apiResponse.Data.Select(data => new
                                 {
                                     Value = data.CU_RECID,
-                                    Text = data.CU_NAME + " (" + data.Type + ")",
+                                    Text = data.CU_NAME + " - "+ " (" + data.Type + ")" + " - " + " (" + data.ProductSerial + ")",
 
                                     WarrantyUpto = data.CU_WARRANTYUPTO,
                                     WarrantyFreeCalls = data.CU_WARRANTYFREECALLS,
+                                    ProductSerial = data.ProductSerial,
 
                                     Type = data.Type   // optional (for future use)
                                 }).ToList<object>();

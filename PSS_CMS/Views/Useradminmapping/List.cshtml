@@ -1,258 +1,394 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Useradminmap>
-@using GridMvc.Html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
-    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
-    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    @*Bootstrap Icons and Boxicons and Fontawesome link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <script src="~/Scripts/Script.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
+@{ ViewData["Title"] = "User Heads Mapping";
+    ViewBag.PageTitle = "User Heads Mapping";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
-</head>
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+    <style>
+        .count-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #f3f0ff;
+            color: #5a4bd1;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 9px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
 
-<body>
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
 
-    <div class="content" style=" overflow-x: hidden!important;">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+        .role-sa {
+            background: #f3f0ff;
+            color: #5a4bd1;
+        }
 
-                </a>
-            </div>
+        .role-admin {
+            background: #e8faf6;
+            color: #00916e;
+        }
 
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-9">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">USER CATEGORY</a></li>
-                    <li>USER</li>
-                    <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserLogin")">LIST</a></li>
-                    <li>@Session["Name"].ToString().ToUpper()</li>
-                    <li>USER HEADS MAPPING</li>
-                </ul>
-            </div>
-            <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "Useradminmapping", FormMethod.Get, new { id = "searchForm" }))
-                {
-                    <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
-                }
+        .role-helpdesk {
+            background: #eef6ff;
+            color: #1a73e8;
+        }
 
-            </div>
+        .role-user {
+            background: #fff4db;
+            color: #c47a00;
+        }
+
+        .role-default {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .footer-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 18px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-save {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 7px 18px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+            .btn-save:hover {
+                background: #5a4bd1;
+            }
+
+        .btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f5f5f5;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 7px 18px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+            .btn-cancel:hover {
+                background: #ebebeb;
+                color: var(--text-dark);
+            }
+
+        .user-code {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 12px;
+        }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+
+    <i class="bi bi-people nav-icon"></i>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("List", "UserGroup")">User Category</a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("List", "UserLogin")">User</a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("List", "UserLogin")">List</a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    @Session["Name"]
+
+    <i class="bi bi-chevron-right"></i>
+
+    <span>User Heads Mapping</span>
+
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+            <!-- Search -->
+            @using (Html.BeginForm("List", "Useradminmapping", FormMethod.Get, new { id = "searchForm" }))
+            {
+    <div class="search-box">
+
+        <i class="bi bi-search"></i>
+
+        <input type="text"
+               id="searchPharse"
+               name="searchPharse"
+               placeholder="Search"
+               autocomplete="off"
+               value="@Request["searchPharse"]" />
+
+        @if (!string.IsNullOrEmpty(Request["searchPharse"]))
+        {
+    <a href="@Url.Action("List","Useradminmapping")" title="Clear">
+        <i class="bi bi-x-circle text-muted"></i>
+    </a>            }
+
+    </div>}
 
         </div>
+        </div>
 
-        <div class="table mt-3 ms-1 me-5" id="ticketTable1">
-            <form method="get" action="/Useradminmapping/CheckedValue">
-                @if (Model != null)
+        <!-- Table -->
+        <div class="grid-wrap table-responsive">
+
+            <form method="post" id="mappingForm">
+
+                @if (Model != null && Model.Any())
                 {
-                    @Html.Grid(Model).Columns(columns =>
-               {
+    <table class="table align-middle mb-0 tickets-table">
 
-                   columns.Add(c => c.Selected)
-        .Titled("<input type='checkbox' id='selectAll' /> &nbsp;&nbsp;") // "Select All" checkbox in the header
-        .Encoded(false)
-        .Sanitized(false)
-        .RenderValueAs(o =>
-        {
-            var index = Model.ToList().IndexOf(o);
-            var isChecked = o.Selected ? "checked" : "";
-            var checkboxHtml = $"<input type='checkbox' name='selectedItems[{index}].USERSELECTED' value='true' class='select-item' {isChecked} />";
-            var hiddenRecId = $"<input type='hidden' name='selectedItems[{index}].L_USERID' value='{o.U_RECID}' />"; // Bind GL_RECID properly
-            return MvcHtmlString.Create(checkboxHtml + hiddenRecId); // Return the HTML
-        })
-        .SetWidth("30px");
-                   columns.Add(c => c.U_USERCODE).Titled("Code").SetWidth("100px");
-                   columns.Add(c => c.U_USERNAME).Titled("Name");
-                   columns.Add(c => c.U_RCODE).Titled("Role").SetWidth("200PX");
-               }).WithPaging(10)
-                }
+        <thead>
+            <tr>
+                <th style="width:52px;">
+                    <input type="checkbox"
+                           id="selectAll"
+                           @(Session["R_CODE"]?.ToString().ToLower() == "user" ? "disabled" : "")
+                           title="Select All" />
+                </th>
+                <th style="width:110px;">Code</th>
+                <th>Name</th>
+                <th style="width:160px;">Role</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @{ var index = 0; }
+
+            @foreach (var o in Model)
+            {
+                var roleClass =
+                    o.U_RCODE == "SA" ? "role-sa" :
+                    o.U_RCODE == "Admin" ? "role-admin" :
+                    o.U_RCODE == "HelpDesk" ? "role-helpdesk" :
+                    o.U_RCODE == "User" ? "role-user" :
+                                              "role-default";
+
+                var roleLabel =
+                    o.U_RCODE == "HelpDesk" ? "Help Desk" :
+                    o.U_RCODE == "SA" ? "Super Admin" :
+                    o.U_RCODE;
+
+    <tr>
+
+        <td>
+            <input type="checkbox"
+                   class="select-item"
+                   name="selectedItems[@index].USERSELECTED"
+                   value="true"
+                   @(o.Selected ? "checked" : "")
+                   @(Session["R_CODE"]?.ToString().ToLower() == "user" ? "disabled" : "") />
+
+            <input type="hidden"
+                   name="selectedItems[@index].L_USERID"
+                   value="@o.U_RECID" />
+        </td>
+
+        <td class="user-code">@o.U_USERCODE</td>
+
+        <td>@o.U_USERNAME</td>
+
+        <td>
+            <span class="role-badge @roleClass">
+                @roleLabel
+            </span>
+        </td>
+
+    </tr>
+index++;
+}
+
+        </tbody>
+
+    </table> <!-- Pagination -->
+
+                    <div class="table-pagination">
+
+                        <button id="prevBtn"
+                                class="page-btn">
+
+                            <i class="bi bi-chevron-left"></i>
+
+                            Previous
+
+                        </button>
+
+                        <span id="pageInfo"
+                              class="page-info">
+                        </span>
+
+                        <button id="nextBtn"
+                                class="page-btn">
+
+                            Next
+
+                            <i class="bi bi-chevron-right"></i>
+
+                        </button>
+
+                    </div>}
                 else
                 {
-                    <div class="alert alert-warning text-center">
-                        <b>No Admin's' are available</b>
-                    </div>}
+    <div class="text-center py-5">
+        <i class="bi bi-inbox" style="font-size:40px;color:var(--text-muted)"></i>
+        <p class="mt-2 text-muted fw-semibold">No Admins Available</p>
+    </div>}
 
+                <!-- Footer Buttons -->
+                <div class="footer-actions">
 
-            <div class="button-container d-flex justify-content-end mt-3">
-                @if (Session["R_CODE"] != null && Session["R_CODE"].ToString().ToLower() != "user")
-                {
-                    <input type="submit" id="submitButton" value="Save" class="btn btn-default1 me-2 text-white" tabindex="8" />
-                }
-                    <input type="button" class="btn btn-default2 text-white" tabindex="9"
-                       onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'"
-                       value="Cancel" />
-            </div>
-            </form>
-        </div>
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+                    @if (Session["R_CODE"] != null &&
+                         Session["R_CODE"].ToString().ToLower() != "user")
+                    {
+        <button type="button" id="submitButton" class="btn-save">
+            <i class="bi bi-floppy"></i>
+            Save
+        </button>}
 
+                    <a href="@Url.Action("List", "UserLogin")" class="btn-cancel">
+                        Cancel
+                    </a>
 
                 </div>
-            </div>
-        </footer>
+
+            </form>
+
+        </div>
+
     </div>
 
+<!-- Legend -->
+<div class="legend-bar">
 
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
-        </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-        </div>
+    <div class="legend-item">
+        <input type="checkbox" disabled />
+        <span>Select User</span>
     </div>
-    <div id="preloader2"></div>
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
 
+    <div class="legend-item">
+        <i class="bi bi-check-circle" style="color:#2ecc71;font-size:14px;"></i>
+        <span>Checked = Mapped</span>
+    </div>
 
+</div>
+
+@section Scripts {
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
-            }
-        });
-    });
-    </script>
 
-    <script src="~/Scripts/Fordelete.js"></script>
+    <script src="~/Scripts/UIPagination.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
         $(document).ready(function () {
-            // Select/Deselect all checkboxes
-            $('#selectAll').click(function () {
-                var isChecked = $(this).is(':checked');
-                console.log(isChecked);
-                $('input[name^="selectedItems"][type="checkbox"]').prop('checked', isChecked);
+
+            // ── Initial count ───────────────────────────────────────
+            updateCount();
+
+            // ── Select All ──────────────────────────────────────────
+            $('#selectAll').on('change', function () {
+                $('input.select-item:not(:disabled)').prop('checked', $(this).is(':checked'));
+                updateCount();
             });
 
-            // Debug form data
-            $('form').submit(function (event) {
-                event.preventDefault();
-                var formData = new FormData(this);
-                var object = {};
-                formData.forEach((value, key) => {
-                    if (object[key]) {
-                        if (!Array.isArray(object[key])) {
-                            object[key] = [object[key]];
-                        }
-                        object[key].push(value);
-                    } else {
-                        object[key] = value;
+            // ── Individual checkbox ─────────────────────────────────
+            $(document).on('change', 'input.select-item', function () {
+                syncSelectAll();
+                updateCount();
+            });
+
+            // ── AJAX Save ───────────────────────────────────────────
+            $('#submitButton').on('click', function () {
+
+                let selectedIds = [];
+
+                $('input.select-item:checked').each(function () {
+                    let idx    = $(this).attr('name').match(/\d+/)[0];
+                    let userId = $('input[name="selectedItems[' + idx + '].L_USERID"]').val();
+                    if (userId) selectedIds.push(userId);
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("CheckedValue", "Useradminmapping")',
+                    data: JSON.stringify({ selectedItems: selectedIds }),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (res) {
+                        Swal.fire({
+                            icon:  res.success ? 'success' : 'error',
+                            title: res.success ? 'Success!' : 'Error!',
+                            text:  res.message,
+                            confirmButtonText: 'OK'
+                        }).then(function () {
+                            if (res.success) {
+                                window.location.href = '@Url.Action("List", "UserLogin")';
+                            }
+                        });
+                    },
+                    error: function () {
+                        Swal.fire('Error!', 'Something went wrong while processing your request.', 'error');
                     }
                 });
-                console.log(object); // Log form data to the console
-                this.submit(); // Submit the form after debugging
             });
+
+            // ── Helpers ─────────────────────────────────────────────
+            function syncSelectAll() {
+                var total   = $('input.select-item:not(:disabled)').length;
+                var checked = $('input.select-item:not(:disabled):checked').length;
+                var $sa     = $('#selectAll');
+                $sa.prop('indeterminate', checked > 0 && checked < total);
+                $sa.prop('checked', total > 0 && checked === total);
+            }
+
+            function updateCount() {
+                var count = $('input.select-item:checked').length;
+                $('#countBadge').text(count + ' selected');
+            }
+
         });
     </script>
-    <script>
-    $(document).ready(function () {
-        // Select/Deselect all checkboxes
-        $('#selectAll').click(function () {
-            var isChecked = $(this).is(':checked');
-            $('input[name^="selectedItems"][type="checkbox"]').prop('checked', isChecked);
-        });
-
-        // Handle submit button click
-        $('#submitButton').click(function (event) {
-            event.preventDefault(); // Prevent the default form submission
-            updateSecondGrid(); // Call the function to gather selected IDs and send them to the server
-        });
-
-        function updateSecondGrid() {
-            let selectedIds = [];
-
-            // Loop through all checked checkboxes
-            $('input[name^="selectedItems"][type="checkbox"]:checked').each(function () {
-                let index = $(this).attr('name').match(/\d+/)[0]; // Get index from name attribute
-                let userId = $('input[name="selectedItems[' + index + '].L_USERID"]').val();
-
-                if (userId) {
-                    selectedIds.push(userId);
-                }
-            });
-
-            console.log("selectedIds", selectedIds);
-
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("CheckedValue", "Useradminmapping")',
-                data: JSON.stringify({ selectedItems: selectedIds }),
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                success: function (response) {
-                    Swal.fire({
-                        title: response.success ? 'Success!' : 'Error!',
-                        text: response.message,
-                        icon: response.success ? 'success' : 'error',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        if (response.success) {
-                            window.location.href = '@Url.Action("List", "UserLogin", new { id = Session["CompanyID"] })';
-                        }
-                    });
-                },
-                error: function () {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Something went wrong while processing your request.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            });
-        }
-    });
-    </script>
-
-
-
-</body>
-</html>
-
-
+}

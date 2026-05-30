@@ -1,0 +1,363 @@
+﻿@model PSS_CMS.Models.ServiceInvoiceData
+
+@{ ViewData["Title"] = "Service Invoice";
+    ViewBag.PageTitle = "Service Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+    <style>
+        /* ── Custom Tabs ───────────────────────────── */
+        .inv-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--border-color);
+            padding: 0 20px;
+            background: #fafafa;
+            overflow-x: auto;
+        }
+
+        .inv-tab-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 13px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: color .18s, border-color .18s;
+            white-space: nowrap;
+            cursor: pointer;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: inherit;
+        }
+
+            .inv-tab-link i {
+                font-size: 15px;
+            }
+
+            .inv-tab-link.active {
+                color: var(--primary);
+                border-bottom-color: var(--primary);
+            }
+
+            .inv-tab-link:hover:not(.active) {
+                color: var(--text-dark);
+            }
+
+        .inv-pane {
+            display: none;
+        }
+
+            .inv-pane.show {
+                display: block;
+            }
+
+        .tab-body {
+            padding: 24px 20px 8px;
+        }
+
+        /* ── Summary totals ─────────────────────────── */
+        .totals-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @@media (max-width: 600px) {
+            .totals-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .total-card {
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary);
+            border-radius: 12px;
+            padding: 16px 20px;
+            background: var(--body-bg);
+        }
+
+            .total-card.net {
+                border-left-color: #1D9E75;
+            }
+
+        .total-card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .total-card-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .total-card.net .total-card-value {
+            color: #1D9E75;
+        }
+
+        /* ── Empty state ────────────────────────────── */
+        .empty-table {
+            padding: 32px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* ── Pane actions ───────────────────────────── */
+        .pane-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 16px 0 4px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-receipt nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("Ticket_History", "Tickets")">Ticket History</a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Service Invoice</span>
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-receipt" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            Service Invoice Details
+        </h6>
+    </div>
+
+    <!-- Tabs -->
+    <div class="inv-tabs">
+        <button type="button" class="inv-tab-link active" data-target="pane-materials">
+            <i class="bi bi-box-seam"></i> Materials &amp; Services
+        </button>
+        <button type="button" class="inv-tab-link" data-target="pane-totals">
+            <i class="bi bi-calculator"></i> Totals
+        </button>
+    </div>
+
+    @using (Html.BeginForm("GenerateInvoice", "ServiceInvoice", FormMethod.Post))
+    {
+<div class="tab-body">
+
+    <!-- ── Pane: Materials & Services ── -->
+    <div class="inv-pane show" id="pane-materials">
+
+        @{
+            var billable = Model?.BillableMaterials?.ToList()
+                            ?? new List<PSS_CMS.Models.ServiceMaterials>();
+
+            var nonBillable = Model?.NonBillableMaterials?.ToList()
+                               ?? new List<PSS_CMS.Models.ServiceMaterials>();
+        }
+
+        <!-- Billable -->
+        <p class="form-section-title" style="margin-bottom:12px;">
+            <i class="bi bi-currency-rupee" style="color:var(--primary);"></i>
+            Billable Materials &amp; Services
+        </p>
+
+        @if (billable.Any())
+        {
+    <div class="grid-wrap" style="margin-bottom:28px;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Material Name</th>
+                    <th style="text-align:right;">Qty</th>
+                    <th style="text-align:right;">Price</th>
+                    <th style="text-align:right;">Discount (%)</th>
+                    <th style="text-align:right;">Amount</th>
+                    <th style="text-align:right;">CGST (%)</th>
+                    <th style="text-align:right;">SGST (%)</th>
+                    <th style="text-align:right;">Net Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in billable)
+                {
+    <tr>
+        <td>@(item.MaterialName ?? "-")</td>
+        <td class="amount-cell">@item.Quantity</td>
+        <td class="amount-cell">@String.Format("{0:N2}", item.Price)</td>
+        <td class="amount-cell">@String.Format("{0:N2}", item.Discount)</td>
+        <td class="amount-cell">@String.Format("{0:N2}", item.Amount)</td>
+        <td class="amount-cell">@String.Format("{0:N2}", item.CGST)</td>
+        <td class="amount-cell">@String.Format("{0:N2}", item.SGST)</td>
+        <td class="net-amount-cell">@String.Format("{0:N2}", item.NetAmount)</td>
+    </tr>
+}
+            </tbody>
+        </table>
+    </div> }
+else
+{
+    <div class="empty-table" style="margin-bottom:28px;">
+        <i class="bi bi-inbox" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4;"></i>
+        No billable materials or services found.
+    </div>          }
+
+        <!-- Non-Billable -->
+        <p class="form-section-title" style="margin-bottom:12px;">
+            <i class="bi bi-gift" style="color:#1D9E75;"></i>
+            Non-Billable Materials &amp; Services
+        </p>
+
+        @if (nonBillable.Any())
+        {
+    <div class="grid-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Material Name</th>
+                    <th style="text-align:right;">Qty</th>
+                    <th style="text-align:right;">Price</th>
+                    <th style="text-align:right;">Net Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in nonBillable)
+                {
+    <tr>
+        <td>@(item.MaterialName ?? "-")</td>
+        <td class="amount-cell">@item.Quantity</td>
+        <td class="amount-cell">@String.Format("{0:N2}", item.Price)</td>
+        <td class="net-amount-cell">@String.Format("{0:N2}", item.NetAmount)</td>
+    </tr>
+}
+            </tbody>
+        </table>
+    </div> }
+else
+{
+    <div class="empty-table">
+        <i class="bi bi-inbox" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4;"></i>
+        No non-billable materials or services found.
+    </div>          }
+
+        <div class="pane-actions">
+            <button type="button" class="btn-save" onclick="switchTab('pane-totals')">
+                <i class="bi bi-arrow-right-circle"></i> Next
+            </button>
+            <a href="@Url.Action("Ticket_History","Tickets")" class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ── Pane: Totals ── -->
+    <div class="inv-pane" id="pane-totals">
+
+        <p class="form-section-title">Invoice Summary</p>
+
+        @{
+            decimal totalAmount = billable.Any()
+                ? (billable.Sum(x => x.Amount) ?? 0)
+                : 0;
+
+            decimal netAmount = billable.Any()
+                ? (billable.Sum(x => x.NetAmount) ?? 0)
+                : 0;
+
+            decimal totalCgst = billable.Any()
+                ? (billable.Sum(x => x.CGST) ?? 0)
+                : 0;
+
+            decimal totalSgst = billable.Any()
+                ? (billable.Sum(x => x.SGST) ?? 0)
+                : 0;
+        }
+
+    <div class="totals-grid" style="margin-bottom:24px;">
+
+
+
+        <div class="total-card">
+            <div class="total-card-label">Total CGST</div>
+            <div class="total-card-value" style="font-size:18px;">₹ @String.Format("{0:N2}", totalCgst)</div>
+        </div>
+
+        <div class="total-card">
+            <div class="total-card-label">Total SGST</div>
+            <div class="total-card-value" style="font-size:18px;">₹ @String.Format("{0:N2}", totalSgst)</div>
+        </div>
+
+        <div class="total-card">
+            <div class="total-card-label">Total Amount (Before Tax)</div>
+            <div class="total-card-value">₹ @String.Format("{0:N2}", totalAmount)</div>
+        </div>
+
+        <div class="total-card net">
+            <div class="total-card-label">Net Amount (After Tax)</div>
+            <div class="total-card-value">₹ @String.Format("{0:N2}", netAmount)</div>
+        </div>
+
+    </div>
+
+        <div class="pane-actions">
+            <a href="@Url.Action("Ticket_History","Tickets")" class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+        </div>
+
+    </div>
+
+</div><!-- /tab-body -->}
+
+</div><!-- /page-card -->
+<!-- Legend bar -->
+<div class="legend-bar">
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+        <span>Billable Items</span>
+    </div>
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#1D9E75;flex-shrink:0;"></span>
+        <span>Non-Billable</span>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        function switchTab(targetId) {
+            document.querySelectorAll('.inv-tab-link').forEach(function (b) {
+                b.classList.remove('active');
+            });
+            document.querySelectorAll('.inv-pane').forEach(function (p) {
+                p.classList.remove('show');
+            });
+            document.querySelector('[data-target="' + targetId + '"]').classList.add('active');
+            document.getElementById(targetId).classList.add('show');
+        }
+
+        document.querySelectorAll('.inv-tab-link').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                switchTab(btn.dataset.target);
+            });
+        });
+    </script>
+}

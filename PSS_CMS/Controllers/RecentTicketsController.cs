@@ -136,8 +136,13 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> AdminTickets(string recid2, string userid, string status,string L_AdminDeligate,string Assigntoclick)
+        public async Task<ActionResult> AdminTickets(string recid2, string userid, string status,string L_AdminDeligate,string Assigntoclick,string customertype,int? projectid,string prodserial,int? ticuserid)
         {
+            Session["Customertype"] = string.IsNullOrWhiteSpace(customertype) ? "" : customertype;
+            Session["Ticid"] = recid2;
+            Session["Prodid"] = projectid;
+            Session["prodserial"] = string.IsNullOrWhiteSpace(prodserial) ? "" : prodserial;
+            Session["ticuserid"] = ticuserid ?? 0;
             IEnumerable<Admintickets> ticketadminList = await GetAdminTickets(recid2, userid, status, L_AdminDeligate, Assigntoclick); // Your logic to get a list of tickets
             return View(ticketadminList); // Pass the collection to the view
         }
@@ -1170,6 +1175,241 @@ namespace PSS_CMS.Controllers
             public string Message { get; set; }
             public string FileUrl { get; set; }
         }
+
+
+
+
+        public ActionResult DraftDownloadPDF()
+        {
+            return View();
+        }
+        // GET: PDF
+        [HttpPost]
+        public async Task<ActionResult> DraftDownloadPDF(PDFDetails pDFDetails)
+        {
+            try
+            {
+                var MaterialcategoryPostURL = ConfigurationManager.AppSettings["RECENTTICKETPDFDRAFT"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{
+            ""ticketRecID"": ""{Session["RECORDID"]}"",
+            ""companyRecID"": ""{Session["CompanyID"]}""
+        }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(MaterialcategoryPostURL),
+                    Method = HttpMethod.Post,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<pdfdetail>(responseString);
+
+                    if (result.Status == "Y" && !string.IsNullOrEmpty(result.fileUrl))
+                    {
+                        // Extract file name from full local path
+                        var fileName = result.fileUrl;
+
+                        // Build web-accessible URL (adjust base URL if needed)
+                        //var requestUrl = HttpContext.Request.Url;
+                        //var baseUrl = $"{requestUrl.Scheme}://{requestUrl.Authority}";
+                        //var fileUrl = $"{baseUrl}/GeneratedPDFs/{fileName}";
+
+                        return Json(new { status = "success", url = fileName });
+                    }
+
+
+                    return Json(new { status = "error", message = result.Message });
+                }
+                else
+                {
+                    return Json(new { status = "error", message = "No material consumptions are there" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = "error", message = "Exception occurred: " + ex.Message });
+            }
+        }
+
+
+
+        public ActionResult ContractDownloadPDF()
+        {
+            return View();
+        }
+        // GET: PDF
+        [HttpPost]
+        public async Task<ActionResult> ContractDownloadPDF(PDFDetails pDFDetails)
+        {
+            try
+            {
+                var MaterialcategoryPostURL = ConfigurationManager.AppSettings["TICCONTRACTPDF"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{
+            ""ticketRecID"": ""{Session["RECORDID"]}"",
+            ""companyRecID"": ""{Session["CompanyID"]}"",
+            ""userRecID"": ""{Session["ticuserid"]}"",
+            ""productRecID"": ""{Session["Prodid"]}"",
+            ""productSerial"": ""{Session["prodserial"]}""
+        }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(MaterialcategoryPostURL),
+                    Method = HttpMethod.Post,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<pdfdetail>(responseString);
+
+                    if (result.Status == "Y" && !string.IsNullOrEmpty(result.fileUrl))
+                    {
+                        // Extract file name from full local path
+                        var fileName = result.fileUrl;
+
+                        // Build web-accessible URL (adjust base URL if needed)
+                        //var requestUrl = HttpContext.Request.Url;
+                        //var baseUrl = $"{requestUrl.Scheme}://{requestUrl.Authority}";
+                        //var fileUrl = $"{baseUrl}/GeneratedPDFs/{fileName}";
+
+                        return Json(new { status = "success", url = fileName });
+                    }
+
+
+                    return Json(new { status = "error", message = result.Message });
+                }
+                else
+                {
+                    return Json(new { status = "error", message = "No material consumptions are there" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = "error", message = "Exception occurred: " + ex.Message });
+            }
+        }
+
+
+        public ActionResult WarrantyDownloadPDF()
+        {
+            return View();
+        }
+        // GET: PDF
+        [HttpPost]
+        public async Task<ActionResult> WarrantyDownloadPDF(PDFDetails pDFDetails)
+        {
+            try
+            {
+                var MaterialcategoryPostURL = ConfigurationManager.AppSettings["TICWARRANTYPDF"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{
+            ""ticketRecID"": ""{Session["RECORDID"]}"",
+            ""companyRecID"": ""{Session["CompanyID"]}"",
+            ""userRecID"": ""{Session["ticuserid"]}"",
+            ""productRecID"": ""{Session["Prodid"]}"",
+            ""productSerial"": ""{Session["prodserial"]}""
+        }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(MaterialcategoryPostURL),
+                    Method = HttpMethod.Post,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json" }
+            },
+                    Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                };
+
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<pdfdetail>(responseString);
+
+                    if (result.Status == "Y" && !string.IsNullOrEmpty(result.fileUrl))
+                    {
+                        // Extract file name from full local path
+                        var fileName = result.fileUrl;
+
+                        // Build web-accessible URL (adjust base URL if needed)
+                        //var requestUrl = HttpContext.Request.Url;
+                        //var baseUrl = $"{requestUrl.Scheme}://{requestUrl.Authority}";
+                        //var fileUrl = $"{baseUrl}/GeneratedPDFs/{fileName}";
+
+                        return Json(new { status = "success", url = fileName });
+                    }
+
+
+                    return Json(new { status = "error", message = result.Message });
+                }
+                else
+                {
+                    return Json(new { status = "error", message = "No material consumptions are there" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = "error", message = "Exception occurred: " + ex.Message });
+            }
+        }
+
 
 
     }

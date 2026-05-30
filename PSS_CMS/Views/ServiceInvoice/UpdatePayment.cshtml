@@ -1,504 +1,269 @@
 ﻿@model PSS_CMS.Models.PaymentUpdate
 
-@{
-    ViewBag.Title = "Add Invoice";
-    Layout = null;
+@{ ViewData["Title"] = "Update Payment";
+                ViewBag.PageTitle = "Update Payment";
+                Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-credit-card nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("Index", "ServiceInvoice")">Service Invoice</a>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("ServiceInvoicePaymentList", "ServiceInvoice")">List</a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Update Payment</span>
+</div>
 
+@using (Html.BeginForm("UpdatePayment", "ServiceInvoice", FormMethod.Post,
+    new { id = "paymentform", @class = "no-preloader" }))
+{
+<div class="page-card">
 
-    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
-    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
-    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+    <!-- Header -->
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-credit-card" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            Update Payment
+        </h6>
+    </div>
+
+    <!-- Form Body -->
+    <div class="form-body">
+
+        <!-- Invoice Info -->
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.TC_ReferenceNo, new { @class = "form-label" })
+                @Html.EditorFor(m => m.TC_ReferenceNo, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.TC_InvoiceNumber, new { @class = "form-label" })
+                @Html.EditorFor(m => m.TC_InvoiceNumber, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+            </div>
+
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Payment Details -->
+        <div class="form-grid">
+
+            <div class="form-group">
+                <div style="display:flex; align-items:center; gap:2px;">
+                    @Html.LabelFor(m => m.TC_ModeOfPayment, new { @class = "form-label", style = "margin-bottom:0;" })
+                    <span class="req" style="color:#E24B4A; font-size:11px; font-weight:600;">*</span>
+                </div>
+                @Html.DropDownListFor(m => m.TC_ModeOfPayment,
+                              new List<SelectListItem>
+                              {
+                            new SelectListItem { Text = "Select Payment Mode", Value = "" },
+                            new SelectListItem { Text = "Cash", Value = "Cash" },
+                            new SelectListItem { Text = "UPI", Value = "UPI" }
+                              },
+                              new { @class = "form-select" })
+            </div>
+
+            <div class="form-group">
+                <div style="display:flex; align-items:center; gap:2px;">
+                    @Html.LabelFor(m => m.TC_ModeOfPayment, new { @class = "form-label", style = "margin-bottom:0;" })
+                    <span class="req" style="color:#E24B4A; font-size:11px; font-weight:600;">*</span>
+                </div>
+                @Html.EditorFor(m => m.TC_DateOfPayment, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", type = "date" } })
+            </div>
+
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Amount Summary -->
+        <div class="form-grid">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SINP_SOFARPAID, "So Far Paid", new { @class = "form-label" })
+                @Html.EditorFor(m => m.SINP_SOFARPAID, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly", id = "Sorfarpaid" } })
+            
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.TC_TotalAmount, new { @class = "form-label" })
+                @Html.EditorFor(m => m.TC_TotalAmount, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly", id = "TotalAmount" } })
+           
+            </div>
+
+            <div class="form-group">
+                <div style="display:flex; align-items:center; gap:2px;">
+                    @Html.LabelFor(m => m.TC_ModeOfPayment, new { @class = "form-label", style = "margin-bottom:0;" })
+                    <span class="req" style="color:#E24B4A; font-size:11px; font-weight:600;">*</span>
+                </div>
+                @Html.EditorFor(m => m.TC_PaidAmount, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", id = "PaidAmount", placeholder = "0.00" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.TC_BalanceAmount, new { @class = "form-label" })
+                @Html.EditorFor(m => m.TC_BalanceAmount, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", id = "BalanceAmount", @readonly = "readonly" } })
+      
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.TC_PaymentStatus, new { @class = "form-label" })
+                @Html.EditorFor(m => m.TC_PaymentStatus, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", id = "PaymentStatus", @readonly = "readonly" } })
+                <span class="auto-badge"><i class="bi bi-info-circle"></i> Auto-updated</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Legend -->
+    <div class="legend-bar">
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#adb5bd;flex-shrink:0;"></span>
+            <span>Read-only Field</span>
+        </div>
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+            <span>Text Field</span>
+        </div>
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
+            <span>Number Field</span>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+        <a href="@Url.Action("ServiceInvoicePaymentList", "ServiceInvoice")" class="btn-cancel">
+            <i class="bi bi-x-lg"></i> Cancel
+        </a>
+        <button type="submit" class="btn-save" id="savebutton">
+            <i class="bi bi-floppy"></i> Update Payment
+        </button>
+    </div>
+
+</div>}
+
+@section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
-    @*Bootstrap Icons and Boxicons and Fontawesome link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
-    <script src="~/Scripts/Sidebarscript.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Colors.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <!-- Favicons -->
-    <link href="~/assets/img/PSSlogo.png" rel="icon">
-    <link href="~/assets/img/PSSlogo.png" rel="apple-touch-icon">
-    <style>
-        select#TC_ModeOfPayment, select#TC_PaymentStatus {
-            font-size: 13px;
-        }
-    </style>
-</head>
-
-<body>
-    @*Sidebar*@
-    <nav class="sidebar close">
-        <header>
-            <div class="text logo-text" style="display:inline-block">
-
-                <a href="@Url.Action("ContractDashboard", "Contract")">
-
-
-                    @if (Session["Logo"] != null)
-                    {
-                        <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
-                    }
-
-                </a>
-
-
-            </div>
-
-            <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
-
-        </header>
-        <div class="menu-bar">
-            <div class="menu">
-                <ul class="menu-links" style="margin-left:20px">
-                    <!-- ACCOUNTS ADMIN -->
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/software-engineer.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
-                        <img src="~/assets/img/software-engineer.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
-                        <span class="text nav-text" style="margin-left:15px">ACCOUNTS ADMIN</span>
-                    </li>
-                    <!-- Customer Accounts -->
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerList", "Contract")">
-                            <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">
-                            <i class='bi bi-person-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
-                        </a>
-                    </li>
-
-                    @*<li class="nav-link">
-                        <a href="@Url.Action("List", "Party")">
-                            <i class='bi bi-person-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Party</span>
-                        </a>
-                    </li>*@
-                    <li class="nav-link">
-                        <a href="@Url.Action("ContractList", "Contract")">
-                            <i class='bi bi-tools' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="@Url.Action("Index", "ServiceInvoice")">
-                            <i class='bx bx-receipt' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
-                        </a>
-                    </li>
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/ReportImage.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
-                        <img src="~/assets/img/ReportImage.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
-                        <span class="text nav-text" style="margin-left:15px">REPORTS</span>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="@Url.Action("Report", "FollowUpReport")">
-                            <i class='bx bx-phone-call' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Follow-up Report</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("ContractexpiryReport", "ContractExpiryReport")">
-                            <i class='bx bx-time-five' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
-                        </a>
-                    </li>
-                    @*<li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>*@
-                    <!-- Settings Section -->
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
-                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:5px;" />
-                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
-                    </li>
-
-                    @*Change Password*@
-                    <li class="nav-link">
-                        <a href="@Url.Action("ChangePassword", "Contract")">
-                            <i class='bx bxs-key' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
-                        </a>
-                    </li>
-
-                    <!-- Logout -->
-                    <li class="nav-link">
-                        <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
-                            <i class='bx bx-log-out' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Logout</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-
-    <div class="content" style=" overflow-x: hidden!important;">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
-
-                </a>
-            </div>
-
-        </nav>
-
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>SERVICE INVOICE</li>
-                    <li class="resadmintic" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Index", "ServiceInvoice")">LIST</a></li>
-                    <li>UPDATE PAYMENT</li>
-                </ul>
-            </div>
-
-
-        </div>
-        <div class="container mt-3">
-
-            @using (Html.BeginForm("UpdatePayment", "ServiceInvoice", FormMethod.Post))
-            {
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_ReferenceNo, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_ReferenceNo, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_InvoiceNumber, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_InvoiceNumber, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", @readonly = "readonly" } })
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_ModeOfPayment, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.DropDownListFor(model => model.TC_ModeOfPayment,
-                            new List<SelectListItem>
-                            {
-                                new SelectListItem { Text = "Select Payment Mode", Value = "" },
-                                new SelectListItem { Text = "Cash", Value = "Cash" },
-                                new SelectListItem { Text = "UPI", Value = "UPI" }
-                            },
-                            new { @class = "form-select textboxcolors" })
-                    </div>
-                </div>
-
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_DateOfPayment, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_DateOfPayment, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_TotalAmount, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_TotalAmount, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", Value = @ViewBag.Amount, @readonly = "readonly", id = "TotalAmount" } })
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_PaidAmount, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_PaidAmount, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", id = "PaidAmount", Placeholde = "0.00" } })
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_BalanceAmount, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_BalanceAmount, new
-                        {
-                            htmlAttributes = new
-                            {
-                                @class = "form-control integerboxcolors",
-                                autocomplete = "off",
-                       id = "BalanceAmount",
-                       @readonly = "readonly"
-                   }
-                        })
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.TC_PaymentStatus, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.TC_PaymentStatus, new
-                   {
-                       htmlAttributes = new
-                       {
-                           @class = "form-control textboxcolors",
-                           autocomplete = "off",
-                           id = "PaymentStatus",
-                           @readonly = "readonly"
-                       }
-                   })
-                       
-                    </div>
-                </div>
-                @*<div class="row mb-3">
-                        <div class="col-lg-2 col-md-2 col-sm-12">
-                            @Html.LabelFor(model => model.TC_DueDate, new { @class = "labels" })
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12">
-                            @Html.EditorFor(model => model.TC_DueDate, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "date" } })
-                        </div>
-                    </div>*@
-
-                <div class="row">
-                    <div class="col-md-5 d-flex justify-content-end ms-1">
-                        <input type="submit" class="submitbuttons me-3" tabindex="" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("Index", "ServiceInvoice")'" />
-
-                    </div>
-                </div>
-
-            }
-        </div>
-    </div>
-
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
-        </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-        </div>
-    </div>
-    <div id="preloader2"></div>
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
-    <!-- Bootstrap 5 JS (optional, only needed for UI components like tooltips) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-
-        $(document).ready(function () {
-
-            $("#PaidAmount").on("input", function () {
-
-                var total = parseFloat($("#TotalAmount").val()) || 0;
-                var paid = parseFloat($(this).val()) || 0;
-
-                var balance = total - paid;
-
-                $("#BalanceAmount").val(balance.toFixed(2));
-            });
-
-        });
-
-    </script>
-    <script>
-$(document).ready(function () {
-    // Intercept form submission
-    $("form").on("submit", function (event) {
-        event.preventDefault();
-
-        var submitBtn = $(this).find("input[type='submit']");
-        submitBtn.prop("disabled", true);
-
-        var form = $(this);
-        var formData = new FormData(this);
-
-        // Disable page interaction
-        $("body").css("pointer-events", "none");
-
-        $.ajax({
-            url: form.attr("action"),
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                if (response.success) {
-
-                    // 🔹 Step 1: Show "Processing..." dialog
-                    Swal.fire({
-                        title: "Processing...",
-                        html: "Please wait while we update your payment details.",
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    // 🔹 Step 2: After a small delay, show success dialog
-                    setTimeout(function () {
-                        Swal.fire({
-                            title: "Success!",
-                            text: response.message,
-                            icon: "success",
-                            showCancelButton: true,
-                            confirmButtonText: "Back to List",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            customClass: {
-                                confirmButton: "swal-btn-continue",
-                            },
-                            didOpen: () => {
-                                $(".swal2-container").css("pointer-events", "auto");
-                            }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '@Url.Action("Index", "ServiceInvoice")';
-                            } else {
-                                window.location.href = '@Url.Action("Index", "ServiceInvoice")';
-                            }
-                        });
-                    }, 1000); // 1 second delay
-
-                } else {
-                    // ℹ️ Info alert for validation or backend message
-                    Swal.fire({
-                        title: "Message",
-                        text: response.message,
-                        icon: "info",
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                    });
-                    resetForm();
-                }
-            },
-            error: function () {
-                // ❌ Error alert
-                Swal.fire({
-                    title: "Error!",
-                    text: "An unexpected error occurred while updating payment.",
-                    icon: "error",
-                    allowOutsideClick: false,
-                    allowEscapeKey: false
-                });
-                resetForm();
-            }
-        });
-    });
-
-    function resetForm() {
-        $("input[type='submit']").prop("disabled", false);
-        $("body").css("pointer-events", "auto");
-    }
-});
-    </script>
 
     <script>
         $(document).ready(function () {
 
-            // Function to update Balance and Payment Status
             function updatePaymentStatus() {
                 var total = parseFloat($("#TotalAmount").val()) || 0;
+                var sofar = parseFloat($("#Sorfarpaid").val()) || 0;
                 var paid = parseFloat($("#PaidAmount").val()) || 0;
-                var balance = total - paid;
+                var totalPaid = sofar + paid;
+                var balance = Math.max(total - totalPaid, 0);
 
-                // Update balance field
                 $("#BalanceAmount").val(balance.toFixed(2));
 
-                // Determine status text and color
                 var statusText = "";
-                var statusColor = "black"; // default color
+                var statusColor = "var(--text-dark)";
 
-                if (paid === 0) {
-                    statusText = "";
-                    statusColor = "black";
-                }
-                else if (paid >= total) {
-                    statusText = "FULLY PAID";
-                    statusColor = "green";
-                }
-                else if (paid < total) {
-                    statusText = "PARTIALLY PAID";
-                    statusColor = "orange";
+                if (totalPaid > 0) {
+                    if (totalPaid >= total) {
+                        statusText = "FULLY PAID";
+                        statusColor = "#1D9E75";
+                    } else {
+                        statusText = "PARTIALLY PAID";
+                        statusColor = "#e67e22";
+                    }
                 }
 
-                // Update Payment Status textbox
-                $("#PaymentStatus").val(statusText);
-                $("#PaymentStatus").css("color", statusColor);
+                $("#PaymentStatus").val(statusText).css("color", statusColor);
             }
 
-            // Trigger update on PaidAmount input
             $("#PaidAmount").on("input", function () {
                 var total = parseFloat($("#TotalAmount").val()) || 0;
+                var sofar = parseFloat($("#Sorfarpaid").val()) || 0;
                 var paid = parseFloat($(this).val()) || 0;
 
-                // Prevent overpayment
-                if (paid > total) {
-                    alert("Paid amount cannot exceed Total Amount");
-                    $(this).val(total.toFixed(2));
-                    paid = total;
+                if ((sofar + paid) > total) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Amount',
+                        text: 'Total paid cannot exceed Total Amount.',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        $(this).val((total - sofar).toFixed(2));
+                        updatePaymentStatus();
+                    });
+                    return;
                 }
-
-                // Update balance and status
                 updatePaymentStatus();
             });
 
-            // Trigger update on page load (edit mode)
+            // Initial calculation on page load
             updatePaymentStatus();
         });
     </script>
 
+    <script>
+        $(document).ready(function () {
+            $("#paymentform").on("submit", function (event) {
+                event.preventDefault();
 
-</body>
-</html>
+                var submitBtn = $("#savebutton");
+                submitBtn.prop("disabled", true);
+                var formData = new FormData(this);
+                $("body").css("pointer-events", "none");
+
+                $.ajax({
+                    url: '@Url.Action("UpdatePayment", "ServiceInvoice")',
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: "Processing...",
+                                html: "Please wait while we update your payment details.",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                didOpen: () => { Swal.showLoading(); }
+                            });
+                            setTimeout(function () {
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: response.message,
+                                    icon: "success",
+                                    confirmButtonText: "Back to List",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    customClass: { confirmButton: "swal-btn-continue" },
+                                    didOpen: () => { $(".swal2-container").css("pointer-events", "auto"); }
+                                }).then(() => {
+                                    window.location.href = '@Url.Action("ServiceInvoicePaymentList", "ServiceInvoice")';
+                                });
+                            }, 1000);
+                        } else {
+                            Swal.fire({ title: "Message", text: response.message, icon: "info", allowOutsideClick: false, allowEscapeKey: false });
+                            resetForm();
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({ title: "Error!", text: "An unexpected error occurred while updating payment.", icon: "error", allowOutsideClick: false, allowEscapeKey: false });
+                        resetForm();
+                    }
+                });
+            });
+
+            function resetForm() {
+                $("#savebutton").prop("disabled", false);
+                $("body").css("pointer-events", "auto");
+            }
+        });
+    </script>
+}

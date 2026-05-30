@@ -1,423 +1,457 @@
 ﻿@model IEnumerable<PSS_CMS.Models.WhitePaper>
-@using GridMvc.Html
-@*@{
-    // Decode JavaScript string
-    Func<string, string> DecodeJavaScriptString = (input) =>
-    {
-        if (input == null) return string.Empty;  // Return empty string if input is null
 
-return input.Replace("\\\"", "\"")        // Double quotes
-                    .Replace("\\'", "'")         // Single quotes
-                    .Replace("\\(", "(")         // Parenthesis
-                    .Replace("\\)", ")")
-                    .Replace("\\[", "[")         // Square brackets
-                    .Replace("\\]", "]")
-                    .Replace("\\,", ",")         // Comma
-                    .Replace("\\.", ".")         // Period
-                    .Replace("\\\\", "\\")       // Backslash
-                    .Replace("\\n", "\n")        // Newline
-                    .Replace("\\r", "\r");       // Carriage return
-};
-}*@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+@{ ViewData["Title"] = "White Papers";
+                ViewBag.PageTitle = "White Papers";
+                Layout = "~/Views/Shared/_Layout.cshtml"; }
 
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    @*Bootstrap Icons and Boxicons link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <script src="~/Scripts/Script.js"></script>
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
     <style>
 
-
-
-        .whitepapers {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+        /* ── Title icon ─────────────────────────── */
+        .title-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--border-radius-md, 8px);
+            background: #EEEDFE;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
-        .whitepaper {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            width: 300px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-            .whitepaper .heading {
-                margin: 0 0 10px;
-                color: #754599
+            .title-icon i {
+                font-size: 15px;
+                color: #3C3489;
             }
 
-            .whitepaper p {
-                font-size: 14px;
-                margin-bottom: 15px;
-            }
-
-        .download-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #2888bb;
-            /* background-color: #f0a72d;*/
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .btncolorsubmit {
-            padding: 5px 10px;
-            font-size: 14px;
-            height: 35px;
-            width: auto;
-            line-height: normal;
-        }
-
-        select#projectTypeFilter2 {
-            font-size: 15px;
-            background-color: #e4e9f7;
-            width: 50%;
-            border: none;
-            border-bottom: 2px solid #3498db;
+        /* ── Product filter ─────────────────────── */
+        .filter-select {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 7px 12px;
+            font-size: 13px;
+            color: var(--text-dark);
+            background: var(--body-bg);
             outline: none;
-            padding-bottom: 10px;
-        }
-        select#projectTypeFilter2 {
-            margin-top: 7px;
-        }
-        .whitepaper .heading {
-            margin: 0 0 10px;
-            color: #754599;
-            word-wrap: break-word; /* For old browsers */
-            overflow-wrap: break-word; /* Modern standard */
-            white-space: normal; /* Ensure text wraps */
-        }
-        .whitepaper .description {
-            margin: 0 0 10px;
-            color: #754599;
-            word-wrap: break-word; /* For old browsers */
-            overflow-wrap: break-word; /* Modern standard */
-            white-space: normal; /* Ensure text wraps */
+            font-family: inherit;
+            cursor: pointer;
+            min-width: 170px;
         }
 
+        /* ── New White Paper button ─────────────── */
+        .btn-new-wp {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            white-space: nowrap;
+            text-decoration: none;
+            transition: background .15s;
+        }
+
+            .btn-new-wp:hover {
+                background: #5a4bd1;
+                color: #fff;
+            }
+
+        /* ── Card grid ──────────────────────────── */
+        .wp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+            padding: 16px 18px 20px;
+        }
+
+        /* ── Individual whitepaper card ─────────── */
+        .wp-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: border-color .15s, box-shadow .15s;
+        }
+
+            .wp-card:hover {
+                border-color: var(--primary);
+                box-shadow: 0 2px 10px rgba(99,89,210,.08);
+            }
+
+        /* ── Card top row ───────────────────────── */
+        .wp-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .wp-icon-wrap {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #EEEDFE;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+            .wp-icon-wrap i {
+                font-size: 18px;
+                color: #534AB7;
+            }
+
+        .wp-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        /* ── Description ────────────────────────── */
+        .wp-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.65;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        /* ── Card footer ────────────────────────── */
+        .wp-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* ── Download button ────────────────────── */
+        .dl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            background: #EEEDFE;
+            color: #3C3489;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid #AFA9EC;
+            transition: background .12s;
+        }
+
+            .dl-btn:hover {
+                background: #CECBF6;
+                color: #26215C;
+            }
+
+        .no-file {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* ── Action buttons ─────────────────────── */
+        .wp-act-btns {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ── Count label ────────────────────────── */
+        .wp-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 14px 18px 0;
+        }
+
+        /* ── Empty state ────────────────────────── */
+        .wp-empty {
+            text-align: center;
+            padding: 48px 20px;
+        }
+
+            .wp-empty i {
+                font-size: 38px;
+                color: var(--text-muted);
+            }
+
+            .wp-empty p {
+                margin-top: 8px;
+                font-size: 13px;
+                color: var(--text-muted);
+                font-weight: 600;
+            }
     </style>
+}
 
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-journals nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    Knowledge Base
+    <i class="bi bi-chevron-right"></i>
+    <span>White Papers</span>
+    <i class="bi bi-chevron-right"></i>
+    List
+</div>
 
-</head>
+<!-- Main Card -->
+<div class="page-card">
 
-<body>
+    <!-- Header -->
+    <div class="page-card-header">
 
-    <div class="content">
+        <h6 class="page-card-title">
+            <span class="title-icon">
+                <i class="bi bi-file-earmark-text"></i>
+            </span>
+            White Papers
+        </h6>
 
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
 
+            <!-- Product Filter -->
+            @{ var projectTypeList = ViewBag.Product as IEnumerable<SelectListItem>;
+                            var defaultSelectedValue = projectTypeList?.FirstOrDefault()?.Value ?? ""; }
+            @if (projectTypeList != null && projectTypeList.Any())
+            {
+@Html.DropDownList(
+         "SelectedProjectType2",
+         projectTypeList,
+         new
+         {
+             @class = "filter-select",
+             id = "projectTypeFilter2",
+             data_default = defaultSelectedValue
+         }) }
+            else
+            {
+@Html.DropDownList(
+         "SelectedProjectType2",
+         projectTypeList,
+         "No products available",
+         new
+         {
+             @class = "filter-select",
+             id = "projectTypeFilter2",
+             data_default = defaultSelectedValue
+         })            }
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
+            <!-- Search -->
+            @using (Html.BeginForm("Whitepaper", "KnowledgeBased", FormMethod.Get, new { id = "searchForm" }))
+            {
+<div class="search-box">
+    <i class="bi bi-search"></i>
+    <input type="text"
+           id="searchPharse"
+           name="searchPharse"
+           placeholder="Search"
+           autocomplete="off"
+           value="@Request["searchPharse"]"
+           onkeyup="autoSubmitSearch(this)" />
+    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
+    {
+<a href="@Url.Action("Whitepaper","KnowledgeBased")" title="Clear">
+    <i class="bi bi-x-circle text-muted"></i>
+</a>}
+</div>            }
 
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
-
-                </a>
-            </div>
-
-
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12 col-sm-12">
-
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="reswhietlist" style="color: #2888bb;">KNOWLEDGE BASED</li>
-                    <li class="reswhietlist">WHITE PAPER</li>
-
-                </ul>
-            </div>
-
+            <!-- New White Paper -->
+            <a href="@Url.Action("WhitepaperPost","KnowledgeBased")"
+               class="btn-new-wp">
+                <i class="bi bi-plus-lg"></i>
+                New White Paper
+            </a>
 
         </div>
-        <div class="row">
-            <div class="col mb-3 ms-5">
-                @{ var projectTypeList = ViewBag.Product as IEnumerable<SelectListItem>;
-                    var defaultSelectedValue = projectTypeList?.FirstOrDefault()?.Value ?? ""; // Get first project ID }
-                }
-                @if (projectTypeList != null && projectTypeList.Any())
-                {
-                    @Html.DropDownList("SelectedProjectType2",
-                                       projectTypeList,
-                                       new { @class = "", id = "projectTypeFilter2", data_default = defaultSelectedValue }) }
-                else
-                {
-                    @Html.DropDownList("SelectedProjectType2",
-                                      projectTypeList,
-                                      "No project's are avialble",
-                                      new { @class = "", id = "projectTypeFilter2", data_default = defaultSelectedValue })}
+    </div>
 
-            </div>
-         
-            <div class="col d-flex justify-content-end mb-3 me-4">
-                @using (Html.BeginForm("Whitepaper", "KnowledgeBased", FormMethod.Get, new { id = "searchForm" }))
-                {
+    <!-- Cards -->
+    @if (Model != null && Model.Any(w => w.WP_DISABLE == "N"))
+    {
+        var activeItems = Model.Where(w => w.WP_DISABLE == "N").ToList();
 
-                    <input type="text" id="searchPharse" name="searchPharse" autocomplete="off" class="inputcustom mt-4" placeholder="Search" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%" />
+<p class="wp-count">
+    @activeItems.Count document@(activeItems.Count != 1 ? "s" : "")
+</p>
 
-                }
-                <button class="btncolorsubmit d-flex align-items-center justify-content-center px-3 py-2 ms-5"
-                        style="width: 150px; margin-top: 10px;"
-                        onclick="window.location.href='@Url.Action("WhitepaperPost","KnowledgeBased")'">
-                    New Whitepaper <i class="bi bi-plus-circle ms-1"></i>
-                </button>
-            </div>
-        </div>
+                <div class="wp-grid">
 
-        <div class="ms-4">
-            <div class="row">
-                @if (Model != null && Model.Any())
-                {
-                    foreach (var whitepaper in Model)
+                    @foreach (var wp in activeItems)
                     {
-                        if (whitepaper.WP_DISABLE == "N") // Only display if WP_DISABLE is "N"
+                        string editUrl = Url.Action("Edit", "KnowledgeBased", new { WP_RECID = wp.WP_RECID, WP_PROJECTID = wp.WP_PROJECTID, WP_USERID = wp.WP_USERID, wP_PRECID = wp.wP_PRECID });
+                        string deleteUrl = Url.Action("Delete", "KnowledgeBased", new { WP_RECID = wp.WP_RECID });
+
+                        /* Attachment type detection */
+                        string base64 = wp.WP_ATTACHEMENT ?? "";
+                        string fileType = "bin";
+                        string mimeType = "application/octet-stream";
+                        bool hasFile = !string.IsNullOrEmpty(base64);
+
+                        if (hasFile)
                         {
-                            <div class="col-md-6 whitepaper ms-4 mt-3">
-
-                                @*<p class="heading"><b>@Html.Raw(DecodeJavaScriptString(@whitepaper.WP_TITLE))</b></p>*@
-                                <p class="heading"><b>@whitepaper.WP_TITLE</b></p>
-
-
-                                @*<p>@Html.Raw(DecodeJavaScriptString(@whitepaper.WP_Description))</p>*@
-                                <p class="description">@whitepaper.WP_Description</p>
-
-                                @if (!string.IsNullOrEmpty(whitepaper.WP_ATTACHEMENT))
-                                {
-                                    string base64String = whitepaper.WP_ATTACHEMENT;
-
-
-                                    // Detect file type from Base64 prefix
-                                    string fileType = "";
-                                    string mimeType = "";
-
-                                    if (base64String.StartsWith("iVBORw0KGgo")) // PNG file signature
-                                    {
-                                        fileType = "png";
-                                        mimeType = "image/png";
-                                    }
-                                    else if (base64String.StartsWith("/9j/")) // JPG/JPEG file signature
-                                    {
-                                        fileType = "jpg";
-                                        mimeType = "image/jpeg";
-                                    }
-                                    else if (base64String.StartsWith("JVBER")) // PDF file signature
-                                    {
-                                        fileType = "pdf";
-                                        mimeType = "application/pdf";
-                                    }
-                                    else if (base64String.StartsWith("UEsDB")) // XLSX or DOCX file signature (ZIP format)
-                                    {
-                                        // Check if the Base64 contains "xl/" (XLSX format)
-                                        if (base64String.Contains("xl/"))
-                                        {
-                                            fileType = "xlsx";
-                                            mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                                        }
-                                        // Check if the Base64 contains "word/" (DOCX format)
-                                        else if (base64String.Contains("word/"))
-                                        {
-                                            fileType = "docx";
-                                            mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-                                        }
-                                    }
-                                    else if (base64String.StartsWith("U1RB") || base64String.StartsWith("R2V0")) // TXT file signature
-                                    {
-                                        fileType = "txt";
-                                        mimeType = "text/plain";
-                                    }
-                                    else if (base64String.StartsWith("Q0N2")) // CSV file signature
-                                    {
-                                        fileType = "csv";
-                                        mimeType = "text/csv";
-                                    }
-                                    else
-                                    {
-                                        fileType = "unknown";
-                                        mimeType = "application/octet-stream"; // Default for unknown file types
-                                    }
-                                    <div class="row">
-                                        <div class="col">
-                                            <a href="data:@mimeType;base64,@whitepaper.WP_ATTACHEMENT"
-                                               download="@whitepaper.WP_TITLE.@fileType"
-                                               class="download-btn text-decoration-none text-white">
-                                                Download
-                                            </a>
-                                        </div>
-                                        <div class="col d-flex justify-content-end align-items-center">
-                                            <a href="@Url.Action("Edit", "KnowledgeBased", new {WP_RECID = whitepaper.WP_RECID, WP_PROJECTID = whitepaper.WP_PROJECTID, WP_USERID = whitepaper.WP_USERID,wP_PRECID=whitepaper.wP_PRECID})"
-                                               class="text-decoration-none"
-                                               data-toggle="tooltip"
-                                               title="Edit">
-                                                <i class="bx bxs-pencil"></i>
-                                            </a>
-
-                                            <a href="@Url.Action("Delete", "KnowledgeBased", new { WP_RECID = whitepaper.WP_RECID })"
-                                               class="text-decoration-none ms-2"
-                                               onclick='return confirmDelete(this);'
-                                               data-toggle="tooltip"
-                                               title="Delete">
-                                                <i class="bx bxs-trash red"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                }
-                                else
-                                {
-                                    <div class="row">
-                                        <div class="col">
-                                            <span><b>No files uploaded</b></span>
-                                        </div>
-                                        <div class="col d-flex justify-content-end">
-                                            <a href="@Url.Action("Edit", "KnowledgeBased", new {WP_RECID = whitepaper.WP_RECID, WP_PROJECTID = whitepaper.WP_PROJECTID, WP_USERID = whitepaper.WP_USERID,wP_PRECID=whitepaper.wP_PRECID})"
-                                               class="text-decoration-none"
-                                               data-toggle="tooltip"
-                                               title="Edit">
-                                                <i class="bx bxs-pencil"></i>
-                                            </a>
-
-                                            <a href="@Url.Action("Delete", "KnowledgeBased", new { WP_RECID = whitepaper.WP_RECID })"
-                                               class="text-decoration-none ms-2"
-                                               onclick='return confirmDelete(this);'
-                                               data-toggle="tooltip"
-                                               title="Delete">
-                                                <i class="bx bxs-trash red"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                }
-
-
-                            </div>
+                            if (base64.StartsWith("iVBORw0KGgo")) { fileType = "png"; mimeType = "image/png"; }
+                            else if (base64.StartsWith("/9j/")) { fileType = "jpg"; mimeType = "image/jpeg"; }
+                            else if (base64.StartsWith("JVBER")) { fileType = "pdf"; mimeType = "application/pdf"; }
+                            else if (base64.StartsWith("UEsDB"))
+                            {
+                                if (base64.Contains("xl/")) { fileType = "xlsx"; mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; }
+                                else if (base64.Contains("word/")) { fileType = "docx"; mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; }
+                            }
+                            else if (base64.StartsWith("U1RB") || base64.StartsWith("R2V0")) { fileType = "txt"; mimeType = "text/plain"; }
+                            else if (base64.StartsWith("Q0N2")) { fileType = "csv"; mimeType = "text/csv"; }
                         }
-                    }
-                }
-                else
-                {
-                    <div class="alert alert-warning text-center">
-                        <b>No whitepapers are available</b>
-                    </div>}
+
+    <div class="wp-card">
+
+        <!-- Title row -->
+        <div class="wp-top">
+            <div class="wp-icon-wrap">
+                <i class="bi bi-file-earmark-text"></i>
             </div>
+            <span class="wp-title">@wp.WP_TITLE</span>
         </div>
 
+        <!-- Description -->
+        <p class="wp-desc">@wp.WP_Description</p>
+
+        <!-- Footer -->
+        <div class="wp-footer">
+
+            @if (hasFile)
+            {
+<a href="data:@mimeType;base64,@wp.WP_ATTACHEMENT"
+   download="@(wp.WP_TITLE).@fileType"
+   class="dl-btn">
+    <i class="bi bi-download"></i>
+    Download
+</a> }
+                    else
+                    {
+<span class="no-file">No attachment</span>}
+
+            <div class="wp-act-btns">
+
+                <!-- Edit -->
+                <a href="@editUrl"
+                   class="act-btn act-edit"
+                   title="Edit">
+                    <i class="bx bxs-pencil"></i>
+                </a>
+
+                <!-- Delete -->
+                <a href="@deleteUrl"
+                   class="act-btn act-delete no-loader"
+                   title="Delete"
+                   onclick="return confirmDelete(this);"
+                   data-name="@wp.WP_TITLE">
+                    <i class="bx bxs-trash"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>}
+
+                </div> }
+                            else
+                            {
+                <div class="wp-empty">
+                    <i class="bi bi-inbox"></i>
+                    <p>No white papers available</p>
+                </div>}
+
+</div>
+
+<!-- Legend -->
+<div class="legend-bar">
+
+    <div class="legend-item">
+        <i class="bx bxs-pencil" style="color:#6c5ce7;font-size:16px"></i>
+        <span>Edit</span>
     </div>
 
-
-
-
-
-
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
-        </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-        </div>
+    <div class="legend-item">
+        <i class="bx bxs-trash" style="color:#e74c3c;font-size:16px"></i>
+        <span>Delete</span>
     </div>
 
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
+    <div class="legend-item">
+        <i class="bi bi-download" style="color:#3C3489;font-size:14px"></i>
+        <span>Download Attachment</span>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Scripts/Fordelete.js"></script>
+    <script src="~/Scripts/Script.js"></script>
 
     <script>
         $(document).ready(function () {
+
+            /* ── Search on keyup ──────────────────── */
             $('#searchPharse').on('keyup', function () {
-                $('#searchForm').submit(); // Submit the form when the user types
+                $('#searchForm').submit();
+            });
+
+            /* ── Product filter redirect ──────────── */
+            var urlParams        = new URLSearchParams(window.location.search);
+            var currentProjectId = urlParams.get("projectID");
+            var storedProjectId  = sessionStorage.getItem("selectedProjectID");
+
+            if (storedProjectId) {
+                $("#projectTypeFilter2").val(storedProjectId);
+            }
+
+            if (!currentProjectId) {
+                if (storedProjectId) {
+                    redirectToPage(storedProjectId);
+                } else {
+                    var first = $("#projectTypeFilter2").val();
+                    if (first) redirectToPage(first);
+                }
+            }
+
+            $("#projectTypeFilter2").change(function () {
+                var val = $(this).val();
+                if (val) {
+                    sessionStorage.setItem("selectedProjectID", val);
+                    redirectToPage(val);
+                }
+            });
+
+            function redirectToPage(projectId) {
+                window.location.href = '@Url.Action("Whitepaper","KnowledgeBased")' +
+                    "?projectID=" + encodeURIComponent(projectId);
+            }
+
+            /* ── Clear session on nav away ────────── */
+            $(document).on("click", "a, button, li", function () {
+                var targetUrl = $(this).attr("href");
+                if (targetUrl && !targetUrl.includes("Whitepaper")) {
+                    sessionStorage.removeItem("selectedProjectID");
+                }
             });
         });
     </script>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
-            }
-        });
-    });
-    </script>
-    <script>
-    $(document).ready(function () {
-        var firstProjectId = $("#projectTypeFilter2").val(); // Get initially selected project ID
-        var urlParams = new URLSearchParams(window.location.search);
-        var currentProjectId = urlParams.get("projectID");
-
-        // Check if there's a stored project ID in sessionStorage
-        var storedProjectId = sessionStorage.getItem("selectedProjectID");
-
-        if (storedProjectId) {
-            $("#projectTypeFilter2").val(storedProjectId);
-        }
-
-        // Redirect only if no projectID exists in the URL to avoid infinite loop
-        if (!currentProjectId) {
-            if (storedProjectId) {
-                redirectToPage(storedProjectId);
-            } else if (firstProjectId) {
-                redirectToPage(firstProjectId);
-            }
-        }
-
-        $("#projectTypeFilter2").change(function () {
-            var selectedProjectId = $(this).val();
-            if (selectedProjectId) {
-                sessionStorage.setItem("selectedProjectID", selectedProjectId); // Store selected value
-                redirectToPage(selectedProjectId);
-            }
-        });
-
-        function redirectToPage(projectId) {
-            var url = '@Url.Action("Whitepaper", "KnowledgeBased")' + "?projectID=" + encodeURIComponent(projectId);
-            window.location.href = url;
-        }
-        // Clear sessionStorage when navigating to a different action
-        $(document).on("click", "a, button,li", function () {
-            var targetUrl = $(this).attr("href");
-            if (targetUrl && !targetUrl.includes("Whitepaper")) {
-                sessionStorage.removeItem("selectedProjectID");
-            }
-        });
-    });
-    </script>
-    <script src="~/Scripts/Fordelete.js"></script>
-
-
-</body>
-</html>
+}

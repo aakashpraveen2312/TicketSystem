@@ -108,6 +108,7 @@ namespace PSS_CMS.Models
         [DisplayName("Ticket Reference No")]
 
         public string TC_REFERENCENO { get; set; }
+        public string TC_PRODUCTSERIALNUMBER { get; set; }
         public int TC_ASSIGNBY { get; set; }
         public int TC_CURECID { get; set; }
         public int TC_RATINGS { get; set; }

@@ -3,8 +3,8 @@
         title: '<span style="font-size: 20px;">Are you sure you want to delete?</span>',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#6ED3D0',
-        cancelButtonColor: '#F0A72D',
+        confirmButtonColor: '#6c5ce7',
+        cancelButtonColor: '#111827',
         confirmButtonText: '<span style="font-size: 15px;">Confirm</span>',
         cancelButtonText: '<span style="font-size: 15px;">Cancel</span>',
         customClass: {

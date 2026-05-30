@@ -54,7 +54,7 @@ namespace PSS_CMS.Controllers
                             //    string base64Logo = Convert.ToBase64String(logoBytes);
                             //    ViewBag.Logo = base64Logo;
                             //}
-                            await LocationList();
+                            //await LocationList();
                             return View(companyinfo);
                         }
                         else
@@ -68,7 +68,7 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            await LocationList();
+            //await LocationList();
             return View();
         }
 
@@ -194,35 +194,35 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> LocationList()
-        {
-            Locations objstoragePoint = new Locations();
-            List<Locations> StorageList = new List<Locations>();
-            string connectionString = ConfigurationManager.ConnectionStrings["Mystring"].ConnectionString;
-            using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {
-                sqlcon.Open();
+        //public async Task<ActionResult> LocationList()
+        //{
+        //    Locations objstoragePoint = new Locations();
+        //    List<Locations> StorageList = new List<Locations>();
+        //    string connectionString = ConfigurationManager.ConnectionStrings["Mystring"].ConnectionString;
+        //    using (SqlConnection sqlcon = new SqlConnection(connectionString))
+        //    {
+        //        sqlcon.Open();
 
-                string cmd1 = "SELECT ROW_NUMBER() OVER(ORDER BY SP_CRECID) AS SerialNumber,SP_CRECID,SP_RECID,SP_Code,SP_Name,SP_Type,SP_Sortorder FROM IM_StoragePoint where SP_CRECID =" + Session["CompanyID"] + " ";
+        //        string cmd1 = "SELECT ROW_NUMBER() OVER(ORDER BY SP_CRECID) AS SerialNumber,SP_CRECID,SP_RECID,SP_Code,SP_Name,SP_Type,SP_Sortorder FROM IM_StoragePoint where SP_CRECID =" + Session["CompanyID"] + " ";
 
-                SqlCommand sqlCdm = new SqlCommand(cmd1, sqlcon); // take the values from the DB
-                SqlDataReader sqlread = sqlCdm.ExecuteReader(); // to read the value reader class called
-                while (sqlread.Read()) // each value to read create function
-                {
-                    var SPList = new Locations();
+        //        SqlCommand sqlCdm = new SqlCommand(cmd1, sqlcon); // take the values from the DB
+        //        SqlDataReader sqlread = sqlCdm.ExecuteReader(); // to read the value reader class called
+        //        while (sqlread.Read()) // each value to read create function
+        //        {
+        //            var SPList = new Locations();
 
-                    SPList.L_CRECID = (int)sqlread["SP_CRECID"];
-                    SPList.L_RECID = (int)sqlread["SP_RECID"];
-                    SPList.L_CODE = sqlread["SP_Code"].ToString();
-                    SPList.L_NAME = sqlread["SP_Name"].ToString();
-                    SPList.L_SORTORDER = (int)sqlread["SP_Sortorder"];
+        //            SPList.L_CRECID = (int)sqlread["SP_CRECID"];
+        //            SPList.L_RECID = (int)sqlread["SP_RECID"];
+        //            SPList.L_CODE = sqlread["SP_Code"].ToString();
+        //            SPList.L_NAME = sqlread["SP_Name"].ToString();
+        //            SPList.L_SORTORDER = (int)sqlread["SP_Sortorder"];
 
-                    StorageList.Add(SPList);
-                    ViewBag.LocationList = StorageList;
-                }
-                sqlcon.Close();           
-            }
-            return View(StorageList);
-        }
+        //            StorageList.Add(SPList);
+        //            ViewBag.LocationList = StorageList;
+        //        }
+        //        sqlcon.Close();           
+        //    }
+        //    return View(StorageList);
+        //}
     }
 }

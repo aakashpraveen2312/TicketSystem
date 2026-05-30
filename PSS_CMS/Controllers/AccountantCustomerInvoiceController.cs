@@ -464,6 +464,7 @@ namespace PSS_CMS.Controllers
                 string apiKey = Session["APIKEY"]?.ToString();
 
                 int? customerRecid = 0;
+                int? UsercustomerRecid = 0;
 
                 string access1 = salesheader.CU_CONTACTACCESS1_BOOL ? "Y" : "N";
                 string access2 = salesheader.CU_CONTACTACCESS2_BOOL ? "Y" : "N";
@@ -473,6 +474,7 @@ namespace PSS_CMS.Controllers
                 // CUSTOMER API CALL
                 // ===========================
                 var customerContent = $@"{{
+           
             ""cU_RECID"": ""{salesheader.HiddenCustomerRecid}"",
             ""cU_PRECID"": ""{(string.IsNullOrWhiteSpace(salesheader.SelectedProduct) ? "0" : salesheader.SelectedProduct)}"",
             ""cU_NAME"": ""{salesheader.CU_NAME}"",
@@ -533,6 +535,7 @@ namespace PSS_CMS.Controllers
                         return Json(new { success = false, message = customerObj.Message });
 
                     customerRecid = customerObj.CustomerRecid;
+                    UsercustomerRecid = customerObj.CU_URECID;
 
                     // ===========================
                     // INVOICE API CALL
@@ -546,7 +549,8 @@ namespace PSS_CMS.Controllers
                 ""siH_SORTORDER"": ""{salesheader.SIH_SORTORDER}"",
                 ""siH_DISABLE"": ""{(salesheader.IsDisabled ? "Y" : "N")}"",
                 ""siH_CRECID"": ""{Session["CompanyID"]}"",
-                ""siH_CURECID"": ""{customerRecid}""
+                ""siH_CURECID"": ""{customerRecid}"",
+                ""siH_URECID"": ""{UsercustomerRecid}""
             }}";
 
                     var invoiceRequest = new HttpRequestMessage(HttpMethod.Post, invoicePostUrl)
@@ -611,6 +615,7 @@ namespace PSS_CMS.Controllers
                             var content = JsonConvert.DeserializeObject<SalesheaderObjects>(jsonString);
                             salesheader = content.Data;
                             Session["CU_RECID"] = salesheader.CU_RECID;
+                            Session["SIH_URECID"] = salesheader.SIH_URECID;
                         }
                         else
                         {
@@ -896,7 +901,8 @@ namespace PSS_CMS.Controllers
                 ""siH_DISABLE"": ""{(salesheader.IsDisabled ? "Y" : "N")}"",
                 ""siH_SORTORDER"": ""{salesheader.SIH_SORTORDER}"",
                 ""siH_CRECID"": ""{Session["CompanyID"]}"",
-                ""siH_CURECID"": ""{Session["CU_RECID"]}""
+                ""siH_CURECID"": ""{Session["CU_RECID"]}"",
+                ""siH_URECID"": ""{Session["SIH_URECID"]}""
             }}";
 
                     var invoiceRequest = new HttpRequestMessage(HttpMethod.Put, invoicePutUrl)

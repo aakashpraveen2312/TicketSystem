@@ -28,6 +28,7 @@ namespace PSS_CMS.Models
         public string Status { get; set; }
 
 
+        public string Code { get; set; }
         public string customerName { get; set; }
         public string customerEmail { get; set; }
         public string customerMobile { get; set; }

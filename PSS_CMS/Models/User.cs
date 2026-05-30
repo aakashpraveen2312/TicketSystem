@@ -9,6 +9,7 @@ namespace PSS_CMS.Models
 
     public class User
     {
+        public int SerialNumber { get; set; }
         public int? U_RECID { get; set; }
 
        
@@ -70,14 +71,15 @@ namespace PSS_CMS.Models
         private string UserDisable { get; set; }
 
         [DisplayName("User Manager")]
+        [JsonIgnore]
         public bool U_UserManager
         {
-            get => UUserManager == "Y";
+            get => (UUserManager ?? "N") == "Y";
             set => UUserManager = value ? "Y" : "N";
         }
 
         [JsonProperty("U_USERMANAGER")]
-        private string UUserManager { get; set; }
+        public string UUserManager { get; set; }
 
 
         public string SelectedRole { get; set; }

@@ -1,568 +1,544 @@
 ﻿@model PSS_CMS.Models.ContractServiceProduct
+
 @{
-    Layout = null;
+    ViewData["Title"] = "Create Contract Product";
+    ViewBag.PageTitle = "Create Contract Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+@section Styles{
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
 
-    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
-    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
-    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
-
-    @*Bootstrap Icons and Boxicons*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <script src="~/Scripts/Sidebarscript.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Colors.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <!-- Favicons -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <style>
-        .swal-btn-continue {
-            background-color: #6ed3d0 !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
+
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 4px 10px;
+            font-size: 13px;
         }
 
-        .swal-btn-back {
-            background-color: #f0a72d !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
+        .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,89,210,.08);
         }
 
-        select.form-select {
-            font-size: 15px;
+        .select2-container {
+            width: 100% !important;
         }
+
+       
+
+       
+
+     
     </style>
-</head>
-<body>
-    @*Sidebar*@
-    <nav class="sidebar close">
-        <header>
-            <div class="text logo-text" style="display:inline-block">
+}
 
-                <a href="@Url.Action("ContractDashboard", "Contract")">
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-box-seam nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
 
+    <span>Party</span>
 
-                    @if (Session["Logo"] != null)
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("ContractList", "Contract")">
+        @Session["CT_CUSTOMERNAME"].ToString()
+    </a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("ContractProductList", "Contract")">
+        Contract (@Session["CP_CODE"].ToString().ToUpper())
+    </a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("List", "ContractProduct")">
+        Products
+    </a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <span>Create</span>
+</div>
+
+@using (Html.BeginForm("Create", "ContractProduct", FormMethod.Post,
+new { id = "createform", @class = "no-preloader" }))
+{
+    <div class="page-card">
+
+        <!-- Header -->
+        <div class="page-card-header">
+
+            <h6 class="page-card-title">
+                <span class="title-icon">
+                    <i class="bi bi-plus-circle"></i>
+                </span>
+
+                Create Contract Product
+            </h6>
+
+        </div>
+
+        <!-- Form -->
+        <div class="form-body">
+
+          
+
+            <div class="form-grid">
+
+                <!-- Product -->
+                <div class="form-group">
+
+                    <label class="form-label">
+                        @Html.LabelFor(model => model.CSP_PRECID)
+                        <span class="req">*</span>
+                    </label>
+
+                    @if (ViewBag.Product != null)
                     {
-                        <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
-                    }
+                        var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
 
-                </a>
-
-
-            </div>
-
-            <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
-
-        </header>
-        <div class="menu-bar">
-            <div class="menu">
-                <ul class="menu-links" style="margin-left:20px">
-                    <!-- ACCOUNTS ADMIN -->
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/software-engineer.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
-                        <img src="~/assets/img/software-engineer.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
-                        <span class="text nav-text" style="margin-left:15px">ACCOUNTS ADMIN</span>
-                    </li>
-                    <!-- Customer Accounts -->
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerList", "Contract")">
-                            <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")">
-                            <i class='bi bi-person-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
-                        </a>
-                    </li>
-
-                    @*<li class="nav-link">
-                            <a href="@Url.Action("List", "Party")">
-                                <i class='bi bi-person-check' style="font-size:20px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Party</span>
-                            </a>
-                        </li>*@
-                    <li class="nav-link">
-                        <a href="@Url.Action("ContractList", "Contract")">
-                            <i class='bi bi-tools' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="@Url.Action("Index", "ServiceInvoice")">
-                            <i class='bx bx-receipt' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
-                        </a>
-                    </li>
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/ReportImage.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
-                        <img src="~/assets/img/ReportImage.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
-                        <span class="text nav-text" style="margin-left:15px">REPORTS</span>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="@Url.Action("Report", "FollowUpReport")">
-                            <i class='bx bx-phone-call' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Follow-up Report</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("ContractexpiryReport", "ContractExpiryReport")">
-                            <i class='bx bx-time-five' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
-                        </a>
-                    </li>
-                    @*<li class="nav-link">
-                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                                <i class='bx bx-credit-card' style="font-size:20px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                            </a>
-                        </li>
-                        <li class="nav-link">
-                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                                <i class='bx bx-wallet' style="font-size:20px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                            </a>
-                        </li>*@
-                    <!-- Settings Section -->
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
-                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:5px;" />
-                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
-                    </li>
-
-                    @*Change Password*@
-                    <li class="nav-link">
-                        <a href="@Url.Action("ChangePassword", "Contract")">
-                            <i class='bx bxs-key' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
-                        </a>
-                    </li>
-
-                    <!-- Logout -->
-                    <li class="nav-link">
-                        <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
-                            <i class='bx bx-log-out' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Logout</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="content" style=" overflow-x: hidden!important;">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
-                </a>
-            </div>
-
-        </nav>
-
-
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    @*<li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">SERVICE CONTRACTS</a></li>
-        <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractProductList", "Contract")">CONTRACT LIST</a></li>
-        <li>CREATE</li>*@
-                    <li>PARTY</li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractList", "Contract")">@Session["CT_CUSTOMERNAME"].ToString().ToUpper()</a></li>
-
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("ContractProductList", "Contract")">CONTRACT(@Session["CP_CODE"].ToString().ToUpper())</a></li>
-                    <li>PRODUCTS</li>
-                    <li>CREATE</li>
-                </ul>
-            </div>
-        </div>
-
-        @using (Html.BeginForm("Create", "ContractProduct", FormMethod.Post, new { id = "createform" }))
-        {
-
-            <div class="create ms-4 me-2 mt-3">
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CSP_PRECID, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @if (ViewBag.Product != null)
+                        if (ProductList != null && ProductList.Any())
                         {
-                            var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
+                            var modifiedProductList = new List<SelectListItem>(ProductList);
 
-                            if (ProductList != null && ProductList.Any())
+                            if (modifiedProductList.Count > 1)
                             {
-                                var modifiedProductList = new List<SelectListItem>(ProductList);
-
-                                // If more than one product, add Select option
-                                if (modifiedProductList.Count > 1)
+                                modifiedProductList.Insert(0, new SelectListItem
                                 {
-                                    modifiedProductList.Insert(0, new SelectListItem
-                                    {
-                                        Text = "-- Select Product --",
-                                        Value = ""
-                                    });
-                                }
-                                else
-                                {
-                                    // If only one product, make it selected
-                                    modifiedProductList[0].Selected = true;
-                                }
-
-                                @Html.DropDownList("SelectedProduct",
-                                    modifiedProductList,
-                                    new { @class = "form-select textboxcolors", id = "SelectedProduct" })
+                                    Text = "-- Select Product --",
+                                    Value = ""
+                                });
                             }
                             else
                             {
-                                <p>No Product's are available</p>
+                                modifiedProductList[0].Selected = true;
                             }
+
+                            @Html.DropDownList("SelectedProduct",
+                                modifiedProductList,
+                                new
+                                {
+                                    @class = "form-select-input",
+                                    id = "SelectedProduct"
+                                })
                         }
                         else
                         {
-                            <p>No Product's are available</p>
+                            <div class="text-danger">
+                                No Products Available
+                            </div>
                         }
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CSP_ARECID, "Service Engineer", new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-
-
-                        <select id="AdminDropdown" class="form-select textboxcolors" disabled>
-                            <option value="">-- Select Service Engineer --</option>
-                        </select>
-
-                        <input type="hidden" id="CSP_ARECID" name="CSP_ARECID" />
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CSP_PRODUCTUNIQUENUMBER, "Product Serial Number", new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CSP_PRODUCTUNIQUENUMBER, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
-
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CSP_PRODUCTAMOUNT, "Contract Product Amount", new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CSP_PRODUCTAMOUNT, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div> <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.CSP_FREESERVICE,"Free Services", new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.CSP_FREESERVICE, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off" } })
-
-                    </div>
-                </div>
-
-
-                <div class="row" style="margin-bottom:50px;">
-                    <div class="col-lg-2">
-
-                    </div>
-                    <div class="col-lg-3 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "ContractProduct")'" />
-                    </div>
-                </div>
-
-            </div>
-
-        }
-
-
-
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck1"></span>
-                            - Text Fields
-                        </div>
-                    </div>
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck2"></span>
-                            - Number Fields
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </footer>
-
-    </div>
-
-
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
-        </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-        </div>
-    </div>
-    <div id="preloader2"></div>
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
-            }
-        });
-    });
-    </script>
-    @*Toastr for created succesfully*@
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- jQuery CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-    $(document).ready(function () {
-        $("#createform").submit(function (event) {
-            event.preventDefault();
-
-            var submitBtn = $("#bt");
-            submitBtn.prop("disabled", true);
-
-            var formData = new FormData(this);
-
-
-
-            // Disable page interaction
-            $("body").css("pointer-events", "none");
-
-            $.ajax({
-                url: '@Url.Action("Create", "ContractProduct")',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response.success) {
-
-                        // 🔹 Show SweetAlert loading dialog
-                        Swal.fire({
-                            title: "Processing...",
-                            html: "Please wait while we save your changes.",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            didOpen: () => {
-                                Swal.showLoading(); // show spinner
-                            }
-                        });
-                        // ⏳ After small delay, show success popup
-                        setTimeout(function () {
-                        Swal.fire({
-                            title: "Success!",
-                            text: response.message,
-                            icon: "success",
-                            showCancelButton: true,
-                            confirmButtonText: "Continue",
-                            cancelButtonText: "Back to List",
-                            allowOutsideClick: false, // Prevent closing by clicking outside
-                            allowEscapeKey: false, // Prevent closing using Esc key
-                            customClass: {
-                                confirmButton: "swal-btn-continue",
-                                cancelButton: "swal-btn-back"
-                            },
-                            didOpen: () => {
-                                // Allow interaction inside the alert only
-                                $(".swal2-container").css("pointer-events", "auto");
-                            }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            } else {
-                                window.location.href = '@Url.Action("List", "ContractProduct", new {})';
-                            }
-                        });
-                    }, 1000); // 1 second delay for "Processing"
-                    } else {
-                        Swal.fire({
-                            title: "Message",
-                            text: response.message,
-                            icon: "info",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                        resetButton();
                     }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "An unexpected error occurred.",
-                        icon: "error",
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                    });
-                    resetButton();
-                }
-            });
-        });
 
-        function resetButton() {
-            $("#bt").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto"); // Re-enable page interaction
-        }
-    });
-    </script>
+                </div>
 
-    <script>
-$(document).ready(function () {
+                <!-- Service Engineer -->
+                <div class="form-group">
 
-    function loadAdmins() {
+                    <label class="form-label">
+                        Service Engineer
+                    </label>
 
-        var precid = $("#SelectedProduct").val();
-        var cmprecid = '@Session["CompanyID"]';
+                    <div class="engineer-card">
 
-        $("#AdminDropdown")
-            .prop("disabled", true)
-            .empty()
-            .append('<option value="">Loading Service Engineer...</option>');
+                      
 
-        if (!precid) {
-            $("#AdminDropdown")
-                .empty()
-                .append('<option value="">-- Select Service Engineer --</option>');
-            return;
-        }
+                        <div style="flex:1;">
 
-        $.ajax({
-            url: '@Url.Action("GetProductAdmins", "AccountantCustomerInvoice")',
-            type: 'GET',
-            data: {
-                cmprecid: cmprecid,
-                precid: precid
-            },
-            success: function (res) {
+                            <select id="AdminDropdown"
+                                    class="form-select-input"
+                                    disabled>
+                                <option value="">
+                                    -- Select Service Engineer --
+                                </option>
+                            </select>
 
-                console.log("API response:", res);
+                            <input type="hidden"
+                                   id="CSP_ARECID"
+                                   name="CSP_ARECID" />
 
-                $("#AdminDropdown").empty();
+                        </div>
 
-                if (res.status === "Y" && res.data && res.data.length > 0) {
+                    </div>
 
-                    $("#AdminDropdown")
-                        .append('<option value="">-- Select Service Engineer --</option>')
-                        .prop("disabled", false);
+                </div>
 
-                    $.each(res.data, function (i, admin) {
-                        $("#AdminDropdown").append(
-                            `<option value="${admin.u_RECID}">
-                                ${admin.u_USERNAME}
-                            </option>`
-                        );
-                    });
+                <!-- Serial Number -->
+                <div class="form-group">
 
-                } else {
-                    $("#AdminDropdown")
-                        .append('<option value="">No Service Engineer mapped to this product</option>')
-                        .prop("disabled", true);
-                }
-            },
-            error: function () {
-                $("#AdminDropdown")
-                    .empty()
-                    .append('<option value="">Error loading Service Engineer</option>')
-                    .prop("disabled", true);
-            }
-        });
-    }
+                    <label class="form-label">
+                        Product Serial Number
+                    </label>
 
-    // Load admins when page loads
-    loadAdmins();
+                    @Html.EditorFor(model => model.CSP_PRODUCTUNIQUENUMBER,
+                    new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-text",
+                            autocomplete = "off",
+                            placeholder = "Enter serial number"
+                        }
+                    })
 
-    // Optional: reload when product changes
-    $("#SelectedProduct").on("change", function () {
-        loadAdmins();
-    });
+                </div>
 
-    // Store selected admin RECID
-    $("#AdminDropdown").on("change", function () {
-    //    $("#CSP_ARECID").val($(this).val());
-        $("#CSP_ARECID").val($("#AdminDropdown").val());
-    });;
+                <!-- Amount -->
+                <div class="form-group">
 
-});
-    </script>
+                    <label class="form-label">
+                        Contract Product Amount
+                    </label>
 
-    <script>
-        document.getElementById("AdminDropdown").addEventListener("change", function () {
-            var selected = this.options[this.selectedIndex];
-            var email = selected.getAttribute("data-email") || "";
-            var name = selected.getAttribute("data-username") || "";
+                    @Html.EditorFor(model => model.CSP_PRODUCTAMOUNT,
+                    new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-num",
+                            autocomplete = "off",
+                            placeholder = "0"
+                        }
+                    })
 
-            document.getElementById("CU_EMAIL").value = email;
-            document.getElementById("CU_NAME").value = name;
-            /*            document.getElementById("CU_URECID").value = recid;*/
-        });
+                </div>
 
-    </script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                <!-- Free Service -->
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Free Services
+                    </label>
+
+                    @Html.EditorFor(model => model.CSP_FREESERVICE,
+                    new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-num",
+                            autocomplete = "off",
+                            placeholder = "0"
+                        }
+                    })
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-bar">
+
+            <div class="legend-item">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);"></span>
+                <span>Text Fields</span>
+            </div>
+
+            <div class="legend-item">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;"></span>
+                <span>Number Fields</span>
+            </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+
+            <a href="@Url.Action("List", "ContractProduct")"
+               class="btn-cancel">
+                <i class="bi bi-x-lg"></i>
+                Cancel
+            </a>
+
+            <button type="submit"
+                    class="btn-save"
+                    id="savebutton">
+
+                <i class="bi bi-floppy"></i>
+                Save
+
+            </button>
+
+        </div>
+
+    </div>
+}
+
+@section Scripts{
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-</body>
 
-</html>
+    <script>
+
+        $(document).ready(function () {
+
+            $('#SelectedProduct').select2();
+
+            $('#AdminDropdown').select2();
+
+        });
+
+    </script>
+
+    <!-- Save -->
+    <script>
+
+        $(document).ready(function () {
+
+            $("#createform").submit(function (e) {
+
+                e.preventDefault();
+
+                var btn = $("#savebutton");
+
+                btn.prop("disabled", true);
+
+                var formData = new FormData(this);
+
+                Swal.fire({
+                    title: "Processing...",
+                    html: "Please wait while we save your changes.",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+
+                    didOpen: function () {
+
+                        Swal.showLoading();
+
+                        $.ajax({
+
+                            url: '@Url.Action("Create", "ContractProduct")',
+
+                            type: "POST",
+
+                            data: formData,
+
+                            processData: false,
+
+                            contentType: false,
+
+                            success: function (response) {
+
+                                if (response.success) {
+
+                                    setTimeout(function () {
+
+                                        Swal.fire({
+
+                                            title: "Success!",
+
+                                            text: response.message,
+
+                                            icon: "success",
+
+                                            showCancelButton: true,
+
+                                            confirmButtonText: "Continue",
+
+                                            cancelButtonText: "Back to List",
+
+                                            allowOutsideClick: false,
+
+                                            allowEscapeKey: false,
+
+                                            customClass: {
+
+                                                confirmButton: "swal-btn-continue",
+
+                                                cancelButton: "swal-btn-back"
+
+                                            }
+
+                                        }).then(function (result) {
+
+                                            if (result.isConfirmed) {
+
+                                                location.reload();
+
+                                            }
+                                            else {
+
+                                                window.location.href =
+                                                    '@Url.Action("List", "ContractProduct")';
+
+                                            }
+
+                                        });
+
+                                    }, 800);
+
+                                }
+                                else {
+
+                                    Swal.fire({
+
+                                        title: "Message",
+
+                                        text: response.message,
+
+                                        icon: "info"
+
+                                    });
+
+                                    resetButton();
+
+                                }
+
+                            },
+
+                            error: function () {
+
+                                Swal.fire({
+
+                                    title: "Error!",
+
+                                    text: "An unexpected error occurred.",
+
+                                    icon: "error"
+
+                                });
+
+                                resetButton();
+
+                            }
+
+                        });
+
+                    }
+
+                });
+
+            });
+
+            function resetButton() {
+
+                $("#savebutton").prop("disabled", false);
+
+            }
+
+        });
+
+    </script>
+
+    <!-- Load Engineers -->
+    <script>
+
+        $(document).ready(function () {
+
+            function loadAdmins() {
+
+                var precid = $("#SelectedProduct").val();
+
+                var cmprecid = '@Session["CompanyID"]';
+
+                $("#AdminDropdown")
+                    .prop("disabled", true)
+                    .empty()
+                    .append('<option value="">Loading Service Engineer...</option>');
+
+                if (!precid) {
+
+                    $("#AdminDropdown")
+                        .empty()
+                        .append('<option value="">-- Select Service Engineer --</option>');
+
+                    return;
+                }
+
+                $.ajax({
+
+                    url: '@Url.Action("GetProductAdmins", "AccountantCustomerInvoice")',
+
+                    type: 'GET',
+
+                    data: {
+
+                        cmprecid: cmprecid,
+
+                        precid: precid
+
+                    },
+
+                    success: function (res) {
+
+                        $("#AdminDropdown").empty();
+
+                        if (res.status === "Y" &&
+                            res.data &&
+                            res.data.length > 0) {
+
+                            $("#AdminDropdown")
+                                .append('<option value="">-- Select Service Engineer --</option>')
+                                .prop("disabled", false);
+
+                            $.each(res.data, function (i, admin) {
+
+                                $("#AdminDropdown").append(
+
+                                    `<option value="${admin.u_RECID}">
+                                        ${admin.u_USERNAME}
+                                    </option>`
+
+                                );
+
+                            });
+
+                        }
+                        else {
+
+                            $("#AdminDropdown")
+                                .append('<option value="">No Service Engineer mapped</option>')
+                                .prop("disabled", true);
+
+                        }
+
+                        $('#AdminDropdown').trigger('change');
+
+                    },
+
+                    error: function () {
+
+                        $("#AdminDropdown")
+                            .empty()
+                            .append('<option value="">Error loading Service Engineer</option>')
+                            .prop("disabled", true);
+
+                    }
+
+                });
+
+            }
+
+            loadAdmins();
+
+            $("#SelectedProduct").on("change", function () {
+
+                loadAdmins();
+
+            });
+
+            $("#AdminDropdown").on("change", function () {
+
+                $("#CSP_ARECID").val($(this).val());
+
+            });
+
+        });
+
+    </script>
+}

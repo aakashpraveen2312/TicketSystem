@@ -466,6 +466,7 @@
     <Compile Include="Models\Salesheader.cs" />
     <Compile Include="Models\SalesInvoiceProducts.cs" />
     <Compile Include="Models\ServiceInvoice.cs" />
+    <Compile Include="Models\ServiceInvoicePayment.cs" />
     <Compile Include="Models\ServiceMaterialConsumption.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\TicketAgeingViewModel.cs" />
@@ -560,6 +561,9 @@
     <Content Include="Content\SideMenu.css" />
     <Content Include="Content\Style.css" />
     <Content Include="Content\Style1.css" />
+    <Content Include="Content\UIListView.css" />
+    <Content Include="Content\UILogin.css" />
+    <Content Include="Content\UISidebarLayout.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -625,6 +629,7 @@
     <Content Include="Scripts\Script.js" />
     <Content Include="Scripts\Sidebarscript.js" />
     <Content Include="Scripts\SwiperJS.js" />
+    <Content Include="Scripts\UIPagination.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -797,6 +802,11 @@
     <Content Include="Views\Contract\ViewContractProductSA.cshtml" />
     <Content Include="Views\ContractProduct\ListView.cshtml" />
     <Content Include="Views\SalesInvoiceProduct\Locklog.cshtml" />
+    <Content Include="Views\ServiceInvoice\ServiceInvoicePaymentList.cshtml" />
+    <Content Include="Views\Tickets\ViewDetails.cshtml" />
+    <Content Include="Views\Tickets\_CaptchaPartial.cshtml" />
+    <Content Include="Views\ContractProduct\View.cshtml" />
+    <Content Include="Views\HelpDesk\_CaptchaPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

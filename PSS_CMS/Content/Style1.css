@@ -86,7 +86,8 @@ div.content {
     min-height: 250px;
     margin-left: 65px;
     background-color: #e4e9f7;
-    overflow-x:hidden;
+    overflow-x: hidden;
+    height: 100vh;
 }
 
 #navheading {

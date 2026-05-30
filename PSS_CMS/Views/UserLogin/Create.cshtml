@@ -1,404 +1,325 @@
 ﻿@model PSS_CMS.Models.User
 
+@{ ViewData["Title"] = "Create User";
+                ViewBag.PageTitle = "Create User";
+                Layout = "~/Views/Shared/_Layout.cshtml";
+                string userRole = Session["UNAME"]?.ToString().ToUpper(); }
 
-@{
-    string userRole = Session["UNAME"]?.ToString().ToUpper();
-}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-
-    @*Bootstrap Icons and Boxicons*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <script src="~/Scripts/Script.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Colors.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
     <style>
-        .swal-btn-continue {
-            background-color: #6ed3d0 !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
+
+        /* ── Role badge in header ────────────────── */
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
         }
 
-        .swal-btn-back {
-            background-color: #f0a72d !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
+        .role-sa {
+            background: #EEEDFE;
+            color: #3C3489;
         }
 
-        select.form-select {
-            font-size: 15px;
+        .role-admin {
+            background: #E1F5EE;
+            color: #085041;
         }
+
+        .role-hd {
+            background: #E6F1FB;
+            color: #0C447C;
+        }
+
+        .role-user {
+            background: #FAEEDA;
+            color: #633806;
+        }
+
+        .role-def {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
     </style>
-</head>
-<body>
+}
 
-    <div class="content" style=" overflow-x: hidden!important;">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
-                </a>
-            </div>
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-people nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("List","UserGroup")">User Category</a>
+    <i class="bi bi-chevron-right"></i>
+    @if (Session["UNAME"] != null)
+    {
+<a href="@Url.Action("List","UserGroup")">@Session["UNAME"].ToString()</a>
+                <i class="bi bi-chevron-right"></i>}
+    <a href="@Url.Action("List","UserLogin")">List</a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Create</span>
+</div>
 
-        </nav>
+<!-- Main Card -->
+@using (Html.BeginForm("Create", "UserLogin", FormMethod.Post,
+    new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
+{
+<div class="page-card">
 
+    <!-- Header -->
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span class="title-icon">
+                <i class="bi bi-person-plus"></i>
+            </span>
+            Create User
+        </h6>
 
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">USER CATEGORY</a></li>
+        @{
+            string roleLower = (userRole ?? "").ToLower();
 
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">@Session["UNAME"].ToString().ToUpper()</a></li>
-                    <li class="resadminwhitepaper" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserLogin")">LIST</a></li>
-                    <li>CREATE</li>
-                </ul>
-            </div>
-        </div>
-        @using (Html.BeginForm("Create", "UserLogin", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
-        {
-    <div class="create ms-4 me-2 mt-3">
-
-
-
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.U_USERCODE, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.U_USERCODE, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-            </div>
-        </div>
-
-
-
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.U_USERNAME, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.U_USERNAME, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-            </div>
-        </div>
-        @if (userRole != "USER")
-        {
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.LT_RECID, htmlAttributes: new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.DropDownList("LT_RECID",
-                               (SelectList)ViewBag.LocationTypeList,
-                               "-- Select Location Type --",
-                               new { @class = "form-control textboxcolors" })
-                    @Html.ValidationMessageFor(model => model.LT_RECID, "", new { @class = "text-danger" })
-                </div>
-            </div>
+            string badgeClass =
+                (roleLower.Contains("super") || roleLower.Contains("sa")) ? "role-sa" :
+                roleLower.Contains("admin") ? "role-admin" :
+                (roleLower.Contains("help") || roleLower.Contains("desk")) ? "role-hd" :
+                roleLower == "user" ? "role-user" :
+                "role-def";
         }
-
-
-
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.U_EMAILID, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.U_EMAILID, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-
-            </div>
-        </div>
-
-
-        @*<div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.U_PASSWORD, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.U_PASSWORD, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off", type = "password" } })
-
-            </div>
-        </div>*@
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.U_MOBILENO, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.U_MOBILENO, new { htmlAttributes = new { @class = "form-control textboxcolors", autocomplete = "off" } })
-            </div>
-        </div>
-        @if (userRole == "USER")
-        {
-            <div class="row mb-3">
-
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.U_LOCATION, new { @class = "labels" })
-                </div>
-
-                <div class="col-lg-3 col-md-3 col-sm-12">
-
-
-                    @if (ViewBag.Location != null)
-                    {
-                        var RoleList = ViewBag.Location as IEnumerable<SelectListItem>
-                            ;
-
-                        if (RoleList != null && RoleList.Any())
-                        {
-                            var modifiedRoleList = new List<SelectListItem>
-                                (RoleList);
-
-                            if (RoleList.Count() > 1)
-                            {
-                                modifiedRoleList.Insert(0, new SelectListItem { Text = "--Select Location--", Value = "" });
-                            }
-
-                            @Html.DropDownList("SelectedRole",
-                                            modifiedRoleList,
-                                            new { @class = "form-select textboxcolors" })
-                        }
-                        else
-                        {
-                            var modifiedRoleList = new List<SelectListItem>
-                                ();
-                            modifiedRoleList.Insert(0, new SelectListItem { Text = "No location's are available", Value = "" });
-
-                            @Html.DropDownList("SelectedRole",
-                                        modifiedRoleList,
-                                        new { @class = "form-select textboxcolors" })
-                        }
-                    }
-                    else
-                    {
-                        <p>No location's are available</p>
-                    }
-
-
-                </div>
-            </div>
-        }
-        else
-        {
-            // For Admin or Manager, send value = 0 (can be stored in a hidden field)
-            <input type="hidden" name="SelectedRole" value="0" />
-        }
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.U_SORTORDER, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.EditorFor(model => model.U_SORTORDER, new { htmlAttributes = new { @class = "form-control integerboxcolors", autocomplete = "off", placeholder = "0" } })
-
-            </div>
-        </div>
-        @if (userRole == "USER")
-        {
-            <div class="row mb-3">
-                <div class="col-lg-2 col-md-2 col-sm-12">
-                    @Html.LabelFor(model => model.U_UserManager, new { @class = "labels" })
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    @Html.CheckBoxFor(model => model.U_UserManager, new { @class = "form-check-input" })
-                </div>
-            </div>
-        }
-        <div class="row mb-3">
-            <div class="col-lg-2 col-md-2 col-sm-12">
-                @Html.LabelFor(model => model.U_UserDisable, new { @class = "labels" })
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-12">
-                @Html.CheckBoxFor(model => model.U_UserDisable, new { @class = "form-check-input" })
-            </div>
-        </div>
-        <div class="row ">
-            <div class="col-lg-2">
-
-            </div>
-            <div class="col-lg-3 d-flex justify-content-end">
-                <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="bt" />
-                <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "UserLogin", new { })'" />
-            </div>
-        </div>
+        <span class="role-badge @badgeClass">
+            <i class="bi bi-shield-check"></i>
+            @userRole
+        </span>
     </div>
-        }
 
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+    <!-- Form body -->
+    <div class="form-body">
 
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck1"></span>
-                            - Text Fields
-                        </div>
-                    </div>
+        <p class="form-section-title">Account Information</p>
 
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck2"></span>
-                            - Number Fields
-                        </div>
-                    </div>
+        <div class="form-grid">
 
-                </div>
+            <!-- User Code -->
+            <div class="form-group">
+                <label class="form-label" for="U_USERCODE">
+                    @Html.DisplayNameFor(m => m.U_USERCODE)
+                    <span class="req">*</span>
+                </label>
+                @Html.TextBoxFor(m => m.U_USERCODE, new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off",
+                    placeholder = "Enter user code"
+                })
+                @Html.ValidationMessageFor(m => m.U_USERCODE, "", new { @class = "text-danger", style = "font-size:11px" })
             </div>
-        </footer>
+
+            <!-- User Name -->
+            <div class="form-group">
+                <label class="form-label" for="U_USERNAME">
+                    @Html.DisplayNameFor(m => m.U_USERNAME)
+                    <span class="req">*</span>
+                </label>
+                @Html.TextBoxFor(m => m.U_USERNAME, new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off",
+                    placeholder = "Enter full name"
+                })
+                @Html.ValidationMessageFor(m => m.U_USERNAME, "", new { @class = "text-danger", style = "font-size:11px" })
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label class="form-label" for="U_EMAILID">
+                    @Html.DisplayNameFor(m => m.U_EMAILID)
+                    <span class="req">*</span>
+                </label>
+                @Html.TextBoxFor(m => m.U_EMAILID, new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off",
+                    placeholder = "Enter email address",
+                    type = "email"
+                })
+                @Html.ValidationMessageFor(m => m.U_EMAILID, "", new { @class = "text-danger", style = "font-size:11px" })
+            </div>
+
+            <!-- Mobile -->
+            <div class="form-group">
+                <label class="form-label" for="U_MOBILENO">
+                    @Html.DisplayNameFor(m => m.U_MOBILENO)
+                </label>
+                @Html.TextBoxFor(m => m.U_MOBILENO, new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off",
+                    placeholder = "Enter mobile number"
+                })
+            </div>
+
+            <!-- Sort Order -->
+            <div class="form-group">
+                <label class="form-label" for="U_SORTORDER">
+                    @Html.DisplayNameFor(m => m.U_SORTORDER)
+                </label>
+                @Html.TextBoxFor(m => m.U_SORTORDER, new
+                {
+                    @class = "form-input-num",
+                    autocomplete = "off",
+                    placeholder = "0"
+                })
+            </div>
+
+            <!-- Location Type  -->
+
+<div class="form-group">
+    <label class="form-label" for="LT_RECID">
+        @Html.DisplayNameFor(m => m.LT_RECID)
+    </label>
+    @Html.DropDownList("LT_RECID",
+            (IEnumerable<SelectListItem>)ViewBag.LocationTypeList,
+             "-- Select Location Type --",
+             new { @class = "form-select-input" })
+    @Html.ValidationMessageFor(m => m.LT_RECID, "", new { @class = "text-danger", style = "font-size:11px" })
+</div>                
+
+        </div>
+
+        <div class="form-divider"></div>
+        <p class="form-section-title">Settings</p>
+
+        <div class="form-grid">
+            <!-- Disable User -->
+            <label class="check-row" for="U_UserDisable">
+                @Html.CheckBoxFor(m => m.U_UserDisable,
+                         new { @class = "form-check-input", id = "U_UserDisable" })
+                <div class="check-row-label">
+                    <span>@Html.DisplayNameFor(m => m.U_UserDisable)</span>
+                    <small>Prevent this user from logging in</small>
+                </div>
+            </label>
+
+        </div>
 
     </div>
 
+    <!-- Legend bar — matches list view style -->
+    <div class="legend-bar">
 
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+            <span>Text Field</span>
         </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
+
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
+            <span>Number Field</span>
         </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-        </div>
+
     </div>
-    <div id="preloader2"></div>
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
 
+    <!-- Actions -->
+    <div class="form-actions">
+        <a href="@Url.Action("List","UserLogin")"
+           class="btn-cancel">
+            <i class="bi bi-x-lg"></i> Cancel
+        </a>
+        <button type="submit"
+                class="btn-save"
+                id="bt">
+            <i class="bi bi-floppy"></i> Save
+        </button>
+    </div>
 
+</div>}
+
+@section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
+        $(document).ready(function () {
+
+            /* ── AJAX submit — processing spinner shows FIRST ── */
+            $("#createform").submit(function (e) {
+                e.preventDefault();
+
+                var btn      = $("#bt");
+                var formData = new FormData(this);
+
+                btn.prop("disabled", true);
+
+                Swal.fire({
+                    title: "Processing…",
+                    html: "Please wait while we save your changes.",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: function () {
+                        Swal.showLoading();
+
+                        $.ajax({
+                            url: '@Url.Action("Create","UserLogin")',
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                if (response.success) {
+                                    setTimeout(function () {
+                                        Swal.fire({
+                                            title: "Success!",
+                                            text: response.message,
+                                            icon: "success",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Continue",
+                                            cancelButtonText: "Back to List",
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false,
+                                            customClass: {
+                                                confirmButton: "swal-btn-continue",
+                                                cancelButton:  "swal-btn-back"
+                                            }
+                                        }).then(function (result) {
+                                            if (result.isConfirmed) {
+                                                location.reload();
+                                            } else {
+                                                window.location.href = '@Url.Action("List","UserLogin")';
+                                            }
+                                        });
+                                    }, 800);
+                                } else {
+                                    Swal.fire({
+                                        title: "Message",
+                                        text: response.message,
+                                        icon: "info",
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    resetButton();
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: "An unexpected error occurred.",
+                                    icon: "error",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                resetButton();
+                            }
+                        });
+                    }
+                });
+            });
+
+            function resetButton() {
+                $("#bt").prop("disabled", false);
             }
         });
-    });
     </script>
-    @*Toastr for created succesfully*@
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- jQuery CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-    $(document).ready(function () {
-        $("#createform").submit(function (event) {
-            event.preventDefault();
-
-            var submitBtn = $("#bt");
-            submitBtn.prop("disabled", true);
-
-            var formData = new FormData(this);
-
-          
-
-            // Disable page interaction
-            $("body").css("pointer-events", "none");
-
-            $.ajax({
-                url: '@Url.Action("Create", "UserLogin")',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response.success) {
-                        // 🔹 First show processing bar
-                        Swal.fire({
-                            title: "Processing...",
-                            html: "Please wait while we save your changes.",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
-                        // ⏳ After small delay, show success popup
-                        setTimeout(function () {
-                        Swal.fire({
-                            title: "Success!",
-                            text: response.message,
-                            icon: "success",
-                            showCancelButton: true,
-                            confirmButtonText: "Continue",
-                            cancelButtonText: "Back to List",
-                            allowOutsideClick: false, // Prevent closing by clicking outside
-                            allowEscapeKey: false, // Prevent closing using Esc key
-                            customClass: {
-                                confirmButton: "swal-btn-continue",
-                                cancelButton: "swal-btn-back"
-                            },
-                            didOpen: () => {
-                                // Allow interaction inside the alert only
-                                $(".swal2-container").css("pointer-events", "auto");
-                            }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            } else {
-                                window.location.href = '@Url.Action("List", "UserLogin",new {})';
-                            }
-                        });
-                        }, 1000); // 1 second delay for "Processing"
-                    } else {
-                        Swal.fire({
-                            title: "Message",
-                            text: response.message,
-                            icon: "info",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                        resetButton();
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "An unexpected error occurred.",
-                        icon: "error",
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                    });
-                    resetButton();
-                }
-            });
-        });
-
-        function resetButton() {
-            $("#bt").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto"); // Re-enable page interaction
-        }
-    });
-    </script>
-
-</body>
-
-</html>
+}

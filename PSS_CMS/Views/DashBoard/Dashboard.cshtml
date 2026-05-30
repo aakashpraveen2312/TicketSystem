@@ -1,471 +1,630 @@
 ﻿@model PSS_CMS.Models.Dashborardchart
 @using GridMvc.Html
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+@{ ViewBag.PageTitle = "Dashboard";
+    ViewBag.PageSubtitle = "Overview of your ticket system"; }
 
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
+@section Styles {
     <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
     <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    @*Bootstrap Icons and Boxicons link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <!-- JustGage Library -->
     <script src="https://cdn.jsdelivr.net/npm/justgage@1.3.0/justgage.min.js"></script>
-    <!-- Correct Raphael.js (Dependency for JustGage) -->
     <script src="https://cdn.jsdelivr.net/npm/raphael@2.1.4/raphael-min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script src="~/Scripts/Script.js"></script>
 
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-
-
     <style>
-        h5.d-flex.flex-column.align-items-center.headingscolor {
-            background-color: #f5f5f5;
-            padding: 10px;
-            font-weight: bold;
+        :root {
+            --purple:       #6c5ce7;
+            --purple-light: #eeeaff;
+            --amber:        #f39c12;
+            --amber-light:  #fff3dc;
+            --green:        #00b894;
+            --green-light:  #d8f5ed;
+            --slate:        #636e72;
+            --slate-light:  #f1f3f5;
+            --blue:         #0984e3;
+            --blue-light:   #dfe6f7;
+            --red:          #e17055;
+            --red-light:    #fde8e4;
+            --bg:           #f4f5f9;
+            --surface:      #ffffff;
+            --border:       #e8eaed;
+            --text:         #1a1d23;
+            --text-sub:     #6b7280;
+            --text-muted:   #9ca3af;
+            --shadow:       0 1px 4px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,.10);
+            --r:            12px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* ════════════════════════════
+   SPARKLINE SHADING EFFECT
+════════════════════════════ */
+
+        /* Hero card sparklines — use a <path> for the filled area below the line */
+        .hc-spark,
+        .pill-spark {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+        .db-wrap { background: var(--bg); padding: 22px; }
+
+        /* ── Page header ── */
+        .db-header {
+            display: flex; align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap; gap: 10px;
+            margin-bottom: 18px;
+        }
+        .db-header h2 { font-size: 20px; font-weight: 800; color: var(--text); margin: 0; }
+        .db-header p  { font-size: 12px; color: var(--text-muted); margin: 2px 0 0; }
+        .db-header-right { display: flex; align-items: center; gap: 8px; }
+        .db-date-pill {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 8px; padding: 7px 12px;
+            font-size: 12px; font-weight: 500; color: var(--text);
+            box-shadow: var(--shadow); cursor: pointer;
+        }
+        .db-export-btn {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--purple); color: #fff;
+            border: none; border-radius: 8px;
+            padding: 8px 15px; font-size: 12px; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: opacity .15s;
+        }
+        .db-export-btn:hover { opacity: .86; }
+
+        /* ── Section label ── */
+        .db-sec {
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.1px;
+            color: var(--text-muted); margin: 18px 0 10px;
         }
 
-        tspan {
-            font-weight: bold;
-            color: black !important;
-            font-size: 19px;
+        /* ════════════════════════════
+           HERO CARDS  (4-col row)
+        ════════════════════════════ */
+        .hero-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
         }
-        h5.d-flex.justify-content-center.headingscolor {
-            background-color: #f5f5f5;
-            padding: 15px;
-            font-weight: bold;
+        @@media (max-width: 1100px) { .hero-row { grid-template-columns: 1fr 1fr; } }
+        @@media (max-width: 600px)  { .hero-row { grid-template-columns: 1fr; } }
+
+        .hero-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 16px 18px 14px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: box-shadow .2s, transform .2s;
+            position: relative; overflow: hidden;
         }
+        .hero-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+
+        .hero-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            border-radius: var(--r) var(--r) 0 0;
+        }
+        .hc-total::before    { background: var(--purple); }
+        .hc-open::before     { background: var(--amber);  }
+        .hc-resolved::before { background: var(--green);  }
+        .hc-closed::before   { background: var(--slate);  }
+
+        .hc-top {
+            display: flex; align-items: center;
+            justify-content: space-between; margin-bottom: 10px;
+        }
+        .hc-label { font-size: 12px; font-weight: 600; color: var(--text-sub); }
+        .hc-icon {
+            width: 36px; height: 36px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center; font-size: 16px;
+        }
+        .hi-total    { background: var(--purple-light); color: var(--purple); }
+        .hi-open     { background: var(--amber-light);  color: var(--amber);  }
+        .hi-resolved { background: var(--green-light);  color: var(--green);  }
+        .hi-closed   { background: var(--slate-light);  color: var(--slate);  }
+
+        .hc-value {
+            font-size: 36px; font-weight: 800; color: var(--text);
+            line-height: 1; letter-spacing: -1.5px;
+        }
+        .hc-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+        .hc-spark {
+            position: absolute; right: 0; bottom: 0;
+            width: 110px; height: 44px; opacity: .5;
+        }
+
+        .hc-open-subs { display: flex; gap: 6px; margin-top: 10px; }
+        .hc-open-sub {
+            flex: 1; text-align: center; border-radius: 7px;
+            padding: 5px 4px; cursor: pointer; transition: background .15s;
+        }
+        .hc-open-sub:hover { background: #fff8ee; }
+        .hc-open-sub-lbl {
+            font-size: 9px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .3px; color: var(--text-muted);
+        }
+        .hc-open-sub-val { font-size: 18px; font-weight: 800; line-height: 1.2; }
+        .sv-current { color: var(--text); }
+        .sv-week    { color: var(--purple); }
+        .sv-month   { color: var(--red); }
+
+        /* ════════════════════════════
+           TREND CHART CARDS (3-col)
+        ════════════════════════════ */
+        .chart-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+        @@media (max-width: 1000px) { .chart-row { grid-template-columns: 1fr 1fr; } }
+        @@media (max-width: 600px)  { .chart-row { grid-template-columns: 1fr; } }
+
+        .chart-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            box-shadow: var(--shadow);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .cc-head {
+            display: flex; align-items: flex-start;
+            justify-content: space-between;
+            padding: 13px 15px 11px;
+            border-bottom: 1px solid var(--border);
+        }
+        .cc-title { font-size: 13px; font-weight: 700; color: var(--text); }
+        .cc-sub   { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+        .cc-right { display: flex; align-items: center; gap: 7px; }
+        .cc-badge {
+            font-size: 10.5px; font-weight: 700;
+            padding: 2px 9px; border-radius: 20px;
+        }
+        .cb-purple { background: var(--purple-light); color: var(--purple); }
+        .cb-green  { background: var(--green-light);  color: var(--green);  }
+        .cb-grey   { background: var(--slate-light);  color: var(--slate);  }
+        .cc-dots   { color: var(--text-muted); font-size: 18px; line-height: 1; cursor: pointer; }
+        .cc-body   { padding: 13px; flex: 1; }
+
+        /* ════════════════════════════
+           MINI PILLS (picked / assigned)
+        ════════════════════════════ */
+        .pill-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+        }
+        @@media (max-width: 600px) { .pill-row { grid-template-columns: 1fr; } }
+
+        .mini-pill {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--r); padding: 15px 18px;
+            display: flex; align-items: center; gap: 14px;
+            box-shadow: var(--shadow);
+            position: relative; overflow: hidden;
+            transition: box-shadow .2s, transform .2s;
+        }
+        .mini-pill:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+
+        .pill-spark {
+            position: absolute; right: 0; bottom: 0;
+            width: 150px; height: 52px; opacity: .4;
+        }
+
+        .mp-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .mpi-green { background: var(--green-light); color: var(--green); }
+        .mpi-red   { background: var(--red-light);   color: var(--red);   }
+        .mpi-blue  { background: var(--blue-light);  color: var(--blue);  }
+
+        .mp-lbl { font-size: 11px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; letter-spacing: .4px; }
+        .mp-val { font-size: 28px; font-weight: 800; color: var(--text); line-height: 1.1; }
+
+        /* ════════════════════════════
+           PRIORITY + GAUGE ROW
+        ════════════════════════════ */
+        .pg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        @@media (max-width: 860px) { .pg-row { grid-template-columns: 1fr; } }
+
+        .cc-gauge-body {
+            display: flex; align-items: center; justify-content: center;
+            padding: 12px 16px 20px; flex: 1;
+        }
+
+        .animated-num { display: inline-block; }
     </style>
-</head>
+}
 
-<body>
+@{ int totalTix = (Model?.TotalTickets != null) ? (int)Model.TotalTickets : 0;
+    int openTix = (Model?.OpenTickets != null) ? (int)Model.OpenTickets : 0;
+    int resolvedTix = (Model?.ResolvedTickets != null) ? (int)Model.ResolvedTickets : 0;
+    int closedTix = (Model?.CloseTickets != null) ? (int)Model.CloseTickets : 0;
+    int openDate = (Model?.OpenDate != null) ? (int)Model.OpenDate : 0;
+    int openMonth = (Model?.OpenLastMonth != null) ? (int)Model.OpenLastMonth : 0;
+    int openWeek = (Model?.OpenLastweek != null) ? (int)Model.OpenLastweek : 0; }
 
-    <div class="content" style=" overflow-x: hidden;">
+<div class="db-wrap">
 
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+    <!-- ══ HERO STAT CARDS ══ -->
+    <div class="hero-row">
 
-
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
-
-                </a>
+        <!-- Total -->
+        <div class="hero-card hc-total"
+             onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="TotalTickets"})'">
+            <div class="hc-top">
+                <span class="hc-label">Total Tickets</span>
+                <div class="hc-icon hi-total"><i class="bi bi-ticket-perforated-fill"></i></div>
             </div>
-
-
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-
-                    <li>DASHBOARD</li>
-                </ul>
-            </div>
-
+            <div class="hc-value animated-num" data-target="@totalTix">0</div>
+            <div class="hc-sub">All time tickets</div>
+            <svg class="hc-spark" width="110" height="44" viewBox="0 0 110 44" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="grad-purple" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#6c5ce7" stop-opacity="0.25" />
+                        <stop offset="100%" stop-color="#6c5ce7" stop-opacity="0" />
+                    </linearGradient>
+                </defs>
+                <!-- filled area -->
+                <path d="M0,38 L22,28 L44,32 L66,16 L88,22 L110,8 L110,44 L0,44 Z"
+                      fill="url(#grad-purple)" />
+                <!-- line on top -->
+                <polyline points="0,38 22,28 44,32 66,16 88,22 110,8"
+                          fill="none" stroke="#6c5ce7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
         </div>
 
-        <div class="container-fluid mt-4 card ms-2">
-
-
-            <!-- Count Cards -->
-            @{
-                // Total Tickets
-                var TotalticketStats = new[]
-                    {
-        new { Title = "Total Tickets", Count = (Model != null && Model.TotalTickets != null) ? (int)Model.TotalTickets : 0, Color = "primary" }
-    };
-
-
-                // Open Tickets
-                var openTicketStats = new[]
-                {
-  new { Title = "Open & New Tickets", Count = (Model != null && Model.OpenTickets != null) ? (int)Model.OpenTickets : 0,
-      OpenDate = (Model != null && Model.OpenDate != null) ? (int)Model.OpenDate : 0,
-      OpenLastMonth = (Model != null && Model.OpenLastMonth != null) ? (int)Model.OpenLastMonth : 0,
-      OpenLastweek = (Model != null && Model.OpenLastweek != null) ? (int)Model.OpenLastweek : 0,
-      Color = "warning" }
-                };
-
-                // Ressolved Tickets
-                var ressolvedTicketStats = new[]
-                {
- new { Title = "Resolved Tickets", Count = (Model != null && Model.ResolvedTickets != null) ? (int)Model.ResolvedTickets : 0, Color = "success" }                };
-
-
-                // Closed Tickets
-                var closedTicketStats = new[]
-                {
- new { Title = "Closed Tickets", Count = (Model != null && Model.CloseTickets != null) ? (int)Model.CloseTickets : 0, Color = "secondary" }                };
-
-
-
-            }
-
-            <div class="row mt-3">
-                @foreach (var stat in TotalticketStats)
-                {
-                    <div class="col-md-3">
-                        <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="TotalTickets"})'">@stat.Title</h5>
-                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="TotalTickets"})'">@stat.Count</h3>
-                            </div>
-                        </div>
-                    </div>
-                }
-
-                @foreach (var stat in openTicketStats)
-                {
-                    <div class="col-md-3">
-                        <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body">
-
-                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenTickets"})'">@stat.Title - (@stat.Count)</h5>
-
-                                <div class="row text-center">
-                                    <div class="col-4">
-                                        <small style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenDate"})'">Current</small>
-                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenDate"})'"><strong>(@stat.OpenDate)</strong></div>
-                                    </div>
-                                    <div class="col-4">
-                                        <small class="text-primary" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenLastweek"})'">>1 Week</small>
-                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenLastweek"})'"><strong class="text-primary">(@stat.OpenLastweek)</strong></div>
-                                    </div>
-                                    <div class="col-4">
-                                        <small class="text-danger" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenLastMonth"})'">>1 Month</small>
-                                        <div style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenLastMonth"})'"><strong class="text-danger">(@stat.OpenLastMonth)</strong></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                }
-                @foreach (var stat in ressolvedTicketStats)
-                {
-                    <div class="col-md-3">
-                        <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="ResolvedTickets"})'">@stat.Title</h5>
-                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="ResolvedTickets"})'">@stat.Count</h3>
-                            </div>
-                        </div>
-                    </div>
-                }
-
-                @foreach (var stat in closedTicketStats)
-                {
-                    <div class="col-md-3">
-                        <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="CloseTickets"})'">@stat.Title</h5>
-                                <h3 class="card-text" style="cursor:pointer;" onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="CloseTickets"})'">@stat.Count</h3>
-                            </div>
-                        </div>
-                    </div>
-                }
+        <!-- Open -->
+        <div class="hero-card hc-open" style="cursor:default;">
+            <div class="hc-top" style="cursor:pointer;"
+                 onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenTickets"})'">
+                <span class="hc-label">Open &amp; New Tickets (@openTix)</span>
+                <div class="hc-icon hi-open"><i class="bi bi-folder2-open"></i></div>
             </div>
-
-
-
-
-            @*Month to Date Chart*@
-            <div class="row">
-
-                @*Week to Date Chart*@
-                <div class="col-md-4">
-                    <h5 class="d-flex flex-column align-items-center headingscolor">
-                        Week to Date
-                        <span class="small">(Last 7 days including today)</span>
-                    </h5>
-                    <canvas id="ticketBarChartWTD"></canvas>
+            <div class="hc-open-subs">
+                <div class="hc-open-sub"
+                     onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenDate"})'">
+                    <div class="hc-open-sub-lbl">Current</div>
+                    <div class="hc-open-sub-val sv-current animated-num" data-target="@openDate">0</div>
                 </div>
-                @*Week to Date Chart*@
-                <script>
-    var ctxBarWTD = document.getElementById('ticketBarChartWTD').getContext('2d');
-    new Chart(ctxBarWTD, {
+                <div class="hc-open-sub"
+                     onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenLastweek"})'">
+                    <div class="hc-open-sub-lbl">&gt;1 Week</div>
+                    <div class="hc-open-sub-val sv-week animated-num" data-target="@openWeek">0</div>
+                </div>
+                <div class="hc-open-sub"
+                     onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="OpenLastMonth"})'">
+                    <div class="hc-open-sub-lbl">&gt;1 Month</div>
+                    <div class="hc-open-sub-val sv-month animated-num" data-target="@openMonth">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resolved -->
+        <div class="hero-card hc-resolved"
+             onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="ResolvedTickets"})'">
+            <div class="hc-top">
+                <span class="hc-label">Resolved Tickets</span>
+                <div class="hc-icon hi-resolved"><i class="bi bi-check2-circle"></i></div>
+            </div>
+            <div class="hc-value animated-num" data-target="@resolvedTix">0</div>
+            <div class="hc-sub">All time resolved</div>
+            <svg class="hc-spark" width="110" height="44" viewBox="0 0 110 44" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="grad-green" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#00b894" stop-opacity="0.25" />
+                        <stop offset="100%" stop-color="#00b894" stop-opacity="0" />
+                    </linearGradient>
+                </defs>
+                <path d="M0,38 L22,26 L44,30 L66,14 L88,20 L110,6 L110,44 L0,44 Z"
+                      fill="url(#grad-green)" />
+                <polyline points="0,38 22,26 44,30 66,14 88,20 110,6"
+                          fill="none" stroke="#00b894" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </div>
+
+        <!-- Closed -->
+        <div class="hero-card hc-closed"
+             onclick="window.location.href='@Url.Action("DashboardListTotalTicket","DashBoard",new { status="CloseTickets"})'">
+            <div class="hc-top">
+                <span class="hc-label">Closed Tickets</span>
+                <div class="hc-icon hi-closed"><i class="bi bi-archive-fill"></i></div>
+            </div>
+            <div class="hc-value animated-num" data-target="@closedTix">0</div>
+            <div class="hc-sub">All time closed</div>
+            <svg class="hc-spark" width="110" height="44" viewBox="0 0 110 44" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="grad-slate" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#636e72" stop-opacity="0.20" />
+                        <stop offset="100%" stop-color="#636e72" stop-opacity="0" />
+                    </linearGradient>
+                </defs>
+                <path d="M0,40 L22,34 L44,36 L66,26 L88,28 L110,16 L110,44 L0,44 Z"
+                      fill="url(#grad-slate)" />
+                <polyline points="0,40 22,34 44,36 66,26 88,28 110,16"
+                          fill="none" stroke="#636e72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </div>
+
+    </div><!-- /hero-row -->
+    <!-- ══ TREND CHARTS ══ -->
+    <div class="db-sec">Ticket Trends</div>
+    <div class="chart-row">
+
+        <div class="chart-card">
+            <div class="cc-head">
+                <div>
+                    <div class="cc-title">Week to Date</div>
+                    <div class="cc-sub">Last 7 days including today</div>
+                </div>
+                <div class="cc-right">
+                    <span class="cc-badge cb-purple">WTD</span>
+                    <span class="cc-dots">···</span>
+                </div>
+            </div>
+            <div class="cc-body"><canvas id="ticketBarChartWTD" height="160"></canvas></div>
+        </div>
+
+        <div class="chart-card">
+            <div class="cc-head">
+                <div>
+                    <div class="cc-title">Month to Date</div>
+                    <div class="cc-sub">Last 27 days including today</div>
+                </div>
+                <div class="cc-right">
+                    <span class="cc-badge cb-green">MTD</span>
+                    <span class="cc-dots">···</span>
+                </div>
+            </div>
+            <div class="cc-body"><canvas id="ticketBarChartMTD" height="160"></canvas></div>
+        </div>
+
+        <div class="chart-card">
+            <div class="cc-head">
+                <div>
+                    <div class="cc-title">Overall Tickets</div>
+                    <div class="cc-sub">All-time summary</div>
+                </div>
+                <div class="cc-right">
+                    <span class="cc-badge cb-grey">ALL</span>
+                    <span class="cc-dots">···</span>
+                </div>
+            </div>
+            <div class="cc-body"><canvas id="ticketBarChart" height="160"></canvas></div>
+        </div>
+
+    </div><!-- /chart-row -->
+    <!-- ══ ROLE-BASED MINI PILLS ══ -->
+    @if (Session["UserRole"].ToString() == "Manager")
+    {
+<div class="db-sec">Assignment Status</div>
+                <div class="pill-row">
+                    <div class="mini-pill">
+                        <div class="mp-icon mpi-blue"><i class="bi bi-person-check-fill"></i></div>
+                        <div>
+                            <div class="mp-lbl">Assigned</div>
+                            <div class="mp-val animated-num" data-target="@ViewBag.totalAssignedCount">0</div>
+                        </div>
+                        <svg class="pill-spark" width="150" height="52" viewBox="0 0 150 52" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="grad-pick" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#00b894" stop-opacity="0.20" />
+                                    <stop offset="100%" stop-color="#00b894" stop-opacity="0" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M0,44 L30,32 L60,36 L90,20 L120,26 L150,10 L150,52 L0,52 Z"
+                                  fill="url(#grad-pick)" />
+                            <polyline points="0,44 30,32 60,36 90,20 120,26 150,10"
+                                      fill="none" stroke="#00b894" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="mini-pill">
+                        <div class="mp-icon mpi-red"><i class="bi bi-person-x-fill"></i></div>
+                        <div>
+                            <div class="mp-lbl">UnAssigned</div>
+                            <div class="mp-val animated-num" data-target="@ViewBag.totalUnAssignedCount">0</div>
+                        </div>
+                        <svg class="pill-spark" width="150" height="52" viewBox="0 0 150 52" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="grad-unpick" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#e17055" stop-opacity="0.20" />
+                                    <stop offset="100%" stop-color="#e17055" stop-opacity="0" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M0,10 L30,22 L60,16 L90,32 L120,26 L150,40 L150,52 L0,52 Z"
+                                  fill="url(#grad-unpick)" />
+                            <polyline points="0,10 30,22 60,16 90,32 120,26 150,40"
+                                      fill="none" stroke="#e17055" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </div>}
+
+    @if (Session["UserRole"].ToString() == "Admin")
+    {
+<div class="db-sec">Pick Status</div>
+                <div class="pill-row">
+                    <div class="mini-pill">
+                        <div class="mp-icon mpi-green"><i class="bi bi-bookmark-check-fill"></i></div>
+                        <div>
+                            <div class="mp-lbl">Picked Tickets</div>
+                            <div class="mp-val animated-num" data-target="@ViewBag.totalPickedTicketCount">0</div>
+                        </div>
+                        <svg class="pill-spark" viewBox="0 0 150 52" preserveAspectRatio="none">
+                            <polyline points="0,44 30,32 60,36 90,20 120,26 150,10"
+                                      fill="none" stroke="#00b894" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="mini-pill">
+                        <div class="mp-icon mpi-red"><i class="bi bi-slash-circle-fill"></i></div>
+                        <div>
+                            <div class="mp-lbl">Unpicked Tickets</div>
+                            <div class="mp-val animated-num" data-target="@ViewBag.totalUnpickedTicketCount">0</div>
+                        </div>
+                        <svg class="pill-spark" viewBox="0 0 150 52" preserveAspectRatio="none">
+                            <polyline points="0,10 30,22 60,16 90,32 120,26 150,40"
+                                      fill="none" stroke="#e17055" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </div>}
+
+    <!-- ══ PRIORITY + GAUGE ══ -->
+    <div class="db-sec">Priority &amp; Completion</div>
+    <div class="pg-row" style="margin-bottom:8px;">
+
+        <div class="chart-card">
+            <div class="cc-head">
+                <div>
+                    <div class="cc-title">Priority wise Stacked Tickets</div>
+                    <div class="cc-sub">Open · Resolved · Closed by priority level</div>
+                </div>
+            </div>
+            <div class="cc-body"><canvas id="ticketChart" height="190"></canvas></div>
+        </div>
+
+        <div class="chart-card">
+            <div class="cc-head">
+                <div>
+                    <div class="cc-title">Percentage of Closed Tickets</div>
+                    <div class="cc-sub">Ticket completion rate</div>
+                </div>
+            </div>
+            <div class="cc-gauge-body">
+                <div id="speedometer" style="width:100%;max-width:320px;height:210px;"></div>
+            </div>
+        </div>
+
+    </div>
+
+</div><!-- /db-wrap -->
+
+
+@section Scripts {
+    <script>
+/* ── Animated counter ── */
+function animateCount(el, target, duration) {
+    var start = 0, inc = target / (duration / (1000 / 60));
+    function tick() {
+        start += inc;
+        if (start >= target) { el.textContent = target; return; }
+        el.textContent = Math.floor(start);
+        requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.animated-num').forEach(function (el) {
+        animateCount(el, parseInt(el.getAttribute('data-target')) || 0, 900);
+    });
+    var el = document.getElementById('dashDateLabel');
+    if (el) el.textContent = new Date().toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'numeric' });
+});
+
+/* ── Chart defaults ── */
+Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+Chart.defaults.font.size   = 12;
+Chart.defaults.color       = '#6b7280';
+
+var COLORS = ['#6c5ce7', '#f39c12', '#00b894', '#636e72'];
+
+function buildBar(id, labels, data) {
+    var ctx = document.getElementById(id);
+    if (!ctx) return;
+    new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Total Tickets', 'Open', 'Resolved', 'Closed'],
+            labels: labels,
             datasets: [{
-                label: 'Week to Date',
-                data: [@ViewBag.WeekTotalTickets, @ViewBag.WeekOpenTickets, @ViewBag.WeekResolvedTickets, @ViewBag.WeekCloseTickets],
-                backgroundColor: ['#0070FC', '#ffc107', '#198754', '#6c757d']
+                data: data,
+                backgroundColor: COLORS,
+                borderRadius: 8,
+                borderSkipped: false
             }]
         },
         options: {
-            plugins: {
-                legend: {
-                    display: false // Hide the dataset label
-                }
-            },
+            animation: { duration: 900, easing: 'easeOutQuart' },
+            plugins: { legend: { display: false } },
             scales: {
-                x: {
-                    ticks: {
-                        display: true // Hide x-axis labels
-                    }
-                }
+                x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                y: { grid: { color: '#f1f3f5' }, ticks: { font: { size: 11 }, precision: 0 }, beginAtZero: true }
             }
         }
     });
-                </script>
+}
 
+var lbl = ['Total', 'Open', 'Resolved', 'Closed'];
+buildBar('ticketBarChartWTD', lbl, [@ViewBag.WeekTotalTickets,  @ViewBag.WeekOpenTickets,  @ViewBag.WeekResolvedTickets,  @ViewBag.WeekCloseTickets]);
+buildBar('ticketBarChartMTD', lbl, [@ViewBag.MonthTotalTickets, @ViewBag.MonthOpenTickets, @ViewBag.MonthResolvedTickets, @ViewBag.MonthCloseTickets]);
+buildBar('ticketBarChart',    lbl, [@(Model?.TotalTickets??0),  @(Model?.OpenTickets??0),  @(Model?.ResolvedTickets??0),  @(Model?.CloseTickets??0)]);
 
-                <div class="col-md-4">
-
-                    <h5 class="d-flex flex-column align-items-center headingscolor">
-                        Month to Date
-                        <span class="small">(Last 27 days including today)</span>
-                    </h5>
-
-
-                    <canvas id="ticketBarChartMTD"></canvas>
-                </div>
-                @*Month to Date Chart*@
-                <script>
-    // Month to Date Chart
-    var ctxBarMTD = document.getElementById('ticketBarChartMTD').getContext('2d');
-    new Chart(ctxBarMTD, {
-        type: 'bar',
-        data: {
-            labels: ['Total Tickets', 'Open', 'Resolved', 'Closed'],
-            datasets: [{
-                data: [@ViewBag.MonthTotalTickets, @ViewBag.MonthOpenTickets, @ViewBag.MonthResolvedTickets, @ViewBag.MonthCloseTickets],
-                backgroundColor: ['#0070FC', '#ffc107', '#198754', '#6c757d']
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    display: false  // Hides the label
-                }
-            }
-        }
-    });
-                </script>
-
-                <div class="col-md-4">
-                    <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Overall Tickets</h5>
-                    <canvas id="ticketBarChart"></canvas>
-                </div>
-                @*Over all ticket bar chart script*@
-                <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var ctxBar = document.getElementById('ticketBarChart').getContext('2d');
-
-        var totalTickets = @(Model?.TotalTickets ?? 0);
-        var openTickets = @(Model?.OpenTickets ?? 0);
-        var resolvedTickets = @(Model?.ResolvedTickets ?? 0);
-        var closedTickets = @(Model?.CloseTickets ?? 0);
-
-        new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: ['Total Tickets', 'Open', 'Resolved', 'Closed'],
-                datasets: [{
-                    label: 'Ticket Count',
-                    data: [totalTickets, openTickets, resolvedTickets, closedTickets],
-                    backgroundColor: ['#0070FC', '#ffc107', '#198754', '#6c757d'],
-                    borderColor: ['#0056b3', '#d39e00', '#146c43', '#5a6268'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-
-                plugins: {
-                    legend: {
-                        display: false // Hide the legend
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            display: true // Show x-axis labels
-                        }
-                    }
-
-                }
-            }
-        });
-    });
-                </script>
-            </div>
-
-            @if (Session["UserRole"].ToString() == "Manager")
-            {
-                @*Picked and Unpicked Ticket*@
-                <div class="row mt-3 d-flex justify-content-center">
-
-                    <div class="col-md-3">
-                        <div class="card text-white bg-success  mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;">Assigned Tickets</h5>
-                                <h3 class="card-text" style="cursor:pointer;">@ViewBag.totalAssignedCount</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card text-white bg-danger  mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;">UnAssigned Tickets</h5>
-                                <h3 class="card-text" style="cursor:pointer;">@ViewBag.totalUnAssignedCount</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-
-            @if (Session["UserRole"].ToString() == "Admin")
-            {
-                @*Picked and Unpicked Ticket*@
-                <div class="row mt-3 d-flex justify-content-center">
-
-                    <div class="col-md-3">
-                        <div class="card text-white bg-success  mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;">Picked Tickets</h5>
-                                <h3 class="card-text" style="cursor:pointer;">@ViewBag.totalPickedTicketCount</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card text-white bg-danger  mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;">Unpicked Tickets</h5>
-                                <h3 class="card-text" style="cursor:pointer;">@ViewBag.totalUnpickedTicketCount</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-
-
-            @*Priority Wise*@
-            <div class="row">
-
-                <div class="col-md-6">
-                    <h5 class="d-flex justify-content-center headingscolor">Priority vise Stacked Tickets</h5>
-                    <canvas id="ticketChart"></canvas>
-                </div>
-                @*Prioritytype bar chart script*@
-                <script>
-    const labels = @Html.Raw(ViewBag.Labels1); // ["Critical", "Emergency", "High", "Medium", "Low"]
-
-    const data = {
-        labels: labels,
+/* ── Priority stacked ── */
+new Chart(document.getElementById('ticketChart'), {
+    type: 'bar',
+    data: {
+        labels: @Html.Raw(ViewBag.Labels1),
         datasets: [
-
-            {
-                label: 'Open',
-                data: @Html.Raw(ViewBag.OpenTickets1 ?? "[]"), // [2, 6, 3, 9, 1]
-                backgroundColor: '#FFBE00'
-            },
-            {
-                label: 'Resolved',
-                data: @Html.Raw(ViewBag.ResolvedTickets1 ?? "[]"), // [6, 4, 8, 1, 3]
-                backgroundColor: '#008959'
-            },
-            {
-                label: 'Closed',
-                data: @Html.Raw(ViewBag.ClosedTickets1 ?? "[]"), // [5, 10, 7, 3, 2]
-                backgroundColor: '#69757D'
-            }
+            { label: 'Open',     data: @Html.Raw(ViewBag.OpenTickets1     ?? "[]"), backgroundColor: '#f39c12', borderRadius: 5 },
+            { label: 'Resolved', data: @Html.Raw(ViewBag.ResolvedTickets1 ?? "[]"), backgroundColor: '#00b894', borderRadius: 5 },
+            { label: 'Closed',   data: @Html.Raw(ViewBag.ClosedTickets1   ?? "[]"), backgroundColor: '#636e72', borderRadius: 5 }
         ]
-    };
-
-    const config = {
-        type: 'bar',
-        data: data,
-        options: {
-            scales: {
-                x: {
-                    stacked: true,
-                    ticks: {
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                y: {
-                    stacked: true,
-                }
+    },
+    options: {
+        animation: { duration: 1000, easing: 'easeOutQuart' },
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 12 } }
             }
+        },
+        scales: {
+            x: { stacked: true, grid: { display: false } },
+            y: { stacked: true, grid: { color: '#f1f3f5' }, beginAtZero: true }
         }
-    };
+    }
+});
 
-    new Chart(document.getElementById('ticketChart'), config);
-                </script>
+/* ── Gauge ── */
+var cpct    = Math.round(@((ViewBag.ClosedPercentage ?? 0)));
+var ctotal  = @((ViewBag.TotalTickets  ?? 0));
+var cclosed = @((ViewBag.ClosedTickets ?? 0));
+if (isNaN(cpct) || cpct < 0) cpct = 0;
+if (cpct > 100) cpct = 100;
 
-
-
-
-                @* Speedometer Container *@
-                <div class="col-md-6 ">
-
-                    <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Percentage of Closed Tickets</h5>
-                    <div class="d-flex justify-content-center">
-                        <div class="" id="speedometer" style="max-width: 600px; max-height: 300px; height: 300px; width: 470px "></div>
-                    </div>
-                </div>
-                @*Script for Speedometer graph values*@
-                <script>
-    const closedPercentage = Math.round(@((ViewBag.ClosedPercentage ?? 0))); // Default to 0 if null
-    const totalTickets = @((ViewBag.TotalTickets ?? 0)); // Default to 0 if null
-    const closedTickets = @((ViewBag.ClosedTickets ?? 0)); // Default to 0 if null
-
-                    function updateSpeedometer(percentage) {
-                        console.log("percentage", percentage);
-        if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-            percentage = 0; // Ensure a valid range (0-100)
-        }
-
-        // Create the gauge
-        var gage = new JustGage({
-            id: "speedometer",
-            value: percentage,
-            min: 0,
-            max: 100,
-            title: "Ticket Progress",
-            label: `${percentage}% Closed\n(${closedTickets}/${totalTickets})`,
-            labelFontColor: "#000000", // Pure black color
-            gaugeWidthScale: 0.1,
-            pointer: true,
-            pointerOptions: {
-                length: 0.6,
-                strokeWidth: 0.04
-            },
-            customSectors: [
-                { color: "#ff0000", lo: 0, hi: 30 },  // Red (0-30%)
-                { color: "#ffff00", lo: 31, hi: 70 }, // Yellow (31-70%)
-                { color: "#00ff00", lo: 71, hi: 100 } // Green (71-100%)
-            ],
-            levelColors: ["#ff0000", "#ffff00", "#00ff00"],
-            hideValue: true // Hide the number inside the gauge
-        });
-
+new JustGage({
+    id: "speedometer",
+    value: cpct,
+    min: 0, max: 100,
+    title: "Ticket Progress",
+    label: `${cpct}% Closed\n(${cclosed}/${ctotal})`,
+    labelFontColor: "#1a1d23",
+    gaugeWidthScale: 0.14,
+    pointer: true,
+    pointerOptions: { length: 0.62, strokeWidth: 0.045 },
+    customSectors: [
+        { color: "#e17055", lo: 0,  hi: 30  },
+        { color: "#fdcb6e", lo: 31, hi: 70  },
+        { color: "#00b894", lo: 71, hi: 100 }
+    ],
+    levelColors: ["#e17055", "#fdcb6e", "#00b894"],
+    hideValue: true,
+    titleFontColor: "#6b7280",
+    titlePosition: "above"
+});
         // Tooltip logic for hovering over yellow sector
         document.getElementById("speedometer").addEventListener("mousemove", function (event) {
             let x = event.pageX, y = event.pageY;
-            if (percentage >= 0 && percentage <= 100) {
-               showTooltip(`Closed Tickets: ${percentage}%`, x, y);
+            if (cpct >= 0 && cpct <= 100) {
+                showTooltip(`Closed Tickets: ${cpct}%`, x, y);
 
             } else {
                 hideTooltip();
@@ -475,89 +634,37 @@
         document.getElementById("speedometer").addEventListener("mouseleave", function () {
             hideTooltip();
         });
-    }
-
-    function showTooltip(text, x, y) {
-        let tooltip = document.getElementById("tooltip");
-        if (!tooltip) {
-            tooltip = document.createElement("div");
-            tooltip.id = "tooltip";
-            tooltip.style.position = "absolute";
-            tooltip.style.background = "black";
-            tooltip.style.color = "white";
-            tooltip.style.padding = "5px 10px";
-            tooltip.style.borderRadius = "5px";
-            tooltip.style.fontSize = "12px";
-            tooltip.style.display = "none";
-            tooltip.style.zIndex = "1000";
-            document.body.appendChild(tooltip);
-        }
-        tooltip.innerHTML = text;
-        tooltip.style.left = x + 10 + "px";
-        tooltip.style.top = y + 10 + "px";
-        tooltip.style.display = "block";
-    }
-
-    function hideTooltip() {
-        let tooltip = document.getElementById("tooltip");
-        if (tooltip) {
-            tooltip.style.display = "none";
-        }
-    }
-
-                    if (closedPercentage !== null && closedPercentage !== undefined) {
-                        console.log("closedPercentage",closedPercentage);
-        updateSpeedometer(closedPercentage);
-    }
-                </script>
-
-
-            </div>
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
-        </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-        </div>
-    </div>
-
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
+        function showTooltip(text, x, y) {
+            let tooltip = document.getElementById("tooltip");
+            if (!tooltip) {
+                tooltip = document.createElement("div");
+                tooltip.id = "tooltip";
+                tooltip.style.position = "absolute";
+                tooltip.style.background = "black";
+                tooltip.style.color = "white";
+                tooltip.style.padding = "5px 10px";
+                tooltip.style.borderRadius = "5px";
+                tooltip.style.fontSize = "12px";
+                tooltip.style.display = "none";
+                tooltip.style.zIndex = "1000";
+                document.body.appendChild(tooltip);
             }
-        });
-    });
-    </script>
+            tooltip.innerHTML = text;
+            tooltip.style.left = x + 10 + "px";
+            tooltip.style.top = y + 10 + "px";
+            tooltip.style.display = "block";
+        }
 
-</body>
-</html>
+        function hideTooltip() {
+            let tooltip = document.getElementById("tooltip");
+            if (tooltip) {
+                tooltip.style.display = "none";
+            }
+        }
+
+        if (closedPercentage !== null && closedPercentage !== undefined) {
+            console.log("closedPercentage", closedPercentage);
+            updateSpeedometer(closedPercentage);
+        }
+    </script>
+}

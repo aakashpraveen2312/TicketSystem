@@ -1,0 +1,361 @@
+﻿@model IEnumerable<PSS_CMS.Models.ServiceInvoicePayment>
+
+@{
+    ViewData["Title"] = "Payment List";
+    ViewBag.PageTitle = "Payment List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string searchPhrase = Request["searchPharse"] ?? "";
+
+    var filtered = Model?.Where(x =>
+        string.IsNullOrEmpty(searchPhrase) ||
+
+        (x.SINP_INVOICENUMBER != null &&
+         x.SINP_INVOICENUMBER.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+
+        ||
+
+        (x.SINP_MODEOFPAYMENT != null &&
+         x.SINP_MODEOFPAYMENT.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+
+        ||
+
+        (x.SINP_PAYMENTSTATUS != null &&
+         x.SINP_PAYMENTSTATUS.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+
+    ).ToList();
+
+    Func<string, string> paymentStatusCss = (status) =>
+    {
+        switch ((status ?? "").ToUpper())
+        {
+            case "FULLY PAID":
+                return "status-processed";
+
+            case "PARTIALLY PAID":
+                return "status-unlocked";
+
+            default:
+                return "status-pending";
+        }
+    };
+}
+
+@section Styles {
+
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+
+    <i class="bi bi-receipt-cutoff nav-icon"></i>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("Index","ServiceInvoice")">
+        Service Invoice
+    </a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <span>Payment List</span>
+
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+
+            <!-- Search -->
+            @using (Html.BeginForm("PaymentList", "SalesInvoiceProduct", FormMethod.Get, new { id = "searchForm" }))
+            {
+                <div class="search-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input type="text"
+                           id="searchPhrase"
+                           name="searchPhrase"
+                           placeholder="Search"
+                           autocomplete="off"
+                           value="@searchPhrase"
+                           onkeyup="autoSubmitSearch(this)" />
+
+                    @if (!string.IsNullOrEmpty(searchPhrase))
+                    {
+                        <a href="@Url.Action("PaymentList","SalesInvoiceProduct")"
+                           title="Clear">
+
+                            <i class="bi bi-x-circle text-muted"></i>
+
+                        </a>
+                    }
+
+                </div>
+            }
+
+            <!-- Add Payment -->
+            @{
+                var paidStatus = Session["Paidstatus"]?.ToString();
+            }
+
+            @if (string.IsNullOrEmpty(paidStatus) || paidStatus != "FULLY PAID")
+            {
+                <a href="@Url.Action("UpdatePayment","ServiceInvoice")"
+                   class="btn-add">
+
+                    <i class="bi bi-plus-circle"></i>
+
+                    Add Payment
+
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+    <!-- Table -->
+    <div class="grid-wrap table-responsive">
+
+        @if (filtered != null && filtered.Any())
+        {
+
+            <table class="table align-middle mb-0 tickets-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th class="text-center" style="width:60px;">
+                            S.No
+                        </th>
+
+                        <th>
+                            Invoice Number
+                        </th>
+
+                        <th>
+                            Date Of Payment
+                        </th>
+
+                     
+
+                        <th class="text-end">
+                            Total Amount (₹)
+                        </th>
+
+                        <th class="text-end">
+                            Paid Amount (₹)
+                        </th>
+
+                        <th class="text-end">
+                            Balance Amount (₹)
+                        </th>
+
+                        <th class="text-center" style="width:160px;">
+                            Payment Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var x in filtered)
+                    {
+
+                        var statusCss = paymentStatusCss(x.SINP_PAYMENTSTATUS);
+
+                        <tr>
+
+                            <!-- Serial -->
+                            <td class="text-center serial-text">
+
+                                @x.SerialNumber
+
+                            </td>
+
+                            <!-- Invoice -->
+                            <td>
+
+                                <span class="inv-code">
+
+                                    <i class="bi bi-hash"></i>
+
+                                    @x.SINP_INVOICENUMBER
+
+                                </span>
+
+                            </td>
+
+                            <!-- Date -->
+                            <td>
+
+                                @(string.IsNullOrEmpty(x.SINP_DATEOFPAYMENT)
+                                    ? "-"
+                                    : Convert.ToDateTime(x.SINP_DATEOFPAYMENT).ToString("dd MMM yyyy"))
+
+                            </td>
+
+                           
+
+                            <!-- Total -->
+                            <td class="amount-cell text-end">
+
+                                @(
+                                    x.SINP_TOTALAMOUNT == null
+                                    ? "0.00"
+                                    : Convert.ToDecimal(x.SINP_TOTALAMOUNT).ToString("N2")
+                                )
+
+                            </td>
+
+                            <!-- Paid -->
+                            <td class="amount-cell text-end">
+
+                                @(
+                                    x.SINP_PAIDAMOUNT == null
+                                    ? "0.00"
+                                    : Convert.ToDecimal(x.SINP_PAIDAMOUNT).ToString("N2")
+                                )
+
+                            </td>
+
+                            <!-- Balance -->
+                            <td class="net-amount-cell text-end">
+
+                                @(
+                                    x.SINP_BALANCEAMOUNT == null
+                                    ? "0.00"
+                                    : Convert.ToDecimal(x.SINP_BALANCEAMOUNT).ToString("N2")
+                                )
+
+                            </td>
+
+                            <!-- Status -->
+                            <td class="text-center">
+
+                                <span class="status-badge @statusCss">
+
+                                    @if ((x.SINP_PAYMENTSTATUS ?? "").ToUpper() == "FULLY PAID")
+                                    {
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    }
+                                    else if ((x.SINP_PAYMENTSTATUS ?? "").ToUpper() == "PARTIALLY PAID")
+                                    {
+                                        <i class="bi bi-exclamation-circle-fill"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-clock-history"></i>
+                                    }
+
+                                    @(System.Globalization.CultureInfo.CurrentCulture.TextInfo
+.ToTitleCase((x.SINP_PAYMENTSTATUS ?? "").ToLower()))
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+            <!-- Pagination -->
+            <div class="table-pagination">
+
+                <button id="prevBtn"
+                        class="page-btn">
+
+                    <i class="bi bi-chevron-left"></i>
+
+                    Previous
+
+                </button>
+
+                <span id="pageInfo"
+                      class="page-info">
+                </span>
+
+                <button id="nextBtn"
+                        class="page-btn">
+
+                    Next
+
+                    <i class="bi bi-chevron-right"></i>
+
+                </button>
+
+            </div>
+
+        }
+        else
+        {
+
+            <div class="text-center py-5">
+
+                <i class="bi bi-wallet2"
+                   style="font-size:42px;color:var(--text-muted)">
+                </i>
+
+                <p class="mt-2 text-muted fw-semibold">
+
+                    @(string.IsNullOrEmpty(searchPhrase)
+                        ? "No payments available"
+                        : "No matching payments found")
+
+                </p>
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
+
+<!-- Legend -->
+<div class="legend-bar">
+
+    <div class="legend-item">
+
+        <i class="bi bi-check-circle-fill"
+           style="color:#00b894;font-size:14px">
+        </i>
+
+        <span>Fully Paid</span>
+
+    </div>
+
+    <div class="legend-item">
+
+        <i class="bi bi-exclamation-circle-fill"
+           style="color:#e6a817;font-size:14px">
+        </i>
+
+        <span>Partially Paid</span>
+
+    </div>
+
+   
+
+</div>
+
+@section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="~/Scripts/UIPagination.js"></script>
+
+}

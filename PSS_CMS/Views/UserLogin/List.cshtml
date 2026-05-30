@@ -1,303 +1,262 @@
 ﻿@model IEnumerable<PSS_CMS.Models.User>
-@using GridMvc.Html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
-    @*Bootstrap Icons and Boxicons and Fontawesome link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <script src="~/Scripts/Script.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Colors.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
- 
-</head>
+@{ ViewData["Title"] = "Users List";
+                ViewBag.PageTitle = "Users List";
+                Layout = "~/Views/Shared/_Layout.cshtml"; }
 
-<body>
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
 
-    <div class="content" style=" overflow-x: hidden!important;">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
 
-                </a>
-            </div>
+    <i class="bi bi-people nav-icon"></i>
 
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-9">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "UserGroup")">USER CATEGORY</a></li>
-                    <li>USERS LIST</li>
-                </ul>
-            </div>
-            <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("List", "UserLogin", FormMethod.Get, new { id = "searchForm" }))
-                {
-                    <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
-                }
-                @if (Session["R_CODE"] != null &&
-     Session["R_CODE"].ToString().ToLower() != "sa" &&
-     Session["R_CODE"].ToString().ToLower() != "user")
-                {
-                    <!-- Add button with icon -->
-                    <a href="@Url.Action("Create", "UserLogin")" class=" ms-3" style="margin-left: 30px;">
-                        <img src="~/assets/img/icons8-add-32.png" class="addimg" alt="Add" width="20" height="20" title="Add User" />
-                    </a>
-                }
-            </div>
+    <i class="bi bi-chevron-right"></i>
 
-        </div>
+    <a href="@Url.Action("List", "UserGroup")">
+        User Category
+    </a>
 
-        <div class="table mt-3 ms-1 me-5" id="ticketTable1">
-            @if (Model != null)
+    <i class="bi bi-chevron-right"></i>
+
+    <span>Users List</span>
+
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+
+            <!-- Search -->
+            @using (Html.BeginForm("List", "UserLogin", FormMethod.Get, new { id = "searchForm" }))
             {
-                @Html.Grid(Model).Columns(columns =>
-           {
-               columns.Add(c => c.U_USERCODE).Titled("Code").SetWidth("100px");
-               columns.Add(c => c.U_USERNAME).Titled("Name").SetWidth("150px");
-               columns.Add(c => c.U_EMAILID).Titled("Email ID");
-               columns.Add(c => c.U_MOBILENO).Titled("Mobile Number");
-               columns.Add(c => c.U_RCODE)
-            .Titled("Role")
-            .SetWidth("100px")
-            .RenderValueAs(c =>
-                c.U_RCODE == "HelpDesk" ? "Help Desk" :
-                c.U_RCODE == "SA" ? "Super Admin" :
-                c.U_RCODE // show original text for others
-            );
-               columns.Add(c => c.U_SORTORDER).Titled("Sort").SetWidth("80px").Css("text-right");
+        <div class="search-box">
 
-               if (Session["R_CODE"] == null || Session["R_CODE"].ToString().ToLower() != "sa")
-               {
-                   columns.Add().Titled("Action").SetWidth("150px")
-                   .Encoded(false)
-                   .Sanitized(false)
-                   .RenderValueAs(o =>
-                   {
-                       var Editurl = Url.Action("Edit", "UserLogin", new { id = o.U_RECID, Username = o.U_USERNAME, EditName = o.U_RCODE });
-                       var Deleteurl = Url.Action("Delete", "UserLogin", new { id = o.U_RECID });
+            <i class="bi bi-search"></i>
 
+            <input type="text"
+                   id="searchPharse"
+                   name="searchPharse"
+                   placeholder="Search"
+                   autocomplete="off"
+                   value="@Request["searchPharse"]"
+                   onkeyup="autoSubmitSearch(this)" />
 
-                       var EditiconHtml = "<i class='bx bxs-pencil bx-sm'></i>";
-                       var DeleteiconHtml = "<i class='bx bxs-trash bx-sm red'></i>";
-
-
-                       var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
-                       var DeletelinkHtml = $"<a href='{Deleteurl}' data-toggle='tooltip' data-placement='top' title='Delete' onclick='return confirmDelete(this);'>{DeleteiconHtml}</a>";
-
-
-                       string InfolinkHtml = string.Empty;
-                       //string LocationlinkHtml = string.Empty;
-                       if (!string.IsNullOrEmpty(o.U_RCODE) && o.U_RCODE.Trim().ToLower() == "user")
-                       {
-                           var Infourl = Url.Action("List", "Useradminmapping", new { id = o.U_RECID, Name = o.U_USERNAME, Role = o.U_RCODE });
-                           var InfoiconHtml = "<i class='bx bx-info-circle bx-sm'></i>";
-                           InfolinkHtml = $"<a href='{Infourl}' data-toggle='tooltip' data-placement='top' title='User Heads Mapping'>{InfoiconHtml}</a>";
-
-                           //var Locationurl = Url.Action("#", "#", new { id = o.U_RECID, Name = o.U_USERNAME, Role = o.U_RCODE });
-                           //var LocationiconHtml = "<i class='bx bx-map bx-sm'></i>";
-                           //LocationlinkHtml = $"<a href='{Locationurl}' data-toggle='tooltip' data-placement='top' title='Location'>{LocationiconHtml}</a>";
-                       }
-
-                       string InfolinkHtml1 = string.Empty;
-                       if (!string.IsNullOrEmpty(o.U_RCODE) && o.U_RCODE.Trim().ToLower() != "sa")
-                       {
-                           var Infourl1 = Url.Action("ListProject", "Useradminmapping", new { id = o.U_RECID, Name = o.U_USERNAME, Productmapppingname = o.U_RCODE });
-                           var InfoiconHtml1 = "<i class='bx bxl-product-hunt bx-sm'></i>";
-                           InfolinkHtml1 = $"<a href='{Infourl1}' data-toggle='tooltip' data-placement='top' title='Product Mapping'>{InfoiconHtml1}</a>";
-                       }
-
-                       var extraSpaces = "&nbsp;&nbsp;&nbsp;";
-                       return MvcHtmlString.Create($"{EditlinkHtml}{extraSpaces}{DeletelinkHtml}{extraSpaces}{InfolinkHtml1}{extraSpaces}{InfolinkHtml}");
-                   });
-               }
-           }).WithPaging(10).Sortable(false)
-            }
-            else
+            @if (!string.IsNullOrEmpty(Request["searchPharse"]))
             {
-                <div class="alert alert-warning text-center">
-                    <b>No User's' are available</b>
-                </div>
+        <a href="@Url.Action("List","UserLogin")" title="Clear">
+            <i class="bi bi-x-circle text-muted"></i>
+        </a>}
 
+        </div>      }
 
-            }
-            <footer>
-                <div class="footer">
-                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
+            <!-- Add Button -->
+            @if (Session["R_CODE"] != null &&
+                 Session["R_CODE"].ToString().ToLower() != "sa" &&
+                 Session["R_CODE"].ToString().ToLower() != "user")
+            {
+        <a href="@Url.Action("Create", "UserLogin")" class="btn-add">
+            <i class="bi bi-plus-lg"></i>
+            Add User
+        </a>        }
 
-                        <div class="flex-item mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
-                            </div>&nbsp;- Create
-                        </div>
-
-                        <div class="flex-item mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
-                            </div>
-                            &nbsp;- Edit
-                        </div>
-
-                        <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i class='bx bxs-trash bx-sm red'> </i>
-                            </div>
-                            &nbsp;- Delete
-                        </div>
-
-                        <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i style="color:#337ab7" class='bx bxl-product-hunt bx-sm'> </i>
-                            </div>
-                            &nbsp;- Product Mapping
-                        </div>
-
-                        <div class="flex-item  mt-1">
-                            <div class="d-flex justify-content-center footerb">
-                                <i style="color:#337ab7" class='bx bx-info-circle bx-sm '> </i>
-                            </div>
-                            &nbsp;- UserAdmin Mapping
-                        </div>
-
-                    </div>
-                </div>
-            </footer>
-        </div>
-
-
-
-    </div>
- 
-
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
-        </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
         </div>
     </div>
-    <div id="preloader2"></div>
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
 
+    <!-- Table -->
+    <div class="grid-wrap table-responsive">
 
+        @if (Model != null && Model.Any())
+        {
+<table class="table align-middle mb-0 tickets-table">
 
+    <thead>
+        <tr>
+            <th style="width:70px;">S.No</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>Role</th>
+            <th class="text-center" style="width:80px;">Sort</th>
+            @if (Session["R_CODE"] != null &&
+                 Session["R_CODE"].ToString().ToLower() != "sa")
+            {
+<th class="text-center" style="width:130px;">Actions</th>}
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var o in Model)
+        {
+            var editUrl = Url.Action("Edit", "UserLogin", new
+            {
+                id = o.U_RECID,
+                Username = o.U_USERNAME,
+                EditName = o.U_RCODE
+            });
+
+            var deleteUrl = Url.Action("Delete", "UserLogin",
+                new { id = o.U_RECID });
+
+            var roleName =
+                o.U_RCODE == "HelpDesk" ? "Help Desk" :
+                o.U_RCODE == "SA" ? "Super Admin" :
+                o.U_RCODE;
+
+            var roleClass =
+                o.U_RCODE == "SA" ? "role-sa" :
+                o.U_RCODE == "Admin" ? "role-admin" :
+                o.U_RCODE == "HelpDesk" ? "role-helpdesk" :
+                o.U_RCODE == "User" ? "role-user" :
+                                           "role-default";
+
+<tr>
+
+    <td>@o.SerialNumber</td>
+    <td>@o.U_USERCODE</td>
+    <td>@o.U_USERNAME</td>
+    <td>@o.U_EMAILID</td>
+    <td>@o.U_MOBILENO</td>
+
+    <td>
+        <span class="role-badge @roleClass">
+            @roleName
+        </span>
+    </td>
+
+    <td class="text-center">@o.U_SORTORDER</td>
+
+    @if (Session["R_CODE"] != null &&
+         Session["R_CODE"].ToString().ToLower() != "sa")
+    {
+<td>
+    <div class="action-cell">
+
+        <!-- Edit -->
+        @if (Session["R_CODE"].ToString().ToLower() != "user")
+        {
+<a href="@editUrl"
+   class="act-btn act-edit"
+   title="Edit">
+    <i class="bx bxs-pencil"></i>
+</a> <!-- Delete -->
+                                                        <a href="@deleteUrl"
+                                                           class="act-btn act-delete no-loader"
+                                                           title="Delete"
+                                                           data-code="@o.U_USERCODE"
+                                                           data-name="@o.U_USERNAME"
+                                                           onclick="return confirmDelete(this);">
+                                                            <i class="bx bxs-trash"></i>
+                                                        </a>}
+
+        <!-- User Mapping -->
+        @if (!string.IsNullOrEmpty(o.U_RCODE) &&
+             o.U_RCODE.ToLower() == "user")
+        {
+<a href="@Url.Action("List", "Useradminmapping", new {
+                                                   id   = o.U_RECID,
+                                                   Name = o.U_USERNAME,
+                                                   Role = o.U_RCODE
+                                               })"
+   class="act-btn act-usermap"
+   title="User Mapping">
+    <i class="bx bx-info-circle"></i>
+</a>}
+
+        <!-- Product Mapping -->
+        @if (!string.IsNullOrEmpty(o.U_RCODE) &&
+             o.U_RCODE.ToLower() != "sa")
+        {
+<a href="@Url.Action("ListProject", "Useradminmapping", new {
+                                                   id                  = o.U_RECID,
+                                                   Name                = o.U_USERNAME,
+                                                   Productmapppingname = o.U_RCODE
+                                               })"
+   class="act-btn act-productmap"
+   title="Product Mapping">
+    <i class="bi bi-box-seam"></i>
+</a>}
+
+    </div>
+</td>}
+
+</tr>}
+
+    </tbody>
+
+</table> <!-- Pagination -->
+                                <div class="table-pagination">
+
+                                    <button id="prevBtn" class="page-btn">
+                                        <i class="bi bi-chevron-left"></i>
+                                        Previous
+                                    </button>
+
+                                    <span id="pageInfo" class="page-info"></span>
+
+                                    <button id="nextBtn" class="page-btn">
+                                        Next
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+
+                                </div> }
+                                            else
+                                            {
+                                <div class="text-center py-5">
+                                    <i class="bi bi-inbox"
+                                       style="font-size:40px;color:var(--text-muted)"></i>
+                                    <p class="mt-2 text-muted fw-semibold">
+                                        No Users Available
+                                    </p>
+                                </div>}
+
+    </div>
+
+</div>
+
+<!-- Legend -->
+@if (Session["R_CODE"] != null &&
+     Session["R_CODE"].ToString().ToLower() != "sa")
+{
+<div class="legend-bar">
+
+    @if (Session["R_CODE"].ToString().ToLower() != "user")
+    {
+<div class="legend-item">
+    <i class="bx bxs-pencil" style="color:#6c5ce7;font-size:16px"></i>
+    <span>Edit</span>
+</div>
+
+                    <div class="legend-item">
+                        <i class="bx bxs-trash" style="color:#e74c3c;font-size:16px"></i>
+                        <span>Delete</span>
+                    </div>}
+
+    @if (Session["R_CODE"].ToString().ToLower() == "user")
+    {
+<div class="legend-item">
+    <i class="bx bx-info-circle" style="color:#0984e3;font-size:16px"></i>
+    <span>User Mapping</span>
+</div>}
+
+    <div class="legend-item">
+        <i class="bi bi-box-seam" style="color:#2ecc71;font-size:16px"></i>
+        <span>Product Mapping</span>
+    </div>
+
+</div>}
+
+@section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
-            }
-        });
-    });
-    </script>
-    <script>
-    $(document).ready(function () {
-
-        // When a checkbox is checked or unchecked
-        $(document).on('change', 'input[type="checkbox"].select-item', function () {
-            Swal.fire({
-                title: 'Processing...',
-                html: 'Please wait while we update the data.',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading(); // Show loading spinner
-                }
-            });
-
-            updateSecondGrid();
-        });
-
-        function updateSecondGrid() {
-            let selectedIds = [];
-
-            // Loop through all checked checkboxes
-            $('input[name^="selectedItems"][type="checkbox"]:checked').each(function () {
-                let index = $(this).attr('name').match(/\d+/)[0];
-                let userId = $('input[name="selectedItems[' + index + '].L_USERID"]').val();
-
-                if (userId) {
-                    selectedIds.push(userId);
-                }
-            });
-
-            console.log("selectedIds", selectedIds);
-
-            // Send to controller via AJAX
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("CheckedValue", "UserLogin")',
-                data: JSON.stringify({ selectedItems: selectedIds }),
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                success: function (response) {
-                    Swal.close(); // Close the loading spinner
-
-                    Swal.fire({
-                        title: response.success ? 'Success!' : 'Error!',
-                        text: response.message,
-                        icon: response.success ? 'success' : 'error',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        if (response.success) {
-                            window.location.href = '@Url.Action("List", "UserLogin", new { id = Session["CompanyID"] })';
-                        }
-                    });
-                },
-                error: function () {
-                    Swal.close(); // Close the loading spinner
-
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Something went wrong while processing your request.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            });
-        }
-    });
-    </script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/Scripts/Fordelete.js"></script>
-
-</body>
-</html>
-
-
+    <script src="~/Scripts/UIPagination.js"></script>
+}

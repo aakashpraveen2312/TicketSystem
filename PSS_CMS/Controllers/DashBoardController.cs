@@ -379,48 +379,119 @@ namespace PSS_CMS.Controllers
             return View(dashboardDataPriority);
         }
 
-        public async Task<ActionResult> SuperAdminCountDashboard()
+        public async Task<ActionResult> SuperAdminCountDashboard(string filter = "week")
         {
-            string WEBURLGET = ConfigurationManager.AppSettings["DASHBOARDGETSUPERADMIN"];
-            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
-            string APIKey = Session["APIKEY"].ToString();
-            string strparams ="cmprecid=" + Session["CompanyID"];
-            string finalurl = WEBURLGET + "?" + strparams;
-            DashboardSA dashboardData = null;
+            ViewBag.PageTitle = "Dashboard";
+            ViewBag.PageSubtitle = "Overview of your ticket system";
+
+            DashboardSA dashboardData = new DashboardSA();
+
+            string WEBURLGET =
+                ConfigurationManager.AppSettings["DASHBOARDGETSUPERADMIN"];
+
+            string AuthKey =
+                ConfigurationManager.AppSettings["AuthKey"];
+
+            string APIKey =
+                Session["APIKEY"].ToString();
+
+            string strparams =
+                "cmprecid=" + Session["CompanyID"];
+
+            string finalurl =
+                WEBURLGET + "?" + strparams;
 
             try
             {
                 using (HttpClientHandler handler = new HttpClientHandler())
                 {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    handler.ServerCertificateCustomValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
 
                     using (HttpClient client = new HttpClient(handler))
                     {
                         client.DefaultRequestHeaders.Add("ApiKey", APIKey);
-                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        client.DefaultRequestHeaders.Add(
+                            "Authorization",
+                            AuthKey);
+
+                        client.DefaultRequestHeaders.Accept.Add(
+                            new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await client.GetAsync(finalurl);
 
                         if (response.IsSuccessStatusCode)
                         {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            dashboardData = JsonConvert.DeserializeObject<DashboardSA>(jsonString); 
-                        }
-                        else
-                        {
-                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                            var jsonString =
+                                await response.Content.ReadAsStringAsync();
+
+                            dashboardData =
+                                JsonConvert.DeserializeObject<DashboardSA>(jsonString);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception occurred: {ex.Message}");
+                Console.WriteLine(ex.Message);
             }
 
-        
+            // ================= RECENT TICKETS =================
+
+            string TicketURL =
+                ConfigurationManager.AppSettings["RECENTTICKETSSA"];
+
+            string ticketParams =
+                "filter=" + filter +
+                "&cmprecid=" + Session["CompanyID"];
+
+            string ticketFinalURL =
+                TicketURL + "?" + ticketParams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+
+                        client.DefaultRequestHeaders.Add(
+                            "Authorization",
+                            AuthKey);
+
+                        client.DefaultRequestHeaders.Accept.Add(
+                            new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(ticketFinalURL);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString =
+                                await response.Content.ReadAsStringAsync();
+
+                            var ticketResponse =
+                                JsonConvert.DeserializeObject<TicketResponse>(jsonString);
+
+                            ViewBag.RecentTickets =
+                                ticketResponse.tickets;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
             return View(dashboardData);
         }
+
+       
+
     }
 }

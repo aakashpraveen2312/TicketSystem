@@ -1,269 +1,313 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Prioritywise>
-@{
-    Layout = null;
-}
-@using Newtonsoft.Json;
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+@using Newtonsoft.Json
 
-    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
-    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
-    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/HelpDesk.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    @*Bootstrap Icons and Boxicons link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <!-- JustGage Library -->
-    <script src="https://cdn.jsdelivr.net/npm/justgage@1.3.0/justgage.min.js"></script>
-    <!-- Correct Raphael.js (Dependency for JustGage) -->
-    <script src="https://cdn.jsdelivr.net/npm/raphael@2.1.4/raphael-min.js"></script>
+@{ ViewData["Title"] = "Priority-wise Ticket Report";
+    ViewBag.PageTitle = "Priority-wise Ticket Report";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script src="~/Scripts/Script.js"></script>
-
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
     <style>
-        .card {
-            max-width: 100% !important;
-            height: 40vh;
-            overflow: visible;
+        /* ── Filter strip ───────────────────────────── */
+        .filter-card {
+            padding: 20px 20px 4px;
+            border-bottom: 1px solid var(--border-color);
+            background: #fafafa;
         }
 
-        h5.d-flex.flex-column.align-items-center.headingscolor {
-            background-color: #f5f5f5;
-            padding: 10px;
-            font-weight: bold;
+        .filter-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding-bottom: 20px;
         }
 
-        tspan {
-            font-weight: bold;
-            color: black !important;
-            font-size: 19px;
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 160px;
         }
 
-        h5.d-flex.justify-content-center.headingscolor {
-            background-color: #f5f5f5;
-            padding: 15px;
-            font-weight: bold;
+        .filter-label {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* ── Priority badges ────────────────────────── */
+        .pri-normal {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .pri-urgent {
+            background: #fff4db;
+            color: #c47a00;
+        }
+
+        .pri-critical {
+            background: #ffeaea;
+            color: #e74c3c;
+        }
+
+        .pri-emergency {
+            background: #EEEDFE;
+            color: #3C3489;
+        }
+
+        .pri-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ── Status badges ──────────────────────────── */
+        .st-submitted {
+            background: #eef6ff;
+            color: #1a73e8;
+        }
+
+        .st-resolved {
+            background: #E1F5EE;
+            color: #085041;
+        }
+
+        .st-closed {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .st-reopened {
+            background: #fff4db;
+            color: #c47a00;
+        }
+
+        .st-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ── Pagination ─────────────────────────────── */
+        .report-pagination {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border-color);
+            justify-content: flex-end;
         }
     </style>
-</head>
+}
 
-<body style="margin-left:0px !important">
-    <nav class="nav d-flex bg-white">
-        <div class="p-2 flex-grow-1">
-            <h3 style="margin-top:10px" class="heading ms-3">SERVICE MANAGEMENT</h3>
-        </div>
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-bar-chart-line nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Priority-wise Ticket Report</span>
+</div>
 
-        <div class="p-2" style="margin-right:10px">
-            <h4 class="heading">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4>
-        </div>
+<!-- Filter Card -->
+<div class="page-card" style="margin-bottom:20px;">
 
-        <div class="p-2 me-3 dropdown">
-            <a href="#" class="text-decoration-none" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class='bx bx-user-circle' style="font-size:24px !important; color:purple !important;"></i>
-            </a>
-
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="@Url.Action("HDDashboard", "HelpDesk")">Dashboard</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="@Url.Action("PrioritywiseReport", "HelpDesk")">Report</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="@Url.Action("HelpdeskChangePassword", "ChangePassword")">Change Password</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                        Logout    <i class='bx bx-log-out' style="font-size:24px !important;color:red !important;"></i>
-
-                    </a>
-                </li>
-
-            </ul>
-        </div>
-    </nav>
-    <div class="content" style=" overflow-x: hidden!important;">
-
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>PRIORITY - WISE TICKET REPORT</li>
-
-                </ul>
-            </div>
-        </div>
-
-        <div class="container mt-5 card shadow p-4 rounded-3">
-            <h3 class="mb-4 text-center">Priority - Wise Ticket Report</h3>
-
-            <!-- ✅ Form starts here -->
-            <form method="post" action="@Url.Action("PrioritywiseReport", "HelpDesk")">
-
-                <div class="row g-3">
-
-                    <!-- From Date -->
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">From Date</label>
-                        <input type="date" name="FromDate" id="fromDate" class="form-control">
-                    </div>
-
-                    <!-- To Date -->
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">To Date</label>
-                        <input type="date" name="ToDate" id="toDate" class="form-control">
-                    </div>
-
-                    <!-- Priority type Combo Box -->
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Select Priority Type</label>
-                        <select id="comboBox" name="Type" class="form-select" style="font-size:15px;">
-                            <option value="">-- Select Priority Type --</option>
-                            <option value="All">All</option>
-                            <option value="Normal">Normal</option>
-                            <option value="Urgent">Urgent</option>
-                            <option value="Critical">Critical</option>
-                            <option value="Emergency">Emergency</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="text-center mt-5">
-                    <button type="submit"
-                            name="ActionType"
-                            value="Filter"
-                            class="btn btn-warning px-4 me-3">
-                        Fillter
-                    </button>
-
-                    <button type="submit"
-                            name="ActionType"
-                            value="PDF"
-                            class="btn btn-danger px-4 me-3">
-                        PDF
-                    </button>
-
-                </div>
-
-            </form>
-            <!-- ✅ Form ends here -->
-        </div>
-
-
-
-        <!-- Report Table -->
-
-        <div class="card report-card mt-5 ms-3  mb-5">
-            <div class="card-body table-responsive">
-
-                <table class="table table-bordered table-hover">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>User Name</th>
-                            <th>Date</th>
-                            <th>Product Name</th>
-                            <th>Subject</th>
-                            <th>Priority</th>
-                            <th>Ticket Type</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@item.UserName</td>
-                                    <td>@item.DATES</td>
-                                    <td>@item.Product</td>
-                                    <td>@item.Subject</td>
-                                    <td>@item.Priority</td>   <!-- FIXED -->
-                                    <td>@item.TicketType</td>
-                                    <td>@item.Status</td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="7" class="text-muted text-center">
-                                    No records found
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-
-                </table>
-                <div class="d-flex justify-content-start mt-3">
-                    <button id="prevBtn" class="btn btn-primary me-2">Previous</button>
-                    <span id="pageInfo" class="mt-2"></span>
-                    <button id="nextBtn" class="btn btn-primary ms-2">Next</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-                <h4>Are you sure you want to log out?</h4>
-            </div>
-            <div class="offcanvas-footer d-flex justify-content-center">
-                <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-                <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-            </div>
-        </div>
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-funnel" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            Filter Report
+        </h6>
     </div>
+
+    <form method="post" action="@Url.Action("PrioritywiseReport","HelpDesk")" id="filterForm">
+        <div class="filter-card">
+            <div class="filter-row">
+
+                <!-- From Date -->
+                <div class="filter-group">
+                    <label class="filter-label">From Date</label>
+                    <input type="date" name="FromDate" id="fromDate"
+                           class="form-input-text" style="font-size:12.5px;padding:8px 10px;" />
+                </div>
+
+                <!-- To Date -->
+                <div class="filter-group">
+                    <label class="filter-label">To Date</label>
+                    <input type="date" name="ToDate" id="toDate"
+                           class="form-input-text" style="font-size:12.5px;padding:8px 10px;" />
+                </div>
+
+                <!-- Priority Type -->
+                <div class="filter-group" style="min-width:200px;">
+                    <label class="filter-label">Priority Type</label>
+                    <select id="comboBox" name="Type" class="form-select-input"
+                            style="font-size:12.5px;padding:8px 10px;">
+                        <option value="">-- Select Priority Type --</option>
+                        <option value="All">All</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Urgent">Urgent</option>
+                        <option value="Critical">Critical</option>
+                        <option value="Emergency">Emergency</option>
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="filter-group" style="flex-direction:row;gap:8px;align-items:flex-end;min-width:auto;flex:0;">
+                    <button type="submit" name="ActionType" value="Filter" class="btn-save">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                    <button type="submit" name="ActionType" value="PDF"
+                            class="btn-save" style="background:#e74c3c;">
+                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<!-- Results Card -->
+<div class="page-card">
+
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-table" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            Report Results
+        </h6>
+        @if (Model != null && Model.Any())
+        {
+<span class="custom-badge badge-active">@Model.Count() Records</span>}
+    </div>
+
+    <div class="grid-wrap" id="reportTable">
+        @if (Model != null && Model.Any())
+        {
+<table>
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Date</th>
+            <th>Product Name</th>
+            <th>Subject</th>
+            <th>Priority</th>
+            <th>Ticket Type</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+ var pri = (item.Priority ?? "").Trim().ToLower();
+                        var priClass = pri == "urgent" ? "pri-urgent"
+                                     : pri == "critical" ? "pri-critical"
+                                     : pri == "emergency" ? "pri-emergency"
+                                     : "pri-normal";
+
+                        var st = (item.Status ?? "").Trim().ToUpper();
+                        var stClass = st == "SUBMITTED" || st == "S" ? "st-submitted"
+                                    : st == "RESOLVED" || st == "R" ? "st-resolved"
+                                    : st == "CLOSED" || st == "C" ? "st-closed"
+                                    : st == "RE-OPENED" || st == "O" ? "st-reopened"
+                                    : "st-closed"; 
+                    <tr>
+                        <td>@item.UserName</td>
+                        <td style="font-size:12px;color:var(--text-muted);">@item.DATES</td>
+                        <td><span class="product-serial">@item.Product</span></td>
+                        <td>@item.Subject</td>
+                        <td><span class="pri-badge @priClass">@item.Priority</span></td>
+                        <td><span class="service-badge">@item.TicketType</span></td>
+                        <td><span class="st-badge @stClass">@item.Status</span></td>
+                    </tr>}
+    </tbody>
+</table> }
+            else
+            {
+<div style="padding:48px 20px;text-align:center;color:var(--text-muted);">
+    <i class="bi bi-bar-chart-line" style="font-size:36px;display:block;margin-bottom:10px;opacity:.4;"></i>
+    <span style="font-size:14px;font-weight:600;">No records found</span>
+    <p style="font-size:12px;margin-top:6px;">Apply a filter above to view priority-wise ticket data.</p>
+</div>}
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+<div class="report-pagination">
+    <button id="prevBtn" class="page-btn" disabled>
+        <i class="bi bi-chevron-left"></i> Previous
+    </button>
+    <span class="page-info" id="pageInfo"></span>
+    <button id="nextBtn" class="page-btn">
+        Next <i class="bi bi-chevron-right"></i>
+    </button>
+</div>}
+
+</div><!-- /page-card -->
+<!-- Legend bar -->
+<div class="legend-bar">
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:10px;background:#f5f5f5;border:1px solid #ddd;flex-shrink:0;"></span>
+        <span>Normal</span>
+    </div>
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:10px;background:#fff4db;flex-shrink:0;"></span>
+        <span>Urgent</span>
+    </div>
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:10px;background:#ffeaea;flex-shrink:0;"></span>
+        <span>Critical</span>
+    </div>
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:10px;background:#EEEDFE;flex-shrink:0;"></span>
+        <span>Emergency</span>
+    </div>
+</div>
+
+@section Scripts {
     <script src="~/Scripts/Logoutjs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <!-- Client-side pagination -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            var table = document.querySelector("#reportTable table");
+            if (!table) return;
 
-            const rowsPerPage = 10;
-            const rows = document.querySelectorAll("tbody tr");
-            const totalRows = rows.length;
-            const totalPages = Math.ceil(totalRows / rowsPerPage);
-
-            let currentPage = 1;
+            var rowsPerPage = 10;
+            var rows = table.querySelectorAll("tbody tr");
+            var totalRows = rows.length;
+            var totalPages = Math.ceil(totalRows / rowsPerPage);
+            var currentPage = 1;
 
             function showPage(page) {
                 currentPage = page;
-
-                rows.forEach((row, index) => {
+                rows.forEach(function (row, i) {
                     row.style.display =
-                        (index >= (page - 1) * rowsPerPage &&
-                            index < page * rowsPerPage)
-                            ? ""
-                            : "none";
+                        (i >= (page - 1) * rowsPerPage && i < page * rowsPerPage) ? "" : "none";
                 });
-
                 document.getElementById("pageInfo").innerText =
                     "Page " + currentPage + " of " + totalPages;
+                document.getElementById("prevBtn").disabled = currentPage === 1;
+                document.getElementById("nextBtn").disabled = currentPage === totalPages;
             }
 
             document.getElementById("prevBtn").addEventListener("click", function () {
                 if (currentPage > 1) showPage(currentPage - 1);
             });
-
             document.getElementById("nextBtn").addEventListener("click", function () {
                 if (currentPage < totalPages) showPage(currentPage + 1);
             });
@@ -271,29 +315,22 @@
             showPage(1);
         });
     </script>
+
+    <!-- TempData error -->
     <script>
-$(document).ready(function () {
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <text>
-            Swal.fire({
-                icon: 'info',
-                title: 'Message',
-                text: '@TempData["ErrorMessage"]',
-                confirmButtonColor: '#034CAE',
-                confirmButtonText: 'OK'
-            });
-        </text>
-    }
-
-});
+        $(document).ready(function () {
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Message',
+                    text: '@TempData["ErrorMessage"]',
+                    confirmButtonColor: '#034CAE',
+                    confirmButtonText: 'OK'
+                });
+                </text>
+            }
+        });
     </script>
-
-
-
-
-</body>
-</html>
-
-
+}

@@ -1,393 +1,301 @@
 ﻿@model PSS_CMS.Models.HSNMaster
 
-@using GridMvc.Html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+@{ ViewData["Title"] = "Create HSN Master";
+                ViewBag.PageTitle = "Create HSN Master";
+                Layout = "~/Views/Shared/_Layout.cshtml"; }
 
-    @*Bootstrap Icons and Boxicons*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <script src="~/Scripts/Script.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Colors.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <style>
-        .swal-btn-continue {
-            background-color: #6ed3d0 !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
-        }
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
 
-        .swal-btn-back {
-            background-color: #f0a72d !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
-        }
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-tag nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    @if (Session["HSNC_CATEGORYNAME"] != null)
+    {
+<a href="@Url.Action("List","HSNCategory")">HSN Category (@Session["HSNC_CATEGORYNAME"].ToString())</a>
+                <i class="bi bi-chevron-right"></i>}
+    <a href="@Url.Action("List","HSNMaster")">HSN Master</a>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("List","HSNMaster")">List</a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Create</span>
+</div>
 
-        select#TUG_NAME {
-            display: block;
-            width: 100%;
-            height: 34px;
-            padding: 6px 12px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #555;
-            background-image: none;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-        }
-        .textboxstylecreateandedit2 {
-            display: block;
-            width: 230%;
-            height: 40px;
-            padding: 4px 12px;
-            font-size: 16px;
-            line-height: 1.5;
-            color: #100c0c;
-            background-color: #dceef5;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: auto;
-            margin-left: 10px;
-        }
-    </style>
-</head>
+<!-- Main Card -->
+@using (Html.BeginForm("Create", "HSNMaster", FormMethod.Post,
+    new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
+{
+<div class="page-card">
 
-<body>
+    <!-- Header -->
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span class="title-icon">
+                <i class="bi bi-receipt"></i>
+            </span>
+            Create HSN Master
+        </h6>
+    </div>
 
-    <div class="content" style=" overflow-x: hidden!important;">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
-                </a>
+    <!-- Form body -->
+    <div class="form-body">
+
+        <p class="form-section-title">HSN Information</p>
+
+        <div class="form-grid">
+
+            <!-- Code -->
+            <div class="form-group">
+                <label class="form-label" for="HM_CODE">
+                    @Html.DisplayNameFor(m => m.HM_CODE)
+                    <span class="req">*</span>
+                </label>
+                @Html.TextBoxFor(m => m.HM_CODE, new
+                {
+                    @class = "form-input-text",
+                    tabindex = "1",
+                    autocomplete = "off",
+                    placeholder = "Enter HSN code"
+                })
+                @Html.ValidationMessageFor(m => m.HM_CODE, "", new { @class = "text-danger", style = "font-size:11px" })
             </div>
 
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "HSNCategory")">HSN CATEGORY(@Session["HSNC_CATEGORYNAME"])</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "HSNMaster")">HSN MASTER</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("List", "HSNMaster")">LIST</a></li>
-                    <li>CREATE</li>
-                </ul>
+            <!-- Description -->
+            <div class="form-group">
+                <label class="form-label" for="HM_DESCRIPTION">
+                    @Html.DisplayNameFor(m => m.HM_DESCRIPTION)
+                    <span class="req">*</span>
+                </label>
+                @Html.TextBoxFor(m => m.HM_DESCRIPTION, new
+                {
+                    @class = "form-input-text",
+                    tabindex = "2",
+                    autocomplete = "off",
+                    placeholder = "Enter description"
+                })
+                @Html.ValidationMessageFor(m => m.HM_DESCRIPTION, "", new { @class = "text-danger", style = "font-size:11px" })
             </div>
+
         </div>
-        @using (Html.BeginForm("Create", "HSNMaster", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data" }))
-        {
 
-            <div class="create ms-4 me-2 mt-3">
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.HM_CODE, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.HM_CODE, new { htmlAttributes = new { @class = "form-control textboxcolors", tabindex = "1", autocomplete = "off" } })
+        <div class="form-divider"></div>
+       
+        <div class="form-grid">
 
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.HM_DESCRIPTION, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.HM_DESCRIPTION, new { htmlAttributes = new { @class = "form-control textboxcolors", tabindex = "2", autocomplete = "off" } })
-
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.HM_CGST, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.HM_CGST, new
-                                              {
-                                                  htmlAttributes = new
-                                                  {
-                                                      @class = "form-control textboxcolors text-right",
-                                                      id = "HM_CGST",
-                                                      tabindex = "3",
-                                                      type = "text",
-                                                      placeholder = "0.00",
-                                                      oninput = "calculateGST()",
-                                                  min = "0"
-                                                  }
-                                              })
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.HM_SGST, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.HM_SGST, new
-                                              {
-                                                  htmlAttributes = new
-                                                  {
-                                                      @class = "form-control textboxcolors text-right",
-                                                      id = "HM_SGST",
-                                                      tabindex = "4",
-                                                      type = "text",
-                                                      placeholder = "0.00",
-                                                      oninput = "calculateGST()",
-                                                  min = "0"
-                                                  }
-                                              })
-                    </div>
-                </div>
-
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.HM_IGST, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.HM_IGST, new
-                                              {
-                                                  htmlAttributes = new
-                                                  {
-                                                      @class = "form-control textboxcolors text-right",
-                                                      id = "HM_IGST",
-                                                      tabindex = "5",
-                                                      type = "text",
-                                                      placeholder = "0.00",
-                                                  min = "0"
-                                                  }
-                                              })
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.HM_SORTORDER, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.EditorFor(model => model.HM_SORTORDER, new
-                   {
-                       htmlAttributes = new
-                       {
-                           @class = "form-control textboxcolors text-right",
-                           id = "HM_SORTORDER",
-                           tabindex = "6",
-                           type = "text",
-                                                    
-                           placeholder = "0",
-                                                  min = "0"
-                       }
-                   })
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-2 col-md-2 col-sm-12">
-                        @Html.LabelFor(model => model.IsDisabled, new { @class = "labels" })
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        @Html.CheckBoxFor(model => model.IsDisabled, new { @class = "form-check-input", tabindex = "7" })
-                    </div>
-                </div>
-                <div class="row ">
-                    <div class="col-lg-2">
-
-                    </div>
-                    <div class="col-lg-3 d-flex justify-content-end">
-                        <input type="submit"
-                               value="Save"
-                               class="submitbuttons me-3"
-                               id="savebutton" />
-                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("List", "HSNMaster", new { })'" />
-                    </div>
-                </div>
+            <!-- CGST -->
+            <div class="form-group">
+                <label class="form-label" for="HM_CGST">
+                    @Html.DisplayNameFor(m => m.HM_CGST)
+                </label>
+                @Html.TextBoxFor(m => m.HM_CGST, new
+                {
+                    @class = "form-input-num",
+                    id = "HM_CGST",
+                    tabindex = "3",
+                    type = "number",
+                    placeholder = "0.00",
+                    oninput = "calculateGST()",
+                    min = "0",
+                    autocomplete = "off"
+                })
             </div>
 
-        }
-
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck1"></span>
-                            - Text Fields
-                        </div>
-                    </div>
-
-                    <div class="flex-item">
-                        <div class="d-flex justify-content-center footerb">
-                            <span class="minicheck minicheck2"></span>
-                            - Number Fields
-                        </div>
-                    </div>
-
-                </div>
+            <!-- SGST -->
+            <div class="form-group">
+                <label class="form-label" for="HM_SGST">
+                    @Html.DisplayNameFor(m => m.HM_SGST)
+                </label>
+                @Html.TextBoxFor(m => m.HM_SGST, new
+           {
+               @class = "form-input-num",
+               id = "HM_SGST",
+               tabindex = "4",
+               type = "number",
+               placeholder = "0.00",
+               oninput = "calculateGST()",
+               min = "0",
+               autocomplete = "off"
+           })
             </div>
-        </footer>
+
+            <!-- IGST -->
+            <div class="form-group">
+                <label class="form-label" for="HM_IGST">
+                    @Html.DisplayNameFor(m => m.HM_IGST)
+                </label>
+                @Html.TextBoxFor(m => m.HM_IGST, new
+           {
+               @class = "form-input-num",
+               id = "HM_IGST",
+               tabindex = "5",
+               type = "number",
+               placeholder = "0.00",
+               min = "0",
+               autocomplete = "off"
+           })
+            </div>
+            <!-- Sort Order -->
+            <div class="form-group">
+                <label class="form-label" for="HM_SORTORDER">
+                    @Html.DisplayNameFor(m => m.HM_SORTORDER)
+                </label>
+                @Html.TextBoxFor(m => m.HM_SORTORDER, new
+           {
+               @class = "form-input-num",
+               id = "HM_SORTORDER",
+               tabindex = "6",
+               type = "number",
+               placeholder = "0",
+               min = "0",
+               autocomplete = "off"
+           })
+            </div>
+
+        </div>
+
+        <div class="form-divider"></div>
+        <p class="form-section-title">SETTINGS</p>
+
+        <div class="form-grid">
+            <!-- Disable checkbox -->
+                <label class="check-row" for="IsDisabled">
+                    @Html.CheckBoxFor(m => m.IsDisabled,
+                             new { @class = "form-check-input", id = "IsDisabled", tabindex = "7" })
+                    <div class="check-row-label">
+                        <span>@Html.DisplayNameFor(m => m.IsDisabled)</span>
+                        <small>Hide this entry from active listings</small>
+                    </div>
+                </label>
+        </div>
 
     </div>
 
+    <!-- Legend bar — matches list view style -->
+    <div class="legend-bar">
 
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+            <span>Text Field</span>
         </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
+
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
+            <span>Number Field</span>
         </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-        </div>
+
     </div>
-    <div id="preloader2"></div>
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
 
+    <!-- Actions -->
+    <div class="form-actions">
+        <a href="@Url.Action("List","HSNMaster")"
+           class="btn-cancel">
+            <i class="bi bi-x-lg"></i> Cancel
+        </a>
+        <button type="submit"
+                class="btn-save"
+                id="savebutton">
+            <i class="bi bi-floppy"></i> Save
+        </button>
+    </div>
 
+</div>}
+
+@section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @*Logout Pronptbox script*@
+
     <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
+
+        /* ── GST total calculator ─────────────────── */
+        function calculateGST() {
+            var cgst = parseFloat(document.getElementById("HM_CGST").value) || 0;
+            var sgst = parseFloat(document.getElementById("HM_SGST").value) || 0;
+            document.getElementById("gstTotal").textContent = (cgst + sgst).toFixed(2) + " %";
+        }
+
+        $(document).ready(function () {
+
+            /* ── AJAX submit — processing spinner shows FIRST ── */
+            $("#createform").submit(function (e) {
+                e.preventDefault();
+
+                var btn      = $("#savebutton");
+                var formData = new FormData(this);
+
+                btn.prop("disabled", true);
+
+                // ① Show Processing spinner first, fire AJAX inside didOpen
+                Swal.fire({
+                    title: "Processing…",
+                    html: "Please wait while we save your changes.",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: function () {
+                        Swal.showLoading();
+
+                        $.ajax({
+                            url: '@Url.Action("Create","HSNMaster")',
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                if (response.success) {
+                                    setTimeout(function () {
+                                        Swal.fire({
+                                            title: "Success!",
+                                            text: response.message,
+                                            icon: "success",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Continue",
+                                            cancelButtonText: "Back to List",
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false,
+                                            customClass: {
+                                                confirmButton: "swal-btn-continue",
+                                                cancelButton:  "swal-btn-back"
+                                            }
+                                        }).then(function (result) {
+                                            if (result.isConfirmed) {
+                                                location.reload();
+                                            } else {
+                                                window.location.href = '@Url.Action("List","HSNMaster")';
+                                            }
+                                        });
+                                    }, 800);
+                                } else {
+                                    Swal.fire({
+                                        title: "Message",
+                                        text: response.message,
+                                        icon: "info",
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    resetButton();
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: "An unexpected error occurred.",
+                                    icon: "error",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                resetButton();
+                            }
+                        });
+                    }
+                });
+            });
+
+            function resetButton() {
+                $("#savebutton").prop("disabled", false);
             }
         });
-    });
     </script>
-
-    @*Toastr for created succesfully*@
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    $(document).ready(function () {
-        $("#createform").submit(function (event) {
-            event.preventDefault();
-
-            var submitBtn = $("#savebutton");
-            submitBtn.prop("disabled", true);
-
-            var formData = new FormData(this);
-
-
-
-            // Disable page interaction
-            $("body").css("pointer-events", "none");
-
-            $.ajax({
-                url: '@Url.Action("Create", "HSNMaster")',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response.success) {
-                        // 🔹 First show processing bar
-                        Swal.fire({
-                            title: "Processing...",
-                            html: "Please wait while we save your changes.",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
-                        // ⏳ After small delay, show success popup
-                        setTimeout(function () {
-                        Swal.fire({
-                            title: "Success!",
-                            text: response.message,
-                            icon: "success",
-                            showCancelButton: true,
-                            confirmButtonText: "Continue",
-                            cancelButtonText: "Back to List",
-                            allowOutsideClick: false, // Prevent closing by clicking outside
-                            allowEscapeKey: false, // Prevent closing using Esc key
-                            customClass: {
-                                confirmButton: "swal-btn-continue",
-                                cancelButton: "swal-btn-back"
-                            },
-                            didOpen: () => {
-                                // Allow interaction inside the alert only
-                                $(".swal2-container").css("pointer-events", "auto");
-                            }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            } else {
-                                window.location.href = '@Url.Action("List", "HSNMaster")';
-                            }
-                        });
-                        }, 1000); // 1 second delay for "Processing"
-                    } else {
-                        Swal.fire({
-                            title: "Message",
-                            text: response.message,
-                            icon: "info",
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                        resetButton();
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "An unexpected error occurred.",
-                        icon: "error",
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                    });
-                    resetButton();
-                }
-            });
-        });
-
-        function resetButton() {
-            $("#savebutton").prop("disabled", false).text("Submit");
-            $("body").css("pointer-events", "auto"); // Re-enable page interaction
-        }
-    });
-    </script>
-</body>
-</html>
-
-
+}

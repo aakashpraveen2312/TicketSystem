@@ -20,45 +20,10 @@ namespace PSS_CMS.Controllers
     public class UserLoginController : Controller
     {
 
-
-        private void PopulateLocationTypeList(int? selectedId = null)
-        {
-            List<LocationType> locationTypes = new List<LocationType>();
-            string connectionString = ConfigurationManager.ConnectionStrings["Mystring"].ConnectionString;
-
-            using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {
-                string cmdText = "SELECT LT_RECID, LT_NAME FROM LOCATIONTYPE WHERE LT_RECID = 1";
-
-                using (SqlCommand cmd = new SqlCommand(cmdText, sqlcon))
-                {
-
-                    using (SqlDataAdapter sqlda = new SqlDataAdapter(cmd))
-                    {
-                        DataTable dt = new DataTable();
-                        sqlda.Fill(dt);
-
-                        foreach (DataRow row in dt.Rows)
-                        {
-                            locationTypes.Add(new LocationType
-                            {
-                                LT_RECID = Convert.ToInt32(row["LT_RECID"]),
-                                LT_NAME = row["LT_NAME"].ToString()
-                            });
-                        }
-                    }
-                }
-            }
-
-            ViewBag.LocationTypeList = new SelectList(locationTypes, "LT_RECID", "LT_NAME", selectedId);
-        }
-
         // GET: UserLogin
         public async Task<ActionResult> Create()
         {
-            await ComboLocationSelection();//we cannot call the combo gteby id here we need to pass the model class here its showing error cauz it already have post method
-            PopulateLocationTypeList(); 
-           
+            await LocationType();
             return View();
         }
 
@@ -83,7 +48,7 @@ namespace PSS_CMS.Controllers
                         u_USERCODE = objUser.U_USERCODE ?? "",
                         u_MOBILENO = objUser.U_MOBILENO ?? "",
                         u_DOMAIN = Session["DOMAIN"],
-                        u_LOCATION = objUser.SelectedRole,
+                        u_LOCATION = '0',
                         u_DISABLE = objUser.U_UserDisable ? "Y" : "N",
                         u_UserManager = objUser.U_UserManager ? "Y" : "N"
                     };
@@ -144,12 +109,6 @@ namespace PSS_CMS.Controllers
                 }
                 return View(objUser);
             
-            
-            return Json(new
-            {
-                success = false,
-                message = "User Code, Name,Email ID, and Mobile Number are mandatory."
-            });
         }
 
         public async Task<ActionResult> List(string searchPharse, string R_CODE, string Role)
@@ -164,6 +123,13 @@ namespace PSS_CMS.Controllers
             }
 
             User objuser = new User();
+
+            int SerialNo = objuser.SerialNumber;
+
+            if (SerialNo == 0)
+            {
+                SerialNo = 1; // Initialize to 1 if it's 0
+            }
 
             string WEBURLGET = ConfigurationManager.AppSettings["GETUSERSBASEDONROLE"];
             string Authkey = ConfigurationManager.AppSettings["Authkey"];
@@ -202,7 +168,14 @@ namespace PSS_CMS.Controllers
                             //GlobalVariables.ResponseStructure = jsonString;
                             var content = JsonConvert.DeserializeObject<ApiResponseUserObjects>(jsonString);
                             userList = content.Data;
-
+                            if (userList.Count > 0)
+                            {
+                                // Assign serial numbers
+                                for (int i = 0; i < userList.Count; i++)
+                                {
+                                    userList[i].SerialNumber = i + 1;
+                                }
+                            }
 
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
@@ -270,7 +243,6 @@ namespace PSS_CMS.Controllers
                             var content = JsonConvert.DeserializeObject<ApiResponseUserObject>(jsonString);
 
                             user = content.Data;
-                            PopulateLocationTypeList(user?.U_LOCATIONTYPERECID);
                         }
                         else
                         {
@@ -283,7 +255,8 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
-            await ComboLocationSelectionGetbyID(user?.U_RCODE);
+
+            ViewBag.LocationTypeList = await LocationTypeEdit(user.U_LOCATIONTYPERECID ?? 0);
             return View(user);
         }
 
@@ -309,7 +282,8 @@ namespace PSS_CMS.Controllers
                     ""u_CRECID"":""{Session["CompanyID"]}"",
                     ""u_USERCODE"":""{UserEdit.U_USERCODE }"",
                     ""u_MOBILENO"":""{ UserEdit.U_MOBILENO}"",
-                    ""u_LOCATION"":""{ UserEdit.U_LOCATION}"",
+                    ""u_LOCATION"":""{0}"",
+                    ""u_LOCATIONTYPERECID"":""{UserEdit.U_LOCATIONTYPERECID}"",
                     ""u_UserManager"":""{ (UserEdit.U_UserManager ? "Y" : "N")}"",
                     ""u_DOMAIN"":""{Session["DOMAIN"]}""
                      }}";
@@ -454,92 +428,106 @@ namespace PSS_CMS.Controllers
 
         }
 
-        public async Task<ActionResult> ComboLocationSelection()
+
+        public async Task<ActionResult> LocationType()
 
         {
-            List<SelectListItem> Location = new List<SelectListItem>();
+            List<SelectListItem> LocationType = new List<SelectListItem>();
 
-            string connectionString = ConfigurationManager.ConnectionStrings["Mystring"].ConnectionString;
-            string cmpRecId = Session["CompanyID"].ToString();
-
-            using (SqlConnection sqlcon = new SqlConnection(connectionString))
+            string webUrlGet = ConfigurationManager.AppSettings["LOCATIONTYPECOMBO"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+            try
             {
-                sqlcon.Open();
-                string cmd1 = "SELECT SP_CRECID, SP_RECID, SP_Code, SP_Name, SP_Sortorder FROM IM_StoragePoint WHERE SP_CRECID = @cmpRecId";
-
-                SqlCommand sqlCdm = new SqlCommand(cmd1, sqlcon);
-                sqlCdm.Parameters.AddWithValue("@cmpRecId", cmpRecId);
-
-                SqlDataReader sqlread = sqlCdm.ExecuteReader();
-                while (sqlread.Read())
+                using (HttpClientHandler handler = new HttpClientHandler())
                 {
-                    Location.Add(new SelectListItem
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
                     {
-                        Value = sqlread["SP_RECID"].ToString(),
-                        Text = sqlread["SP_Name"].ToString()
-                    });
-                }
-                sqlcon.Close();
-            }
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            ViewBag.Location = Location;
-            return View();
-        }
-
-        public async Task<ActionResult> ComboLocationSelectionGetbyID(string selectedRoleCode)
-        {
-            List<SelectListItem> Location = new List<SelectListItem>();
-
-            string connectionString = ConfigurationManager.ConnectionStrings["Mystring"].ConnectionString;
-            string cmpRecId = Session["CompanyID"].ToString();
-
-            using (SqlConnection sqlcon = new SqlConnection(connectionString))
-            {
-                sqlcon.Open();
-                string query = "SELECT SP_CRECID, SP_RECID, SP_Code, SP_Name, SP_Sortorder FROM IM_StoragePoint WHERE SP_CRECID = @cmpRecId";
-
-                using (SqlCommand cmd = new SqlCommand(query, sqlcon))
-                {
-                    cmd.Parameters.AddWithValue("@cmpRecId", cmpRecId);
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
                         {
-                            Location.Add(new SelectListItem
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
+
+                            if (rootObjects?.Data != null)
                             {
-                                Value = reader["SP_RECID"].ToString(),
-                                Text = reader["SP_Name"].ToString(),
-                                Selected = (reader["SP_RECID"].ToString() == selectedRoleCode)
-                            });
+                                LocationType = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.LT_RECID.ToString(), // or the appropriate value field
+                                    Text = t.LT_NAME,
+                                }).ToList();
+                            }
                         }
                     }
                 }
             }
-
-            ViewBag.Location = Location;
-            return View(); 
-        }
-
-        private async Task ComboLocationSelectionGetbyID(int? selectedValue = null)
-        {
-            List<LocationType> locationTypes = new List<LocationType>();
-
-            // Call your API to get the location type list (or fetch from DB)
-            // Example:
-            using (var client = new HttpClient())
+            catch (Exception ex)
             {
-                var response = await client.GetAsync("PopulateLocationTypeList");
-                if (response.IsSuccessStatusCode)
-                {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    locationTypes = JsonConvert.DeserializeObject<List<LocationType>>(jsonString);
-                }
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
             }
 
-            ViewBag.LocationTypeList = new SelectList(locationTypes, "LT_RECID", "LT_NAME", selectedValue);
+            // Assuming you are passing ticketTypes to the view
+            ViewBag.LocationTypeList = LocationType;
+
+            return View();
         }
-    
-    
+
+        public async Task<List<SelectListItem>> LocationTypeEdit(int selectedLocationid)
+        {
+            List<SelectListItem> LocationType = new List<SelectListItem>();
+
+            string webUrlGet = ConfigurationManager.AppSettings["LOCATIONTYPECOMBO"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
+
+                            if (rootObjects?.Data != null)
+                            {
+                                LocationType = rootObjects.Data.Select(t => new SelectListItem
+                                {
+                                    Value = t.LT_RECID.ToString(),
+                                    Text = t.LT_NAME,
+                                    Selected = (t.LT_RECID == selectedLocationid)
+                                }).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+
+            return LocationType;
+        }
+
     }
 }

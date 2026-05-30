@@ -14,6 +14,7 @@ using System.Net;
 
 namespace PSS_CMS.Controllers
 {
+    [ApiKeyAuthorize]
     public class ServiceMaterialConsumptionController : Controller
     {
         // GET: ServiceMaterialConsumption

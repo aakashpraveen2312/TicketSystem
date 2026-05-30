@@ -1,94 +1,180 @@
-﻿
-@model  PSS_CMS.Models.Admintickets
+﻿@model PSS_CMS.Models.Admintickets
 
-@using (Html.BeginForm("AdminResponseTicket", "RecentTickets", FormMethod.Post, new { id = "AdminResponseForm", enctype = "multipart/form-data" }))
+@using (Html.BeginForm("AdminResponseTicket", "RecentTickets", FormMethod.Post,
+    new { id = "AdminResponseForm", enctype = "multipart/form-data", @class = "no-preloader" }))
 {
-    @Html.AntiForgeryToken()
+@Html.AntiForgeryToken()
 
-    <div class="row" style="margin-left:5px">      
-        <div class="col-md-12">
-            @Html.LabelFor(model => model.RESPONSE_COMMENTS, "Admin Comments", new { @class = "pb-2" })
-            @Html.TextAreaFor(model => model.RESPONSE_COMMENTS, new { @class = "form-control custom-textarea", placeholder = "Please enter your comments here....", rows = "10", cols = "70" })
-        </div>       
-        <div class="col-md-12 mt-2">
-            @Html.Label("myfile", "Attachments:")
-            <input type="file" id="myfile" name="myfile" accept=".pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv,.mp4" onchange="validateFile()" />
-            <small id="fileError" style="color: red; display: none;">This file format is not supported.<br />The formats are(.pdf, .xlsx, .txt, .jpeg, .png, .jpg, .docx, .csv,.mp4)</small>
-        </div>
+                <div class="response-card">
 
-        <div class="col-md-12 mt-2 mb-3 d-flex justify-content-md-end justify-content-start">
-            <button type="submit" class="btncolorsubmit me-3" id="submitBtn">Submit</button>
-            <button type="submit" class="btncolorquery me-3" name="Query" value="Q" id="submitBtn">Query</button>
-            <button type="button" class="btncolorcancel" onclick="window.location.href='@Url.Action("RecentTicket", "RecentTickets")'">Cancel</button>
-        </div>
-    </div>
+                    <!-- Header -->
+                    <div class="response-card-header">
+                        <span class="response-title">
+                            <i class="bi bi-reply-all"></i>
+                            Admin Response
+                        </span>
+                    </div>
 
+                    <!-- Body -->
+                    <div class="response-card-body">
 
-}
+                        <!-- Comments -->
+                        <div class="res-form-group">
+                            <label class="res-label" for="RESPONSE_COMMENTS">
+                              Comments
+                                <span class="req">*</span>
+                            </label>
+                            @Html.TextAreaFor(m => m.RESPONSE_COMMENTS, new
+                            {
+                                @class = "res-textarea",
+                                placeholder = "Please enter your comments here…",
+                                rows = "7",
+                                id = "RESPONSE_COMMENTS"
+                            })
+                            @Html.ValidationMessageFor(m => m.RESPONSE_COMMENTS, "", new { @class = "text-danger", style = "font-size:11px" })
+                        </div>
 
+                        <!-- Attachment -->
+                        <div class="res-form-group">
+                            <label class="res-label">Attachment</label>
+                            <div class="file-upload-wrap" id="fileDropArea">
+                                <div class="file-upload-icon">
+                                    <i class="bi bi-paperclip"></i>
+                                </div>
+                                <div class="file-upload-text">
+                                    <span id="fileLabel">No file chosen</span>
+                                    <small>Accepted: .pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv, .mp4</small>
+                                </div>
+                                <label class="btn-browse" for="myfile">
+                                    <i class="bi bi-folder2-open"></i> Browse
+                                </label>
+                                <input type="file"
+                                       id="myfile"
+                                       name="myfile"
+                                       style="display:none;"
+                                       accept=".pdf,.xlsx,.jpeg,.png,.jpg,.docx,.csv,.mp4"
+                                       onchange="handleFileChange(this)" />
+                            </div>
+                            <small id="fileError" style="color:#E24B4A;font-size:11px;display:none;">
+                                This file format is not supported. Accepted: .pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv, .mp4
+                            </small>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="response-card-footer">
+                        <a href="@Url.Action("RecentTicket","RecentTickets")"
+                           class="res-btn res-btn-cancel">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                        <button type="submit"
+                                class="res-btn res-btn-query"
+                                name="Query"
+                                value="Q"
+                                id="queryBtn">
+                            <i class="bi bi-question-circle"></i> Query
+                        </button>
+                        <button type="submit"
+                                class="btn-save"
+                                id="submitBtn">
+                            <i class="bi bi-send"></i> Submit
+                        </button>
+                    </div>
+
+                </div>}
+
+<link href="~/Content/UIListView.css" rel="stylesheet" />
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="~/Scripts/Formatcheck.js"></script>
 
 <script>
-    $(document).ready(function () {
-        $("#AdminResponseForm").submit(function (e) {
-            e.preventDefault(); // Prevent default form submission
 
-            var formData = new FormData(this); // Create FormData object for file upload
-            // Get the button that submitted the form
+    /* ── File picker label update ────────────── */
+    function handleFileChange(input) {
+        var allowed = ['.pdf','.xlsx','.jpeg','.png','.jpg','.docx','.csv','.mp4'];
+        var errorEl = document.getElementById('fileError');
+        var labelEl = document.getElementById('fileLabel');
+
+        if (input.files && input.files[0]) {
+            var name = input.files[0].name;
+            var ext  = name.substring(name.lastIndexOf('.')).toLowerCase();
+
+            if (allowed.indexOf(ext) === -1) {
+                errorEl.style.display = 'block';
+                labelEl.textContent   = 'Invalid file — please choose another';
+                input.value           = '';
+            } else {
+                errorEl.style.display = 'none';
+                labelEl.textContent   = name;
+            }
+        }
+    }
+
+    /* ── AJAX form submit ─────────────────────── */
+    $(document).ready(function () {
+
+        $("#AdminResponseForm").submit(function (e) {
+            e.preventDefault();
+
+            var formData  = new FormData(this);
             var submitter = e.originalEvent.submitter;
 
             if (submitter && submitter.name) {
                 formData.append(submitter.name, submitter.value);
             }
+
+            // Disable both buttons
+            $("#submitBtn, #queryBtn").prop("disabled", true);
+
+            Swal.fire({
+                title: "Processing…",
+                text: "Please wait while we submit your response.",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: function () { Swal.showLoading(); }
+            });
+
             $.ajax({
-                url: '@Url.Action("AdminResponseTicket", "RecentTickets")',
-                type: 'POST',
+                url: '@Url.Action("AdminResponseTicket","RecentTickets")',
+                type: "POST",
                 data: formData,
                 processData: false,
                 contentType: false,
-                beforeSend: function () {
-                    Swal.fire({
-                        title: 'Processing...',
-                        text: 'Please wait while we submit your response.',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-                },
                 success: function (response) {
                     Swal.fire({
-                        icon: response.success ? 'success' : 'error',
-                        title: response.success ? 'Success!' : 'Error!',
-                        text: response.message || (response.success ? 'Response submitted successfully!' : 'Submission failed. Please try again.'),
+                        icon: response.success ? "success" : "error",
+                        title: response.success ? "Success!" : "Error!",
+                        text: response.message || (response.success
+                            ? "Response submitted successfully!"
+                            : "Submission failed. Please try again."),
                         showConfirmButton: false,
-                        timer: 2000 // Auto close after 2 seconds
+                        timer: 2000
                     });
 
                     if (response.success) {
-                        setTimeout(() => {
-                            window.location.href = '@Url.Action("RecentTicket", "RecentTickets")'; // Redirect after success
-                        }, 2000); // Wait for alert to disappear before redirecting
+                        setTimeout(function () {
+                            window.location.href = '@Url.Action("RecentTicket","RecentTickets")';
+                        }, 2000);
+                    } else {
+                        $("#submitBtn, #queryBtn").prop("disabled", false);
                     }
                 },
-                error: function (xhr, status, error) {
+                error: function (xhr) {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Something went wrong. Please try again.',
+                        icon: "error",
+                        title: "Error!",
+                        text: xhr.responseJSON && xhr.responseJSON.message
+                            ? xhr.responseJSON.message
+                            : "Something went wrong. Please try again.",
                         showConfirmButton: false,
-                        timer: 3000 // Auto close after 3 seconds
+                        timer: 3000
                     });
+                    $("#submitBtn, #queryBtn").prop("disabled", false);
                 }
             });
         });
     });
 </script>
-
-
-
-
-

@@ -53,7 +53,7 @@ namespace PSS_CMS.Models
         public string TC_TICKETTYPE { get; set; }
         public string TC_PRIORITYTYPE { get; set; }
 
-       
+
         public bool P_Comprehensivewarranty
         {
             get => PCOMPREHENSIVEWARRANTY == "Y";
@@ -73,7 +73,7 @@ namespace PSS_CMS.Models
                     case "R":
                         return "Resolved";
                     case "C":
-                        return "Closed";   
+                        return "Closed";
                     case "Q":
                         return "Query";
 
@@ -134,9 +134,9 @@ namespace PSS_CMS.Models
         public string TT_DISABLE { get; set; }
 
         public string P_PROJECTRECID { get; set; }
-   
-       
-        
+
+
+
         public string P_CODE { get; set; }
         public string P_NAME { get; set; }
         public int P_RECID { get; set; }
@@ -146,7 +146,9 @@ namespace PSS_CMS.Models
         public int TC_URECID { get; set; }
         public int CU_RECID { get; set; }
         public string TPM_PRODUCTNAME { get; set; }
-      
+        public string TC_PRODUCTSERIALNUMBER { get; set; }
+        public string TC_CUSTOMERTYPE { get; set; }
+
 
         [DisplayName("Ticket Type")]
         public string SelectedTicketType { get; set; }
@@ -177,7 +179,7 @@ namespace PSS_CMS.Models
 
 
     }
-    public class TicketTypeModels                                                                                                                                                                                                                                                                                                                                                                                                                           
+    public class TicketTypeModels
     {
         public string Status { get; set; }
         public List<Recenttickets> Data { get; set; }

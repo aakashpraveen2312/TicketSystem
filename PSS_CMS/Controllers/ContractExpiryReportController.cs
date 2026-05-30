@@ -470,14 +470,14 @@ namespace PSS_CMS.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ProjectMasterRootObject>(jsonString);
+                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseUserObjects>(jsonString);
 
                             if (rootObjects?.Data != null)
                             {
                                 Customer = rootObjects.Data.Select(t => new SelectListItem
                                 {
-                                    Value = t.CU_RECID.ToString(),
-                                    Text = t.CU_NAME,
+                                    Value = t.U_RECID.ToString(),
+                                    Text = t.U_USERNAME,
                                 }).ToList();
                             }
                         }

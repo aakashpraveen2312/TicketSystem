@@ -1,553 +1,608 @@
 ﻿@model PSS_CMS.Models.Dashborardchart
-@using GridMvc.Html
-@{
-    Layout = null;
-}
-@using Newtonsoft.Json;
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+@{ ViewBag.PageTitle = "Dashboard";
+    ViewBag.PageSubtitle = "Overview of your ticket system"; }
+@using Newtonsoft.Json
 
-    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
-    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
-    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/HelpDesk.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    @*Bootstrap Icons and Boxicons link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <!-- JustGage Library -->
-    <script src="https://cdn.jsdelivr.net/npm/justgage@1.3.0/justgage.min.js"></script>
-    <!-- Correct Raphael.js (Dependency for JustGage) -->
-    <script src="https://cdn.jsdelivr.net/npm/raphael@2.1.4/raphael-min.js"></script>
+@{ int totalTickets = (Model?.TotalTickets != null) ? (int)Model.TotalTickets : 0;
+    int closedTickets = (Model?.CloseTickets != null) ? (int)Model.CloseTickets : 0; }
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@section Styles {
 
-    <script src="~/Scripts/Script.js"></script>
-
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-
+    <!-- List View CSS -->
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
 
     <style>
-        h5.d-flex.flex-column.align-items-center.headingscolor {
-            background-color: #f5f5f5;
-            padding: 10px;
-            font-weight: bold;
+        :root {
+            --primary: #6c5ce7;
+            --primary-lt: #eeeaff;
+            --green: #00b894;
+            --green-lt: #d8f5ed;
+            --amber: #f39c12;
+            --amber-lt: #fff3dc;
+            --slate: #636e72;
+            --slate-lt: #f1f3f5;
+            --bg: #f4f5f9;
+            --surface: #ffffff;
+            --border: #e8eaed;
+            --text: #1a1d23;
+            --text-sub: #6b7280;
+            --text-muted: #9ca3af;
+            --shadow: 0 1px 4px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,.10);
+            --r: 14px;
         }
 
-        tspan {
-            font-weight: bold;
-            color: black !important;
-            font-size: 19px;
+        /* ── Page wrapper ───────────────────────── */
+        .hd-page {
+            background: var(--bg);
+            border-radius: 18px;
         }
 
-        h5.d-flex.justify-content-center.headingscolor {
-            background-color: #f5f5f5;
-            padding: 15px;
-            font-weight: bold;
+        /* ── Top bar ────────────────────────────── */
+        .hd-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .hd-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+            .hd-breadcrumb a {
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .hd-breadcrumb span {
+                color: var(--text);
+                font-weight: 600;
+            }
+
+            .hd-breadcrumb i {
+                font-size: 11px;
+            }
+
+        .btn-create {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background .15s;
+        }
+
+            .btn-create:hover {
+                background: #5a4bd1;
+            }
+
+        /* ── Section title ──────────────────────── */
+        .hd-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin: 15px 0 14px;
+        }
+
+        /* ── Stat grid ──────────────────────────── */
+        .hd-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            align-items: stretch;
+            grid-auto-rows: auto;
+        }
+
+        @@media (max-width: 600px) {
+            .hd-stat-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Stat card ──────────────────────────── */
+        .hd-stat-card {
+            background: var(--surface);
+            border-radius: var(--r);
+            border: 1px solid var(--border);
+            padding: 14px 16px 0;
+            position: relative;
+            cursor: pointer;
+            transition: transform .25s, box-shadow .25s;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+            .hd-stat-card:hover {
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-hover);
+            }
+
+            .hd-stat-card::before {
+                content: '';
+                position: absolute;
+                inset: 0 0 auto 0;
+                height: 4px;
+                border-radius: var(--r) var(--r) 0 0;
+            }
+
+        .hd-card-total::before {
+            background: var(--green);
+        }
+
+        .hd-card-closed::before {
+            background: var(--amber);
+        }
+
+        /* ── Card icon ──────────────────────────── */
+        .hd-stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .icon-total {
+            background: var(--green-lt);
+            color: var(--green);
+        }
+
+        .icon-closed {
+            background: var(--amber-lt);
+            color: var(--amber);
+        }
+
+        .hd-stat-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-sub);
+            margin-top: 2px;
+            margin-bottom: 4px;
+            padding-right: 46px;
+        }
+
+        .hd-stat-count {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text);
+            padding-right: 46px;
+        }
+
+        .hd-stat-sub {
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ── Sparkline ──────────────────────────── */
+        .hd-sparkline {
+            display: block;
+            width: calc(100% + 32px);
+            margin-left: -16px;
+            height: 40px;
+            min-height: 40px;
+            max-height: 40px;
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        /* ── Chart panel ────────────────────────── */
+        .hd-chart-panel {
+            background: var(--surface);
+            border-radius: var(--r);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .hd-chart-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+            .hd-chart-header span {
+                display: block;
+                font-size: 13.5px;
+                font-weight: 700;
+                color: var(--text);
+            }
+
+            .hd-chart-header small {
+                font-size: 11px;
+                color: var(--text-muted);
+            }
+
+        .hd-chart-body {
+            padding: 16px;
+        }
+
+        /* ── 3-col chart grid ───────────────────── */
+        .hd-charts-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @@media (max-width: 1000px) {
+            .hd-charts-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── 2-col chart grid ───────────────────── */
+        .hd-charts-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        @@media (max-width: 900px) {
+            .hd-charts-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Full-width panel ───────────────────── */
+        .hd-chart-full {
+            margin-top: 16px;
+        }
+
+            .hd-chart-full .hd-chart-body {
+                height: 280px;
+            }
+
+        #hd-speedometer {
+            width: 100% !important;
+            max-width: 320px;
+            height: 220px !important;
+            margin: auto;
         }
     </style>
-</head>
+}
+<div class="hd-page">
 
-<body style="margin-left:0px !important">
+    <!-- ── Stat cards ── -->
+    <div class="hd-section-title">Overview</div>
+    <div class="hd-stat-grid">
 
-    <nav class="nav d-flex bg-white">
-        <div class="p-2 flex-grow-1">
-            <h3 style="margin-top:10px" class="heading ms-3">SERVICE MANAGEMENT</h3>
+        <!-- Total -->
+        <div class="hd-stat-card hd-card-total">
+            <div class="hd-stat-icon icon-total"><i class="bi bi-ticket-perforated-fill"></i></div>
+            <div class="hd-stat-label">Total Tickets</div>
+            <div class="hd-stat-count">@totalTickets</div>
+            <div class="hd-stat-sub">All time tickets</div>
+            <canvas class="hd-sparkline" id="hd-spark-total"></canvas>
         </div>
 
-        <div class="p-2" style="margin-right:10px">
-            <h4 class="heading">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4>
+        <!-- Closed -->
+        <div class="hd-stat-card hd-card-closed">
+            <div class="hd-stat-icon icon-closed"><i class="bi bi-archive-fill"></i></div>
+            <div class="hd-stat-label">Closed Tickets</div>
+            <div class="hd-stat-count">@closedTickets</div>
+            <div class="hd-stat-sub">Completed tickets</div>
+            <canvas class="hd-sparkline" id="hd-spark-closed"></canvas>
         </div>
 
-        <div class="p-2 me-3 dropdown">
-            <a href="#" class="text-decoration-none" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class='bx bx-user-circle' style="font-size:24px !important; color:purple !important;"></i>
-            </a>
+    </div>
 
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="@Url.Action("HDDashboard", "HelpDesk")">Dashboard</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="@Url.Action("PrioritywiseReport", "HelpDesk")">Report</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="@Url.Action("HelpdeskChangePassword", "ChangePassword")">Change Password</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                        Logout    <i class='bx bx-log-out' style="font-size:24px !important;color:red !important;"></i>
+    <!-- ── Bar Charts ── -->
+    <div class="hd-section-title">Ticket Trends</div>
+    <div class="hd-charts-3">
 
-                    </a>
-                </li>
-
-            </ul>
-        </div>
-    </nav>
-    <div class="content" style=" overflow-x: hidden;">
-
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-8">
-
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="resticketraisebreadcrumb" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "HelpDesk")">TICKET HISTORY</a></li>
-
-                    <li>DASHBOARD</li>
-                </ul>
+        <div class="hd-chart-panel">
+            <div class="hd-chart-header">
+                <span>Week to Date</span>
+                <small>Last 7 days including today</small>
             </div>
-
-            <div class="col-lg-4 col-md-2 col-sm-2 mt-2  d-flex justify-content-end">
-                <button type="button" class="btn btn-primary ms-2" onclick="window.location.href='@Url.Action("Ticket", "HelpDesk")'">Create</button>
+            <div class="hd-chart-body">
+                <canvas id="hdBarChartWTD"></canvas>
             </div>
-
-
-
-
-
-
         </div>
 
-        <div class="container-fluid mt-4 card ms-2">
-
-
-            <!-- Count Cards -->
-            @{
-                // Total Tickets
-                var TotalticketStats = new[]
-                    {
-        new { Title = "Total Tickets", Count = (Model != null && Model.TotalTickets != null) ? (int)Model.TotalTickets : 0, Color = "success" }
-    };
-
-
-
-                // Closed Tickets
-                var closedTicketStats = new[]
-                {
- new { Title = "Closed Tickets", Count = (Model != null && Model.CloseTickets != null) ? (int)Model.CloseTickets : 0, Color = "warning" }                };
-
-
-
-            }
-
-            <div class="row mt-3 d-flex justify-content-center">
-                @foreach (var stat in TotalticketStats)
-                {
-                    <div class="col-md-3">
-                        <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;">@stat.Title</h5>
-                                <h3 class="card-text" style="cursor:pointer;">@stat.Count</h3>
-                            </div>
-                        </div>
-                    </div>
-                }
-
-
-                @foreach (var stat in closedTicketStats)
-                {
-                    <div class="col-md-3">
-                        <div class="card text-white bg-@stat.Color mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title" style="cursor:pointer;">@stat.Title</h5>
-                                <h3 class="card-text" style="cursor:pointer;">@stat.Count</h3>
-                            </div>
-                        </div>
-                    </div>
-                }
+        <div class="hd-chart-panel">
+            <div class="hd-chart-header">
+                <span>Month to Date</span>
+                <small>Last 27 days including today</small>
             </div>
+            <div class="hd-chart-body">
+                <canvas id="hdBarChartMTD"></canvas>
+            </div>
+        </div>
 
+        <div class="hd-chart-panel">
+            <div class="hd-chart-header">
+                <span>Overall Tickets</span>
+                <small>All time summary</small>
+            </div>
+            <div class="hd-chart-body">
+                <canvas id="hdBarChartAll"></canvas>
+            </div>
+        </div>
 
+    </div>
 
+    <!-- ── Product Trend ── -->
+    <div class="hd-section-title">Product Trend</div>
+    <div class="hd-chart-full hd-chart-panel">
+        <div class="hd-chart-header">
+            <span>Product Ticket Trend</span>
+            <small>Monthly breakdown by product</small>
+        </div>
+        <div class="hd-chart-body">
+            <canvas id="hdTrendChart"></canvas>
+        </div>
+    </div>
 
-            @*Month to Date Chart*@
-            <div class="row">
+    <!-- ── Priority + Speedometer ── -->
+    <div class="hd-section-title">Priority &amp; Completion</div>
+    <div class="hd-charts-2">
 
-                @*Week to Date Chart*@
-                <div class="col-md-4">
-                    <h5 class="d-flex flex-column align-items-center headingscolor">
-                        Week to Date
-                        <span class="small">(Last 7 days including today)</span>
-                    </h5>
-                    <canvas id="ticketBarChartWTD"></canvas>
-                </div>
-                @*Week to Date Chart*@
-                <script>
-    var ctxBarWTD = document.getElementById('ticketBarChartWTD').getContext('2d');
-    new Chart(ctxBarWTD, {
-        type: 'bar',
-        data: {
-            labels: ['Total Tickets', 'Closed'],
-            datasets: [{
-                label: 'Week to Date',
-                data: [@ViewBag.WeekTotalTickets, @ViewBag.WeekCloseTickets],
-                backgroundColor: ['#198754', '#ffc107']
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    display: false // Hide the dataset label
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        display: true // Hide x-axis labels
-                    }
-                }
-            }
-        }
-    });
-                </script>
+        <div class="hd-chart-panel">
+            <div class="hd-chart-header">
+                <span>Priority-wise Stacked Tickets</span>
+                <small>Total · Closed by priority</small>
+            </div>
+            <div class="hd-chart-body">
+                <canvas id="hdPriorityChart"></canvas>
+            </div>
+        </div>
 
+        <div class="hd-chart-panel">
+            <div class="hd-chart-header">
+                <span>Percentage of Closed Tickets</span>
+                <small>Ticket resolution progress</small>
+            </div>
+            <div class="hd-chart-body"
+                 style="display:flex;align-items:center;justify-content:center;">
+                <div id="hd-speedometer"></div>
+            </div>
+        </div>
 
-                <div class="col-md-4">
+    </div>
 
-                    <h5 class="d-flex flex-column align-items-center headingscolor">
-                        Month to Date
-                        <span class="small">(Last 27 days including today)</span>
-                    </h5>
+</div><!-- /hd-page -->
+<!-- ── Scripts ─────────────────────────────────────────── -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/raphael@2.1.4/raphael-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/justgage@1.3.0/justgage.min.js"></script>
 
+<script>
+    /* ── Shared bar helper ───────────────────── */
+    var hdBarColors = ['#00b894', '#f39c12'];
+    var hdBarLabels = ['Total Tickets', 'Closed'];
 
-                    <canvas id="ticketBarChartMTD"></canvas>
-                </div>
-                @*Month to Date Chart*@
-                <script>
-    // Month to Date Chart
-    var ctxBarMTD = document.getElementById('ticketBarChartMTD').getContext('2d');
-    new Chart(ctxBarMTD, {
-        type: 'bar',
-        data: {
-            labels: ['Total Tickets', 'Closed'],
-            datasets: [{
-                data: [@ViewBag.MonthTotalTickets,  @ViewBag.MonthCloseTickets],
-                backgroundColor: ['#198754', '#ffc107', '#198754', '#6c757d']
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    display: false  // Hides the label
-                }
-            }
-        }
-    });
-                </script>
-
-                <div class="col-md-4">
-                    <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Overall Tickets</h5>
-                    <canvas id="ticketBarChart"></canvas>
-                </div>
-                @*Over all ticket bar chart script*@
-                <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var ctxBar = document.getElementById('ticketBarChart').getContext('2d');
-
-        var totalTickets = @(Model?.TotalTickets ?? 0);
-        var closedTickets = @(Model?.CloseTickets ?? 0);
-
-        new Chart(ctxBar, {
+    function hdMakeBar(id, data) {
+        var ctx = document.getElementById(id);
+        if (!ctx) return;
+        new Chart(ctx.getContext('2d'), {
             type: 'bar',
             data: {
-                labels: ['Total Tickets','Closed'],
+                labels: hdBarLabels,
                 datasets: [{
-                    label: 'Ticket Count',
-                    data: [totalTickets,closedTickets],
-                    backgroundColor: ['#198754', '#ffc107', '#198754', '#6c757d'],
-                    borderColor: ['#0056b3', '#d39e00', '#146c43', '#5a6268'],
-                    borderWidth: 1
+                    data: data,
+                    backgroundColor: hdBarColors,
+                    borderRadius: 6,
+                    borderSkipped: false
                 }]
             },
             options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 }, color: '#6b7280' } },
+                    y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 }, color: '#6b7280' }, beginAtZero: true }
+                }
+            }
+        });
+    }
 
+    hdMakeBar('hdBarChartWTD', [@(ViewBag.WeekTotalTickets  ?? 0), @(ViewBag.WeekCloseTickets  ?? 0)]);
+    hdMakeBar('hdBarChartMTD', [@(ViewBag.MonthTotalTickets ?? 0), @(ViewBag.MonthCloseTickets ?? 0)]);
+
+    document.addEventListener('DOMContentLoaded', function () {
+        hdMakeBar('hdBarChartAll', [@(Model?.TotalTickets ?? 0), @(Model?.CloseTickets ?? 0)]);
+    });
+</script>
+
+<script>
+    /* ── Priority stacked chart ──────────────── */
+    (function () {
+        var labels   = @Html.Raw(ViewBag.Labels1       ?? "[]");
+        var total    = @Html.Raw(ViewBag.TotalTickets1  ?? "[]");
+        var closed   = @Html.Raw(ViewBag.ClosedTickets1 ?? "[]");
+
+        new Chart(document.getElementById('hdPriorityChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Total Tickets',  data: total,  backgroundColor: '#f39c12', borderRadius: 4 },
+                    { label: 'Closed Tickets', data: closed, backgroundColor: '#636e72', borderRadius: 4 }
+                ]
+            },
+            options: {
+                scales: {
+                    x: { stacked: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 }, color: '#6b7280' } },
+                    y: { stacked: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 }, color: '#6b7280' }, beginAtZero: true }
+                },
                 plugins: {
                     legend: {
-                        display: false // Hide the legend
+                        position: 'bottom',
+                        labels: { font: { size: 11 }, color: '#6b7280', boxWidth: 12, padding: 14 }
+                    }
+                }
+            }
+        });
+    })();
+</script>
+
+<script>
+    /* ── Product trend line chart ────────────── */
+    document.addEventListener('DOMContentLoaded', function () {
+var rawData = @Html.Raw(
+    JsonConvert.SerializeObject(
+        Model?.ProductTrend
+        ?? new System.Collections.Generic.List<PSS_CMS.Models.TicketTrendVM>()
+    )
+);
+        if (!Array.isArray(rawData) || rawData.length === 0) return;
+
+        var labels  = [...new Set(rawData.map(x => x.yearMonth))];
+        var grouped = {};
+        rawData.forEach(function(x) {
+            if (!grouped[x.productName]) grouped[x.productName] = {};
+            grouped[x.productName][x.yearMonth] = x.ticketCount;
+        });
+
+        var palette = ['#6c5ce7','#00b894','#f39c12','#e17055','#0984e3','#fd79a8','#00cec9'];
+        var datasets = Object.keys(grouped).map(function(product, i) {
+            return {
+                label:       product,
+                data:        labels.map(function(m) { return grouped[product][m] || 0; }),
+                borderColor: palette[i % palette.length],
+                backgroundColor: palette[i % palette.length] + '22',
+                borderWidth: 2,
+                tension:     0.4,
+                fill:        true,
+                pointRadius: 3
+            };
+        });
+
+        new Chart(document.getElementById('hdTrendChart'), {
+            type: 'line',
+            data: { labels: labels, datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { size: 11 }, color: '#6b7280', boxWidth: 12, padding: 14 }
                     }
                 },
                 scales: {
-                    x: {
-                        ticks: {
-                            display: true // Show x-axis labels
-                        }
-                    }
-
+                    x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 }, color: '#6b7280' } },
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 }, color: '#6b7280' } }
                 }
             }
         });
     });
-                </script>
-            </div>
+</script>
 
-            <p>Product Trend Count: @(Model.ProductTrend?.Count ?? 0)</p>
+<script>
+    /* ── Speedometer ─────────────────────────── */
+    (function () {
+        var closedPct = Math.round(@((ViewBag.ClosedPercentage ?? 0)));
+        var totalTix  = @((ViewBag.TotalTickets  ?? 0));
+        var closedTix = @((ViewBag.ClosedTickets ?? 0));
 
-            <div style="height:260px;">
-                <canvas id="ticketTrendChart"></canvas>
-            </div>
+        if (isNaN(closedPct) || closedPct < 0 || closedPct > 100) closedPct = 0;
 
-            <div class="row">
-
-                <div class="col-md-6">
-                    <h5 class="d-flex justify-content-center headingscolor">Priority vise Stacked Tickets</h5>
-                    <canvas id="ticketChart"></canvas>
-                </div>
-                @*Prioritytype bar chart script*@
-                <script>
-    const labels = @Html.Raw(ViewBag.Labels1); // ["Critical", "Emergency", "High", "Medium", "Low"]
-
-    const data = {
-        labels: labels,
-        datasets: [
-
-            {
-                label: 'Total Tickets',
-                data: @Html.Raw(ViewBag.TotalTickets1 ?? "[]"), // [2, 6, 3, 9, 1]
-                backgroundColor: '#FFBE00'
-            },
-
-            {
-                label: 'Closed Tickets',
-                data: @Html.Raw(ViewBag.ClosedTickets1 ?? "[]"), // [5, 10, 7, 3, 2]
-                backgroundColor: '#69757D'
-            }
-        ]
-    };
-
-    const config = {
-        type: 'bar',
-        data: data,
-        options: {
-            scales: {
-                x: {
-                    stacked: true,
-                    ticks: {
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                y: {
-                    stacked: true,
-                }
-            }
-        }
-    };
-
-    new Chart(document.getElementById('ticketChart'), config);
-                </script>
-
-               
-                @*Trend Analysis*@
-                @*<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>*@
-            <script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    // ✅ Product trend data from model
-    const rawData = @Html.Raw(
-        JsonConvert.SerializeObject(Model.ProductTrend)
-    );
-
-    console.log("ProductTrend:", rawData);
-    console.log(rawData[0].yearMonth); // should print "2025-09"
-
-    if (!Array.isArray(rawData) || rawData.length === 0) {
-        console.warn("No Product Trend data");
-        return;
-    }
-
-    // ✅ FIX: use camelCase
-    const labels = [...new Set(rawData.map(x => x.yearMonth))];
-
-    const grouped = {};
-    rawData.forEach(x => {
-        if (!grouped[x.productName]) {
-            grouped[x.productName] = {};
-        }
-        grouped[x.productName][x.yearMonth] = x.ticketCount;
-    });
-
-    const datasets = Object.keys(grouped).map(product => ({
-        label: product,
-        data: labels.map(m => grouped[product][m] || 0),
-        borderWidth: 2,
-        tension: 0.4,
-        fill: false
-    }));
-
-    new Chart(document.getElementById("ticketTrendChart"), {
-        type: "line",
-        data: {
-            labels: labels,
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: "top" },
-                title: {
-                    display: true,
-                    text: "Product Ticket Trend"
-                }
-            },
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
-    });
-
-});
-            </script>
-                @* Speedometer Container *@
-                <div class="col-md-6 ">
-
-                    <h5 class="d-flex justify-content-center headingscolor" style=" background-color: #f5f5f5; padding: 15px; font-weight: bold; ">Percentage of Closed Tickets</h5>
-                    <div class="d-flex justify-content-center">
-                        <div class="" id="speedometer" style="max-width: 600px; max-height: 300px; height: 300px; width: 470px "></div>
-                    </div>
-                </div>
-                @*Script for Speedometer graph values*@
-                <script>
-    const closedPercentage = Math.round(@((ViewBag.ClosedPercentage ?? 0))); // Default to 0 if null
-    const totalTickets = @((ViewBag.TotalTickets ?? 0)); // Default to 0 if null
-    const closedTickets = @((ViewBag.ClosedTickets ?? 0)); // Default to 0 if null
-
-                    function updateSpeedometer(percentage) {
-                        console.log("percentage", percentage);
-        if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-            percentage = 0; // Ensure a valid range (0-100)
-        }
-
-        // Create the gauge
-        var gage = new JustGage({
-            id: "speedometer",
-            value: percentage,
-            min: 0,
-            max: 100,
+        new JustGage({
+            id: "hd-speedometer",
+            value: closedPct,
+            min: 0, max: 100,
             title: "Ticket Progress",
-            label: `${percentage}% Closed\n(${closedTickets}/${totalTickets})`,
-            labelFontColor: "#000000", // Pure black color
+            label: closedPct + "% Closed (" + closedTix + "/" + totalTix + ")",
             gaugeWidthScale: 0.1,
             pointer: true,
-            pointerOptions: {
-                length: 0.6,
-                strokeWidth: 0.04
-            },
+            pointerOptions: { length: 0.6, strokeWidth: 0.04 },
             customSectors: [
-                { color: "#ff0000", lo: 0, hi: 30 },  // Red (0-30%)
-                { color: "#ffff00", lo: 31, hi: 70 }, // Yellow (31-70%)
-                { color: "#00ff00", lo: 71, hi: 100 } // Green (71-100%)
+                { color: "#e74c3c", lo: 0,  hi: 30  },
+                { color: "#e6a817", lo: 31, hi: 70  },
+                { color: "#1D9E75", lo: 71, hi: 100 }
             ],
-            levelColors: ["#ff0000", "#ffff00", "#00ff00"],
-            hideValue: true // Hide the number inside the gauge
+            levelColors: ["#e74c3c", "#e6a817", "#1D9E75"],
+            hideValue: true
         });
+    })();
+</script>
 
-        // Tooltip logic for hovering over yellow sector
-        document.getElementById("speedometer").addEventListener("mousemove", function (event) {
-            let x = event.pageX, y = event.pageY;
-            if (percentage >= 0 && percentage <= 100) {
-               showTooltip(`Closed Tickets: ${percentage}%`, x, y);
+<script>
+    /* ── Sparklines ──────────────────────────── */
+    function hdDrawSparkline(id, points, color) {
+        var canvas = document.getElementById(id);
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var W = canvas.offsetWidth || canvas.parentElement.offsetWidth || 200;
+        var H = 40;
+        canvas.width = W; canvas.height = H;
 
-            } else {
-                hideTooltip();
-            }
+        if (!points || points.length < 2) points = [0, 0, 0];
+
+        var min   = Math.min.apply(null, points);
+        var max   = Math.max.apply(null, points);
+        var range = max - min || 1;
+        var pad   = 4;
+        var step  = (W - pad * 2) / (points.length - 1);
+
+        var grad = ctx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, color + '44');
+        grad.addColorStop(1, color + '00');
+
+        ctx.beginPath();
+        ctx.moveTo(pad, H);
+        points.forEach(function(v, i) {
+            var x = pad + i * step;
+            var y = pad + (1 - (v - min) / range) * (H - pad * 2);
+            ctx.lineTo(x, y);
         });
+        ctx.lineTo(pad + (points.length - 1) * step, H);
+        ctx.closePath();
+        ctx.fillStyle = grad;
+        ctx.fill();
 
-        document.getElementById("speedometer").addEventListener("mouseleave", function () {
-            hideTooltip();
+        ctx.beginPath();
+        points.forEach(function(v, i) {
+            var x = pad + i * step;
+            var y = pad + (1 - (v - min) / range) * (H - pad * 2);
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
+        ctx.strokeStyle = color;
+        ctx.lineWidth   = 2;
+        ctx.lineJoin    = 'round';
+        ctx.lineCap     = 'round';
+        ctx.stroke();
     }
 
-    function showTooltip(text, x, y) {
-        let tooltip = document.getElementById("tooltip");
-        if (!tooltip) {
-            tooltip = document.createElement("div");
-            tooltip.id = "tooltip";
-            tooltip.style.position = "absolute";
-            tooltip.style.background = "black";
-            tooltip.style.color = "white";
-            tooltip.style.padding = "5px 10px";
-            tooltip.style.borderRadius = "5px";
-            tooltip.style.fontSize = "12px";
-            tooltip.style.display = "none";
-            tooltip.style.zIndex = "1000";
-            document.body.appendChild(tooltip);
-        }
-        tooltip.innerHTML = text;
-        tooltip.style.left = x + 10 + "px";
-        tooltip.style.top = y + 10 + "px";
-        tooltip.style.display = "block";
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        var wTotal  = @(ViewBag.WeekTotalTickets  ?? 0);
+        var mTotal  = @(ViewBag.MonthTotalTickets ?? 0);
+        var aTotal  = @(Model?.TotalTickets  ?? 0);
+        var wClose  = @(ViewBag.WeekCloseTickets  ?? 0);
+        var mClose  = @(ViewBag.MonthCloseTickets ?? 0);
+        var aClose  = @(Model?.CloseTickets  ?? 0);
 
-    function hideTooltip() {
-        let tooltip = document.getElementById("tooltip");
-        if (tooltip) {
-            tooltip.style.display = "none";
-        }
-    }
-
-                    if (closedPercentage !== null && closedPercentage !== undefined) {
-                        console.log("closedPercentage",closedPercentage);
-        updateSpeedometer(closedPercentage);
-    }
-                </script>
-
-
-            </div>
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
-        </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-        </div>
-    </div>
-
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
-            }
-        });
+        hdDrawSparkline('hd-spark-total',  [wTotal, mTotal, aTotal], '#00b894');
+        hdDrawSparkline('hd-spark-closed', [wClose, mClose, aClose], '#f39c12');
     });
-    </script>
-
-</body>
-</html>
+</script>

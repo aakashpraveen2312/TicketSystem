@@ -1,410 +1,584 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
-    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
-    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
-    <script src="~/Scripts/Inactivitylogout.js"></script>
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
-    <style>
-        .swal-toast-center {
-            width: 400px !important;
-            max-width: 90% !important;
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ticket System</title>
 
-        .swal-toast-popup {
-            padding: 20px !important;
-            font-size: 1.2rem !important;
-        }
-        .swal-custom-title {
-            font-size: 20px !important;
-            text-align: center !important;
-        }
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <!-- Box Icons -->
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Google Font: DM Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Side bar and Top bar Css -->
+    <link href="~/Content/UISidebarLayout.css" rel="stylesheet" />
 
-        .swal-custom-text {
-            font-size: 15px !important;
-            text-align: center !important;
-        }
-        /* Sidebar basics */
-.sidebar {
-    width: 260px;
-    transition: width 0.3s ease;
-}
-
-/* Submenu animation */
-.submenu {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease, opacity 0.3s ease;
-    opacity: 0;
-}
-
-.submenu.show {
-    max-height: 200px;
-    opacity: 1;
-}
-
-/* Active menu header */
-.nav-link.openfold.active {
-    background: rgba(0, 123, 255, 0.12);
-    font-weight: 600;
-}
-
-/* Active page link */
-.nav-link.submenu.active a {
-    background: #0d6efd;
-    color: #fff;
-    border-radius: 6px;
-}
-
-@*/* Mobile accordion */
-@media (max-width: 768px) {
-    .sidebar {
-        position: fixed;
-        z-index: 1000;
-    }
-}*@
-
-    </style>
+    @RenderSection("Styles", required: false)
 </head>
-<body onload="hideLoadingScreen()">
-    <div id="loadingScreen">
-        <div class="loader"></div>
+<body>
+    <!-- ═══════════════════════════════════
+         PRELOADER
+    ═══════════════════════════════════ -->
+    <div id="preloader">
+        <div class="pre-spinner">
+            <div class="pre-icon"><i class="bi bi-ticket-perforated-fill"></i></div>
+        </div>
+       
     </div>
-    <nav class="sidebar close">
-        <header>
-            <div class="text logo-text" style="display:inline-block">
+    <!-- Sidebar Backdrop (mobile) -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+
+    <!-- ─── SIDEBAR ─── -->
+    <nav id="sidebar">
+        <!-- Brand / Logo -->
+            <a class="sidebar-brand">
+                @if (Session["Logo"] != null)
+                {
+                    <img src="data:image/png;base64,@Session["Logo"]" alt="Logo" class="brand-logo" /> 
+                }
+                else
+                {
+                    <div class="brand-icon"><i class="bi bi-ticket-perforated-fill"></i></div>
+                }
+                <span class="brand-text">TICKET SYSTEM</span>
+            </a>
+ 
+            <div class="sidebar-scroll">
+
+                <!-- OVERVIEW -->
+                <div class="nav-section-label">Overview</div>
                 @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa")
                 {
-                    <a href="@Url.Action("SuperAdminCountDashboard", "DashBoard")">
 
 
-                        @if (Session["Logo"] != null)
-                        {
-                            <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
-                        }
+                    <a href="@Url.Action("SuperAdminCountDashboard", "DashBoard")" class="nav-item-link">
+                        <i class="bi bi-house-door-fill nav-icon"></i>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                }
+                else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "accountant")
+                {
 
+
+                    <a href="@Url.Action("ContractDashboard", "Contract")" class="nav-item-link">
+                        <i class="bi bi-house-door-fill nav-icon"></i>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                }
+                else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
+                {
+
+
+                    <a href="@Url.Action("UserDashboardCount", "UserDashboard")" class="nav-item-link">
+                        <i class="bi bi-house-door-fill nav-icon"></i>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                }
+                else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
+                {
+
+
+                    <a href="@Url.Action("HDDashboard", "HelpDesk")" class="nav-item-link">
+                        <i class="bi bi-house-door-fill nav-icon"></i>
+                        <span class="nav-label">Dashboard</span>
                     </a>
                 }
                 else
                 {
-                    <a href="@Url.Action("Dashboard", "DashBoard")">
-
-
-                        @if (Session["Logo"] != null)
-                        {
-                            <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
-                        }
-
+                    <a href="@Url.Action("Dashboard", "DashBoard")" class="nav-item-link">
+                        <i class="bi bi-house-door-fill nav-icon"></i>
+                        <span class="nav-label">Dashboard</span>
                     </a>
                 }
 
-            </div>
-            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "sa")
-            {
-                <a href="@Url.Action("RecentTicket", "RecentTickets")" title="Tickets">
-                    <i class="bi bi-card-list text logo-text" style="position: absolute; top: 50%; left: 52%; color: #695cfe; font-size: 27px; display: inline-block"></i>
+
+
+                <!-- BUSINESS -->
+                <div class="nav-section-label">Business</div>
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
+                {
+                    <a href="@Url.Action("Ticket", "Tickets")" class="nav-item-link">
+                        <i class="bi bi-receipt-cutoff nav-icon"></i>
+                        <span class="nav-label">Create Ticket</span>
+                    </a>
+
+                    <a href="@Url.Action("Ticket_History", "Tickets")" class="nav-item-link">
+                        <i class="bi-ticket-detailed nav-icon"></i>
+                        <span class="nav-label">Service Tickets</span>
+                    </a>
+
+                }
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
+                {
+            <a href="@Url.Action("Ticket_History", "HelpDesk")" class="nav-item-link">
+                <i class="bi-ticket-detailed nav-icon"></i>
+                <span class="nav-label">Service Tickets</span>
+            </a>
+
+                <a href="@Url.Action("Ticket", "HelpDesk")" class="nav-item-link">
+                    <i class="bi bi-receipt-cutoff nav-icon"></i>
+                    <span class="nav-label">Create Ticket</span>
                 </a>
-            }
-            <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
+                }
 
-        </header>
-        <div class="menu-bar">
-            <div class="menu">
-                <ul class="menu-links" style="margin-left:20px">
-                    <!-- Configuration Section -->
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/book.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 10px;" />
-                        <img src="~/assets/img/book.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 10px;" />
-                        <span class="text nav-text kb-menu" style="margin-left:15px">KNOWLEDGE BASED </span>
-                    </li>
-                    <!-- User Group -->
-                    <li class="nav-link kb-item">
-                        <a href="@Url.Action("FAQADMIN", "RecentTickets")">
-                            <i class='bx  bx-message-circle-question-mark' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">FAQ</span>
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "accountant")
+                {
+                    <a href="@Url.Action("CustomerList", "Contract")" class="nav-item-link">
+                        <i class="bi bi-shield-check nav-icon"></i>
+                        <span class="nav-label">Warranty Products</span>
+                    </a>
+
+                    <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")" class="nav-item-link">
+                        <i class="bi bi-receipt-cutoff nav-icon"></i>
+                        <span class="nav-label">Sales Invoice</span>
+                    </a>
+
+                    <a href="@Url.Action("ContractList", "Contract")" class="nav-item-link">
+                        <i class="bi bi-file-earmark-text nav-icon"></i>
+                        <span class="nav-label">Service Contract</span>
+                    </a>
+
+                    <a href="@Url.Action("Index", "ServiceInvoice")" class="nav-item-link">
+                        <i class="bi bi-tools nav-icon"></i>
+                        <span class="nav-label">Service Invoice</span>
+                    </a>
+                }
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "accountant" &&
+                     Session["UserRole"].ToString().ToLower() != "user"
+
+                    )
+                {
+                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "sa" && Session["UserRole"].ToString().ToLower() != "helpdesk")
+                    {
+                        <a href="@Url.Action("RecentTicket", "RecentTickets")" class="nav-item-link">
+                            <i class="bi-ticket-detailed nav-icon"></i>
+                            <span class="nav-label">Service Requests</span>
                         </a>
-                    </li>
-                    <!-- App User -->
-                    <li class="nav-link kb-item">
-                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")">
-                            <i class='bx bx-newspaper' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">White Paper</span>
+                    }
+
+
+                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "admin" && Session["UserRole"].ToString().ToLower() != "helpdesk")
+                    {
+                        <a href="@Url.Action("List", "ProductMaster")" class="nav-item-link">
+                            <i class="bi bi-shield-check nav-icon"></i>
+                            <span class="nav-label">Warranty Products</span>
                         </a>
-                    </li>
-
-
-                    <li class="nav-link openfold " style="margin-top:10px;">
-                        <img src="~/assets/img/ReportImage.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 10px;" />
-                        <img src="~/assets/img/ReportImage.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 10px;" />
-                        <span class="text nav-text report-menu" style="margin-left:15px">REPORT </span>
-                    </li>
-                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "admin" ||
-                        Session["UserRole"].ToString().ToLower() == "manager")
-                    {
-                        <!-- Priority based Report -->
-                        <li class="nav-link report-item">
-                            <a href="@Url.Action("PrioritywiseReport", "PriorityWiseReport")">
-                                <i class='bx  bx-link' style="font-size:20px"></i>
-                                <span class="text nav-text " style="margin-left:15px">Priority Based Ticket</span>
-                            </a>
-                        </li>
-
-                    }
-                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "admin")
-                    {
-                        <li class="nav-link report-item">
-                            <a href="@Url.Action("ServiceProductReport", "ContractExpiryReport")">
-                                <i class='bx bx-wrench' style="font-size:20px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Service Product</span>
-                            </a>
-                        </li>
-                    }
-                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "manager")
-                    {
-                        <li class="nav-link report-item">
-                            <a href="@Url.Action("ManagersubordinateReport", "ManagerSubordinateReport")">
-                                <i class='bx bx-bar-chart-alt-2' style="font-size:20px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Suboridinate Productivity</span>
-                            </a>
-                        </li>
-                    }
-                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa" ||
-                        Session["UserRole"].ToString().ToLower() == "manager")
-                    {
-                        <li class="nav-link report-item">
-                            <a href="@Url.Action("TicketAgeingReportPdf", "RecentTickets")">
-                                <i class='bx bx-timer' style="font-size:20px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Ticket Aging</span>
-                            </a>
-                        </li>
-                    }
-
-
-
-
-                    <!-- Settings Section -->
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
-                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display: none; width: 25px; height: 25px; margin-bottom: 5px;" />
-                        <span class="text nav-text security-menu" style="margin-left:15px">SECURITY</span>
-                    </li>
-                    <!-- Change Password -->
-                    @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "admin")
-                    {
-                        <li class="nav-link security-item">
-                            <a href="@Url.Action("List", "UserGroup")">
-                                <i class='bx bx-user-circle' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">User Accounts</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-link security-item">
-                            <a href="@Url.Action("List", "ProductMaster")">
-                                <i class='bx bx-spreadsheet' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-link security-item">
-                            <a href="@Url.Action("SalesheaderAdminListView", "AccountantCustomerInvoice")">
-                                <i class='bi bi-person-check' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
-                            </a>
-                        </li> 
-                        <li class="nav-link security-item">
-                            <a href="@Url.Action("ContractProductListView", "Contract")">
-                                <i class='bi bi-tools' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Service Contract</span>
-                            </a>
-                        </li>
-
-
-                    }
-                    @if ((Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa") && (Session["MaterialConsumptionFlag"] != null && Session["MaterialConsumptionFlag"].ToString().ToLower() == "y"))
-                    {
-                        @*<li class="nav-link">
-                <a href="@Url.Action("List", "MaterialCategory")">
-                    <i class='bx bxs-category' style="font-size:24px"></i>
-                    <span class="text nav-text" style="margin-left:15px">Item Category</span>
-                </a>
-            </li>*@
-
-                        <li class="nav-link  security-item">
-                            <a href="@Url.Action("List", "HSNCategory")">
-                                <i class='bx bx-book' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">HSN Congifuration</span>
-                            </a>
-                        </li>
-
-
-
-
-
-                        <li class="nav-link security-item">
-                            <a href="@Url.Action("List", "ItemGroup")">
-                                <i class='bx bx-cart-alt' style="font-size:24px"></i>
-                                <span class="text nav-text" style="margin-left:15px">Item Configuration</span>
-                            </a>
-                        </li>
-                    }
-
-                    <li class="nav-link security-item">
-                        <a href="@Url.Action("Info", "CompanyInfo")">
-                            <i class='bx bx-buildings' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Company Onboard</span>
+                        <a href="@Url.Action("SalesheaderAdminListView", "AccountantCustomerInvoice")" class="nav-item-link">
+                            <i class="bi bi-receipt nav-icon"></i>
+                            <span class="nav-label">Sales Invoice</span>
                         </a>
-                    </li>
-                    <li class="nav-link security-item">
-                        <a href="@Url.Action("ChangePassword", "ChangePassword")">
-                            <i class='bx bxs-key' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
+                        <a href="@Url.Action("ContractProductListView", "Contract")" class="nav-item-link">
+                            <i class="bi bi-file-earmark-text nav-icon"></i>
+                            <span class="nav-label">Service Contract</span>
                         </a>
-                    </li>
-                    <li class="nav-link security-item">
-                        <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
-                            <i class='bx bx-log-out' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Logout</span>
+                    }
+
+                    if ((Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa") && (Session["MaterialConsumptionFlag"] != null && Session["MaterialConsumptionFlag"].ToString().ToLower() == "y"))
+                    {
+                        <a href="@Url.Action("List", "HSNCategory")" class="nav-item-link">
+                            <i class="bi bi-grid-3x3 nav-icon"></i>
+                            <span class="nav-label">HSN Configuration</span>
                         </a>
-                    </li>
-                </ul>
+                        <a href="@Url.Action("List", "ItemGroup")" class="nav-item-link">
+                            <i class="bi bi-cart3 nav-icon"></i>
+                            <span class="nav-label">Item Configuration</span>
+                        </a>
+                    }
+
+
+                }
+
+
+                <!-- REPORTS -->
+
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "user")
+                {
+                    <div class="nav-section-label">Reports</div>
+                }
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa" ||
+                              Session["UserRole"].ToString().ToLower() == "manager")
+                {
+
+                    <a href="@Url.Action("TicketAgeingReportPdf", "RecentTickets")" class="nav-item-link">
+                        <i class="bi bi-clock-history nav-icon"></i>
+                        <span class="nav-label">Aging Reports</span>
+                    </a>
+                }
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "admin")
+                {
+                    <a href="@Url.Action("ServiceProductReport", "ContractExpiryReport")" class="nav-item-link">
+                        <i class="bi bi-clipboard-data nav-icon"></i>
+                        <span class="nav-label">Service Product Report</span>
+                    </a>
+                }
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "admin" ||
+                               Session["UserRole"].ToString().ToLower() == "manager")
+                {
+                    <a href="@Url.Action("PrioritywiseReport", "PriorityWiseReport")" class="nav-item-link">
+                        <i class="bi bi-flag nav-icon"></i>
+                        <span class="nav-label">Priority Based Reports</span>
+                    </a>
+                }
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "accountant")
+                {
+                    <a href="@Url.Action("Locklog", "SalesInvoiceProduct")" class="nav-item-link">
+                        <i class="bi bi-clipboard-data nav-icon"></i>
+                        <span class="nav-label">Data Audit</span>
+                    </a>
+
+                    <a href="@Url.Action("ContractExpiryReport", "ContractexpiryReport")" class="nav-item-link">
+                        <i class="bi bi-file-earmark-text nav-icon"></i>
+                        <span class="nav-label">Contract Expiry Reports</span>
+                    </a>
+                }
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
+                {
+                    <a href="@Url.Action("PrioritywiseReport", "HelpDesk")" class="nav-item-link">
+                        <i class="bi bi-flag nav-icon"></i>
+                        <span class="nav-label">Priority Based Reports</span>
+                    </a>
+                }
+
+                <!-- SETTINGS -->
+                <div class="nav-section-label">Settings</div>
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "user" && Session["UserRole"].ToString().ToLower() != "helpdesk")
+                {
+                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "admin" && Session["UserRole"].ToString().ToLower() != "accountant")
+                    {
+                        <a href="@Url.Action("List", "UserGroup")" class="nav-item-link">
+                            <i class="bi bi-people nav-icon"></i>
+                            <span class="nav-label">User Accounts</span>
+                        </a>
+                    }
+
+                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "accountant")
+                    {
+                        <a href="@Url.Action("Info", "CompanyInfo")" class="nav-item-link">
+                            <i class="bi bi-buildings nav-icon"></i>
+                            <span class="nav-label">Company</span>
+                        </a>
+
+                    }
+                }
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
+                {
+                    <a href="@Url.Action("UserChangePassword", "ChangePassword")" class="nav-item-link">
+                        <i class="bi bi-file-earmark-lock nav-icon"></i>
+                        <span class="nav-label">Change Password</span>
+                    </a>
+                }
+                else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
+                {
+                    <a href="@Url.Action("HelpdeskChangePassword", "ChangePassword")" class="nav-item-link">
+                        <i class="bi bi-file-earmark-lock nav-icon"></i>
+                        <span class="nav-label">Change Password</span>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("ChangePassword", "ChangePassword")" class="nav-item-link">
+                        <i class="bi bi-file-earmark-lock nav-icon"></i>
+                        <span class="nav-label">Change Password</span>
+                    </a>
+                }
+
+
+                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "accountant" && Session["UserRole"].ToString().ToLower() != "helpdesk")
+                {
+                    <!-- KNOWLEDGE BASED -->
+                    <div class="nav-section-label">KNOWLEDGE BASE</div>
+                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
+                    {
+                        <a href="@Url.Action("FAQ", "Tickets")" class="nav-item-link">
+                            <i class="bi bi-question-circle nav-icon"></i>
+                            <span class="nav-label">Faq</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("FAQADMIN", "RecentTickets")" class="nav-item-link">
+                            <i class="bi bi-question-circle nav-icon"></i>
+                            <span class="nav-label">Faq</span>
+                        </a>
+                    }
+
+
+                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "user")
+                    {
+                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")" class="nav-item-link">
+                            <i class="bi bi-file-earmark-text nav-icon"></i>
+                            <span class="nav-label">White Paper</span>
+                        </a>
+                    }
+
+                }
+
             </div>
+
+        <!-- Logout -->
+        <div class="sidebar-footer">
+            <a href="@Url.Action("Index", "Login")" class="nav-item-link">
+                <i class="bi bi-box-arrow-left nav-icon"></i>
+                <span class="nav-label">Logout</span>
+            </a>
         </div>
-
-
     </nav>
 
-    <div>
-        @RenderBody()
+    <!-- ─── MAIN WRAPPER ─── -->
+    <div id="main-wrapper">
 
-    </div>
+        <!-- TOPBAR -->
+        <header id="topbar">
+            <button class="topbar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="topbar-page">
+                <h1 id="pageTitle">@ViewBag.PageTitle</h1>
+                <p id="pageSubtitle">@ViewBag.PageSubtitle</p>
+            </div>
+
+            <div class="topbar-actions">
+                <!-- User pill -->
+                <div class="topbar-user">
+                    <div class="user-avatar-initials">
+                        @if (Session["UserName"] != null)
+                        {@(Session["UserName"].ToString().Length > 0 ? Session["UserName"].ToString().Substring(0, 1).ToUpper() : "U") @(Session["UserName"].ToString().Contains(" ") ? Session["UserName"].ToString().Split(' ')[1].Substring(0, 1).ToUpper() : "") }
+                        else
+                        {
+            @:U
+        }
+                    </div>
+                    <div class="user-info d-none d-sm-block">
+                        <div class="user-name"> @(Session["UserName"] != null ? Session["UserName"].ToString() : "User")</div>
+                        <div class="user-role"> @(Session["Role"] != null ? Session["Role"].ToString().ToUpper() : "")</div>
+                    </div>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <main class="page-content">
+            @RenderBody()
+        </main>
+
+    </div><!-- /main-wrapper -->
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        /* ══════════════════════════════
+           PRELOADER
+        ══════════════════════════════ */
+        const preloader = document.getElementById('preloader');
 
-            const openfolds = document.querySelectorAll(".nav-link.openfold");
-            const submenus = document.querySelectorAll(".submenu");
-            const currentUrl = window.location.pathname.toLowerCase();
+        /* ══════════════════════════════
+           HIDE LOADER AFTER PAGE LOAD
+        ══════════════════════════════ */
+        window.addEventListener('load', function () {
 
-            /* ---------- UTILITIES ---------- */
+            setTimeout(function () {
 
-            function toggleIcons(menu, open) {
-                const settingsIcon = menu.querySelector(".settingsIcon");
-                const openIcon = menu.querySelector(".openIcon");
+                preloader.classList.add('hide');
 
-                settingsIcon.style.display = open ? "none" : "inline";
-                openIcon.style.display = open ? "inline" : "none";
-            }
+                preloader.addEventListener('transitionend', function () {
 
-            function closeAllMenus(except = null) {
-                openfolds.forEach(menu => {
-                    if (menu !== except) {
-                        menu.classList.remove("active");
-                        toggleIcons(menu, false);
+                    preloader.style.display = 'none';
+
+                }, { once: true });
+
+            }, 300);
+
+        });
+
+        /* ══════════════════════════════
+           FIX BROWSER BACK/FORWARD
+        ══════════════════════════════ */
+        window.addEventListener('pageshow', function () {
+
+            preloader.classList.add('hide');
+            preloader.style.display = 'none';
+
+        });
+
+        /* ══════════════════════════════
+           SHOW LOADER ON LINKS / FORMS
+        ══════════════════════════════ */
+        document.addEventListener('DOMContentLoaded', function () {
+
+            /* LINKS */
+            document.querySelectorAll('a[href]').forEach(link => {
+
+                link.addEventListener('click', function () {
+
+                    // IGNORE DELETE POPUP LINKS
+                    if (this.classList.contains('no-loader')) {
+                        return;
                     }
+
+                    const href = this.getAttribute('href');
+
+                    // Ignore empty/js/anchor links
+                    if (
+                        !href ||
+                        href === '#' ||
+                        href.startsWith('javascript') ||
+                        href.startsWith('mailto:') ||
+                        href.startsWith('tel:') ||
+                        this.hasAttribute('target')
+                    ) {
+                        return;
+                    }
+
+                    // Ignore same page navigation
+                    const currentPath = window.location.pathname.toLowerCase();
+                    const linkPath = new URL(href, window.location.origin)
+                        .pathname
+                        .toLowerCase();
+
+                    if (currentPath === linkPath) {
+                        return;
+                    }
+
+                    preloader.classList.remove('hide');
+                    preloader.style.display = 'flex';
+
                 });
 
-                submenus.forEach(sm => {
-                    if (!except || sm.dataset.parent !== except.dataset.menu) {
-                        sm.classList.remove("show");
-                    }
-                });
-            }
-
-            function openMenu(menu) {
-                const key = menu.dataset.menu;
-                menu.classList.add("active");
-                toggleIcons(menu, true);
-
-                document.querySelectorAll(`.submenu[data-parent="${key}"]`)
-                    .forEach(sm => sm.classList.add("show"));
-
-                localStorage.setItem("openMenu", key);
-            }
-
-            /* ---------- CLICK HANDLERS ---------- */
-
-            openfolds.forEach(menu => {
-                menu.addEventListener("click", function () {
-                    const isOpen = this.classList.contains("active");
-                    closeAllMenus(this);
-
-                    if (!isOpen) {
-                        openMenu(this);
-                    } else {
-                        localStorage.removeItem("openMenu");
-                    }
-                });
             });
 
-            /* ---------- ACTIVE PAGE HIGHLIGHT ---------- */
+            /* FORMS */
+            document.querySelectorAll('form').forEach(form => {
 
-            document.querySelectorAll(".submenu a").forEach(link => {
-                if (link.getAttribute("href") &&
-                    currentUrl.includes(link.getAttribute("href").toLowerCase())) {
+                form.addEventListener('submit', function () {
 
-                    const submenuItem = link.closest(".submenu");
-                    submenuItem.classList.add("active");
+                    // Skip AJAX forms
+                    if (this.classList.contains('no-preloader')) {
+                        return;
+                    }
 
-                    const parentMenu = document.querySelector(
-                        `.openfold[data-menu="${submenuItem.dataset.parent}"]`
-                    );
-                    if (parentMenu) openMenu(parentMenu);
+                    setTimeout(() => {
+
+                        preloader.classList.remove('hide');
+                        preloader.style.display = 'flex';
+
+                    }, 100);
+
+                });
+
+            });
+
+        });
+
+        /* ══════════════════════════════
+           SIDEBAR TOGGLE
+        ══════════════════════════════ */
+        // ── Sidebar toggle logic ──
+        const sidebar = document.getElementById('sidebar');
+        const mainWrapper = document.getElementById('main-wrapper');
+        const topbar = document.getElementById('topbar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        const isMobile = () => window.innerWidth < 992;
+
+        function toggleSidebar() {
+            if (isMobile()) {
+                sidebar.classList.toggle('mobile-open');
+                backdrop.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
+            } else {
+                sidebar.classList.toggle('collapsed');
+                const w = sidebar.classList.contains('collapsed')
+                    ? 'var(--sidebar-collapsed-width)'
+                    : 'var(--sidebar-width)';
+                mainWrapper.style.marginLeft = w;
+                topbar.style.left = w;
+            }
+        }
+
+        // Close mobile sidebar on resize to desktop
+        window.addEventListener('resize', () => {
+            if (!isMobile()) {
+                sidebar.classList.remove('mobile-open');
+                backdrop.style.display = 'none';
+            }
+        });
+
+        // Active nav link
+        // ── Active nav highlight based on current URL ──
+        (function () {
+
+            const currentPath = window.location.pathname.toLowerCase();
+
+            let bestMatch = null;
+            let bestMatchLength = 0;
+
+            document.querySelectorAll('.nav-item-link').forEach(function (link) {
+
+                link.classList.remove('active');
+
+                const href = link.getAttribute('href');
+
+                // Ignore invalid links + logout
+                if (
+                    href &&
+                    href !== '#' &&
+                    !href.toLowerCase().includes('/login')
+                ) {
+
+                    const linkPath = new URL(href, window.location.origin)
+                        .pathname
+                        .toLowerCase();
+
+                    // Exact match OR proper folder match
+                    if (
+                        currentPath === linkPath ||
+                        currentPath.startsWith(linkPath + '/')
+                    ) {
+
+                        if (linkPath.length > bestMatchLength) {
+                            bestMatch = link;
+                            bestMatchLength = linkPath.length;
+                        }
+                    }
                 }
             });
 
-            /* ---------- RESTORE OPEN MENU ---------- */
-
-            const savedMenu = localStorage.getItem("openMenu");
-            if (savedMenu) {
-                const menu = document.querySelector(`.openfold[data-menu="${savedMenu}"]`);
-                if (menu) openMenu(menu);
+            if (bestMatch) {
+                bestMatch.classList.add('active');
             }
 
+        })();
+
+        // Chevron rotation for collapse
+        document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(btn => {
+            const target = document.querySelector(btn.getAttribute('href'));
+            if (target) {
+                target.addEventListener('show.bs.collapse', () => {
+                    const arrow = btn.querySelector('.nav-arrow');
+                    if (arrow) arrow.style.transform = 'rotate(0deg)';
+                });
+                target.addEventListener('hide.bs.collapse', () => {
+                    const arrow = btn.querySelector('.nav-arrow');
+                    if (arrow) arrow.style.transform = 'rotate(-90deg)';
+                });
+            }
         });
     </script>
-    @*Toastr CSS*@
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-    @*jQuery (required by Toastr)*@
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    @*Toastr JS*@
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    @*Preloader script*@
-    <script type="text/javascript">
-        function preventBack() {
-            window.history.forward();
-        }
-        setTimeout("preventBack()", 0);
 
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            showLoadingScreen();
-
-        });
-
-        window.addEventListener('load', function () {
-            // Delay hiding the preloader to ensure it's displayed even on fast loads
-            setTimeout(hideLoadingScreen, 500); // 500ms delay before hiding
-        });
-
-        function showLoadingScreen() {
-            document.getElementById('loadingScreen').style.display = 'flex';
-        }
-
-        function hideLoadingScreen() {
-            document.getElementById('loadingScreen').style.display = 'none';
-        }
-    </script>
-    @*Preloader script*@
-
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
-
-
-
-

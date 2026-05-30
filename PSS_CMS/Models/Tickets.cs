@@ -15,6 +15,7 @@ namespace PSS_CMS.Models
         public int TC_PRECID { get; set; }       
         public int CP_CTRECID { get; set; }       
         public int? CU_WARRANTYFREECALLS { get; set; }
+        
 
         public bool IsDisabled
         {
@@ -107,12 +108,14 @@ namespace PSS_CMS.Models
         public int TT_SORTORDER { get; set; }
         public string TT_TICKETTYPE { get; set; }
         public string P_NAME { get; set; }
+        public string P_SERIALNUMBER { get; set; }
         public string CU_NAME { get; set; }
         public int P_RECID { get; set; }
         public int CU_RECID { get; set; }
         public string TT_CODE { get; set; }
         public string TT_DISABLE { get; set; }
-       
+        public string ProductSerial { get; set; }
+        public string CustomerType { get; set; }
 
     }
 
@@ -133,6 +136,7 @@ namespace PSS_CMS.Models
     public class ApiResponseObject
     {
         public string Status { get; set; }
+        public string CustomerType { get; set; }
         public string Message { get; set; }
         public Tickets Data { get; set; }
     }

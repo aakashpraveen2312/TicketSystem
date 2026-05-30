@@ -1,352 +1,300 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Prioritywise>
-<!DOCTYPE html>
-@{
-    Layout = null;
-}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <!-- Favicons -->
-    <link href="~/assets/img/bexlogo_wob.png" rel="icon">
-    <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="~/Content/FooterResponsive.css" rel="stylesheet" />
-    @*Bootstrap Icons and Boxicons and Fontawesome link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <title>BEYONDEXS - SERVICE MANAGEMENT</title>
+@{ ViewData["Title"] = "Contract Expiry Report";
+    ViewBag.PageTitle = "Contract Expiry Report";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
-    <script src="~/Scripts/Sidebarscript.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Colors.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- JustGage (only if used) -->
-    <script src="https://cdn.jsdelivr.net/npm/raphael@2.1.4/raphael-min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/justgage@1.3.0/justgage.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
     <style>
-        .card {
-            max-width: 100% !important;
-            height: 40vh;
-            overflow: visible;
+        /* ── Status badges ──────────────────────────── */
+        .status-expiring {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: #fff4db;
+            color: #c47a00;
+            font-size: 11px;
+            font-weight: 600;
         }
-        input#PastExpiry {
-            width: 25px;
-            height: 25px;
+
+        .status-expired {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: #ffeaea;
+            color: #e74c3c;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: #e8faf6;
+            color: #00916e;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ── Filter card ────────────────────────────── */
+        .filter-card {
+            padding: 20px 20px 4px;
+            border-bottom: 1px solid var(--border-color);
+            background: #fafafa;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 150px;
+        }
+
+        .filter-label {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* ── Pagination ─────────────────────────────── */
+        .report-pagination {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border-color);
+            justify-content: flex-end;
+        }
+
+        .page-info {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
         }
     </style>
-</head>
+}
 
-<body>
-    @*Sidebar*@
-    <nav class="sidebar close">
-        <header>
-            <div class="text logo-text" style="display:inline-block">
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-clock-history nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Contract Expiry Report</span>
+</div>
 
-                <a href="@Url.Action("ContractDashboard", "Contract")">
+<!-- Filter Card -->
+<div class="page-card" style="margin-bottom:20px;">
 
-
-                    @if (Session["Logo"] != null)
-                    {
-                        <img src="data:image/png;base64,@Session["Logo"]" alt="PSS Logo" class="logo" />
-                    }
-
-                </a>
-
-
-            </div>
-
-            <i class="bx bx-chevron-right toggle" style="margin-right:28px;margin-top:16px;"></i>
-
-        </header>
-        <div class="menu-bar">
-            <div class="menu">
-                <ul class="menu-links" style="margin-left:20px">
-                    <!-- ACCOUNTS ADMIN -->
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/software-engineer.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
-                        <img src="~/assets/img/software-engineer.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
-                        <span class="text nav-text" style="margin-left:15px">ACCOUNTS ADMIN</span>
-                    </li>
-                    <!-- Customer Accounts -->
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerList", "Contract")">
-                            <i class='bx bx-file' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Warranty Products</span>
-                        </a>
-                    </li>
-
-                    @*<li class="nav-link">
-                        <a href="@Url.Action("List", "Party")">
-                            <i class='bi bi-person-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Party</span>
-                        </a>
-                    </li>*@
-                    <li class="nav-link">
-                        <a href="@Url.Action("ContractList", "Contract")">
-                            <i class='bi bi-tools' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Service Contract</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="@Url.Action("Index", "ServiceInvoice")">
-                            <i class='bx bx-receipt' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Service Invoice</span>
-                        </a>
-                    </li>
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/ReportImage.png" class="settingsIcon" style="width:25px;height:25px;margin-bottom:10px;" />
-                        <img src="~/assets/img/ReportImage.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:10px;" />
-                        <span class="text nav-text" style="margin-left:15px">REPORTS</span>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="@Url.Action("Report", "FollowUpReport")">
-                            <i class='bx bx-phone-call' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Follow-up Report</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("ContractexpiryReport", "ContractExpiryReport")">
-                            <i class='bx bx-time-five' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Contract Expiry</span>
-                        </a>
-                    </li>
-                    @*<li class="nav-link">
-                        <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-credit-card' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                            <i class='bx bx-wallet' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-                        </a>
-                    </li>*@
-                    <!-- Settings Section -->
-                    <li class="nav-link openfold" style="margin-top:10px;">
-                        <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
-                        <img src="~/assets/img/cyber-security.png" class="openIcon" style="display:none;width:25px;height:25px;margin-bottom:5px;" />
-                        <span class="text nav-text" style="margin-left:15px">SECURITY</span>
-                    </li>
-
-                    @*Change Password*@
-                    <li class="nav-link">
-                        <a href="@Url.Action("ChangePassword", "Contract")">
-                            <i class='bx bxs-key' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Change Password</span>
-                        </a>
-                    </li>
-
-                    <!-- Logout -->
-                    <li class="nav-link">
-                        <a href="@Url.Action("Index", "Login")" class="logout-trigger login-link text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
-                            <i class='bx bx-log-out' style="font-size:24px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Logout</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="content" style=" overflow-x: hidden!important;">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
-
-                </a>
-            </div>
-
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li>CONTRACT - EXPIRY REPORT</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="container mt-5 card shadow p-4 rounded-3">
-            <h3 class="mb-4 text-center">Contract - Expiry Report</h3>
-
-            <!-- ✅ Form starts here -->
-            <form method="post" action="@Url.Action("ContractexpiryReport", "ContractExpiryReport")">
-
-                <div class="row g-3">
-
-                    <!-- From Date -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">From Date</label>
-                        <input type="date" name="FromDate" id="fromDate" class="form-control">
-                    </div>
-
-                    <!-- To Date -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">To Date</label>
-                        <input type="date" name="ToDate" id="toDate" class="form-control">
-                    </div>
-
-                    <!-- Priority type Combo Box -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Select Type</label>
-                        <select id="comboBox" name="Type" class="form-select" style="font-size:15px;">
-                            <option value="">-- Select Type --</option>
-                            <option value="Today">Today</option>
-                            <option value="This Week">This Week</option>
-                            <option value="This Month">This Month</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold d-block">Past Expiry</label>
-
-                        <div class="form-check mt-1">
-                            <input type="checkbox"
-                                   class="form-check-input"
-                                   id="PastExpiry"
-                                   name="PastExpiry" />
-                           
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="text-center mt-5">
-                    <button type="submit"
-                            name="ActionType"
-                            value="Filter"
-                            class="btn btn-warning px-4 me-3">
-                        Fillter
-                    </button>
-
-                    <button type="submit"
-                            name="ActionType"
-                            value="PDF"
-                            class="btn btn-danger px-4 me-3">
-                        PDF
-                    </button>
-
-                </div>
-
-            </form>
-            <!-- ✅ Form ends here -->
-        </div>
-
-        <!-- Report Table -->
-
-        <div class="card report-card mt-5 ms-3  mb-5">
-            <div class="card-body table-responsive">
-
-                <table class="table table-bordered table-hover">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>Customer Name</th>
-                            <th>Customer Email</th>
-                            <th>Customer Number</th>
-                            <th>Invoice Number</th>
-                            <th>Expiry Date</th>
-                            <th>Remaining Days</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@item.customerName</td>
-                                    <td>@item.customerEmail</td>
-                                    <td>@item.customerMobile</td>
-                                    <td>@item.invoiceNumber</td>
-                                    <td>@item.expiryDate</td>   <!-- FIXED -->
-                                    <td class="text-right">@item.remainingDays</td>
-                                    <td>@item.Status</td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="7" class="text-muted text-center">
-                                    No records found
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-
-                </table>
-                <div class="d-flex justify-content-start mt-3">
-                    <button id="prevBtn" class="btn btn-primary me-2">Previous</button>
-                    <span id="pageInfo" class="mt-2"></span>
-                    <button id="nextBtn" class="btn btn-primary ms-2">Next</button>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-                <h4>Are you sure you want to log out?</h4>
-            </div>
-            <div class="offcanvas-footer d-flex justify-content-center">
-                <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-                <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-            </div>
-        </div>
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-funnel" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            Filter Contracts
+        </h6>
     </div>
-    <script src="~/Scripts/Logoutjs.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <form method="post" action="@Url.Action("ContractexpiryReport", "ContractExpiryReport")" id="filterForm">
+        <div class="filter-card">
+            <div class="filter-row">
+
+                <!-- From Date -->
+                <div class="filter-group">
+                    <label class="filter-label">From Date</label>
+                    <input type="date" name="FromDate" id="fromDate" class="form-input-text"
+                           style="font-size:12.5px;padding:8px 10px;" />
+                </div>
+
+                <!-- To Date -->
+                <div class="filter-group">
+                    <label class="filter-label">To Date</label>
+                    <input type="date" name="ToDate" id="toDate" class="form-input-text"
+                           style="font-size:12.5px;padding:8px 10px;" />
+                </div>
+
+                <!-- Type -->
+                <div class="filter-group" style="min-width:180px;">
+                    <label class="filter-label">Select Type</label>
+                    <select id="comboBox" name="Type" class="form-select-input"
+                            style="font-size:12.5px;padding:8px 10px;">
+                        <option value="">-- Select Type --</option>
+                        <option value="Today">Today</option>
+                        <option value="This Week">This Week</option>
+                        <option value="This Month">This Month</option>
+                    </select>
+                </div>
+
+                <!-- Past Expiry -->
+                <div class="filter-group">
+                    <label class="filter-label">Past Expiry</label>
+                    <label class="check-row" style="padding:8px 14px;">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="PastExpiry"
+                               name="PastExpiry" />
+                        <div class="check-row-label">
+                            <span>Include past expired</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Buttons -->
+                <div class="filter-group" style="flex-direction:row;gap:8px;align-items:flex-end;min-width:auto;">
+                    <button type="submit" name="ActionType" value="Filter" class="btn-save">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                    <button type="submit" name="ActionType" value="PDF" class="btn-save"
+                            style="background:#e74c3c;">
+                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<!-- Results Card -->
+<div class="page-card">
+
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-table" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            Report Results
+        </h6>
+        @if (Model != null && Model.Any())
+        {
+<span class="custom-badge badge-active">@Model.Count() Records</span>}
+    </div>
+
+    <div class="grid-wrap">
+        @if (Model != null && Model.Any())
+        {
+<table id="reportTable">
+    <thead>
+        <tr>
+            <th>Customer Code</th>
+            <th>Customer Name</th>
+            <th>Customer Email</th>
+            <th>Customer Number</th>
+            <th>Expiry Date</th>
+            <th style="text-align:right;">Remaining Days</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+<tr>
+    <td><span class="contract-code">@item.Code</span></td>
+    <td>@item.customerName</td>
+    <td style="font-size:12px;color:var(--text-muted);">@item.customerEmail</td>
+    <td>@item.customerMobile</td>
+    <td>@item.expiryDate</td>
+    <td style="text-align:right;font-weight:600;">@item.remainingDays</td>
+    <td>
+        @{ var statusVal = (item.Status ?? "").Trim().ToUpper();
+                                var statusClass = statusVal.Contains("EXPIR") && !statusVal.Contains("ED")
+                                    ? "status-expiring"
+                                    : statusVal.Contains("EXPIRED")
+                                        ? "status-expired"
+                                        : "status-active";
+                                var statusIcon = statusVal.Contains("EXPIRED") ? "bi-x-circle-fill"
+                                               : statusVal.Contains("EXPIR") ? "bi-exclamation-circle-fill"
+                                               : "bi-check-circle-fill"; }
+        <span class="@statusClass">
+            <i class="bi @statusIcon"></i>
+            @item.Status
+        </span>
+    </td>
+</tr>}
+    </tbody>
+</table> }
+            else
+            {
+<div style="padding:48px 20px;text-align:center;color:var(--text-muted);">
+    <i class="bi bi-clock-history" style="font-size:36px;display:block;margin-bottom:10px;opacity:.4;"></i>
+    <span style="font-size:14px;font-weight:600;">No records found</span>
+    <p style="font-size:12px;margin-top:6px;">Apply a filter above to view contract expiry data.</p>
+</div>}
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+<div class="report-pagination">
+    <button id="prevBtn" class="page-btn" disabled>
+        <i class="bi bi-chevron-left"></i> Previous
+    </button>
+    <span class="page-info" id="pageInfo"></span>
+    <button id="nextBtn" class="page-btn">
+        Next <i class="bi bi-chevron-right"></i>
+    </button>
+</div>}
+
+</div><!-- /page-card -->
+<!-- Legend bar -->
+<div class="legend-bar">
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#e8faf6;border:1px solid #9FE1CB;flex-shrink:0;"></span>
+        <span>Active</span>
+    </div>
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#fff4db;border:1px solid #FAC775;flex-shrink:0;"></span>
+        <span>Expiring Soon</span>
+    </div>
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#ffeaea;border:1px solid #f5a9a9;flex-shrink:0;"></span>
+        <span>Expired</span>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+    <!-- Client-side pagination -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
-            const rowsPerPage = 10;
-            const rows = document.querySelectorAll("tbody tr");
-            const totalRows = rows.length;
-            const totalPages = Math.ceil(totalRows / rowsPerPage);
+            var table = document.getElementById("reportTable");
+            if (!table) return;
 
-            let currentPage = 1;
+            var rowsPerPage = 10;
+            var rows = table.querySelectorAll("tbody tr");
+            var totalRows = rows.length;
+            var totalPages = Math.ceil(totalRows / rowsPerPage);
+            var currentPage = 1;
 
             function showPage(page) {
                 currentPage = page;
-
-                rows.forEach((row, index) => {
+                rows.forEach(function (row, i) {
                     row.style.display =
-                        (index >= (page - 1) * rowsPerPage &&
-                            index < page * rowsPerPage)
-                            ? ""
-                            : "none";
+                        (i >= (page - 1) * rowsPerPage && i < page * rowsPerPage)
+                            ? "" : "none";
                 });
-
                 document.getElementById("pageInfo").innerText =
                     "Page " + currentPage + " of " + totalPages;
+                document.getElementById("prevBtn").disabled = currentPage === 1;
+                document.getElementById("nextBtn").disabled = currentPage === totalPages;
             }
 
             document.getElementById("prevBtn").addEventListener("click", function () {
@@ -360,40 +308,30 @@
             showPage(1);
         });
     </script>
+
+    <!-- Past Expiry checkbox value fix -->
     <script>
-$(document).ready(function () {
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <text>
-            Swal.fire({
-                icon: 'info',
-                title: 'Message',
-                text: '@TempData["ErrorMessage"]',
-                confirmButtonColor: '#034CAE',
-                confirmButtonText: 'OK'
-            });
-        </text>
-    }
-
-});
-    </script>
-    <script>
-        document.querySelector("form").addEventListener("submit", function () {
-
-            var checkbox = document.getElementById("PastExpiry");
-
-            if (checkbox.checked) {
-                checkbox.value = "checked";
-            } else {
-                checkbox.value = "unchecked";
-            }
-
-           
+        document.getElementById("filterForm").addEventListener("submit", function () {
+            var cb = document.getElementById("PastExpiry");
+            cb.value = cb.checked ? "checked" : "unchecked";
         });
     </script>
 
-</body>
-</html>
-
-
+    <!-- TempData error message -->
+    <script>
+        $(document).ready(function () {
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Message',
+                    text: '@TempData["ErrorMessage"]',
+                    confirmButtonColor: '#034CAE',
+                    confirmButtonText: 'OK'
+                });
+                </text>
+            }
+        });
+    </script>
+}

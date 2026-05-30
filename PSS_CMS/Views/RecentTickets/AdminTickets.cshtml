@@ -1,512 +1,327 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Admintickets>
 @using GridMvc.Html
-@{
-    // Decode JavaScript string
+
+@{ ViewData["Title"] = "Verify Tickets";
+    ViewBag.PageTitle = "Verify Tickets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
     Func<string, string> DecodeJavaScriptString = (input) =>
     {
-        if (input == null) return string.Empty;  // Return empty string if input is null
-
-return input.Replace("\\\"", "\"")        // Double quotes
-                    .Replace("\\'", "'")         // Single quotes
-                    .Replace("\\(", "(")         // Parenthesis
+        if (input == null) return string.Empty;
+        return input.Replace("\\\"", "\"")
+                    .Replace("\\'", "'")
+                    .Replace("\\(", "(")
                     .Replace("\\)", ")")
-                    .Replace("\\[", "[")         // Square brackets
+                    .Replace("\\[", "[")
                     .Replace("\\]", "]")
-                    .Replace("\\,", ",")         // Comma
-                    .Replace("\\.", ".")         // Period
-                    .Replace("\\\\", "\\")       // Backslash
-                    .Replace("\\n", "\n")        // Newline
-                    .Replace("\\r", "\r");       // Carriage return
-};
-}
+                    .Replace("\\,", ",")
+                    .Replace("\\.", ".")
+                    .Replace("\\\\", "\\")
+                    .Replace("\\n", "\n")
+                    .Replace("\\r", "\r");
+    };
 
+    string lastStatus = Session["STATUS"]?.ToString(); }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    @*Bootstrap Icons and Boxicons link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="~/Scripts/Script.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
     <style>
-        #ticetscreen {
-            overflow-x: hidden;
+
+        /* ── Thread is a flex column of rows ── */
+        .ticket-thread {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* ── Each row = 2-column grid ── */
+        .ticket-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        /* ── Card fills full height ── */
+        .ticket-card {
+            background: var(--body-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* ── Empty placeholder when no response ── */
+        .ticket-card-empty {
+            border-radius: 12px;
+            border: 1.5px dashed var(--border-color);
+            background: transparent;
+            min-height: 80px;
+        }
+
+        /* ── Card body: fills space + scrolls if large ── */
+        .ticket-card-body {
+            padding: 16px;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 100px;
+        }
+
+        @@media (max-width: 640px) {
+            .ticket-row {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
+}
 
-</head>
-<body id="ticetscreen">
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-ticket-perforated nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("RecentTicket","RecentTickets")">Tickets</a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Verify Ticket</span>
+</div>
 
-    <div class="">
+<!-- Main Card -->
+<div class="page-card">
 
-        <div class="content">
-            <nav class="nav d-flex">
-                <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+    <!-- Header -->
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-ticket-perforated" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            Ticket Thread
+        </h6>
+    </div>
 
+    <!-- PDF action buttons (shown when not Closed/Resolved) -->
+    @if (lastStatus != "C" && lastStatus != "R")
+    {
+<div class="pdf-action-row">
+    <button class="btn-pdf btn-draft download-pdf">
+        <i class="bi bi-file-earmark-pdf"></i> Draft PDF
+    </button>
 
-                <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-
-                <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                    <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                        <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
-
-                    </a>
-                </div>
-
-
-            </nav>
-            <div class="row" style="margin-top:10px">
-                <div class="col-lg-12 col-sm-12">
-                    <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-
-                        <li class="resadmintic" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("RecentTicket", "RecentTickets")">TICKETS</a></li>
-                        <li class="resadmintic" style="color: #2888bb;">VERIFY TICKETS</li>
-
-                    </ul>
-                </div>
-
-            </div>
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    @foreach (var item in Model)
-                    {
-                        <form>
-                            <div class="container rescontaineradmin">
-                                <div class="row ms-2">
-                                    <div class="col-10">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <h4 style="margin-top:0px!important"><b><u>TICKET RAISED</u></b><span style="font-size:17px;"> By:@item.TC_USERNAME</span></h4>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <p class="" readonly><b>Subject:</b> @item.TC_SUBJECT</p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <p class="" readonly><b>@Convert.ToDateTime(item.TC_TICKETDATE).ToString("dd/MM/yyyy HH:mm")</b></p>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                @Html.Label("User Comments", new { @class = "pb-2" })
-                                                @*<p class="" readonly>@item.TC_COMMENTS</p>*@
-                                                <p class="readonly">@Html.Raw(DecodeJavaScriptString(@item.TC_COMMENTS))</p>
-
-                                            </div>
-
-
-                                        </div>
-
-
-                                        @if (!string.IsNullOrEmpty(item.TC_REQUEST_ATTPREFIX))
-                                        {
-                                            string base64String = item.TC_REQUEST_ATTPREFIX;
-
-                                            // Detect file type from Base64 prefix
-                                            string fileType = "";
-                                            string mimeType = "";
-
-                                            if (base64String.StartsWith("iVBORw0KGgo")) // PNG file signature
-                                            {
-                                                fileType = "png";
-                                                mimeType = "image/png";
-                                            }
-                                            else if (base64String.StartsWith("/9j/")) // JPG/JPEG file signature
-                                            {
-                                                fileType = "jpg";
-                                                mimeType = "image/jpeg";
-                                            }
-                                            else if (base64String.StartsWith("AAAAFGZ0eXB")) // MP4 file signature
-                                            {
-                                                fileType = "mp4";
-                                                mimeType = "video/mp4";
-                                            }
-                                            else if (base64String.StartsWith("AAAAGGZ0eXBt")) // MP4 file signature
-                                            {
-                                                fileType = "mp4";
-                                                mimeType = "video/mp4";
-                                            }
-                                            else if (base64String.StartsWith("JVBER")) // PDF file signature
-                                            {
-                                                fileType = "pdf";
-                                                mimeType = "application/pdf";
-                                            }
-                                            else if (base64String.StartsWith("UEsDB")) // XLSX or DOCX file signature (ZIP format)
-                                            {
-                                                fileType = "xlsx"; // Default to XLSX
-                                                mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-                                                // Further checking if it's DOCX (DOCX and XLSX share the same initial ZIP signature)
-                                                if (base64String.Contains("word/"))
-                                                {
-                                                    fileType = "docx";
-                                                    mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-                                                }
-                                            }
-                                            else if (base64String.StartsWith("U1RB") || base64String.StartsWith("R2V0")) // TXT file signature
-                                            {
-                                                fileType = "txt";
-                                                mimeType = "text/plain";
-                                            }
-                                            else if (base64String.StartsWith("Q0N2")) // CSV file signature
-                                            {
-                                                fileType = "csv";
-                                                mimeType = "text/csv";
-                                            }
-                                            else
-                                            {
-                                                fileType = "unknown";
-                                                mimeType = "application/octet-stream"; // Default for unknown file types
-                                            }
-
-                                            // If it's an image, show the preview
-                                            <!--if (mimeType.StartsWith("image/"))
-                                            {
-                                                <div class="row">
-                                                    <div class="col-7">
-                                                        <img src="data:@mimeType;base64,@item.TC_REQUEST_ATTPREFIX"
-                                                             alt="Ticket Image" class="img-fluid "
-                                                             data-toggle="modal" data-target="#modal_@item.TC_RECID" />
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-2">
-                                                        <button style="margin:20px" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_@item.TC_RECID">
-                                                            Preview
-                                                        </button>-->
-
-                                                        <!-- Modal for Image Preview -->
-                                                        <!--<div class="modal fade" id="modal_@item.TC_RECID" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog" role="document">
-                                                                <div class="custom modal-content">
-                                                                    <div class="modal-body">
-                                                                        <img src="data:@mimeType;base64,@item.TC_REQUEST_ATTPREFIX" alt="Ticket Image" class="img-fluid logical" />
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                                            Close
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                            else
-                                            {-->
-                                                // If it's a document (PDF, XLSX, TXT), show the Download button
-                                                <div class="row">
-                                                    <div class="col-2">
-                                                        <a href="data:@mimeType;base64,@item.TC_REQUEST_ATTPREFIX"
-                                                           download="Attachment.@fileType"
-                                                           class="btn btn-success" style="margin:10px">
-                                                            Download
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            //}
-                                        }
-
-
-                                    </div>
-
-                                </div>
-                            </div>
-                        </form>
-
-                        @* Show form if data exists *@
-
-                        if (!string.IsNullOrEmpty(item.TC_RESPONSECOMMENTS))
-                        {
-                            using (Html.BeginForm("AdminResponseTicket", "RecentTickets", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                            {
-                                @Html.AntiForgeryToken()
-                                @Html.Hidden("TicketId", item.TC_ID)
-
-                                <div class="container rescontaineradmin mt-2 ">
-                                    <div style="margin-left:5px" class="row">
-                                        <div class="col-10">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <h4 style="margin-top:0px!important"><b><u>RESPONSED</u></b><span style="font-size:17px;"> By:@item.TC_ADMINNAME</span></h4>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <p class="" readonly><b>@Convert.ToDateTime(item.TC_TICKETDATE).ToString("dd/MM/yyyy HH:mm:ss")</b></p>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    @Html.Label("Admin Comments", new { @class = "pb-2" })
-                                                    <p class="" readonly>@item.TC_RESPONSECOMMENTS</p>
-                                                </div>
-
-
-                                            </div>
-
-
-                                            @if (!string.IsNullOrEmpty(item.TC_RESPONSE_ATTPREFIX))
-                                            {
-                                                string base64String = item.TC_RESPONSE_ATTPREFIX;
-
-                                                // Detect file type from Base64 prefix
-                                                string fileType = "";
-                                                string mimeType = "";
-
-                                                if (base64String.StartsWith("iVBORw0KGgo")) // PNG file signature
-                                                {
-                                                    fileType = "png";
-                                                    mimeType = "image/png";
-                                                }
-                                                else if (base64String.StartsWith("/9j/")) // JPG/JPEG file signature
-                                                {
-                                                    fileType = "jpg";
-                                                    mimeType = "image/jpeg";
-                                                }
-                                                else if (base64String.StartsWith("JVBER")) // PDF file signature
-                                                {
-                                                    fileType = "pdf";
-                                                    mimeType = "application/pdf";
-                                                }
-                                                else if (base64String.StartsWith("AAAAFGZ0eXB")) // MP4 file signature
-                                                {
-                                                    fileType = "mp4";
-                                                    mimeType = "video/mp4";
-                                                }
-                                                else if (base64String.StartsWith("AAAAGGZ0eXBt")) // MP4 file signature
-                                                {
-                                                    fileType = "mp4";
-                                                    mimeType = "video/mp4";
-                                                }
-                                                else if (base64String.StartsWith("UEsDB")) // XLSX or DOCX file signature (ZIP format)
-                                                {
-                                                    fileType = "xlsx"; // Default to XLSX
-                                                    mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-                                                    // Further checking if it's DOCX (DOCX and XLSX share the same initial ZIP signature)
-                                                    if (base64String.Contains("word/"))
-                                                    {
-                                                        fileType = "docx";
-                                                        mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-                                                    }
-                                                }
-                                                else if (base64String.StartsWith("U1RB") || base64String.StartsWith("R2V0")) // TXT file signature
-                                                {
-                                                    fileType = "txt";
-                                                    mimeType = "text/plain";
-                                                }
-                                                else if (base64String.StartsWith("Q0N2")) // CSV file signature
-                                                {
-                                                    fileType = "csv";
-                                                    mimeType = "text/csv";
-                                                }
-                                                else
-                                                {
-                                                    fileType = "unknown";
-                                                    mimeType = "application/octet-stream"; // Default for unknown file types
-                                                }
-
-                                                // If it's an image, show the preview
-                                                if (mimeType.StartsWith("image/"))
-                                                {
-                                                    <div class="row">
-                                                        <div class="col-7">
-                                                            <img src="data:@mimeType;base64,@item.TC_RESPONSE_ATTPREFIX"
-                                                                 alt="Response Ticket Image" class="img-fluid"
-                                                                 data-toggle="modal" data-target="#modal_@item.TC_RECID" />
-                                                        </div>
-                                                       
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-2">
-                                                            <button style="margin:20px" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalpreview_@item.TC_RECID">
-                                                                Preview
-                                                            </button>
-
-                                                            <!-- Modal for Image Preview -->
-                                                            <div class="modal fade" id="modalpreview_@item.TC_RECID" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog" role="document">
-                                                                    <div class="custom modal-content imagewidth">
-                                                                        <div class="modal-body">
-                                                                            <img src="data:@mimeType;base64,@item.TC_RESPONSE_ATTPREFIX" alt="Response Ticket Image" class="img-fluid logical" />
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                                                Close
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    // If it's a document (PDF, XLSX, TXT), show the Download button
-                                                    <div class="row">
-                                                        <div class="col-2">
-                                                            <a href="data:@mimeType;base64,@item.TC_RESPONSE_ATTPREFIX"
-                                                               download="Attachment.@fileType"
-                                                               class="btn btn-success" style="margin:10px">
-                                                                Download
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                }
-                                            }
-
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                            }
-                        }
-
-                    }
-                </div>
-
-                @{
-                    var lastStatus = Session["STATUS"]?.ToString();
-                }
-
-                @if (lastStatus != "C" && lastStatus != "R")
-                {
-
-                    <div class="col-md-12 mt-2">
-                        @{
-                            Html.RenderPartial("_AdminResponse", new PSS_CMS.Models.Admintickets());  // Pass the single ticket to the partial view
-
-                        }
-                    </div>
-                }
+    @if ((Session["Customertype"]?.ToString() ?? "") == "Contract")
+    {
+<button class="btn-pdf btn-contract download-contractpdf">
+    <i class="bi bi-file-earmark-text"></i> Contract Service
+</button> }
                 else
                 {
+<button class="btn-pdf btn-warranty download-warrantypdf">
+    <i class="bi bi-shield-check"></i> Warranty Service
+</button>}
+</div>}
 
-                }
+    <!-- Ticket thread -->
+    <div style="padding:18px;">
+        <div class="ticket-thread">
 
+            @foreach (var item in Model)
+            {
+<div class="ticket-row">
+
+    @* ── Ticket Raised card (always left) ── *@
+    <div class="ticket-card">
+
+        <div class="ticket-card-header raised">
+            <div class="ticket-meta">
+                <span class="ticket-badge badge-raised">
+                    <i class="bi bi-arrow-up-circle"></i> Ticket Raised
+                </span>
+                <span class="ticket-by">@item.TC_USERNAME</span>
             </div>
+            <span class="ticket-date">
+                <i class="bi bi-clock"></i>
+                @Convert.ToDateTime(item.TC_TICKETDATE).ToString("dd/MM/yyyy HH:mm")
+            </span>
         </div>
 
-        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-                <h4>Are you sure you want to log out?</h4>
-            </div>
-            <div class="offcanvas-footer d-flex justify-content-center">
-                <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-                <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-            </div>
+        <div class="ticket-card-body">
+            <p class="comments-label">User Comments</p>
+            <p class="comments-text">@Html.Raw(DecodeJavaScriptString(item.TC_COMMENTS))</p>
+
+            @* Request attachment *@
+            @if (!string.IsNullOrEmpty(item.TC_REQUEST_ATTPREFIX))
+            {
+                string b64 = item.TC_REQUEST_ATTPREFIX;
+                string ft = "bin";
+                string mime = "application/octet-stream";
+
+                if (b64.StartsWith("iVBORw0KGgo")) { ft = "png"; mime = "image/png"; }
+                else if (b64.StartsWith("/9j/")) { ft = "jpg"; mime = "image/jpeg"; }
+                else if (b64.StartsWith("AAAAFGZ0eXB") ||
+                         b64.StartsWith("AAAAGGZ0eXBt")) { ft = "mp4"; mime = "video/mp4"; }
+                else if (b64.StartsWith("JVBER")) { ft = "pdf"; mime = "application/pdf"; }
+                else if (b64.StartsWith("UEsDB"))
+                {
+                    ft = "xlsx"; mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    if (b64.Contains("word/")) { ft = "docx"; mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; }
+                }
+                else if (b64.StartsWith("U1RB") || b64.StartsWith("R2V0")) { ft = "txt"; mime = "text/plain"; }
+                else if (b64.StartsWith("Q0N2")) { ft = "csv"; mime = "text/csv"; }
+
+                if (mime.StartsWith("image/"))
+                {
+<img src="data:@mime;base64,@item.TC_REQUEST_ATTPREFIX"
+     alt="Ticket attachment"
+     class="img-thumb" /> }
+                    else
+                    {
+<a href="data:@mime;base64,@item.TC_REQUEST_ATTPREFIX"
+   download="Attachment.@ft"
+   class="dl-btn">
+    <i class="bi bi-download"></i> Download Attachment
+</a>}
+                }
         </div>
     </div>
 
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
+    @* ── Response card (right) or empty placeholder ── *@
+    @if (!string.IsNullOrEmpty(item.TC_RESPONSECOMMENTS))
+    {
+        using (Html.BeginForm("AdminResponseTicket", "RecentTickets", FormMethod.Post, new { enctype = "multipart/form-data", @class = "no-preloader" }))
+        {
+@Html.AntiForgeryToken()
+                        @Html.Hidden("TicketId", item.TC_ID)
+
+                                                <div class="ticket-card">
+
+                                                    <div class="ticket-card-header responded">
+                                                        <div class="ticket-meta">
+                                                            <span class="ticket-badge badge-responded">
+                                                                <i class="bi bi-reply-all"></i> Response
+                                                            </span>
+                                                            <span class="ticket-by">@item.TC_ADMINNAME</span>
+                                                        </div>
+                                                        <span class="ticket-date">
+                                                            <i class="bi bi-clock"></i>
+                                                            @Convert.ToDateTime(item.TC_TICKETDATE).ToString("dd/MM/yyyy HH:mm")
+                                                        </span>
+                                                    </div>
+
+                                                    <div class="ticket-card-body">
+                                                        <p class="comments-label">Admin Comments</p>
+                                                        <p class="comments-text">@item.TC_RESPONSECOMMENTS</p>
+
+                                                        @* Response attachment *@
+                                                        @if (!string.IsNullOrEmpty(item.TC_RESPONSE_ATTPREFIX))
+                                                        {
+                                                            string b64r = item.TC_RESPONSE_ATTPREFIX;
+                                                            string ftr = "bin";
+                                                            string mimer = "application/octet-stream";
+
+                                                            if (b64r.StartsWith("iVBORw0KGgo")) { ftr = "png"; mimer = "image/png"; }
+                                                            else if (b64r.StartsWith("/9j/")) { ftr = "jpg"; mimer = "image/jpeg"; }
+                                                            else if (b64r.StartsWith("AAAAFGZ0eXB") ||
+                                                                     b64r.StartsWith("AAAAGGZ0eXBt")) { ftr = "mp4"; mimer = "video/mp4"; }
+                                                            else if (b64r.StartsWith("JVBER")) { ftr = "pdf"; mimer = "application/pdf"; }
+                                                            else if (b64r.StartsWith("UEsDB"))
+                                                            {
+                                                                ftr = "xlsx"; mimer = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                                                                if (b64r.Contains("word/")) { ftr = "docx"; mimer = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; }
+                                                            }
+                                                            else if (b64r.StartsWith("U1RB") || b64r.StartsWith("R2V0")) { ftr = "txt"; mimer = "text/plain"; }
+                                                            else if (b64r.StartsWith("Q0N2")) { ftr = "csv"; mimer = "text/csv"; }
+
+                                                            if (mimer.StartsWith("image/"))
+                                                            {
+                                <div>
+                                    <img src="data:@mimer;base64,@item.TC_RESPONSE_ATTPREFIX"
+                                         alt="Response attachment"
+                                         class="img-thumb"
+                                         id="respImg_@item.TC_RECID" />
+                                </div>
+                                                                <a href="data:@mimer;base64,@item.TC_RESPONSE_ATTPREFIX"
+                                                                   download="Attachment.@ftr"
+                                                                   class="dl-btn dl-btn-green" style="margin-top:8px;">
+                                                                    <i class="bi bi-download"></i> Download Image
+                                                                </a> }
+                                                                                            else
+                                                                                            {
+                                                                <a href="data:@mimer;base64,@item.TC_RESPONSE_ATTPREFIX"
+                                                                   download="Attachment.@ftr"
+                                                                   class="dl-btn dl-btn-green">
+                                                                    <i class="bi bi-download"></i> Download Attachment
+                                                                </a>}
+                                                                                        }
+                                                    </div>
+
+                                                </div> }
+                                                                }
+                                                                else
+                                                                { @* Empty placeholder keeps column 2 reserved *@
+                                                                                    <div class="ticket-card-empty"></div>}
+
+</div>            }
+
+        </div>
+
+        @if (lastStatus == "C" || lastStatus == "R")
+        {<!-- Actions -->
+                <div class="mt-3 d-flex justify-content-end">
+                    <a href="@Url.Action("RecentTicket", "RecentTickets")"
+                       class="res-btn res-btn-cancel">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
+                </div> } @* ── Admin response form (partial) ── *@
+        @if (lastStatus != "C" && lastStatus != "R")
+        {
+<div style="margin-top:20px;">
+    @{ Html.RenderPartial("_AdminResponse", new PSS_CMS.Models.Admintickets()); }
+</div>}
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var img = document.getElementById("ticketImage");
-            img.onload = function () {
-                console.log("Image Loaded Successfully");
-            };
-        });
 
-    </script>
-    <script>
-        function updateDateTime() {
-            let now = new Date();
-
-            // Format Date as DD/MM/YYYY
-            let date = now.toLocaleDateString("en-GB"); // 'en-GB' gives DD/MM/YYYY format
-
-            // Format Time as HH:MM:SS
-            let time = now.toLocaleTimeString(); // This gives HH:MM:SS in 24-hour format
-
-            // Combine Date & Time
-            let formattedDateTime = `${date} ${time}`;
-
-            // Set the formatted date-time inside the <p> tag
-            document.getElementById("responseDateTime").innerText = formattedDateTime;
+        /* ── Generic PDF handler ─────────────────── */
+        function handlePdf(action) {
+            Swal.fire({
+                title: 'Generating PDF…',
+                text: 'Please wait.',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            $.ajax({
+                url: action, type: 'POST',
+                success: function (r) {
+                    Swal.close();
+                    if (r.status === 'success') { window.open(r.url, '_blank'); }
+                    else { Swal.fire({ icon: 'info', title: 'Message', text: r.message }); }
+                },
+                error: function () {
+                    Swal.close();
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Something went wrong. Please try again.' });
+                }
+            });
         }
 
-        // Run the function immediately and update it every second
-        updateDateTime(); // Initial call
-        setInterval(updateDateTime, 1000); // Update every 1 second
-    </script>
-    <script>
-    @* Script for active menu *@
+        $(document).on('click', '.download-pdf',         function (e) { e.preventDefault(); handlePdf('@Url.Action("DraftDownloadPDF","RecentTickets")'); });
+        $(document).on('click', '.download-contractpdf', function (e) { e.preventDefault(); handlePdf('@Url.Action("ContractDownloadPDF","RecentTickets")'); });
+        $(document).on('click', '.download-warrantypdf', function (e) { e.preventDefault(); handlePdf('@Url.Action("WarrantyDownloadPDF","RecentTickets")'); });
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const sidebarLinks = document.querySelectorAll(".sidebar a");
-
-        // Highlight the active link based on the current URL
-        sidebarLinks.forEach(link => {
-            if (link.href === window.location.href) {
-                link.classList.add("active");
-            }
-        });
-
-        // Add click event to update the active class
-        sidebarLinks.forEach(link => {
-            link.addEventListener("click", function () {
-                // Remove active class from all links
-                sidebarLinks.forEach(l => l.classList.remove("active"));
-
-                // Add active class to the clicked link
-                this.classList.add("active");
-            });
-        });
-    });
-
-
-    @* Script for dropdown *@
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const dropdownBtn = document.querySelector(".dropdown-btn");
-        const dropdownContainer = document.querySelector(".dropdown-container");
-
-        dropdownBtn.addEventListener("click", function () {
-            this.classList.toggle("active");
-        dropdownContainer.style.display = dropdownContainer.style.display === "block" ? "none" : "block";
-            });
-        });
-
-
-        @* Script for deep dropdown *@
-        document.addEventListener("DOMContentLoaded", function () {
-            const deepDropdown = document.querySelector(".deep-dropdown");
-            const deepSubmenu = deepDropdown.querySelector(".deep-submenu");
-
-            deepDropdown.addEventListener("mouseenter", function () {
-                deepSubmenu.style.display = "block";
-            });
-
-            deepDropdown.addEventListener("mouseleave", function () {
-                deepSubmenu.style.display = "none";
-            });
-        });
-
+        /* ── Datetime updater ───────────────────── */
+        function updateDateTime() {
+            var el = document.getElementById('responseDateTime');
+            if (!el) return;
+            var now  = new Date();
+            el.innerText = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString();
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
 
     </script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-</body>
-</html>
+}

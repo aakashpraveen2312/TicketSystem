@@ -1,428 +1,364 @@
 ﻿@model IEnumerable<PSS_CMS.Models.TicketAgeingViewModel>
-@using GridMvc.Html
-@{
-    ViewBag.Title = "Ticket History Product";
-    var productList = ViewBag.Product as List<SelectListItem>;
-}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    @*Bootstrap Icons and Boxicons link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
-    <script src="~/Scripts/Script.js"></script>
+@{ ViewData["Title"] = "Aging Report";
+                ViewBag.PageTitle = "Aging Report";
+                Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
     <style>
-
-        .container-fluid {
-            width: 80%;
-            margin: 20px 1px;
+        /* ── Filter Card ───────────────────────────────────────── */
+        .filter-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            padding: 20px 22px;
+            margin-bottom: 18px;
         }
 
-
-        .whitepapers {
+        .filter-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 16px;
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+            align-items: center;
+            gap: 7px;
         }
 
-        .whitepaper {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            width: 300px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            .filter-title i { color: var(--primary); }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
         }
 
-            .whitepaper h3 {
-                margin: 0 0 10px;
-                color: #754599
+        @@media (max-width: 768px) {
+            .filter-grid { grid-template-columns: 1fr; }
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        .filter-input {
+            width: 100%;
+            background: var(--body-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 9px;
+            padding: 7px 12px;
+            font-size: 12.5px;
+            font-family: inherit;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color .15s, box-shadow .15s;
+        }
+
+            .filter-input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(108,92,231,.1);
             }
 
-            .whitepaper p {
-                font-size: 14px;
-                margin-bottom: 15px;
-            }
-
-        .download-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #2888bb;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        /* Custom styling for SweetAlert buttons */
-        .swal-btn-continue {
-            background-color: #6ed3d0 !important; /* Green color */
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 18px;
         }
 
-        .swal-btn-back {
-            background-color: #f0a72d !important; /* Red color */
-            color: white !important;
-            border-radius: 5px;
-            padding: 8px 20px;
-            font-weight: bold;
+        .btn-filter {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 7px 18px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+            .btn-filter:hover { background: #5a4bd1; }
+
+        .btn-pdf {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 7px 18px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+            .btn-pdf:hover { background: #c0392b; }
+
+        /* ── Status Badge ──────────────────────────────────────── */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .s-open      { background: #eef6ff; color: #1a73e8; }
+        .s-closed    { background: #e8faf6; color: #00916e; }
+        .s-pending   { background: #fff4db; color: #c47a00; }
+        .s-escalated { background: #ffeaea; color: #e74c3c; }
+
+        /* ── Bucket Badge ──────────────────────────────────────── */
+        .bucket-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .b-0 { background: #e8faf6; color: #00916e; }
+        .b-1 { background: #fff4db; color: #c47a00; }
+        .b-2 { background: #ffeaea; color: #e74c3c; }
+        .b-3 { background: #f3f0ff; color: #5a4bd1; }
+
+        /* ── Record Count Badge ────────────────────────────────── */
+        .record-badge {
+            background: #f3f0ff;
+            color: #5a4bd1;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 9px;
+            border-radius: 20px;
+            margin-left: 6px;
+        }
+
+        .ref-code {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 12px;
         }
     </style>
+}
 
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
 
-</head>
+    <i class="bi bi-clock-history"></i>
 
-<body>
+    <i class="bi bi-chevron-right"></i>
 
-    <div class="content">
+    <span>Report</span>
 
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">SERVICE MANAGEMENT</h3></div>
+    <i class="bi bi-chevron-right"></i>
 
+    <span>Aging Report</span>
 
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
+</div>
 
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+<!-- Filter Card -->
+<div class="filter-card">
 
-                </a>
-            </div>
+    <div class="filter-title">
+        <i class="bi bi-funnel"></i>
+        Ticket Aging Report — Filters
+    </div>
 
+    @using (Html.BeginForm(
+        "TicketAgeingReportPdf",
+        "RecentTickets",
+        FormMethod.Post,
+        new { id = "filterForm", enctype = "multipart/form-data", @class = "no-preloader" }))
+    {
+<div class="filter-grid">
 
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-12">
+    <!-- From Date -->
+    <div class="form-group">
+        <label>From Date</label>
+        <input type="date"
+               name="FromDate"
+               id="fromDate"
+               class="filter-input"
+               value="@Request["FromDate"]" />
+    </div>
 
-                <ul class="breadcrumb mt-3">
-                    <li class="resadminFAQ" style="color: #2888bb;">REPORT</li>
-                    <li>AGING REPORT</li>
-                </ul>
-            </div>
+    <!-- To Date -->
+    <div class="form-group">
+        <label>To Date</label>
+        <input type="date"
+               name="ToDate"
+               id="toDate"
+               class="filter-input"
+               value="@Request["ToDate"]" />
+    </div>
 
-        </div>
+    <!-- Product -->
+    <div class="form-group">
+        <label>Product</label>
+        @Html.DropDownList(
+                 "ProductId",
+                 ViewBag.Product as IEnumerable<SelectListItem> ?? new List<SelectListItem>(),
+                 "-- Select Product --",
+                 new { @class = "filter-input" })
+    </div>
 
+</div>
 
-        <div class="">
-            @using (Html.BeginForm("TicketAgeingReportPdf", "RecentTickets", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data" }))
-            {
-                <div class="container mt-5 card shadow p-4 rounded-3">
-                    <h3 class="mb-4 text-center">Ticket Aging Report</h3>
-                    <!-- ✅ Form starts here -->
+                <div class="filter-actions">
 
-                    <div class="row g-3">
+                    <button type="submit"
+                            name="ActionType"
+                            value="Filter"
+                            class="btn-filter">
+                        <i class="bi bi-funnel"></i>
+                        Filter
+                    </button>
 
-                        <!-- From Date -->
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">From Date</label>
-                            <input type="date" name="FromDate" id="fromDate" class="form-control">
-                        </div>
+                    <button type="submit"
+                            name="ActionType"
+                            value="PDF"
+                            class="btn-pdf">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                        PDF
+                    </button>
 
-                        <!-- To Date -->
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">To Date</label>
-                            <input type="date" name="ToDate" id="toDate" class="form-control">
-                        </div>
+                </div>}
 
-                        @*Product DropDown*@
+</div>
 
-                    <div class="col-md-4">
-                        <label for="ProductId">Product</label>
-                        @Html.DropDownList(
-                            "ProductId",
-                            ViewBag.Product as IEnumerable<SelectListItem> ?? new List<SelectListItem>(),
-                            "-- Select Product --",
-                            new { @class = "form-control" }
-                        )
-                    </div>
+<!-- Report Table -->
+<div class="page-card">
 
-                    </div>
+    <!-- Header -->
+    <div class="page-card-header">
 
-                    <!-- Submit Button -->
-                    <div class="text-center mt-5">
-                        <button type="submit"
-                                name="ActionType"
-                                value="Filter"
-                                class="btn btn-warning px-4 me-3">
-                            Fillter
-                        </button>
+        <h6 class="page-card-title">
+            <i class="bi bi-clock-history" style="color:var(--primary)"></i>
+            Aging Report
+            <span class="record-badge">
+                @(Model != null ? Model.Count() : 0) records
+            </span>
+        </h6>
 
-                        <button type="submit"
-                                name="ActionType"
-                                value="PDF"
-                                class="btn btn-danger px-4 me-3">
-                            PDF
-                        </button>
+    </div>
 
-                    </div>
+    <!-- Table -->
+    <div class="grid-wrap table-responsive">
 
-                    <!-- ✅ Form ends here -->
-                </div>
+        @if (Model != null && Model.Any())
+        {
+<table class="table align-middle mb-0 tickets-table">
 
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Reference No</th>
+            <th>Customer Name</th>
+            <th>Status</th>
+            <th>Age</th>
+            <th>Bucket</th>
+        </tr>
+    </thead>
 
-            }
+    <tbody>
 
-            <!-- Report Table -->
-            <div class="card">
-                <div class="card-body table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>Invoice No</th>
-                                <th>Customer Name</th>
-                                <th>Email ID</th>
-                                <th>Mobile No</th>
-                                <th>Remarks</th>
-                                <th>Next Follow-Up</th>
-                                <th>Status</th>
+        @foreach (var item in Model)
+        {
+            var statusClass =
+                item.Status == "Open" ? "s-open" :
+                item.Status == "Closed" ? "s-closed" :
+                item.Status == "Pending" ? "s-pending" :
+                item.Status == "Escalated" ? "s-escalated" :
+                                             "s-open";
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model != null && Model.Any())
-                            {
-                                @*foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>@item.CN_INVOICENO</td>
-                                        <td>@item.CU_NAME</td>
-                                        <td>@item.CU_EMAIL</td>
-                                        <td>@item.CU_MOBILENO</td>
-                                        <td>@item.CN_COMMENTS</td>
-                                        <td>@item.CN_FOLLOWUPDATE</td>
-                                        <td>
-                                            @if (!string.IsNullOrWhiteSpace(item.CN_STATUS))
+            var bucketClass =
+                item.AgeBucket == "0-7 Days" ? "b-0" :
+                item.AgeBucket == "8-30 Days" ? "b-1" :
+                item.AgeBucket == "31-60 Days" ? "b-2" :
+                                                 "b-3";
+
+<tr>
+    <td>@item.ticketDate</td>
+    <td class="ref-code">@item.referenceNo</td>
+    <td>@item.CustomerName</td>
+    <td>
+        <span class="status-badge @statusClass">
+            @item.Status
+        </span>
+    </td>
+    <td>@item.ageText</td>
+    <td>
+        <span class="bucket-badge @bucketClass">
+            @item.AgeBucket
+        </span>
+    </td>
+</tr>}
+
+    </tbody>
+
+</table> <!-- Pagination -->
+                                <div class="table-pagination">
+
+                                    <button id="prevBtn" class="page-btn">
+                                        <i class="bi bi-chevron-left"></i>
+                                        Previous
+                                    </button>
+
+                                    <span id="pageInfo" class="page-info"></span>
+
+                                    <button id="nextBtn" class="page-btn">
+                                        Next
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+
+                                </div> }
+                                            else
                                             {
-                                                if (item.CN_STATUS.Equals("Renewed", StringComparison.OrdinalIgnoreCase))
-                                                {
-                                                    <span class="badge bg-success">Renewed</span>
-                                                }
-                                                else if (item.CN_STATUS.Equals("Denied", StringComparison.OrdinalIgnoreCase))
-                                                {
-                                                    <span class="badge bg-danger">Denied</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-secondary">@item.CN_STATUS</span>
-                                                }
-                                            }
-                                        </td>
+                                <div class="text-center py-5">
+                                    <i class="bi bi-inbox"
+                                       style="font-size:40px;color:var(--text-muted)"></i>
+                                    <p class="mt-2 text-muted fw-semibold">No records found</p>
+                                </div>}
 
-                                    </tr>
-                                }*@
-                           
-                            
-                            
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted">
-                                        No follow-ups found
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-        </div>
-        <!-- Report Table -->
-
-        <div class="card report-card mt-5 ms-3  mb-5">
-            <div class="card-body table-responsive">
-
-                <table class="table table-bordered table-hover">
-                    <thead class="table-primary">
-                        <tr>
-
-                            <th>Date</th>
-                            <th>Reference No</th>
-                            <th>Customer Name</th>
-                            <th>Status</th>
-                            <th>Age</th>
-                            <th>Bucket</th>
-
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@item.ticketDate</td>
-                                    <td>@item.referenceNo</td>
-                                    <td>@item.CustomerName</td>
-                                    <td>@item.Status</td>
-                                    <td>@item.ageText</td>
-                                    <td>@item.AgeBucket</td>
-
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="7" class="text-muted text-center">
-                                    No records found
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-
-                </table>
-                <div class="d-flex justify-content-start mt-3">
-                    <button id="prevBtn" class="btn btn-primary me-2">Previous</button>
-                    <span id="pageInfo" class="mt-2"></span>
-                    <button id="nextBtn" class="btn btn-primary ms-2">Next</button>
-                </div>
-            </div>
-        </div>
     </div>
 
+</div>
 
+@section Scripts {
 
-   
-
-
-    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <h4>Are you sure you want to log out?</h4>
-        </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
-            <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
-            <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
-        </div>
-    </div>
-
-    <!-- LogOut JS -->
-    <script src="~/Scripts/Logoutjs.js"></script>
-    <script src="~/Scripts/Formatcheck.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            const rowsPerPage = 10;
-            const rows = document.querySelectorAll("tbody tr");
-            const totalRows = rows.length;
-            const totalPages = Math.ceil(totalRows / rowsPerPage);
-
-            let currentPage = 1;
-
-            function showPage(page) {
-                currentPage = page;
-
-                rows.forEach((row, index) => {
-                    row.style.display =
-                        (index >= (page - 1) * rowsPerPage &&
-                            index < page * rowsPerPage)
-                            ? ""
-                            : "none";
-                });
-
-                document.getElementById("pageInfo").innerText =
-                    "Page " + currentPage + " of " + totalPages;
-            }
-
-            document.getElementById("prevBtn").addEventListener("click", function () {
-                if (currentPage > 1) showPage(currentPage - 1);
-            });
-
-            document.getElementById("nextBtn").addEventListener("click", function () {
-                if (currentPage < totalPages) showPage(currentPage + 1);
-            });
-
-            showPage(1);
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-            $('#searchPharse').on('keyup', function () {
-                $('#searchForm').submit(); // Submit the form when the user types
-            });
-        });
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
-            }
-        });
-    });
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-$(document).ready(function () {
+    <script src="~/Scripts/UIPagination.js"></script>
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <text>
-            Swal.fire({
-                icon: 'info',
-                title: 'Message',
-                text: '@TempData["ErrorMessage"]',
-                confirmButtonColor: '#034CAE',
-                confirmButtonText: 'OK'
+<script>
+            $(document).ready(function () {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Message',
+                    text: '@TempData["ErrorMessage"]',
+                    confirmButtonColor: '#6c5ce7',
+                    confirmButtonText: 'OK'
+                });
             });
-        </text>
-    }
-
-});
-    </script>
-    @*Script for edited succesfully*@
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-
-
-
-
-</body>
-</html>
+</script>}
+}

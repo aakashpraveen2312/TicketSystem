@@ -58,72 +58,72 @@
     </div>
 
     <!-- Table -->
-    <div class="grid-wrap">
+    <div class="grid-wrap table-responsive">
         @if (Model != null && Model.Any())
         {
-<table>
-    <thead>
-        <tr>
-            <th style="width:60px;">S.No</th>
-            <th>Date of Unlock</th>
-            <th>Transaction Type</th>
-            <th>Unlock By</th>
-            <th>Reason</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-<tr>
-    <td>
-        <span class="serial-text">@item.SerialNumber</span>
-    </td>
-    <td>
-        @(string.IsNullOrEmpty(item.LL_DATETIME)
+    <table class="table align-middle mb-0 tickets-table">
+        <thead>
+            <tr>
+                <th style="width:60px;">S.No</th>
+                <th>Date of Unlock</th>
+                <th>Transaction Type</th>
+                <th>Unlock By</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+    <tr>
+        <td>
+            <span class="serial-text">@item.SerialNumber</span>
+        </td>
+        <td>
+            @(string.IsNullOrEmpty(item.LL_DATETIME)
                                     ? ""
                                     : Convert.ToDateTime(item.LL_DATETIME).ToString("dd-MM-yyyy"))
-    </td>
-    <td>
-        <span class="service-badge">@item.LL_TRANSACTIONTYPE</span>
-    </td>
-    <td>@item.UnlockUserName</td>
-    <td style="color:var(--text-muted);font-size:12.5px;">@item.LL_REASON</td>
-</tr>}
-    </tbody>
-</table> <!-- Pagination -->
+        </td>
+        <td>
+            <span class="service-badge">@item.LL_TRANSACTIONTYPE</span>
+        </td>
+        <td>@item.UnlockUserName</td>
+        <td style="color:var(--text-muted);font-size:12.5px;">@item.LL_REASON</td>
+    </tr>}
+        </tbody>
+    </table> <!-- Pagination -->
 
-                <div class="table-pagination">
+                    <div class="table-pagination">
 
-                    <button id="prevBtn"
-                            class="page-btn">
+                        <button id="prevBtn"
+                                class="page-btn">
 
-                        <i class="bi bi-chevron-left"></i>
+                            <i class="bi bi-chevron-left"></i>
 
-                        Previous
+                            Previous
 
-                    </button>
+                        </button>
 
-                    <span id="pageInfo"
-                          class="page-info">
-                    </span>
+                        <span id="pageInfo"
+                              class="page-info">
+                        </span>
 
-                    <button id="nextBtn"
-                            class="page-btn">
+                        <button id="nextBtn"
+                                class="page-btn">
 
-                        Next
+                            Next
 
-                        <i class="bi bi-chevron-right"></i>
+                            <i class="bi bi-chevron-right"></i>
 
-                    </button>
+                        </button>
 
-                </div>}
-            else
-            {
-<div style="padding:48px 20px;text-align:center;color:var(--text-muted);">
-    <i class="bi bi-shield-check" style="font-size:36px;display:block;margin-bottom:10px;opacity:.4;"></i>
-    <span style="font-size:14px;font-weight:600;">No audit log entries found</span>
-    <p style="font-size:12px;margin-top:6px;">Try adjusting the date range filter above.</p>
-</div>}
+                    </div>}
+                else
+                {
+    <div style="padding:48px 20px;text-align:center;color:var(--text-muted);">
+        <i class="bi bi-shield-check" style="font-size:36px;display:block;margin-bottom:10px;opacity:.4;"></i>
+        <span style="font-size:14px;font-weight:600;">No audit log entries found</span>
+        <p style="font-size:12px;margin-top:6px;">Try adjusting the date range filter above.</p>
+    </div>}
     </div>
 
 </div><!-- /page-card -->

@@ -109,7 +109,7 @@
         </h6>
     </div>
 
-    <form method="post" action="@Url.Action("ContractexpiryReport", "ContractExpiryReport")" id="filterForm">
+    <form method="post" action="@Url.Action("ContractexpiryReport", "ContractExpiryReport",new {@class = "no-preloader" })" id="filterForm">
         <div class="filter-card">
             <div class="filter-row">
 
@@ -158,7 +158,7 @@
                     <button type="submit" name="ActionType" value="Filter" class="btn-save">
                         <i class="bi bi-funnel"></i> Filter
                     </button>
-                    <button type="submit" name="ActionType" value="PDF" class="btn-save"
+                    <button type="submit" name="ActionType" value="PDF" class="btn-save no-preloader"
                             style="background:#e74c3c;">
                         <i class="bi bi-file-earmark-pdf"></i> PDF
                     </button>

@@ -23,6 +23,7 @@ namespace PSS_CMS.Models
         [Required(ErrorMessage = "Please enter the User ID")]
         public string U_EMAILID { get; set; }
         public string U_RCODE { get; set; }
+        public string U_ADDONCUSTOMER { get; set; }
         public string U_DISABLE { get; set; }
         public string U_USERCODE { get; set; }
         public string U_MOBILENO { get; set; }
@@ -44,6 +45,7 @@ namespace PSS_CMS.Models
         public string U_EMAILID { get; set; }
         public string U_PASSWORD { get; set; }
         public string U_DOMAIN { get; set; }
+        public string U_ADDONCUSTOMER { get; set; }
         public string U_RCODE { get; set; }
         public string U_DISABLE { get; set; }
         public string U_USERCODE { get; set; }

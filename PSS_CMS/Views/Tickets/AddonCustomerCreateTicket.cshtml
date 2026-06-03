@@ -260,16 +260,7 @@
             </span>
             Raise New Ticket
         </h6>
-
-        <!-- Service selector -->
-        <div class="service-btn-group">
-            <button type="button" class="service-btn service-btn-contract" onclick="openContractModal()">
-                <i class="bi bi-file-earmark-text"></i> Contract Service
-            </button>
-            <button type="button" class="service-btn service-btn-warranty" onclick="openInvoiceModal()">
-                <i class="bi bi-shield-check"></i> Warranty Service
-            </button>
-        </div>
+      
     </div>
 
     @using (Html.BeginForm("Ticket", "Tickets", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data", @class = "no-preloader" }))
@@ -294,18 +285,18 @@
                                                             @if (Model.TicketCombo2.TicketTypes2 != null)
                                                             {
                                             @Html.DropDownListFor(m => m.SelectedProjectType,
-                                                     Model.TicketCombo2.TicketTypes2,
-                                                     "Select Product",
-                                                     new { @class = "form-select-input", onchange = "loadMaterials(this)", tabindex = "2" }) }
-                                                            else
-                                                            {
-                                            @Html.DropDownListFor(m => m.SelectedProjectType,
-                                                     Model.TicketCombo2.TicketTypes2,
-                                                     "No Products available",
-                                                     new { @class = "form-select-input" })}
+                                                          Model.TicketCombo2.TicketTypes2,
+                                                          "Select Product",
+                                                          new { @class = "form-select-input", onchange = "loadMaterials(this)", tabindex = "2" }) }
+                                        else
+                                        {
+                        @Html.DropDownListFor(m => m.SelectedProjectType,
+                                      Model.TicketCombo2.TicketTypes2,
+                                      "No Products available",
+                                      new { @class = "form-select-input" })}
                                                             @Html.DropDownList("SelectedCustomer",
-                                                                     new List<SelectListItem> { new SelectListItem { Text = "No Product is selected", Value = "", Selected = true } },
-                                                                     new { @class = "form-select-input d-none", id = "CustomerDropdown" })
+                                                                          new List<SelectListItem> { new SelectListItem { Text = "No Product is selected", Value = "", Selected = true } },
+                                                                          new { @class = "form-select-input d-none", id = "CustomerDropdown" })
                                                         </div>
 
                                                         <div class="form-group">
@@ -316,43 +307,24 @@
                                                         <div class="form-group">
                                                             @Html.LabelFor(m => m.TC_PRIORITYTYPE, "Priority Type", new { @class = "form-label" })
                                                             @Html.DropDownListFor(m => m.TC_PRIORITYTYPE,
-                                                                     new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
-                                                                     "Select Priority Type",
-                                                                     new { @class = "form-select-input prioritystyle", tabindex = "4" })
+                                                                          new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
+                                                                          "Select Priority Type",
+                                                                          new { @class = "form-select-input prioritystyle", tabindex = "4" })
                                                         </div>
 
                                                         <div class="form-group">
                                                             @Html.LabelFor(m => m.SelectedTicketType, "Ticket Type", new { @class = "form-label" })
                                                             @Html.DropDownListFor(m => m.SelectedTicketType,
-                                                                     Model.TicketCombo.TicketTypes,
-                                                                     "Select Ticket Type",
-                                                                     new { @class = "form-select-input", tabindex = "6" })
+                                                                          Model.TicketCombo.TicketTypes,
+                                                                          "Select Ticket Type",
+                                                                          new { @class = "form-select-input", tabindex = "6" })
                                                         </div>
 
                                                     </div>
 
-                                                    <!-- ── Section 2: Warranty Info ── -->
-                                                    <p class="form-section-title">Warranty / Contract Details</p>
-                                                    <div class="form-grid" style="margin-bottom:24px;" id="warrantySection">
+                                                  
 
-                                                        <div class="form-group" id="productSection">
-                                                            @Html.LabelFor(m => m.LatestPaymentDueDate, "Product Warranty Upto", new { @class = "form-label" })
-                                                            @Html.TextBoxFor(m => m.LatestPaymentDueDate, new { @class = "form-input-auto", id = "latestwarranty", @readonly = "readonly", tabindex = "5" })
-                                                        </div>
-
-                                                        <div class="form-group" id="contractSection">
-                                                            @Html.LabelFor(m => m.TC_WARRANTYUPTO, "Contract Warranty Upto", new { @class = "form-label" })
-                                                            @Html.TextBoxFor(m => m.TC_WARRANTYUPTO, new { @class = "form-input-auto", id = "warranty", @readonly = "readonly", tabindex = "5" })
-                                                        </div>
-
-                                                        <div class="form-group" id="freeServiceSection">
-                                                            @Html.LabelFor(m => m.CU_WARRANTYFREECALLS, "Free Services", new { @class = "form-label" })
-                                                            @Html.TextBoxFor(m => m.CU_WARRANTYFREECALLS, new { @class = "form-input-auto", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
-                                                        </div>
-
-                                                    </div>
-
-                                                    <!-- ── Section 3: Comments & Attachments ── -->
+                                                    <!-- ── Section 2: Comments & Attachments ── -->
                                                     <p class="form-section-title">Comments & Attachments</p>
                                                     <div style="margin-bottom:24px;">
 
@@ -394,8 +366,16 @@
                                                         </div>
 
                                                         <!-- Terms checkbox -->
+                                                        @*<div class="terms-row" style="margin-bottom:8px;">
+            @Html.CheckBoxFor(m => m.paidservice, new { id = "termsCheckbox" })
+            <label for="termsCheckbox" id="termsLabel">
+                Add a Service Request with Payment
+            </label>
+        </div>*@
                                                         <div class="terms-row" style="margin-bottom:8px;">
-                                                            @Html.CheckBoxFor(m => m.paidservice, new { id = "termsCheckbox" })
+                                                            <input type="checkbox" id="termsCheckbox" checked="checked" disabled="disabled" />
+                                                            <input type="hidden" name="paidservice" value="true" />
+
                                                             <label for="termsCheckbox" id="termsLabel">
                                                                 Add a Service Request with Payment
                                                             </label>
@@ -431,95 +411,39 @@
     </div>
 </div>
 
-<!-- ── Contract Modal ── -->
-<div id="contractModal" class="custom-modal">
-    <div class="custom-modal-content">
-        <div class="custom-modal-header">
-            <span style="display:flex;align-items:center;gap:8px;">
-                <i class="bi bi-file-earmark-text" style="color:var(--primary);"></i>
-                Select Contract
-            </span>
-            <span class="close-btn" onclick="closeContractModal()">&times;</span>
-        </div>
-        <div class="custom-modal-body">
-            <table id="contractTable">
-                <thead>
-                    <tr>
-                        <th>Contract No</th>
-                        <th style="text-align:right;">Amount</th>
-                        <th>Warranty Upto</th>
-                    </tr>
-                </thead>
-                <tbody>
 
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- ── Invoice Modal ── -->
-<div id="invoiceModal" class="custom-modal">
-    <div class="custom-modal-content">
-        <div class="custom-modal-header">
-            <span style="display:flex;align-items:center;gap:8px;">
-                <i class="bi bi-shield-check" style="color:#1D9E75;"></i>
-                Select Sales Invoice
-            </span>
-            <span class="close-btn" onclick="closeInvoiceModal()">&times;</span>
-        </div>
-        <div class="custom-modal-body">
-            <table id="invoiceTable">
-                <thead>
-                    <tr>
-                        <th>Invoice No</th>
-                        <th style="text-align:right;">Amount</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
-  
+
     <script src="~/Scripts/Formatcheck.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Loading screen control -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+    <script>document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('loadingScreen').style.display = 'flex';
         });
         window.addEventListener('load', function () {
             setTimeout(function () {
                 document.getElementById('loadingScreen').style.display = 'none';
             }, 500);
-        });
-    </script>
+        });</script>
 
     <!-- Set current datetime on load -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+    <script>document.addEventListener("DOMContentLoaded", function () {
             var dateTextbox = document.getElementById("date");
             var now = new Date();
             var pad = function (n) { return String(n).padStart(2, "0"); };
             dateTextbox.value = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" +
                 pad(now.getDate()) + "T" + pad(now.getHours()) + ":" + pad(now.getMinutes());
-        });
-    </script>
+        });</script>
 
     <!-- File name display on browse -->
-    <script>
-        document.getElementById("myfile").addEventListener("change", function () {
+    <script>document.getElementById("myfile").addEventListener("change", function () {
             var fileName = this.files.length ? this.files[0].name : "";
             var textEl = document.querySelector(".file-upload-text span");
             if (textEl) textEl.textContent = fileName || "Choose file to attach";
-        });
-    </script>
+        });</script>
 
     <!-- Captcha refresh -->
     <script>
@@ -537,8 +461,7 @@
     </script>
 
     <!-- Form submit with fetch -->
-    <script>
-        document.getElementById("myForm").addEventListener("submit", function (event) {
+    <script>document.getElementById("myForm").addEventListener("submit", function (event) {
             event.preventDefault();
 
             var form = this;
@@ -601,243 +524,7 @@
                     Swal.fire({ title: "Message", text: "Something went wrong while submitting the form.", icon: "info" });
                     submitButton.disabled = false;
                 });
-        });
-    </script>
+        });</script>
 
-    <!-- Warranty / checkbox logic -->
-    <script>
-        function loadMaterials(element) {
-            let selectedRecId = element.value;
-            let serialNo = $(element).find(':selected').data('serial');
-            $('#SerialNo').val(serialNo);
 
-            $.ajax({
-                url: '@Url.Action("ComboProductTicketNew", "Tickets")',
-                type: 'GET',
-                data: { Recid: selectedRecId, SerialNo: serialNo },
-                success: function (response) {
-                    $('#CustomerDropdown').empty();
-                    $('#warranty').val('');
-                    $('#latestwarranty').val('');
-                    $('#warrantyfreecalls').val('');
-                    $('#termsCheckbox').prop('checked', false).prop('disabled', true);
-
-                    if (response.error) { Swal.fire('Error', response.error, 'error'); return; }
-
-                    if (response.length > 0) {
-                        const item = response[0];
-
-                        $('#CustomerDropdown').append($('<option>', { value: item.Value, text: item.Text, selected: true }));
-
-                        if (item.WarrantyUpto) {
-                            const d = new Date(item.WarrantyUpto);
-                            $('#warranty').val(("0" + d.getDate()).slice(-2) + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + d.getFullYear());
-                        }
-                        if (item.ProductUpto) {
-                            const d2 = new Date(item.ProductUpto);
-                            $('#latestwarranty').val(("0" + d2.getDate()).slice(-2) + "-" + ("0" + (d2.getMonth() + 1)).slice(-2) + "-" + d2.getFullYear());
-                        }
-
-                        $('#warrantyfreecalls').val(item.WarrantyFreeCalls);
-                        $('#CustomerType').val(item.CustomerType);
-                        updateCheckboxState();
-                        toggleWarrantyFields();
-                    }
-                },
-                error: function () { Swal.fire('Error', 'Failed to load customers.', 'error'); }
-            });
-        }
-
-        function updateCheckboxState() {
-            const wStr = $('#warranty').val();
-            const lwStr = $('#latestwarranty').val();
-            const freeCalls = parseInt($('#warrantyfreecalls').val(), 10) || 0;
-            const today = new Date(); today.setHours(0,0,0,0);
-
-            function parseDate(s) {
-                if (!s) return null;
-                const p = s.split('-');
-                return new Date(p[2], p[1] - 1, p[0]);
-            }
-
-            const wd = parseDate(wStr);
-            const lwd = parseDate(lwStr);
-            const custExp = wd && wd < today;
-            const prodExp = lwd && lwd < today;
-
-            if (wStr && freeCalls === 0) {
-                $('#termsCheckbox').prop('disabled', false);
-                $('#termsLabel').removeClass('label-gray');
-                return;
-            }
-            if (custExp || prodExp) {
-                $('#termsCheckbox').prop('disabled', false);
-                $('#termsLabel').removeClass('label-gray');
-            } else {
-                $('#termsCheckbox').prop('disabled', true).prop('checked', false);
-                $('#termsLabel').addClass('label-gray');
-            }
-        }
-
-        $('#submitBtn').on('click', function (e) {
-            const wStr = $('#warranty').val();
-            const lwStr = $('#latestwarranty').val();
-            const isChecked = $('#termsCheckbox').is(':checked');
-            const freeCalls = parseInt($('#warrantyfreecalls').val(), 10) || 0;
-            const today = new Date(); today.setHours(0,0,0,0);
-
-            function parseDate(s) {
-                if (!s) return null;
-                const p = s.split('-');
-                return new Date(p[2], p[1] - 1, p[0]);
-            }
-
-            const wd = parseDate(wStr);
-            const lwd = parseDate(lwStr);
-            const custExp = wd && wd < today;
-            const prodExp = lwd && lwd < today;
-
-            if (wStr && freeCalls === 0) {
-                if (!isChecked) {
-                    e.preventDefault();
-                    Swal.fire({ icon: 'warning', title: 'Free Service Over', text: 'Your free service is over. Please check the Add a Service Request with Payment to continue.' });
-                }
-                return;
-            }
-
-            if (!custExp && !prodExp) return;
-
-            if ((custExp || prodExp) && !isChecked) {
-                e.preventDefault();
-                let msg = custExp && prodExp
-                    ? 'Both contract and product warranties have expired.'
-                    : custExp
-                        ? 'Contract warranty has expired.'
-                        : 'Product warranty has expired.';
-                Swal.fire({ icon: 'warning', title: 'Warranty Expired', text: msg + ' Please check the Add a Service Request with Payment to continue.', confirmButtonColor: '#d33' });
-            }
-        });
-
-        $(document).ready(function () {
-            updateCheckboxState();
-            if (typeof toggleWarrantyFields === "function") toggleWarrantyFields();
-        });
-    </script>
-
-    <!-- Modal logic (Contract + Invoice) -->
-    <script id="fullcssmodal01">
-        $(document).ready(function () {
-
-            let selectedCmpRecId = null;
-            let selectedContractRecId = null;
-
-            function formatDate(ds) {
-                if (!ds) return "";
-                if (typeof ds === "string" && ds.indexOf("/Date(") > -1) ds = parseInt(ds.replace(/[^0-9]/g, ""));
-                let d = new Date(ds);
-                if (isNaN(d.getTime())) return "";
-                return ("0" + d.getDate()).slice(-2) + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + d.getFullYear();
-            }
-
-            function openModal(id) { $("#" + id).addClass("open"); }
-            function closeModal(id) { $("#" + id).removeClass("open"); }
-
-            window.openContractModal = function () { loadContracts(); };
-            window.closeContractModal = function () { closeModal("contractModal"); };
-            window.openInvoiceModal = function () { loadInvoices(); };
-            window.closeInvoiceModal = function () { closeModal("invoiceModal"); };
-
-            function loadContracts() {
-                $.ajax({
-                    url: '/Tickets/GetContractsModal', type: 'GET',
-                    success: function (res) {
-                        if (res.Status === "Y" && res.Data.length > 0) {
-                            let tbody = $('#contractTable tbody').empty();
-                            $.each(res.Data, function (i, item) {
-                                let fd = formatDate(item.CU_WARRANTYUPTO);
-                                let amt = Number(item.CP_CONTRACTAMOUNT || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                tbody.append(`<tr class="contract-row" data-cmprecid="${item.CU_CRECID}" data-contractrecid="${item.CP_RECID}" data-date="${fd}" style="cursor:pointer">
-                                        <td><span class="contract-code">${item.CP_CODE}</span></td>
-                                        <td style="text-align:right;font-weight:600;">${amt}</td>
-                                        <td>${fd}</td></tr>`);
-                            });
-                            openModal("contractModal");
-                        } else { Swal.fire('Info', 'No contracts found', 'info'); }
-                    },
-                    error: function () { Swal.fire('Error', 'Failed to load contracts', 'error'); }
-                });
-            }
-
-            function loadInvoices() {
-                $.ajax({
-                    url: '/Tickets/GetSalesInvoiceModal', type: 'GET',
-                    success: function (res) {
-                        if (res.Status === "Y" && res.Data.length > 0) {
-                            let tbody = $('#invoiceTable tbody').empty();
-                            $.each(res.Data, function (i, item) {
-                                let fd = formatDate(item.SIH_INVOICEDATE);
-                                let amt = Number(item.SIH_INVOICEAMOUNT || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                tbody.append(`<tr class="invoice-row" data-invoicerecid="${item.SIH_RECID}" style="cursor:pointer">
-                                        <td><span class="inv-code">${item.SIH_INVOICENO}</span></td>
-                                        <td style="text-align:right;font-weight:600;">${amt}</td>
-                                        <td>${fd}</td></tr>`);
-                            });
-                            openModal("invoiceModal");
-                        } else { Swal.fire('Info', 'No invoices found', 'info'); }
-                    },
-                    error: function () { Swal.fire('Error', 'Failed to load invoices', 'error'); }
-                });
-            }
-
-            $(document).on('click', '.contract-row', function () {
-                selectedContractRecId = $(this).data('contractrecid');
-                selectedCmpRecId = $(this).data('cmprecid');
-                loadProductsByContract(selectedContractRecId);
-                closeModal("contractModal");
-            });
-
-            $(document).on('click', '.invoice-row', function () {
-                loadProductsByInvoice($(this).data('invoicerecid'));
-                closeModal("invoiceModal");
-            });
-
-            // Close on outside click
-            $(window).on('click', function (e) {
-                if ($(e.target).is('#contractModal')) closeModal("contractModal");
-                if ($(e.target).is('#invoiceModal')) closeModal("invoiceModal");
-            });
-        });
-
-        function loadProductsByContract(contractRecId) {
-            $.ajax({
-                url: '/Tickets/ComboBoxProductNewticket', type: 'GET',
-                data: { contractRecId: contractRecId },
-                success: function (res) {
-                    let dd = $('#SelectedProjectType').empty().append('<option value="">Select Product</option>');
-                    $.each(res, function (i, item) {
-                        dd.append(`<option value="${item.Value}" data-serial="${item.SerialNo}">${item.Text}</option>`);
-                    });
-                    dd.trigger('change');
-                },
-                error: function () { Swal.fire('Error', 'Failed to load products', 'error'); }
-            });
-        }
-
-        function loadProductsByInvoice(invoiceRecId) {
-            $.ajax({
-                url: '/Tickets/ComboBoxProductNewticket', type: 'GET',
-                data: { invoiceRecId: invoiceRecId },
-                success: function (res) {
-                    let dd = $('#SelectedProjectType').empty().append('<option value="">Select Product</option>');
-                    $.each(res, function (i, item) {
-                        dd.append(`<option value="${item.Value}" data-serial="${item.SerialNo}">${item.Text}</option>`);
-                    });
-                    dd.trigger('change');
-                },
-                error: function () { Swal.fire('Error', 'Failed to load products from invoice', 'error'); }
-            });
-        }
-    </script>
-
-   
 }

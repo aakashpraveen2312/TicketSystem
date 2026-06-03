@@ -215,6 +215,7 @@ else
                                   {
                                       @class = "form-input-num",
                                       autocomplete = "off",
+                                      id= "productAmountField",
                                       placeholder = "0"
                                   }
                               })
@@ -416,9 +417,37 @@ else
 
         $(document).ready(function () {
 
+            var $amt = $("#productAmountField");
+
+            // Format on load
+            if ($amt.val()) {
+                $amt.val(parseFloat($amt.val()).toLocaleString('en-IN', {
+                    minimumFractionDigits: 2, maximumFractionDigits: 2
+                }));
+            }
+
+            // Format on blur
+            $amt.on("blur", function () {
+                var num = parseFloat($(this).val().replace(/,/g, ''));
+                if (!isNaN(num)) $(this).val(num.toLocaleString('en-IN', {
+                    minimumFractionDigits: 2, maximumFractionDigits: 2
+                }));
+            });
+
+            // Live format while typing
+            $amt.on("input", function () {
+                var raw = $(this).val().replace(/,/g, '');
+                var parts = raw.split('.');
+                if (parts[0]) parts[0] = parseInt(parts[0]).toLocaleString('en-IN');
+                $(this).val(parts.join('.'));
+            });
+
             $("#editform").submit(function (e) {
 
                 e.preventDefault();
+
+                // ✅ Strip commas BEFORE FormData captures the value
+                $amt.val($amt.val().replace(/,/g, ''));
 
                 var btn = $("#savebutton");
                 btn.prop("disabled", true);

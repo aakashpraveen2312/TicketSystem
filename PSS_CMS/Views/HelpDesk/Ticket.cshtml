@@ -137,144 +137,147 @@
                 @Html.HiddenFor(m => m.P_SERIALNUMBER, new { id = "serialNumber" })
                                 @Html.HiddenFor(m => m.CustomerType, new { id = "customertype" })
 
-                                                <div style="padding:24px 20px 8px;">
+<div style="padding:24px 20px 8px;">
 
-                                                    <!-- ── Section 1: Ticket Info ── -->
-                                                    <p class="form-section-title">Ticket Information</p>
-                                                    <div class="form-grid" style="margin-bottom:24px;">
+    <!-- ── Section 1: Ticket Info ── -->
+    <p class="form-section-title">Ticket Information</p>
+    <div class="form-grid" style="margin-bottom:24px;">
 
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(m => m.TC_Date, "Date", new { @class = "form-label" })
-                                                            @Html.TextBoxFor(m => m.TC_Date, new { @class = "form-input-text", id = "date", type = "datetime-local", required = "required", tabindex = "1" })
-                                                        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.TC_Date, "Date", new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.TC_Date, new { @class = "form-input-text", id = "date", type = "datetime-local", required = "required", tabindex = "1" })
+        </div>
 
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(m => m.SelectedProjectType, "Product", new { @class = "form-label" })
-                                                            @if (Model.TicketCombo2.TicketTypes2 != null)
-                                                            {
-                                            @Html.DropDownListFor(m => m.SelectedProjectType,
-                                                     Model.TicketCombo2.TicketTypes2,
-                                                     "Select Product",
-                                                     new { @class = "form-select-input", onchange = "loadMaterials(this.value)", tabindex = "2" }) }
-                                                            else
-                                                            {
-                                            @Html.DropDownListFor(m => m.SelectedProjectType,
-                                                     Model.TicketCombo2.TicketTypes2,
-                                                     "No Products available",
-                                                     new { @class = "form-select-input" })}
-                                                        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.SelectedProjectType, "Product", new { @class = "form-label" })
+            @if (Model.TicketCombo2.TicketTypes2 != null)
+            {
+@Html.DropDownListFor(m => m.SelectedProjectType,
+              Model.TicketCombo2.TicketTypes2,
+              "Select Product",
+              new { @class = "form-select-input", onchange = "loadMaterials(this.value)", tabindex = "2" }) }
+else
+{
+@Html.DropDownListFor(m => m.SelectedProjectType,
+              Model.TicketCombo2.TicketTypes2,
+              "No Products available",
+              new { @class = "form-select-input" })}
+        </div>
 
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(m => m.TC_SUBJECT, "Subject", new { @class = "form-label" })
-                                                            @Html.TextBoxFor(m => m.TC_SUBJECT, new { @class = "form-input-text", id = "sub", tabindex = "3" })
-                                                        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.TC_SUBJECT, "Subject", new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.TC_SUBJECT, new { @class = "form-input-text", id = "sub", tabindex = "3" })
+        </div>
 
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(m => m.TC_CUSTOMER, "Customer", new { @class = "form-label" })
-                                                            @Html.DropDownList("SelectedCustomer",
-                                                                     new List<SelectListItem> { new SelectListItem { Text = "No Product is selected", Value = "", Selected = true } },
-                                                                     new { @class = "form-select-input", id = "CustomerDropdown" })
-                                                        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.TC_CUSTOMER, "Customer", new { @class = "form-label" })
+            @Html.DropDownList("SelectedCustomer",
+                          new List<SelectListItem> { new SelectListItem { Text = "No Product is selected", Value = "", Selected = true } },
+                          new { @class = "form-select-input", id = "CustomerDropdown" })
+        </div>
 
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(m => m.TC_PRIORITYTYPE, "Priority Type", new { @class = "form-label" })
-                                                            @Html.DropDownListFor(m => m.TC_PRIORITYTYPE,
-                                                                     new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
-                                                                     "Select Priority Type",
-                                                                     new { @class = "form-select-input prioritystyle", tabindex = "4" })
-                                                        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.TC_PRIORITYTYPE, "Priority Type", new { @class = "form-label" })
+            @Html.DropDownListFor(m => m.TC_PRIORITYTYPE,
+                          new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
+                          "Select Priority Type",
+                          new { @class = "form-select-input prioritystyle", tabindex = "4" })
+        </div>
 
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(m => m.SelectedTicketType, "Ticket Type", new { @class = "form-label" })
-                                                            @Html.DropDownListFor(m => m.SelectedTicketType,
-                                                                     Model.TicketCombo.TicketTypes,
-                                                                     "Select Ticket Type",
-                                                                     new { @class = "form-select-input", tabindex = "6" })
-                                                        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.SelectedTicketType, "Ticket Type", new { @class = "form-label" })
+            @Html.DropDownListFor(m => m.SelectedTicketType,
+                          Model.TicketCombo.TicketTypes,
+                          "Select Ticket Type",
+                          new { @class = "form-select-input", tabindex = "6" })
+        </div>
 
-                                                    </div>
+    </div>
 
-                                                    <!-- ── Section 2: Warranty Info ── -->
-                                                    <p class="form-section-title">Warranty Details</p>
-                                                    <div class="form-grid" style="margin-bottom:24px;">
+    <!-- ── Section 2: Warranty Info ── -->
+    <p class="form-section-title">Warranty Details</p>
+    <div class="form-grid" style="margin-bottom:24px;">
 
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(m => m.TC_WARRANTYUPTO, "Warranty Upto", new { @class = "form-label" })
-                                                            @Html.TextBoxFor(m => m.TC_WARRANTYUPTO, new { @class = "form-input-auto", id = "warranty", @readonly = "readonly", tabindex = "5" })
-                                                        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.TC_WARRANTYUPTO, "Warranty Upto", new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.TC_WARRANTYUPTO, new { @class = "form-input-auto", id = "warranty", @readonly = "readonly", tabindex = "5" })
+        </div>
 
-                                                        <div class="form-group" id="freeCallsContainer">
-                                                            @Html.LabelFor(m => m.CU_WARRANTYFREECALLS, "Free Services", new { @class = "form-label" })
-                                                            @Html.TextBoxFor(m => m.CU_WARRANTYFREECALLS, new { @class = "form-input-auto", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
-                                                        </div>
+        <div class="form-group" id="freeCallsContainer">
+            @Html.LabelFor(m => m.CU_WARRANTYFREECALLS, "Free Services", new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.CU_WARRANTYFREECALLS, new { @class = "form-input-auto", id = "warrantyfreecalls", @readonly = "readonly", tabindex = "7" })
+        </div>
 
-                                                    </div>
+    </div>
 
-                                                    <!-- ── Section 3: Comments & Attachments ── -->
-                                                    <p class="form-section-title">Comments &amp; Attachments</p>
-                                                    <div style="margin-bottom:24px;">
+    @Html.HiddenFor(m => m.CU_URECID, new {id = "curecid"})
 
-                                                        <div class="form-group" style="margin-bottom:16px;">
-                                                            @Html.LabelFor(m => m.TC_COMMENTS, "User Comments", new { @class = "form-label" })
-                                                            @Html.TextAreaFor(m => m.TC_COMMENTS, new
-                                                            {
-                                                                @class = "form-textarea",
-                                                                placeholder = "Please enter your comments here....",
-                                                                rows = "6",
-                                                                tabindex = "8"
-                                                            })
-                                                        </div>
 
-                                                        <div class="form-group" style="margin-bottom:16px;">
-                                                            <label class="form-label">Attachments</label>
-                                                            <div class="file-upload-wrap">
-                                                                <div class="file-upload-icon">
-                                                                    <i class="bi bi-paperclip"></i>
-                                                                </div>
-                                                                <div class="file-upload-text">
-                                                                    <span id="fileNameDisplay">Choose file to attach</span>
-                                                                    <small>Supported: .pdf, .xlsx, .jpeg, .png, .jpg, .csv, .mp4</small>
-                                                                </div>
-                                                                <label class="btn-browse" for="myfile">
-                                                                    <i class="bi bi-folder2-open"></i> Browse
-                                                                </label>
-                                                                <input type="file" id="myfile" name="myfile" class="file-input-hidden"
-                                                                       tabindex="6"
-                                                                       accept=".pdf,.xlsx,.jpeg,.png,.jpg,.csv,.mp4"
-                                                                       onchange="validateFile()" />
-                                                            </div>
-                                                            <small id="fileError">This file format is not supported. Allowed: .pdf, .xlsx, .jpeg, .png, .jpg, .csv, .mp4</small>
-                                                        </div>
+    <!-- ── Section 3: Comments & Attachments ── -->
+    <p class="form-section-title">Comments &amp; Attachments</p>
+    <div style="margin-bottom:24px;">
 
-                                                        <!-- Captcha -->
-                                                        <div class="form-group" style="margin-bottom:16px;" id="captchaContainer">
-                                                            @Html.Partial("_CaptchaPartial")
-                                                        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+            @Html.LabelFor(m => m.TC_COMMENTS, "User Comments", new { @class = "form-label" })
+            @Html.TextAreaFor(m => m.TC_COMMENTS, new
+            {
+                @class = "form-textarea",
+                placeholder = "Please enter your comments here....",
+                rows = "6",
+                tabindex = "8"
+            })
+        </div>
 
-                                                        <!-- Terms -->
-                                                        <div class="terms-row" style="margin-bottom:8px;">
-                                                            @Html.CheckBoxFor(m => m.paidservice, new { id = "termsCheckbox" })
-                                                            <label for="termsCheckbox" id="termsLabel">
-                                                                I agree to proceed with this service as a paid request
-                                                            </label>
-                                                        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+            <label class="form-label">Attachments</label>
+            <div class="file-upload-wrap">
+                <div class="file-upload-icon">
+                    <i class="bi bi-paperclip"></i>
+                </div>
+                <div class="file-upload-text">
+                    <span id="fileNameDisplay">Choose file to attach</span>
+                    <small>Supported: .pdf, .xlsx, .jpeg, .png, .jpg, .csv, .mp4</small>
+                </div>
+                <label class="btn-browse" for="myfile">
+                    <i class="bi bi-folder2-open"></i> Browse
+                </label>
+                <input type="file" id="myfile" name="myfile" class="file-input-hidden"
+                       tabindex="6"
+                       accept=".pdf,.xlsx,.jpeg,.png,.jpg,.csv,.mp4"
+                       onchange="validateFile()" />
+            </div>
+            <small id="fileError">This file format is not supported. Allowed: .pdf, .xlsx, .jpeg, .png, .jpg, .csv, .mp4</small>
+        </div>
 
-                                                    </div>
+        <!-- Captcha -->
+        <div class="form-group" style="margin-bottom:16px;" id="captchaContainer">
+            @Html.Partial("_CaptchaPartial")
+        </div>
 
-                                                    <!-- Actions -->
-                                                    <div class="form-actions">
-                                                        <button type="button" class="btn-cancel"
-                                                                onclick="window.location.href='@Url.Action("Ticket_History","HelpDesk")'"
-                                                                tabindex="10">
-                                                            <i class="bi bi-x-lg"></i> Cancel
-                                                        </button>
-                                                        <button type="submit" class="btn-save" id="submitBtn" tabindex="9">
-                                                            <i class="bi bi-send"></i> Submit
-                                                        </button>
+        <!-- Terms -->
+        <div class="terms-row" style="margin-bottom:8px;">
+            @Html.CheckBoxFor(m => m.paidservice, new { id = "termsCheckbox" })
+            <label for="termsCheckbox" id="termsLabel">
+                Add a Service Request with Payment
+            </label>
+        </div>
 
-                                                    </div>
+    </div>
 
-                                                </div>}
+    <!-- Actions -->
+    <div class="form-actions">
+        <button type="button" class="btn-cancel"
+                onclick="window.location.href='@Url.Action("Ticket_History","HelpDesk")'"
+                tabindex="10">
+            <i class="bi bi-x-lg"></i> Cancel
+        </button>
+        <button type="submit" class="btn-save" id="submitBtn" tabindex="9">
+            <i class="bi bi-send"></i> Submit
+        </button>
+
+    </div>
+
+</div>}
 
 </div><!-- /page-card -->
 <!-- Legend bar -->
@@ -361,12 +364,14 @@
                     if (response.length > 0) {
                         $dd.append($('<option>', { value: '', text: '-- Select Customer --' }));
                         $.each(response, function (i, item) {
+                            console.log("item", item);
                             $dd.append($('<option>', {
                                 value: item.Value,
                                 text: item.Text,
                                 'data-warranty': item.WarrantyUpto,
                                 'data-warrantyfreecalls': item.WarrantyFreeCalls,
                                 'data-serial': item.ProductSerial,
+                                'data-curecid': item.CusRecid,
                                 'data-type': item.Type
                             }));
                         });
@@ -392,7 +397,7 @@
                 var warrantyUpto = sel.data('warranty');
                 var freeCalls = parseInt(sel.data('warrantyfreecalls')) || 0;
                 var disableCheckbox = true;
-
+                $('#curecid').val(sel.data('curecid') ?? 0);
                 $('#serialNumber').val(sel.data('serial') || '');
                 $('#customertype').val(sel.data('type') || '');
 
@@ -442,7 +447,7 @@
                         Swal.fire({
                             icon: 'warning',
                             title: isContract ? 'Paid Service' : 'Warranty Expired',
-                            text: 'Please agree to proceed with this service as a paid request.'
+                            text: 'Please agree to proceed with this service as a paid service request.'
                         });
                     }
                 }

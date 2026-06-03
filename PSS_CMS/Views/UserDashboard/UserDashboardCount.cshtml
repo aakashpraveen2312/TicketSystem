@@ -172,14 +172,26 @@
 
 <!-- Main Card -->
 <div class="page-card">
-
+    <div class="d-flex justify-content-end mb-3">
+        @if (Session["U_ADDONCUSTOMER"].ToString().Trim() == "Y")
+        {<!-- New Ticket -->
+        <a href="@Url.Action("AddonCustomerCreateTicket", "Tickets")" class="btn-add">
+            <i class="bi bi-plus-lg"></i>  New Ticket
+        </a> }
+                        else
+                        { <!-- New Ticket -->
+    <a href="@Url.Action("Ticket", "Tickets")" class="btn-add">
+        <i class="bi bi-plus-lg"></i> New Ticket
+    </a>}
+    </div>
+    
     @{ int totalTickets = (int)(Model?.TotalTickets ?? 0);
-                    int openTickets = (int)(Model?.OpenTickets ?? 0);
-                    int resolvedTickets = (int)(Model?.ResolvedTickets ?? 0);
-                    int closedTickets = (int)(Model?.CloseTickets ?? 0);
-                    int openDate = (int)(Model?.OpenDate ?? 0);
-                    int openLastMonth = (int)(Model?.OpenLastMonth ?? 0);
-                    int openLastWeek = (int)(Model?.OpenLastweek ?? 0); }
+        int openTickets = (int)(Model?.OpenTickets ?? 0);
+        int resolvedTickets = (int)(Model?.ResolvedTickets ?? 0);
+        int closedTickets = (int)(Model?.CloseTickets ?? 0);
+        int openDate = (int)(Model?.OpenDate ?? 0);
+        int openLastMonth = (int)(Model?.OpenLastMonth ?? 0);
+        int openLastWeek = (int)(Model?.OpenLastweek ?? 0); }
 
     <!-- ── Stat cards ── -->
     <div class="stat-grid">

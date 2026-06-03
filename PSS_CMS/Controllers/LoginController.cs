@@ -72,6 +72,9 @@ namespace PSS_CMS.Controllers
                         string role = data.U_RCODE;
                         string U_USERMANAGER = data.U_USERMANAGER;
                         // Common session assignments
+                        Session["U_ADDONCUSTOMER"] = string.IsNullOrWhiteSpace(data.U_ADDONCUSTOMER)
+    ? "N"
+    : data.U_ADDONCUSTOMER;
                         Session["DOMAIN"] = data.U_DOMAIN;
                         Session["UserName"] = data.U_USERNAME;
                         Session["UserRole"] = data.U_RCODE;
@@ -238,6 +241,9 @@ namespace PSS_CMS.Controllers
                         string U_USERMANAGER = data.U_USERMANAGER;
                         // Common session assignments
                         Session["DOMAIN"] = data.U_DOMAIN;
+                        Session["U_ADDONCUSTOMER"] = string.IsNullOrWhiteSpace(data.U_ADDONCUSTOMER)
+    ? "N"
+    : data.U_ADDONCUSTOMER;
                         Session["UserName"] = data.U_USERNAME;
                         Session["UserRole"] = data.U_RCODE;
                         Session["EmailId"] = data.U_EMAILID;

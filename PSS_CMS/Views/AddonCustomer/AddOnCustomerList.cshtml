@@ -1,0 +1,249 @@
+﻿@model IEnumerable<PSS_CMS.Models.User>
+
+@{ ViewData["Title"] = "Add on Customer List";
+    ViewBag.PageTitle = "Add on Customer List";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+
+    <i class="bi bi-people nav-icon"></i>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <span>Add on Customer List</span>
+
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+
+            <!-- Search -->
+            @using (Html.BeginForm("", "", FormMethod.Get, new { id = "searchForm" }))
+            {
+<div class="search-box">
+
+    <i class="bi bi-search"></i>
+
+    <input type="text"
+           id="searchPharse"
+           name="searchPharse"
+           placeholder="Search"
+           autocomplete="off"
+           value="@Request["searchPharse"]"
+           onkeyup="autoSubmitSearch(this)" />
+
+    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
+    {
+<a href="@Url.Action("AddOnCustomerList","AddonCustomer")" title="Clear">
+    <i class="bi bi-x-circle text-muted"></i>
+</a>}
+
+</div>}
+
+            <!-- Add Button -->
+          
+<a href="@Url.Action("Create", "AddonCustomer")" class="btn-add">
+    <i class="bi bi-plus-lg"></i>
+    Add User
+</a>
+
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="grid-wrap table-responsive">
+
+        @if (Model != null && Model.Any())
+        {
+<table class="table align-middle mb-0 tickets-table">
+
+    <thead>
+        <tr>
+            <th style="width:70px;">S.No</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>Role</th>
+            <th class="text-center" style="width:80px;">Sort</th>
+            @if (Session["R_CODE"] != null &&
+                 Session["R_CODE"].ToString().ToLower() != "sa")
+            {
+<th class="text-center" style="width:130px;">Actions</th>
+}
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var o in Model)
+        {
+            var editUrl = Url.Action("Edit", "AddonCustomer", new
+            {
+                id = o.U_RECID,
+                Username = o.U_USERNAME,
+                EditName = o.U_RCODE
+            });
+
+            var deleteUrl = Url.Action("Delete", "AddonCustomer",
+                new { id = o.U_RECID });
+
+            var roleName =
+                o.U_RCODE == "HelpDesk" ? "Help Desk" :
+                o.U_RCODE == "SA" ? "Super Admin" :
+                o.U_RCODE;
+
+            var roleClass =
+                o.U_RCODE == "SA" ? "role-sa" :
+                o.U_RCODE == "Admin" ? "role-admin" :
+                o.U_RCODE == "HelpDesk" ? "role-helpdesk" :
+                o.U_RCODE == "User" ? "role-user" :
+                                           "role-default";
+
+<tr>
+
+    <td>@o.SerialNumber</td>
+    <td>@o.U_USERCODE</td>
+    <td>@o.U_USERNAME</td>
+    <td>@o.U_EMAILID</td>
+    <td>@o.U_MOBILENO</td>
+
+    <td>
+        <span class="role-badge @roleClass">
+            @roleName
+        </span>
+    </td>
+
+    <td class="text-center">@o.U_SORTORDER</td>
+
+ 
+<td>
+    <div class="action-cell">
+
+        <!-- Edit -->
+    
+<a href="@editUrl"
+   class="act-btn act-edit"
+   title="Edit">
+    <i class="bx bxs-pencil"></i>
+</a> <!-- Delete -->
+                            <a href="@deleteUrl"
+                               class="act-btn act-delete no-loader"
+                               title="Delete"
+                               data-code="@o.U_USERCODE"
+                               data-name="@o.U_USERNAME"
+                               onclick="return confirmDelete(this);">
+                                <i class="bx bxs-trash"></i>
+                            </a>
+
+        <!-- User Admin Mapping -->
+  
+<a href="@Url.Action("UserAdminMappingList", "AddonCustomer", new {
+                                                   id   = o.U_RECID,
+                                                   Name = o.U_USERNAME,
+                                                   Role = o.U_RCODE
+                                               })"
+   class="act-btn act-usermap"
+   title="User Mapping">
+    <i class="bx bx-info-circle"></i>
+</a>
+
+        <!-- Product Mapping -->
+
+<a href="@Url.Action("UserProductMappingList", "AddonCustomer", new {
+                                                   id                  = o.U_RECID,
+                                                   Name                = o.U_USERNAME,
+                                                   Productmapppingname = o.U_RCODE
+                                               })"
+   class="act-btn act-productmap"
+   title="Product Mapping">
+    <i class="bi bi-box-seam"></i>
+</a>
+
+    </div>
+</td>
+
+
+</tr>
+}
+
+    </tbody>
+
+</table> <!-- Pagination -->
+                <div class="table-pagination">
+
+                    <button id="prevBtn" class="page-btn">
+                        <i class="bi bi-chevron-left"></i>
+                        Previous
+                    </button>
+
+                    <span id="pageInfo" class="page-info"></span>
+
+                    <button id="nextBtn" class="page-btn">
+                        Next
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+
+                </div> }
+            else
+            {
+<div class="text-center py-5">
+    <i class="bi bi-inbox"
+       style="font-size:40px;color:var(--text-muted)"></i>
+    <p class="mt-2 text-muted fw-semibold">
+        No Users Available
+    </p>
+</div>}
+
+    </div>
+
+</div>
+
+<!-- Legend -->
+@if (Session["R_CODE"] != null &&
+     Session["R_CODE"].ToString().ToLower() != "sa")
+{
+<div class="legend-bar">
+
+    @if (Session["R_CODE"].ToString().ToLower() != "user")
+    {
+<div class="legend-item">
+    <i class="bx bxs-pencil" style="color:#6c5ce7;font-size:16px"></i>
+    <span>Edit</span>
+</div>
+
+                    <div class="legend-item">
+                        <i class="bx bxs-trash" style="color:#e74c3c;font-size:16px"></i>
+                        <span>Delete</span>
+                    </div>}
+
+    @if (Session["R_CODE"].ToString().ToLower() == "user")
+    {
+<div class="legend-item">
+    <i class="bx bx-info-circle" style="color:#0984e3;font-size:16px"></i>
+    <span>User Mapping</span>
+</div>}
+
+    <div class="legend-item">
+        <i class="bi bi-box-seam" style="color:#2ecc71;font-size:16px"></i>
+        <span>Product Mapping</span>
+    </div>
+
+</div>}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/Fordelete.js"></script>
+    <script src="~/Scripts/UIPagination.js"></script>
+}

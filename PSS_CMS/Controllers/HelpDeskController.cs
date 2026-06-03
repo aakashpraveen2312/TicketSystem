@@ -291,9 +291,10 @@ namespace PSS_CMS.Controllers
                 var NewTicketPostURL = ConfigurationManager.AppSettings["NewTicketurl"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();
+                //""tC_URECID"": ""{ Session["UserRECID"]}"",   -- changed by prathesh this is old -- it does not get the value for sales invoice customer name     
 
                 var content = $@"{{           
-            ""tC_URECID"": ""{Session["UserRECID"]}"",           
+            ""tC_URECID"": ""{tickets.CU_URECID}"",           
             ""tC_CRECID"": ""{ Session["CompanyID"]}"",          
             ""tC_PRECID"": ""{tickets.SelectedProjectType}"",        
             ""tC_CURECID"": ""{tickets.SelectedCustomer}"",        
@@ -654,6 +655,7 @@ namespace PSS_CMS.Controllers
                                     WarrantyUpto = data.CU_WARRANTYUPTO,
                                     WarrantyFreeCalls = data.CU_WARRANTYFREECALLS,
                                     ProductSerial = data.ProductSerial,
+                                    CusRecid = data.CU_URECID,
 
                                     Type = data.Type   // optional (for future use)
                                 }).ToList<object>();
@@ -1001,32 +1003,7 @@ namespace PSS_CMS.Controllers
             }
         }
 
-        //public async Task<ActionResult> TicketTrendDashboard(int companyRecID)
-        //{
-        //    var model = new Dashborardchart();
-
-        //    string Weburl = ConfigurationManager.AppSettings["TicketTrend"];
-        //    int companyId = Convert.ToInt32(Session["CompanyID"]);
-          
-
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        string finalUrl =
-        //  $"{Weburl}?companyRecID={companyId}";
-
-        //        var response = await client.GetAsync(finalUrl);
-        //        response.EnsureSuccessStatusCode();
-
-        //        var json = await response.Content.ReadAsStringAsync();
-        //        model.ProductTrend =
-        //        JsonConvert.DeserializeObject<List<TicketTrendVM>>(json);
-        //    }
-
-        //    return View(model);
-        //}
-
-     
-
+       
         public class PriorityWisePdfResponse
         {
             public string Status { get; set; }

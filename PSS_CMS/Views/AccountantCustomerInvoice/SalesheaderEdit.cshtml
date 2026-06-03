@@ -182,7 +182,7 @@
 
             <div class="form-group">
                 @Html.LabelFor(m => m.SIH_INVOICEAMOUNT, new { @class = "form-label" })
-                @Html.EditorFor(m => m.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+                @Html.EditorFor(m => m.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly",id="invoicenetamount" } })
                 <span class="auto-badge"><i class="bi bi-calculator"></i> Auto-calculated</span>
             </div>
 
@@ -488,6 +488,7 @@
                     return;
                 }
 
+
                 $.ajax({
                     url: '@Url.Action("LocationRef", "AccountantCustomerInvoice")',
                     type: 'GET',
@@ -527,9 +528,39 @@
                 loadLocationRef(initialLocationId, preselectedRefId);
             }
 
+
+
+            var $amt = $("#invoicenetamount");
+
+            // Format on load
+            if ($amt.val()) {
+                $amt.val(parseFloat($amt.val()).toLocaleString('en-IN', {
+                    minimumFractionDigits: 2, maximumFractionDigits: 2
+                }));
+            }
+
+            // Format on blur
+            $amt.on("blur", function () {
+                var num = parseFloat($(this).val().replace(/,/g, ''));
+                if (!isNaN(num)) $(this).val(num.toLocaleString('en-IN', {
+                    minimumFractionDigits: 2, maximumFractionDigits: 2
+                }));
+            });
+
+            // Live format while typing
+            $amt.on("input", function () {
+                var raw = $(this).val().replace(/,/g, '');
+                var parts = raw.split('.');
+                if (parts[0]) parts[0] = parseInt(parts[0]).toLocaleString('en-IN');
+                $(this).val(parts.join('.'));
+            });
+
             // ── Form Submit ────────────────────────────
             $("#editform").submit(function (e) {
                 e.preventDefault();
+
+                // ✅ Strip commas BEFORE FormData captures the value
+                $amt.val($amt.val().replace(/,/g, ''));
 
                 var submitBtn = $("#savebutton");
                 submitBtn.prop("disabled", true);

@@ -461,6 +461,7 @@ body {
     font-family: inherit;
     width: 100%;
     transition: border-color .15s, box-shadow .15s;
+    text-align:right;
 }
 
     .form-input-num:focus {
@@ -1506,4 +1507,7 @@ body {
     color: #633806;
     font-size: 11px;
     font-weight: 600;
+}
+.intalignment{
+    text-align:right;
 }

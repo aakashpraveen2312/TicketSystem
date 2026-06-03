@@ -668,5 +668,72 @@ namespace PSS_CMS.Controllers
             }
         }
 
+
+        public async Task<ActionResult> FreeServiceDownaloadPDF(int? ticketRecID, int? TC_CRECID)
+        {
+            string Weburl = ConfigurationManager.AppSettings["DOWNLOADPDFFREESERVICE"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string APIKey = Session["APIKEY"]?.ToString();
+
+            //int companyId = Convert.ToInt32(Session["CompanyId"]);
+            //int ticketId = Convert.ToInt32(Session["TicketRecID"]);
+
+            try
+            {
+                // Build the request body as per JSON structure
+                var requestBody = new
+                {
+                    companyRecID = TC_CRECID,
+                    ticketRecID = ticketRecID,
+                    materialName = "",
+                    quantity = 0,
+                    price = 0,
+                    cgst = 0,
+                    sgst = 0,
+                    amount = 0,
+                    discount = 0,
+                    netAmount = 0,
+                    billableType = ""
+                };
+
+                using (HttpClientHandler handler = new HttpClientHandler())
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    // 🔑 Send POST request with JSON body
+                    var content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync(Weburl, content);
+
+                    if (!response.IsSuccessStatusCode)
+                        return Content("Error fetching data: " + response.ReasonPhrase);
+
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var rootObjects = JsonConvert.DeserializeObject<ApiPdfResponse>(jsonString);
+
+                    if (rootObjects == null || rootObjects.Status != "Y")
+                        return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
+
+                    if (string.IsNullOrEmpty(rootObjects.FileUrl))
+                        return Content("PDF URL not returned from API.");
+
+                    // ✅ Fetch the actual PDF bytes
+                    var fileBytes = await client.GetByteArrayAsync(rootObjects.FileUrl);
+                    var fileName = Path.GetFileName(rootObjects.FileUrl);
+
+                    return File(fileBytes, "application/pdf", fileName);// Forces download/open in browser
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception occurred: " + ex.Message);
+            }
+            //return RedirectToAction("Index");
+        }
+
     }
 }

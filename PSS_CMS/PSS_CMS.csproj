@@ -367,6 +367,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountantCustomerInvoiceController.cs" />
+    <Compile Include="Controllers\AddonCustomerController.cs" />
     <Compile Include="Controllers\ContractController.cs" />
     <Compile Include="Controllers\AssignToController.cs" />
     <Compile Include="Controllers\CompanyInfoController.cs" />
@@ -807,6 +808,12 @@
     <Content Include="Views\Tickets\_CaptchaPartial.cshtml" />
     <Content Include="Views\ContractProduct\View.cshtml" />
     <Content Include="Views\HelpDesk\_CaptchaPartial.cshtml" />
+    <Content Include="Views\AddonCustomer\AddOnCustomerList.cshtml" />
+    <Content Include="Views\AddonCustomer\Create.cshtml" />
+    <Content Include="Views\AddonCustomer\UserAdminMappingList.cshtml" />
+    <Content Include="Views\AddonCustomer\UserProductMappingList.cshtml" />
+    <Content Include="Views\AddonCustomer\Edit.cshtml" />
+    <Content Include="Views\Tickets\AddonCustomerCreateTicket.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

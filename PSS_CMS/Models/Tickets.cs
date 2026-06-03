@@ -112,6 +112,7 @@ namespace PSS_CMS.Models
         public string CU_NAME { get; set; }
         public int P_RECID { get; set; }
         public int CU_RECID { get; set; }
+        public int CU_URECID { get; set; }
         public string TT_CODE { get; set; }
         public string TT_DISABLE { get; set; }
         public string ProductSerial { get; set; }

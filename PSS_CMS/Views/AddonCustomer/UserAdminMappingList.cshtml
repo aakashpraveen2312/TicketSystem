@@ -1,0 +1,388 @@
+﻿@model IEnumerable<PSS_CMS.Models.Useradminmap>
+
+@{ ViewData["Title"] = "User Service Engineer Mapping";
+    ViewBag.PageTitle = "User Service Engineer Mapping";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+    <style>
+        .count-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #f3f0ff;
+            color: #5a4bd1;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 9px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .role-sa {
+            background: #f3f0ff;
+            color: #5a4bd1;
+        }
+
+        .role-admin {
+            background: #e8faf6;
+            color: #00916e;
+        }
+
+        .role-helpdesk {
+            background: #eef6ff;
+            color: #1a73e8;
+        }
+
+        .role-user {
+            background: #fff4db;
+            color: #c47a00;
+        }
+
+        .role-default {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .footer-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 18px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-save {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 7px 18px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+            .btn-save:hover {
+                background: #5a4bd1;
+            }
+
+        .btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f5f5f5;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 7px 18px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+            .btn-cancel:hover {
+                background: #ebebeb;
+                color: var(--text-dark);
+            }
+
+        .user-code {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 12px;
+        }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+
+    <i class="bi bi-people nav-icon"></i>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <i class="bi bi-people nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Add on Customer</span>
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("AddOnCustomerList","AddonCustomer")">List</a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    @Session["Name"]
+
+    <i class="bi bi-chevron-right"></i>
+
+    <span>Service Engineer</span>
+
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+            <!-- Search -->
+            @using (Html.BeginForm("", "", FormMethod.Get, new { id = "searchForm" }))
+            {
+<div class="search-box">
+
+    <i class="bi bi-search"></i>
+
+    <input type="text"
+           id="searchPharse"
+           name="searchPharse"
+           placeholder="Search"
+           autocomplete="off"
+           value="@Request["searchPharse"]" />
+
+    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
+    {
+<a href="@Url.Action("","")" title="Clear">
+    <i class="bi bi-x-circle text-muted"></i>
+</a>        }
+
+</div>}
+
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="grid-wrap table-responsive">
+
+        <form method="post" id="mappingForm">
+
+            @if (Model != null && Model.Any())
+            {
+<table class="table align-middle mb-0 tickets-table">
+
+    <thead>
+        <tr>
+            <th style="width:52px;">
+                <input type="checkbox"
+                       id="selectAll"
+                      
+                       title="Select All" />
+            </th>
+            <th style="width:110px;">Code</th>
+            <th>Name</th>
+            <th style="width:160px;">Role</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @{ var index = 0; }
+
+        @foreach (var o in Model)
+        {
+            var roleClass =
+                o.U_RCODE == "SA" ? "role-sa" :
+                o.U_RCODE == "Admin" ? "role-admin" :
+                o.U_RCODE == "HelpDesk" ? "role-helpdesk" :
+                o.U_RCODE == "User" ? "role-user" :
+                                          "role-default";
+
+            var roleLabel =
+                o.U_RCODE == "HelpDesk" ? "Help Desk" :
+                o.U_RCODE == "SA" ? "Super Admin" :
+                o.U_RCODE;
+
+<tr>
+
+    <td>
+        <input type="checkbox"
+               class="select-item"
+               name="selectedItems[@index].USERSELECTED"
+               value="true"
+                @(o.Selected ? "checked" : "")/>
+               
+
+        <input type="hidden"
+               name="selectedItems[@index].L_USERID"
+               value="@o.U_RECID" />
+    </td>
+
+    <td class="user-code">@o.U_USERCODE</td>
+
+    <td>@o.U_USERNAME</td>
+
+    <td>
+        <span class="role-badge @roleClass">
+            @roleLabel
+        </span>
+    </td>
+
+</tr>index++;
+                }
+
+    </tbody>
+
+</table> <!-- Pagination -->
+
+                <div class="table-pagination">
+
+                    <button id="prevBtn"
+                            class="page-btn">
+
+                        <i class="bi bi-chevron-left"></i>
+
+                        Previous
+
+                    </button>
+
+                    <span id="pageInfo"
+                          class="page-info">
+                    </span>
+
+                    <button id="nextBtn"
+                            class="page-btn">
+
+                        Next
+
+                        <i class="bi bi-chevron-right"></i>
+
+                    </button>
+
+                </div>}
+            else
+            {
+<div class="text-center py-5">
+    <i class="bi bi-inbox" style="font-size:40px;color:var(--text-muted)"></i>
+    <p class="mt-2 text-muted fw-semibold">No Admins Available</p>
+</div>}
+
+            <!-- Footer Buttons -->
+        <div class="footer-actions">
+
+            <a href="@Url.Action("AddOnCustomerList", "AddonCustomer")" class="btn-cancel">
+                Cancel
+            </a>
+            <button type="button" id="submitButton" class="btn-save">
+                <i class="bi bi-floppy"></i>
+                Save
+            </button>
+
+
+
+        </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- Legend -->
+<div class="legend-bar">
+
+    <div class="legend-item">
+        <input type="checkbox" disabled />
+        <span>Select User</span>
+    </div>
+
+    <div class="legend-item">
+        <i class="bi bi-check-circle" style="color:#2ecc71;font-size:14px;"></i>
+        <span>Checked = Mapped</span>
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="~/Scripts/UIPagination.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // ── Initial count ───────────────────────────────────────
+            updateCount();
+
+            // ── Select All ──────────────────────────────────────────
+            $('#selectAll').on('change', function () {
+                $('input.select-item:not(:disabled)').prop('checked', $(this).is(':checked'));
+                updateCount();
+            });
+
+            // ── Individual checkbox ─────────────────────────────────
+            $(document).on('change', 'input.select-item', function () {
+                syncSelectAll();
+                updateCount();
+            });
+
+            // ── AJAX Save ───────────────────────────────────────────
+            $('#submitButton').on('click', function () {
+
+                let selectedIds = [];
+
+                $('input.select-item:checked').each(function () {
+                    let idx    = $(this).attr('name').match(/\d+/)[0];
+                    let userId = $('input[name="selectedItems[' + idx + '].L_USERID"]').val();
+                    if (userId) selectedIds.push(userId);
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("CheckedValue", "AddonCustomer")',
+                    data: JSON.stringify({ selectedItems: selectedIds }),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (res) {
+                        Swal.fire({
+                            icon:  res.success ? 'success' : 'error',
+                            title: res.success ? 'Success!' : 'Error!',
+                            text:  res.message,
+                            confirmButtonText: 'OK'
+                        }).then(function () {
+                            if (res.success) {
+                                window.location.href = '@Url.Action("AddOnCustomerList", "AddonCustomer")';
+                            }
+                        });
+                    },
+                    error: function () {
+                        Swal.fire('Error!', 'Something went wrong while processing your request.', 'error');
+                    }
+                });
+            });
+
+            // ── Helpers ─────────────────────────────────────────────
+            function syncSelectAll() {
+                var total   = $('input.select-item:not(:disabled)').length;
+                var checked = $('input.select-item:not(:disabled):checked').length;
+                var $sa     = $('#selectAll');
+                $sa.prop('indeterminate', checked > 0 && checked < total);
+                $sa.prop('checked', total > 0 && checked === total);
+            }
+
+            function updateCount() {
+                var count = $('input.select-item:checked').length;
+                $('#countBadge').text(count + ' selected');
+            }
+
+        });
+    </script>
+}

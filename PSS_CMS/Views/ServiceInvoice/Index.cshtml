@@ -107,16 +107,29 @@
         {
             var statusText = getStatus(o);
             var statusCss = getStatusCss(o);
-            @* Build action URLs *@ 
-        var downloadPdfUrl = Url.Action("DownaloadPDF", "ServiceInvoice",
+            var downloadPdfUrl = "";
+
+@* Build action URLs *@ 
+        if (o.TotalNetAmount== 0m) {
+             downloadPdfUrl = Url.Action("FreeServiceDownaloadPDF", "ServiceInvoice",
 new { ticketRecID = o.TC_RECID, TC_CRECID = o.TC_CRECID });
 
-            string primaryActionUrl = "";
-            string primaryActionIcon = "";
-            string primaryActionTitle = "";
+        }
+        else
+        {
 
-            if (o.TotalNetAmount == 0)
-            { @* Free service — only PDF *@ }
+             downloadPdfUrl = Url.Action("DownaloadPDF", "ServiceInvoice",
+new { ticketRecID = o.TC_RECID, TC_CRECID = o.TC_CRECID });
+
+        }
+
+
+        string primaryActionUrl = "";
+        string primaryActionIcon = "";
+        string primaryActionTitle = "";
+
+        if (o.TotalNetAmount == 0)
+        { @* Free service — only PDF *@ }
         else if (o.TC_SISTATUS == "YG")
         {
             primaryActionUrl = Url.Action("GeneratePDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID });

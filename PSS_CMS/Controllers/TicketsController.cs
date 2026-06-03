@@ -80,6 +80,59 @@ namespace PSS_CMS.Controllers
             return View(viewModel);
         }
 
+
+        [HttpGet]
+        public async Task<ActionResult> AddonCustomerCreateTicket()
+        {
+            var viewModel = new Tickets();
+            string Weburl = ConfigurationManager.AppSettings["COMBOBOXTICKETTYPE"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "cmprecid=" + Session["CompanyID"];
+            string finalurl = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseTicketsResponseTypes>(jsonString);
+                            var ticketTypes = rootObjects?.Data ?? new List<TicketComboTypes>();
+
+                            viewModel.TicketCombo.TicketTypes = ticketTypes.Select(item => new SelectListItem
+                            {
+                                Value = item.TT_TICKETTYPE,
+                                Text = item.TT_TICKETTYPE
+                            }).ToList();
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, $"Error: {response.ReasonPhrase}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Exception occurred: {ex.Message}");
+            }
+
+            // Pass the view model to the next method
+            await ComboBoxProduct(viewModel);
+
+            return View(viewModel);
+        }
         private string GetImageMimeType(string base64Image)
         {
             if (base64Image.Contains("data:image/jpeg;base64,"))
@@ -151,8 +204,8 @@ namespace PSS_CMS.Controllers
   ""tC_HFLAG"": ""{"N"}"",
 ""tC_ASSIGNFLAG"": ""{"N"}"",
 ""tC_PICKFLAG"": ""{"N"}"",
-""tC_PRODUCTSERIALNUMBER"": ""{tickets.P_SERIALNUMBER}"",
-""tC_CUSTOMERTYPE"": ""{tickets.CustomerType}""
+""tC_PRODUCTSERIALNUMBER"": ""{tickets.P_SERIALNUMBER ?? "No serial number"}"",
+""tC_CUSTOMERTYPE"": ""{tickets.CustomerType ?? "Addon User"}""
         }}";
 
                 // Create the HTTP request
@@ -1443,10 +1496,6 @@ namespace PSS_CMS.Controllers
                 return Json(new { status = "error", message = "Exception occurred: " + ex.Message });
             }
         }
-
-
-
-
         public async Task<ActionResult> ViewDetails(int ticketRecID)
         {
             ServiceInvoiceData invoiceData = new ServiceInvoiceData();
@@ -1520,6 +1569,50 @@ namespace PSS_CMS.Controllers
 
             return View(invoiceData);
         }
+
+
+        public async Task ComboBoxProduct(Tickets viewModel)
+        {
+            string webUrlGet = ConfigurationManager.AppSettings["GETCUSTOMERPRODUCTLIST"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            string strparams = "companyId=" + Session["CompanyID"] + "&UserID=" + Session["UserRECID"];
+            string url = webUrlGet + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var rootObjects = JsonConvert.DeserializeObject<ApiResponseTicketsResponseTypes>(jsonString);
+                            var ticketTypes2 = rootObjects?.Data ?? new List<TicketComboTypes>();
+
+                            viewModel.TicketCombo2.TicketTypes2 = ticketTypes2.Select(item => new SelectListItem
+                            {
+                                Value = item.P_RECID.ToString(),
+                                Text = item.P_NAME
+                            }).ToList();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Exception occurred: {ex.Message}");
+            }
+        }
+
 
     }
 }

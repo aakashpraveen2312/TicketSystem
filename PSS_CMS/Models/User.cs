@@ -21,6 +21,8 @@ namespace PSS_CMS.Models
         [StringLength(100, MinimumLength = 4, ErrorMessage = "Password must be between 4 and 100 characters long")]
         [DisplayName("Password")]
         public string U_PASSWORD { get; set; }
+        [DisplayName("Address")]
+        public string U_ADDRESS { get; set; }
 
        
         [DisplayName("Role")]

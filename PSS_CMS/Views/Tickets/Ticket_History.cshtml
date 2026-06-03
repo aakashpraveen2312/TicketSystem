@@ -181,13 +181,13 @@
             <!-- Search -->
             @using (Html.BeginForm("Ticket_History", "Tickets", FormMethod.Get, new { id = "searchForm" }))
             {
-<div class="search-box">
-    <i class="bi bi-search"></i>
-    <input type="text" id="searchPharse" name="searchPharse"
-           placeholder="Search"
-           autocomplete="off"
-           value="@Request["searchPharse"]" />
-</div>      }
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" id="searchPharse" name="searchPharse"
+                   placeholder="Search"
+                   autocomplete="off"
+                   value="@Request["searchPharse"]" />
+        </div>}
 
             <!-- Date picker -->
             <button type="button" class="tool-btn" id="daterange" title="Date Range Filter">
@@ -212,11 +212,17 @@
             <button type="button" class="btn-reset-filter" id="resetFilters">
                 <i class="bi bi-arrow-counterclockwise"></i> Reset
             </button>
+            @if (Session["U_ADDONCUSTOMER"].ToString().Trim() == "Y")
+            {<!-- New Ticket -->
+        <a href="@Url.Action("AddonCustomerCreateTicket", "Tickets")" class="btn-add">
+            <i class="bi bi-plus-lg"></i>  New Ticket
+        </a> }
+                                            else
+                                            { <!-- New Ticket -->
+        <a href="@Url.Action("Ticket", "Tickets")" class="btn-add">
+            <i class="bi bi-plus-lg"></i> New Ticket
+        </a>            }
 
-            <!-- New Ticket -->
-            <a href="@Url.Action("Ticket", "Tickets")" class="btn-add">
-                <i class="bi bi-plus-lg"></i> New Ticket
-            </a>
 
         </div>
     </div>

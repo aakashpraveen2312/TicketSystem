@@ -1,0 +1,287 @@
+﻿@model IEnumerable<PSS_CMS.Models.Useradminmap>
+
+@{ ViewData["Title"] = "User Product Mapping";
+    ViewBag.PageTitle = "User Product Mapping";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+
+    <i class="bi bi-chevron-right"></i>
+
+    <i class="bi bi-people nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Add on Customer</span>
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("AddOnCustomerList","AddonCustomer")">List</a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    @Session["Name"]
+
+    <i class="bi bi-chevron-right"></i>
+
+
+    <span>Product Mapping</span>
+
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+            <!-- Search -->
+            @using (Html.BeginForm("", "", FormMethod.Get, new { id = "searchForm" }))
+            {
+<div class="search-box">
+
+    <i class="bi bi-search"></i>
+
+    <input type="text"
+           id="searchPharse"
+           name="searchPharse"
+           placeholder="Search"
+           autocomplete="off"
+           value="@Request["searchPharse"]" />
+
+    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
+    {
+<a href="@Url.Action("","")" title="Clear">
+    <i class="bi bi-x-circle text-muted"></i>
+</a>        }
+
+</div>}
+
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="grid-wrap table-responsive">
+
+        <form method="post" id="mappingForm">
+
+            @if (Model != null && Model.Any())
+            {
+<table class="table align-middle mb-0 tickets-table">
+
+    <thead>
+        <tr>
+            <th style="width:56px;">
+                <input type="checkbox"
+                       id="selectAll"
+                     
+                       title="Select All" />
+            </th>
+            <th>Product Name</th>
+            <th class="text-center" style="width:120px;">Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @{ var index = 0; }
+
+        @foreach (var o in Model)
+        {
+<tr>
+
+    <td>
+        <input type="checkbox"
+               class="select-item"
+               name="selectedItems[@index].USERSELECTED"
+               value="true"
+                @(o.Selected ? "checked" : "")/>
+
+        <input type="hidden"
+               name="selectedItems[@index].P_PROJECTRECID"
+               value="@o.P_RECID" />
+    </td>
+
+    <td>@o.P_NAME</td>
+
+    <td class="text-center">
+        @if (o.Selected)
+        {
+<span class="assigned-chip">
+    <i class="bi bi-check-lg" style="font-size:11px;"></i>
+    Assigned
+</span> }
+else
+{
+<span class="status-dash">—</span>}
+    </td>
+
+</tr>index++;
+                }
+
+    </tbody>
+
+</table> <!-- Pagination -->
+
+                <div class="table-pagination">
+
+                    <button id="prevBtn"
+                            class="page-btn">
+
+                        <i class="bi bi-chevron-left"></i>
+
+                        Previous
+
+                    </button>
+
+                    <span id="pageInfo"
+                          class="page-info">
+                    </span>
+
+                    <button id="nextBtn"
+                            class="page-btn">
+
+                        Next
+
+                        <i class="bi bi-chevron-right"></i>
+
+                    </button>
+
+                </div>}
+            else
+            {
+<div class="text-center py-5">
+    <i class="bi bi-inbox" style="font-size:40px;color:var(--text-muted)"></i>
+    <p class="mt-2 text-muted fw-semibold">No Products Available</p>
+</div>}
+
+            <!-- Footer Buttons -->
+        <div class="footer-actions">
+            <a href="@Url.Action("AddOnCustomerList", "AddonCustomer")" class="btn-cancel">
+                Cancel
+            </a>
+
+            <button type="button" id="submitButton" class="btn-save">
+                <i class="bi bi-floppy"></i>
+                Save
+            </button>
+
+
+
+        </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- Legend -->
+<div class="legend-bar">
+
+    <div class="legend-item">
+        <input type="checkbox" disabled />
+        <span>Select Product</span>
+    </div>
+
+    <div class="legend-item">
+        <i class="bi bi-check-circle" style="color:#2ecc71;font-size:14px;"></i>
+        <span>Checked = Assigned</span>
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="~/Scripts/UIPagination.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // ── Initial count ──────────────────────────────────────
+            updateCount();
+
+            // ── Select All ─────────────────────────────────────────
+            $('#selectAll').on('change', function () {
+                var checked = $(this).is(':checked');
+                $('input.select-item:not(:disabled)').prop('checked', checked);
+                refreshStatusCells();
+                updateCount();
+            });
+
+            // ── Individual checkbox ────────────────────────────────
+            $(document).on('change', 'input.select-item', function () {
+                refreshStatusCells();
+                syncSelectAll();
+                updateCount();
+            });
+
+            // ── AJAX Save ──────────────────────────────────────────
+            $('#submitButton').on('click', function () {
+
+                let selectedIds = [];
+
+                $('input.select-item:checked').each(function () {
+                    let idx = $(this).attr('name').match(/\d+/)[0];
+                    let id  = $('input[name="selectedItems[' + idx + '].P_PROJECTRECID"]').val();
+                    if (id) selectedIds.push(id);
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("CheckedValueProject", "AddonCustomer")',
+                    data: JSON.stringify({ selectedItems: selectedIds }),
+                    contentType: 'application/json',
+                    success: function (res) {
+                        Swal.fire({
+                            icon:  res.success ? 'success' : 'error',
+                            title: res.success ? 'Success'  : 'Error',
+                            text:  res.message
+                        }).then(function () {
+                            if (res.success) {
+                                window.location.href = '@Url.Action("AddOnCustomerList", "AddonCustomer")';
+                            }
+                        });
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Something went wrong', 'error');
+                    }
+                });
+            });
+
+            // ── Helpers ────────────────────────────────────────────
+            function refreshStatusCells() {
+                $('input.select-item').each(function () {
+                    var $cell = $(this).closest('tr').find('td:last-child');
+                    if ($(this).is(':checked')) {
+                        $cell.html('<span class="assigned-chip"><i class="bi bi-check-lg" style="font-size:11px;"></i> Assigned</span>');
+                    } else {
+                        $cell.html('<span class="status-dash">—</span>');
+                    }
+                });
+            }
+
+            function syncSelectAll() {
+                var total   = $('input.select-item:not(:disabled)').length;
+                var checked = $('input.select-item:not(:disabled):checked').length;
+                var $sa     = $('#selectAll');
+                $sa.prop('indeterminate', checked > 0 && checked < total);
+                $sa.prop('checked', total > 0 && checked === total);
+            }
+
+            function updateCount() {
+                var count = $('input.select-item:checked').length;
+                $('#countBadge').text(count + ' selected');
+            }
+
+        });
+    </script>
+}

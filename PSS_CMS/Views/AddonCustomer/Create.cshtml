@@ -1,0 +1,304 @@
+﻿@model PSS_CMS.Models.User
+
+@{ ViewData["Title"] = "Create User";
+    ViewBag.PageTitle = "Create User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string userRole = Session["UNAME"]?.ToString().ToUpper(); }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+    <style>
+
+        /* ── Role badge in header ────────────────── */
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .role-sa {
+            background: #EEEDFE;
+            color: #3C3489;
+        }
+
+        .role-admin {
+            background: #E1F5EE;
+            color: #085041;
+        }
+
+        .role-hd {
+            background: #E6F1FB;
+            color: #0C447C;
+        }
+
+        .role-user {
+            background: #FAEEDA;
+            color: #633806;
+        }
+
+        .role-def {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-people nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Add on Customer</span>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("AddOnCustomerList","AddonCustomer")">List</a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Create</span>
+</div>
+
+<!-- Main Card -->
+@using (Html.BeginForm("Create", "AddonCustomer", FormMethod.Post,
+    new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
+{
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span class="title-icon">
+                <i class="bi bi-person-plus"></i>
+            </span>
+            Create User
+        </h6>
+       
+    </div>
+
+    <!-- Form body -->
+    <div class="form-body">
+
+        <p class="form-section-title">Account Information</p>
+
+        <div class="form-grid">
+
+            <!-- User Code -->
+            <div class="form-group">
+                <label class="form-label" for="U_USERCODE">
+                    @Html.DisplayNameFor(m => m.U_USERCODE)
+                    <span class="req">*</span>
+                </label>
+                @Html.TextBoxFor(m => m.U_USERCODE, new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off",
+                    placeholder = "Enter user code"
+                })
+                @Html.ValidationMessageFor(m => m.U_USERCODE, "", new { @class = "text-danger", style = "font-size:11px" })
+            </div>
+
+            <!-- User Name -->
+            <div class="form-group">
+                <label class="form-label" for="U_USERNAME">
+                    @Html.DisplayNameFor(m => m.U_USERNAME)
+                    <span class="req">*</span>
+                </label>
+                @Html.TextBoxFor(m => m.U_USERNAME, new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off",
+                    placeholder = "Enter full name"
+                })
+                @Html.ValidationMessageFor(m => m.U_USERNAME, "", new { @class = "text-danger", style = "font-size:11px" })
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label class="form-label" for="U_EMAILID">
+                    @Html.DisplayNameFor(m => m.U_EMAILID)
+                    <span class="req">*</span>
+                </label>
+                @Html.TextBoxFor(m => m.U_EMAILID, new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off",
+                    placeholder = "Enter email address",
+                    type = "email"
+                })
+                @Html.ValidationMessageFor(m => m.U_EMAILID, "", new { @class = "text-danger", style = "font-size:11px" })
+            </div>
+
+            <!-- Mobile -->
+            <div class="form-group">
+                <label class="form-label" for="U_MOBILENO">
+                    @Html.DisplayNameFor(m => m.U_MOBILENO)
+                </label>
+                @Html.TextBoxFor(m => m.U_MOBILENO, new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off",
+                    placeholder = "Enter mobile number"
+                })
+            </div>
+            <!-- Address -->
+            <div class="form-group">
+                <label class="form-label" for="U_ADDRESS">
+                    @Html.DisplayNameFor(m => m.U_ADDRESS)
+                </label>
+                @Html.TextBoxFor(m => m.U_ADDRESS, new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off",
+                    placeholder = "Enter your address"
+                })
+            </div>
+            <!-- Sort Order -->
+            <div class="form-group">
+                <label class="form-label" for="U_SORTORDER">
+                    @Html.DisplayNameFor(m => m.U_SORTORDER)
+                </label>
+                @Html.TextBoxFor(m => m.U_SORTORDER, new
+                {
+                    @class = "form-input-num",
+                    autocomplete = "off",
+                    placeholder = "0"
+                })
+            </div>
+
+        </div>
+
+        <div class="form-divider"></div>
+        <p class="form-section-title">Settings</p>
+
+        <div class="form-grid">
+            <!-- Disable User -->
+            <label class="check-row" for="U_UserDisable">
+                @Html.CheckBoxFor(m => m.U_UserDisable,
+                              new { @class = "form-check-input", id = "U_UserDisable" })
+                <div class="check-row-label">
+                    <span>@Html.DisplayNameFor(m => m.U_UserDisable)</span>
+                    <small>Prevent this user from logging in</small>
+                </div>
+            </label>
+
+        </div>
+
+    </div>
+
+    <!-- Legend bar — matches list view style -->
+    <div class="legend-bar">
+
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+            <span>Text Field</span>
+        </div>
+
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
+            <span>Number Field</span>
+        </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+        <a href="@Url.Action("AddOnCustomerList","AddonCustomer")"
+           class="btn-cancel">
+            <i class="bi bi-x-lg"></i> Cancel
+        </a>
+        <button type="submit"
+                class="btn-save"
+                id="bt">
+            <i class="bi bi-floppy"></i> Save
+        </button>
+    </div>
+
+</div>}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            /* ── AJAX submit — processing spinner shows FIRST ── */
+            $("#createform").submit(function (e) {
+                e.preventDefault();
+
+                var btn      = $("#bt");
+                var formData = new FormData(this);
+
+                btn.prop("disabled", true);
+
+                Swal.fire({
+                    title: "Processing…",
+                    html: "Please wait while we save your changes.",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: function () {
+                        Swal.showLoading();
+
+                        $.ajax({
+                            url: '@Url.Action("Create", "AddonCustomer")',
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                if (response.success) {
+                                    setTimeout(function () {
+                                        Swal.fire({
+                                            title: "Success!",
+                                            text: response.message,
+                                            icon: "success",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Continue",
+                                            cancelButtonText: "Back to List",
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false,
+                                            customClass: {
+                                                confirmButton: "swal-btn-continue",
+                                                cancelButton:  "swal-btn-back"
+                                            }
+                                        }).then(function (result) {
+                                            if (result.isConfirmed) {
+                                                location.reload();
+                                            } else {
+                                                window.location.href = '@Url.Action("AddOnCustomerList", "AddonCustomer")';
+                                            }
+                                        });
+                                    }, 800);
+                                } else {
+                                    Swal.fire({
+                                        title: "Message",
+                                        text: response.message,
+                                        icon: "info",
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    resetButton();
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: "An unexpected error occurred.",
+                                    icon: "error",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                resetButton();
+                            }
+                        });
+                    }
+                });
+            });
+
+            function resetButton() {
+                $("#bt").prop("disabled", false);
+            }
+        });
+    </script>
+}

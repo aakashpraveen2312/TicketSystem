@@ -180,12 +180,12 @@
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.SIH_INVOICEAMOUNT, new { @class = "form-label" })
-                    @Html.EditorFor(m => m.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly", id = "invoiceAmountField" } })
+                    @Html.EditorFor(m => m.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-input-auto intalignment", autocomplete = "off", @readonly = "readonly", id = "invoiceAmountField" } })
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.SIH_SORTORDER, new { @class = "form-label" })
-                    @Html.EditorFor(m => m.SIH_SORTORDER, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+                    @Html.EditorFor(m => m.SIH_SORTORDER, new { htmlAttributes = new { @class = "form-input-auto intalignment", autocomplete = "off", @readonly = "readonly" } })
                 </div>
 
                 <div class="form-group">
@@ -439,16 +439,13 @@
             });
         });
 
-        // ── Format invoice amount (Indian locale) ─────
-        $(document).ready(function () {
-            var input = $("#invoiceAmountField");
-            var value = input.val();
-            if (value) {
-                input.val(parseFloat(value).toLocaleString('en-IN', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                }));
-            }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var f = document.getElementById("invoiceAmountField");
+            if (f && f.value) f.value = parseFloat(f.value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         });
+       
     </script>
+
+
 }

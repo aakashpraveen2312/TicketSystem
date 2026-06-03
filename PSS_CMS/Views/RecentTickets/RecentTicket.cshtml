@@ -441,7 +441,7 @@
             <th>Priority</th>
             <th>Ticket Type</th>
             <th>Status</th>
-            <th>Comprehensive</th>
+            
             @if (isManager)
             {
                 <th>Assigned To</th>
@@ -480,12 +480,12 @@
                                 @o.TC_STATUS_DISPLAY
                             </span>
                         </td>
-                        <td style="text-align:center;">
+                        @*<td style="text-align:center;">
                             <input type="checkbox"
                                    @(o.P_Comprehensivewarranty ? "checked" : "")
                                    disabled
                                    style="accent-color:var(--primary);width:14px;height:14px;" />
-                        </td>
+                        </td>*@
                         @if (isManager)
                         {
                             <td>@o.U_ASSIGNEDUSERNAME</td>

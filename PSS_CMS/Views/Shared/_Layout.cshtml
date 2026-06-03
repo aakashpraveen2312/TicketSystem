@@ -101,10 +101,6 @@
 
                 @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
                 {
-                    <a href="@Url.Action("Ticket", "Tickets")" class="nav-item-link">
-                        <i class="bi bi-receipt-cutoff nav-icon"></i>
-                        <span class="nav-label">Create Ticket</span>
-                    </a>
 
                     <a href="@Url.Action("Ticket_History", "Tickets")" class="nav-item-link">
                         <i class="bi-ticket-detailed nav-icon"></i>
@@ -115,15 +111,21 @@
 
                 @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
                 {
-            <a href="@Url.Action("Ticket_History", "HelpDesk")" class="nav-item-link">
-                <i class="bi-ticket-detailed nav-icon"></i>
-                <span class="nav-label">Service Tickets</span>
-            </a>
+                    <a href="@Url.Action("AddOnCustomerList", "AddonCustomer")" class="nav-item-link">
+                        <i class="bi bi-person-plus nav-icon"></i>
+                        <span class="nav-label">Add on Customer</span>
+                    </a>
+                    <a href="@Url.Action("Ticket", "HelpDesk")" class="nav-item-link">
+                        <i class="bi bi-receipt-cutoff nav-icon"></i>
+                        <span class="nav-label">Create Ticket</span>
+                    </a>
+                    <a href="@Url.Action("Ticket_History", "HelpDesk")" class="nav-item-link">
+                        <i class="bi-ticket-detailed nav-icon"></i>
+                        <span class="nav-label">Service Tickets</span>
+                    </a>
 
-                <a href="@Url.Action("Ticket", "HelpDesk")" class="nav-item-link">
-                    <i class="bi bi-receipt-cutoff nav-icon"></i>
-                    <span class="nav-label">Create Ticket</span>
-                </a>
+
+
                 }
 
 

@@ -175,6 +175,7 @@
 
             var processUrl = Url.Action("ContractProcessStatus", "Contract", new { Recid = o.CP_RECID });
             var productsUrl = Url.Action("List", "ContractProduct", new { ContractRecid = o.CP_RECID, CP_CODE = o.CP_CODE, CP_STATUS = o.CP_STATUS });
+            var UserUrl = Url.Action("ContractUserList", "Contract", new { userid = o.CP_RECID});
             var pdfUrl = Url.Action("ContractInvoice", "Contract", new { CP_CTURECID = o.CP_CTURECID, CP_CRECID = o.CP_CRECID });
 
 <tr>
@@ -213,33 +214,33 @@
 
             @if (isProcessed)
             {<!-- View -->
-                        <a href="@viewUrl"
-                           title="View"
-                           class="act-btn act-view">
-                            <i class='bx bx-show'></i>
-                        </a> }
-                                            else
-                                            { <!-- Edit -->
-                                                <a href="@editUrl"
-                                                   title="Edit"
-                                                   class="act-btn act-edit">
-                                                    <i class='bx bxs-pencil'></i>
-                                                </a> <!-- Process -->
-                                                                                                <a href="javascript:void(0);"
-                                                                                                   onclick="confirmProcess('@processUrl')"
-                                                                                                   title="Process"
-                                                                                                   class="act-btn no-loader"
-                                                                                                   style="color:#00b894;">
-                                                                                                    <i class='bx bx-check-circle'></i>
-                                                                                                </a> <!-- Delete -->
-                                                                                                                                                <a href="@deleteUrl"
-                                                                                                                                                   data-id="@o.CP_RECID"
-                                                                                                                                                   data-name="@o.CP_CODE"
-                                                                                                                                                   title="Delete"
-                                                                                                                                                   class="act-btn act-delete no-loader"
-                                                                                                                                                   onclick="return confirmDelete(this);">
-                                                                                                                                                    <i class='bx bxs-trash'></i>
-                                                                                                                                                </a>}
+                <a href="@viewUrl"
+                   title="View"
+                   class="act-btn act-view">
+                    <i class='bx bx-show'></i>
+                </a> }
+            else
+            { <!-- Edit -->
+                <a href="@editUrl"
+                   title="Edit"
+                   class="act-btn act-edit">
+                    <i class='bx bxs-pencil'></i>
+                </a> <!-- Process -->
+                <a href="javascript:void(0);"
+                   onclick="confirmProcess('@processUrl')"
+                   title="Process"
+                   class="act-btn no-loader"
+                   style="color:#00b894;">
+                    <i class='bx bx-check-circle'></i>
+                </a> <!-- Delete -->
+                <a href="@deleteUrl"
+                   data-id="@o.CP_RECID"
+                   data-name="@o.CP_CODE"
+                   title="Delete"
+                   class="act-btn act-delete no-loader"
+                   onclick="return confirmDelete(this);">
+                    <i class='bx bxs-trash'></i>
+                </a>}
 
             <!-- Products -->
             <a href="@productsUrl"
@@ -249,7 +250,15 @@
                 <i class='bi bi-bag-check'></i>
             </a>
 
-           
+            <!-- User -->
+            <a href="@UserUrl"
+               title="User"
+               class="act-btn"
+               style="color:#6c5ce7;">
+                <i class="bi bi-person-circle"></i>
+            </a>
+
+
 
             <!-- Download PDF -->
             <a href="javascript:void(0);"
@@ -350,7 +359,14 @@
         Products
     </div>
 
-  
+    <div class="legend-item">
+        <span class="act-btn"
+              style="width:22px;height:22px;font-size:13px;color:#6c5ce7;">
+            <i class='bi bi-person-circle'></i>
+        </span>
+        User
+    </div>
+
 
     <div class="legend-item">
         <span class="act-btn"

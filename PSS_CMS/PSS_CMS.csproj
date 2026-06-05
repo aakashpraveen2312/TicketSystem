@@ -426,6 +426,7 @@
     <Compile Include="Models\ContractInclusion.cs" />
     <Compile Include="Models\ContractInvoice.cs" />
     <Compile Include="Models\ContractServiceProduct.cs" />
+    <Compile Include="Models\ContractUser.cs" />
     <Compile Include="Models\Customernotification.cs" />
     <Compile Include="Models\DashBoardList.cs" />
     <Compile Include="Models\CompanyInfo.cs" />
@@ -814,6 +815,9 @@
     <Content Include="Views\AddonCustomer\UserProductMappingList.cshtml" />
     <Content Include="Views\AddonCustomer\Edit.cshtml" />
     <Content Include="Views\Tickets\AddonCustomerCreateTicket.cshtml" />
+    <Content Include="Views\Contract\ContractUserList.cshtml" />
+    <Content Include="Views\Contract\CreateContractUser.cshtml" />
+    <Content Include="Views\Contract\EditContractUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

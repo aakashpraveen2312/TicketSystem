@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -291,6 +292,411 @@ namespace PSS_CMS.Controllers
             }
             return View(contractsList);
 
+        }
+
+        public async Task<ActionResult> ContractUserList(string searchPharse, int? userid)
+        {
+            if (userid != null)
+            {
+
+                Session["userid"] = userid;
+            }
+            Contract objproduct = new Contract();
+            int SerialNo = objproduct.SerialNumber;
+
+            if (SerialNo == 0)
+            {
+                SerialNo = 1; // Initialize to 1 if it's 0
+            }
+
+            string WEBURLGET = ConfigurationManager.AppSettings["CONTRACTUSERGET"];
+            string Authkey = ConfigurationManager.AppSettings["Authkey"];
+
+            List<ContractUser> contractsUserList = new List<ContractUser>();
+
+
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            string strparams = "CompanyRecID=" + Session["CompanyID"] + "&UserId=" + Session["userid"];
+            string finalurl = WEBURLGET + "?" + strparams;
+            try
+            {
+
+
+                // Prepare header parameters as per RSGT inputs
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", Authkey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                        var response = await client.GetAsync(finalurl);
+
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            //GlobalVariables.ResponseStructure = jsonString;
+                            var content = JsonConvert.DeserializeObject<RootObjectsContractUser>(jsonString);
+                            contractsUserList = content.Data ?? new List<ContractUser>();
+
+                            if (contractsUserList.Count > 0)
+                            {
+                                // Assign serial numbers
+                                for (int i = 0; i < contractsUserList.Count; i++)
+                                {
+                                    contractsUserList[i].SerialNumber = i + 1;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(searchPharse))
+                            {
+                                contractsUserList = contractsUserList
+                                    .Where(r => r.U_CONTRACTUSERFIRSTNAME.ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_CONTRACTUSERLASTNAME.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_CONTRACTUSEREMAIL.ToString().ToLower().Contains(searchPharse.ToLower()) ||
+                                   r.U_CONTRACTMOBILE.ToString().ToLower().Contains(searchPharse.ToLower()))
+                                    .ToList();
+
+                            }
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            return View(contractsUserList);
+
+        }
+
+        public async Task<ActionResult> CreateContractUser()
+        {
+
+            await ComboCustomerSelection();
+            await ComboProductSelection();
+            return View();
+
+        }
+
+        public async Task<ActionResult> EditContractUser(int? Contractid)
+        {
+
+            Session["Contractid"] = Contractid;
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["CONTRACTUSERGETBYID"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            ContractUser contract = null;
+
+            string strparams = "recID=" + Session["Contractid"] + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(finalurl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var content = JsonConvert.DeserializeObject<ContractUserMasterObject>(jsonString);
+                            contract = content.Data;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }          
+            return View(contract);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> EditContractUser(ContractUser contract)
+        {
+            try
+            {
+                var UpdateURL = ConfigurationManager.AppSettings["CONTRACTUSERPUT"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{
+            ""U_CONTRACTRECID"": ""{Session["Contractid"]}"",
+            ""U_USERCODE"": ""{contract.U_USERCODE}"",
+            ""U_USERNAME"": ""{contract.U_CONTRACTUSERFIRSTNAME}"",
+            ""U_CONTRACTUSERFIRSTNAME"": ""{contract.U_CONTRACTUSERFIRSTNAME}"",
+            ""U_CONTRACTUSERLASTNAME"": ""{contract.U_CONTRACTUSERLASTNAME}"",
+            ""U_CONTRACTUSEREMAIL"": ""{contract.U_CONTRACTUSEREMAIL}"",
+            ""U_EMAILID"": ""{contract.U_CONTRACTUSEREMAIL}"",
+            ""U_MOBILENO"": ""{contract.U_CONTRACTMOBILE}"",
+            ""U_CONTRACTMOBILE"": ""{contract.U_CONTRACTMOBILE}"",
+            ""U_CONTRACTDESIGNATION"": ""{contract.U_CONTRACTDESIGNATION}"",
+            ""U_CRECID"": ""{Session["CompanyID"]}""
+        }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(UpdateURL),
+                    Method = HttpMethod.Put,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, Encoding.UTF8, "application/json")
+                };
+
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ContractMasterObject>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            message = apiResponse.Message
+                        });
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = apiResponse.Message
+                        });
+                    }
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Error: Something went wrong."
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Exception: " + ex.Message
+                });
+            }
+        }
+
+        public async Task<ActionResult> DeleteContractUser(int id)
+
+        {
+
+            string WEBURLDELETE = ConfigurationManager.AppSettings["CONTRACTUSERDELETE"];
+            string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+            string strparams = "companyId=" + Session["CompanyID"] + "&RecordId=" + id;
+            string finalurl = WEBURLDELETE + "?" + strparams;
+            string APIKey = Session["APIKEY"].ToString();
+
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                        var request = new HttpRequestMessage
+                        {
+                            Method = HttpMethod.Delete,
+                            RequestUri = new Uri(finalurl)
+                        };
+
+                        var response = await client.SendAsync(request);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            var apiResponse = JsonConvert.DeserializeObject<ContractUserMasterObject>(responseBody);
+
+                            if (apiResponse.Status == "Y")
+                            {
+
+                                string redirectUrl = Url.Action("ContractUserList", "Contract", new { });
+                                return Json(new { status = "success", message = apiResponse.Message, redirectUrl = redirectUrl });
+                            }
+                            else if (apiResponse.Status == "U")
+                            {
+                                return Json(new { status = "error", message = apiResponse.Message });
+                            }
+                            else if (apiResponse.Status == "N")
+                            {
+                                return Json(new { status = "error", message = apiResponse.Message });
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Failed to delete: {response.StatusCode} - {response.ReasonPhrase}");
+                        }
+                    }
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Console.WriteLine($"HTTP Request error occurred: {httpEx.Message}");
+            }
+            catch (TaskCanceledException tcEx)
+            {
+                Console.WriteLine($"Request timed out: {tcEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            return View();
+
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateContractUser(ContractUser contractuser)
+        {
+            try
+            {
+                var ContractUserPostURL = ConfigurationManager.AppSettings["CONTRACTUSERPOST"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var content = $@"{{
+            ""U_CONTRACTRECID"": ""{Session["userid"]}"",
+            ""U_USERCODE"": ""{contractuser.U_USERCODE}"",
+            ""U_USERNAME"": ""{contractuser.U_CONTRACTUSERFIRSTNAME}"",
+            ""U_CONTRACTUSERFIRSTNAME"": ""{contractuser.U_CONTRACTUSERFIRSTNAME}"",
+            ""U_CONTRACTUSERLASTNAME"": ""{contractuser.U_CONTRACTUSERLASTNAME}"",
+            ""U_CONTRACTUSEREMAIL"": ""{contractuser.U_CONTRACTUSEREMAIL}"",
+            ""U_EMAILID"": ""{contractuser.U_CONTRACTUSEREMAIL}"",
+            ""U_MOBILENO"": ""{contractuser.U_CONTRACTMOBILE}"",
+            ""U_CONTRACTMOBILE"": ""{contractuser.U_CONTRACTMOBILE}"",
+            ""U_CONTRACTDESIGNATION"": ""{contractuser.U_CONTRACTDESIGNATION}"",
+            ""U_DOMAIN"": ""{Session["DOMAIN"]}"",
+            ""U_CRECID"": ""{Session["CompanyID"]}""
+        }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(ContractUserPostURL),
+                    Method = HttpMethod.Post,
+                    Headers =
+            {
+                { "X-Version", "1" },
+                { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+            },
+                    Content = new StringContent(content, Encoding.UTF8, "application/json")
+                };
+
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ContractUserMasterObject>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            message = apiResponse.Message
+                        });
+                    }
+                    else if (apiResponse.Status == "U" || apiResponse.Status == "N")
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = apiResponse.Message
+                        });
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "An unexpected status was returned."
+                        });
+                    }
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Error: " + response.ReasonPhrase
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
         }
 
         public async Task<ActionResult> CreateContract()
@@ -1689,7 +2095,7 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             //GlobalVariables.ResponseStructure = jsonString;
                             var content = JsonConvert.DeserializeObject<RootObjectsContract>(jsonString);
-                            contractsList = content.Data;
+                            contractsList = content.Data ?? new List<Contract>();
 
                             if (contractsList.Count > 0)
                             {

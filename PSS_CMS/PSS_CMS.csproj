@@ -427,6 +427,7 @@
     <Compile Include="Models\ContractInclusion.cs" />
     <Compile Include="Models\ContractInvoice.cs" />
     <Compile Include="Models\ContractServiceProduct.cs" />
+    <Compile Include="Models\ContractUser.cs" />
     <Compile Include="Models\Customernotification.cs" />
     <Compile Include="Models\DashBoardList.cs" />
     <Compile Include="Models\CompanyInfo.cs" />
@@ -824,6 +825,9 @@
     <Content Include="Views\HelpdeskSalesInvoice\Edit.cshtml" />
     <Content Include="Views\HelpdeskSalesInvoice\SalesheaderView.cshtml" />
     <Content Include="Views\HelpdeskSalesInvoice\View.cshtml" />
+    <Content Include="Views\Contract\ContractUserList.cshtml" />
+    <Content Include="Views\Contract\CreateContractUser.cshtml" />
+    <Content Include="Views\Contract\EditContractUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

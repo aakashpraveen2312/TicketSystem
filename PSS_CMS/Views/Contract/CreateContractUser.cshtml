@@ -1,0 +1,272 @@
+﻿@model PSS_CMS.Models.ContractUser
+
+@{ ViewData["Title"] = "Create User";
+    ViewBag.PageTitle = "Create User";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-file-text nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("ContractProductList", "Contract")">
+        Contracts
+    </a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Create User</span>
+</div>
+
+@using (Html.BeginForm("CreateContractUser", "Contract", FormMethod.Post,
+    new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
+{
+    <div class="page-card">
+
+        <!-- Header -->
+        <div class="page-card-header">
+            <h6 class="page-card-title">
+                <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="bi bi-file-text" style="font-size:15px;color:#3C3489;"></i>
+                </span>
+                Create User
+            </h6>
+        </div>
+
+        <!-- Form Body -->
+        <div class="form-body">
+
+            <!-- Section: Basic Info -->
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">
+                        User Code
+                    </label>
+                    @Html.EditorFor(m => m.U_USERCODE, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-text",
+                            autocomplete = "off",
+                            placeholder = "User Code"
+                        }
+                    })
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.U_CONTRACTUSERFIRSTNAME)
+                        <span class="req">*</span>
+                    </label>
+                    @Html.EditorFor(m => m.U_CONTRACTUSERFIRSTNAME, new
+               {
+                   htmlAttributes = new
+                   {
+                       @class = "form-input-text",
+                       autocomplete = "off",
+                       placeholder = "First Name"
+                   }
+               })
+
+                </div>
+
+                <!-- Contract Last Name -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.U_CONTRACTUSERLASTNAME)
+                    </label>
+                    @Html.EditorFor(m => m.U_CONTRACTUSERLASTNAME, new
+               {
+                   htmlAttributes = new
+                   {
+                       @class = "form-input-text",
+                       autocomplete = "off",
+                       placeholder = "Last Name"
+                   }
+               })
+                </div>
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.U_CONTRACTUSEREMAIL)
+                    </label>
+                    @Html.EditorFor(m => m.U_CONTRACTUSEREMAIL, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-text",
+                            autocomplete = "off",
+                            placeholder = "Email"
+                        }
+                    })
+                </div>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <div class="form-grid">
+
+                <!-- Mobile -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.U_CONTRACTMOBILE)
+                    </label>
+                    @Html.EditorFor(m => m.U_CONTRACTMOBILE, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-text",
+                            autocomplete = "off",
+                            maxlength = "10",
+                            placeholder = "Mobile",
+                            onkeypress = "return isNumberKey(event)"
+                        }
+                    })
+                </div>
+
+                <!-- Desigination -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.U_CONTRACTDESIGNATION)
+                    </label>
+                    @Html.EditorFor(m => m.U_CONTRACTDESIGNATION, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-text",
+                            autocomplete = "off",
+                            placeholder = "Desigination"
+                        }
+                    })
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Legend Bar -->
+        <div class="legend-bar">
+            <div class="legend-item">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+                <span>Text Field</span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+            <a href="@Url.Action("ContractUserList", "Contract")" class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+            <button type="submit" class="btn-save" id="savebutton">
+                <i class="bi bi-floppy"></i> Save
+            </button>
+        </div>
+
+    </div>}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        /* ── Mutual-exclusion checkboxes ── */
+        document.getElementById('existingUserCheckbox').addEventListener('change', function () {
+            if (this.checked) document.getElementById('newUserCheckbox').checked = false;
+        });
+        document.getElementById('newUserCheckbox').addEventListener('change', function () {
+            if (this.checked) document.getElementById('existingUserCheckbox').checked = false;
+        });
+    </script>
+    <script>
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+            // Allow only numbers (0-9)
+            if (charCode < 48 || charCode > 57) {
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <script>
+        /* ── AJAX submit with processing spinner first ── */
+        $(document).ready(function () {
+            $("#createform").submit(function (e) {
+                e.preventDefault();
+
+                var btn      = $("#savebutton");
+                var formData = new FormData(this);
+
+                btn.prop("disabled", true);
+
+                Swal.fire({
+                    title: "Processing…",
+                    html: "Please wait while we save your changes.",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: function () {
+                        Swal.showLoading();
+
+                        $.ajax({
+                            url: '@Url.Action("CreateContractUser", "Contract")',
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                if (response.success) {
+                                    setTimeout(function () {
+                                        Swal.fire({
+                                            title: "Success!",
+                                            text: response.message,
+                                            icon: "success",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Continue",
+                                            cancelButtonText: "Back to List",
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false,
+                                            customClass: {
+                                                confirmButton: "swal-btn-continue",
+                                                cancelButton: "swal-btn-back"
+                                            }
+                                        }).then(function (result) {
+                                            if (result.isConfirmed) {
+                                                location.reload();
+                                            } else {
+                                                window.location.href = '@Url.Action("ContractUserList", "Contract")';
+                                            }
+                                        });
+                                    }, 800);
+                                } else {
+                                    Swal.fire({
+                                        title: "Message",
+                                        text: response.message,
+                                        icon: "info",
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    resetButton();
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: "An unexpected error occurred.",
+                                    icon: "error",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                resetButton();
+                            }
+                        });
+                    }
+                });
+            });
+
+            function resetButton() {
+                $("#savebutton").prop("disabled", false);
+            }
+        });
+    </script>
+}

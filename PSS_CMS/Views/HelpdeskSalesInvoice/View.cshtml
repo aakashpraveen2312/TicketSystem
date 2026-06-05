@@ -1,0 +1,209 @@
+﻿@model PSS_CMS.Models.SalesInvoiceProducts
+
+@{ ViewData["Title"] = "Sales Invoice Products - View";
+    ViewBag.PageTitle = "Sales Invoice Products View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var cuCtrecid = Session["RECID"]?.ToString();
+    var contractName = Session["ContractName"]?.ToString();
+    var ctPrecid = Session["CT_PRECID"]?.ToString();
+    var contractAmount = Session["ContractAmount"]?.ToString(); }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-box-seam nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("List", "HelpdeskSalesInvoice", new { SalesinvoiceRecID = Session["SalesinvoiceRecID"], customerid = Session["customerid"], status = Session["status"] })">
+        Sales Invoice Products
+    </a>
+    <i class="bi bi-chevron-right"></i>
+    <span>View</span>
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-box-seam" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            Product Details
+        </h6>
+    </div>
+
+    @using (Html.BeginForm("Edit", "HelpdeskSalesInvoice", FormMethod.Post, new { id = "editform", enctype = "multipart/form-data" }))
+    {
+<div style="padding:24px 20px 8px;">
+
+    <p class="form-section-title">Product Information</p>
+    <div class="form-grid" style="margin-bottom:24px;">
+
+        <!-- Product -->
+        <div class="form-group">
+            @Html.LabelFor(m => m.SIP_PRECID, new { @class = "form-label" })
+
+            @{ var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
+                var durationMap = ViewBag.ProductDurationList as Dictionary<int, int>; }
+
+            @if (ProductList != null && ProductList.Any())
+            {
+                var modifiedProductList = new List<SelectListItem>(ProductList);
+                if (modifiedProductList.Count > 1)
+                {
+                    modifiedProductList.Insert(0, new SelectListItem { Text = "-- Select Product --", Value = "" });
+                }
+
+<select id="SelectedProduct" name="SelectedProduct" class="form-input-auto" disabled>
+    @foreach (var item in modifiedProductList)
+    {
+        int duration = 0;
+        if (durationMap != null && !string.IsNullOrEmpty(item.Value))
+        {
+            int key = Convert.ToInt32(item.Value);
+            if (durationMap.ContainsKey(key)) { duration = durationMap[key]; }
+        }
+<option value="@item.Value"
+        data-duration="@duration"
+        @(item.Selected ? "selected" : "")>
+    @item.Text
+</option>
+}
+</select>
+                    <input type="hidden" name="SelectedProduct" value="@Model.SIP_PRECID" /> }
+                else
+                {
+<div class="form-input-auto" style="display:flex;align-items:center;color:var(--text-muted);font-size:13px;">
+    No products available
+</div>}
+        </div>
+
+        <!-- Product Serial No -->
+        <div class="form-group">
+            @Html.LabelFor(m => m.SIP_PRODUCTSERIALNUMBER, "Product Serial No", new { @class = "form-label" })
+            @Html.EditorFor(m => m.SIP_PRODUCTSERIALNUMBER, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+        </div>
+
+        <!-- Service Engineer -->
+        <div class="form-group">
+            <label class="form-label">Service Engineer</label>
+            <select id="AdminDropdown" class="form-input-auto" disabled>
+                <option value="">-- Select Admin --</option>
+            </select>
+            @Html.HiddenFor(m => m.SIP_ADMINRECID)
+        </div>
+
+        <!-- Warranty Upto -->
+        <div class="form-group">
+            @Html.LabelFor(m => m.SIP_WARRANTYUPTO, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.SIP_WARRANTYUPTO, new
+            {
+                @class = "form-input-auto",
+                type = "date",
+                id = "SIP_WARRANTYUPTO",
+                @readonly = "readonly"
+            })
+        </div>
+
+        <!-- Sort Order -->
+        <div class="form-group">
+            @Html.LabelFor(m => m.SIP_SORTORDER, new { @class = "form-label" })
+            @Html.EditorFor(m => m.SIP_SORTORDER, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", placeholder = "0", @readonly = "readonly" } })
+        </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+        <a href="@Url.Action("List", "HelpdeskSalesInvoice", new { SalesinvoiceRecID = Session["SalesinvoiceRecID"], customerid = Session["customerid"], status = Session["status"] })"
+           class="btn-cancel">
+            <i class="bi bi-x-lg"></i> Cancel
+        </a>
+    </div>
+
+</div>}
+
+</div><!-- /page-card -->
+<!-- Legend bar -->
+<div class="legend-bar">
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#adb5bd;flex-shrink:0;"></span>
+        <span>Read-only Field</span>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            const selectedAdminFromEdit = '@Model.SIP_ADMINRECID';
+
+            // ── Load admins for the pre-selected product ─
+            function loadAdmins(precid) {
+
+                var cmprecid = '@Session["CompanyID"]';
+
+                $("#AdminDropdown")
+                    .prop("disabled", true)
+                    .empty()
+                    .append('<option value="">Loading...</option>');
+
+                if (!precid) {
+                    $("#AdminDropdown").empty().append('<option value="">-- Select Admin --</option>');
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("GetProductAdmins", "SalesInvoiceProduct")',
+                    type: 'GET',
+                    data: { cmprecid: cmprecid, precid: precid },
+                    success: function (res) {
+                        $("#AdminDropdown").empty();
+
+                        if (res.status === "Y" && res.data && res.data.length > 0) {
+                            $("#AdminDropdown").append('<option value="">-- Select Admin --</option>');
+
+                            $.each(res.data, function (i, admin) {
+                                var isSelected = admin.u_RECID.toString() === selectedAdminFromEdit.toString();
+                                $("#AdminDropdown").append(
+                                    $('<option>', {
+                                        value: admin.u_RECID,
+                                        text:  admin.u_USERNAME,
+                                        selected: isSelected
+                                    })
+                                );
+                            });
+
+                            if (selectedAdminFromEdit) {
+                                $("#SIP_ADMINRECID").val(selectedAdminFromEdit);
+                            }
+                        } else {
+                            $("#AdminDropdown")
+                                .append('<option value="">No admins mapped to this product</option>');
+                        }
+                    },
+                    error: function () {
+                        $("#AdminDropdown")
+                            .empty()
+                            .append('<option value="">Error loading admins</option>');
+                    }
+                });
+            }
+
+            // Auto-load on page open (view/edit mode)
+            var initialProduct = $("#SelectedProduct").val();
+            if (initialProduct) {
+                loadAdmins(initialProduct);
+            }
+        });
+    </script>
+}

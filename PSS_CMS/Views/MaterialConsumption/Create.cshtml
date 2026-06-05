@@ -56,8 +56,8 @@
                     @Html.DisplayNameFor(m => m.ITEMGROUP) <span class="req">*</span>
                 </label>
                 @Html.DropDownListFor(m => m.SelectedItemGroup, Model.ItemGroups,
-                         "Select an Item Group",
-                         new { id = "itemGroupDropdown", @class = "form-input-text", tabindex = "1" })
+                                        "Select an Item Group",
+                                        new { id = "itemGroupDropdown", @class = "form-input-text", tabindex = "1" })
             </div>
 
             <!-- Item Category -->
@@ -66,8 +66,8 @@
                     @Html.DisplayNameFor(m => m.ITEMCATEGORY) <span class="req">*</span>
                 </label>
                 @Html.DropDownListFor(m => m.SelectedItemCategory, Model.ItemCategories,
-                         "Select an Item Category",
-                         new { id = "itemCategoryDropdown", @class = "form-input-text", tabindex = "2" })
+                                        "Select an Item Category",
+                                        new { id = "itemCategoryDropdown", @class = "form-input-text", tabindex = "2" })
             </div>
 
             <!-- Material / Item -->
@@ -76,8 +76,8 @@
                     @Html.DisplayNameFor(m => m.MATERIAL) <span class="req">*</span>
                 </label>
                 @Html.DropDownList("SelectedMaterial",
-                         new List<SelectListItem> { new SelectListItem { Text = "Select an Item", Value = "" } },
-                         new { @class = "form-input-text", id = "MaterialDropdown", tabindex = "3" })
+                                        new List<SelectListItem> { new SelectListItem { Text = "Select an Item", Value = "" } },
+                                        new { @class = "form-input-text", id = "MaterialDropdown", tabindex = "3" })
             </div>
 
             <!-- UOM (readonly) -->
@@ -105,7 +105,7 @@
                 <label class="form-label" for="tM_PRICE">@Html.DisplayNameFor(m => m.tM_PRICE)</label>
                 @Html.TextBoxFor(m => m.tM_PRICE, new
                 {
-                    @class = "form-input-auto",
+                    @class = "form-input-auto intalignment",
                     autocomplete = "off",
                     placeholder = "0.00",
                     @readonly = "readonly"
@@ -157,7 +157,7 @@
                 <label class="form-label" for="tM_SGST">@Html.DisplayNameFor(m => m.tM_SGST)</label>
                 @Html.TextBoxFor(m => m.tM_SGST, "{0:0.00}", new
                 {
-                    @class = "form-input-auto",
+                    @class = "form-input-auto intalignment",
                     autocomplete = "off",
                     placeholder = "0.00",
                     @readonly = "readonly"
@@ -169,7 +169,7 @@
                 <label class="form-label" for="tM_CGST">@Html.DisplayNameFor(m => m.tM_CGST)</label>
                 @Html.TextBoxFor(m => m.tM_CGST, new
                 {
-                    @class = "form-input-auto",
+                    @class = "form-input-auto intalignment",
                     autocomplete = "off",
                     @readonly = "readonly",
                     type = "text"
@@ -192,7 +192,7 @@
                     </span>
                     @Html.TextBoxFor(m => m.tM_TOTALAMOUNT, new
                     {
-                        @class = "form-input-calc",
+                        @class = "form-input-calc intalignment",
                         autocomplete = "off",
                         @readonly = "readonly",
                         placeholder = "0.00"
@@ -206,7 +206,7 @@
                     </span>
                     @Html.TextBoxFor(m => m.tM_NETAMOUNT, new
                     {
-                        @class = "form-input-calc",
+                        @class = "form-input-calc intalignment",
                         autocomplete = "off",
                         @readonly = "readonly",
                         placeholder = "0.00"
@@ -218,20 +218,28 @@
 
         <div class="form-divider"></div>
 
-        <!-- ── Settings ────────────────────── -->
-        <p class="form-section-title">Settings</p>
 
-        <div class="form-grid">
-            <!-- Billable checkbox -->
-            <label class="check-row" for="tM_BILLABLE">
-                @Html.CheckBoxFor(m => m.tM_BILLABLE,
-                         new { @class = "form-check-input", id = "tM_BILLABLE" })
-                <div class="check-row-label">
-                    <span>@Html.DisplayNameFor(m => m.tM_BILLABLE)</span>
-                    <small>Mark this line item as billable to the customer</small>
-                </div>
-            </label>
-        </div>
+        @if (Session["customertypes"].ToString() == "Addon User")
+        {
+    <div class="form-grid">
+       
+       
+    </div> }
+else
+{ <!-- ── Settings ────────────────────── -->
+                        <p class="form-section-title">Settings</p>
+                                            <div class="form-grid">
+                                                <!-- Billable checkbox -->
+                                                <label class="check-row" for="tM_BILLABLE">
+                                                    @Html.CheckBoxFor(m => m.tM_BILLABLE,
+                                                                       new { @class = "form-check-input", id = "tM_BILLABLE" })
+                                                    <div class="check-row-label">
+                                                        <span>@Html.DisplayNameFor(m => m.tM_BILLABLE)</span>
+                                                        <small>Mark this line item as billable to the customer</small>
+                                                    </div>
+                                                </label>
+                                            </div>}
+
 
     </div>
 

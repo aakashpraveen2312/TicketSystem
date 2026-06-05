@@ -1,0 +1,532 @@
+﻿@model PSS_CMS.Models.SalesInvoiceProducts
+
+@{ ViewData["Title"] = "Create Sales Invoice Product";
+    ViewBag.PageTitle = "Create Sales Invoice Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var cuCtrecid = Session["RECID"]?.ToString();
+    var contractName = Session["ContractName"]?.ToString();
+    var ctPrecid = Session["CT_PRECID"]?.ToString();
+    var contractAmount = Session["ContractAmount"]?.ToString(); }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 4px 10px;
+            font-size: 13px;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,89,210,.08);
+        }
+
+        .select2-container {
+            width: 100% !important;
+        }
+
+        /* readonly date input */
+        input[readonly].form-input-text {
+            background: var(--body-bg);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+
+    <i class="bi bi-receipt-cutoff nav-icon"></i>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("SalesheaderList", "HelpdeskSalesInvoice")">
+        Sales Invoice Entry
+    </a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("List", "HelpdeskSalesInvoice", new { SalesinvoiceRecID = Session["SalesinvoiceRecID"], customerid = Session["customerid"] })">
+        Sales Products
+    </a>
+
+    <i class="bi bi-chevron-right"></i>
+
+    <span>Create</span>
+
+</div>
+
+@using (Html.BeginForm("Create", "HelpdeskSalesInvoice", FormMethod.Post,
+    new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
+{
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+
+        <h6 class="page-card-title">
+            <span class="title-icon">
+                <i class="bi bi-plus-circle"></i>
+            </span>
+            Create Sales Invoice Product
+        </h6>
+
+    </div>
+
+    <!-- Form Body -->
+    <div class="form-body">
+
+        <div class="form-grid">
+
+            <!-- Product -->
+            <div class="form-group">
+
+                <label class="form-label">
+                    @Html.LabelFor(model => model.SIP_PRECID)
+                    <span class="req">*</span>
+                </label>
+
+                @if (ViewBag.Product != null)
+                {
+                    var ProductList = ViewBag.Product as IEnumerable<SelectListItem>;
+                    var durationMap = ViewBag.ProductDurationList as Dictionary<int, int>;
+
+                    if (ProductList != null && ProductList.Any())
+                    {
+                        var modifiedProductList = new List<SelectListItem>(ProductList);
+
+                        if (modifiedProductList.Count > 1)
+                        {
+                            modifiedProductList.Insert(0, new SelectListItem
+                            {
+                                Text = "-- Select Product --",
+                                Value = ""
+                            });
+                        }
+                        else
+                        {
+                            modifiedProductList[0].Selected = true;
+                        }
+
+<select id="SelectedProduct"
+        name="SelectedProduct"
+        class="form-select-input">
+
+    @foreach (var item in modifiedProductList)
+    {
+        int duration = 0;
+
+        if (durationMap != null && !string.IsNullOrEmpty(item.Value))
+        {
+            int key = Convert.ToInt32(item.Value);
+            if (durationMap.ContainsKey(key))
+            {
+                duration = durationMap[key];
+            }
+        }
+
+<option value="@item.Value"
+        data-duration="@duration.ToString()"
+        @(item.Selected ? "selected" : "")>
+    @item.Text
+</option>
+}
+
+</select> }
+else
+{
+<div class="text-danger" style="font-size:12px;margin-top:4px;">
+    No Products Available
+</div> }
+}
+else
+{
+<div class="text-danger" style="font-size:12px;margin-top:4px;">
+    No Products Available
+</div>}
+
+                <input type="hidden" id="ProductDuration" name="ProductDuration" />
+
+            </div>
+
+            <!-- Service Engineer -->
+            <div class="form-group">
+
+                <label class="form-label">
+                    @Html.LabelFor(model => model.SIP_ADMINRECID, "Service Engineer")
+                </label>
+
+                <select id="AdminDropdown"
+                        class="form-select-input"
+                        disabled>
+                    <option value="">-- Select Service Engineer --</option>
+                </select>
+
+                <input type="hidden"
+                       id="SIP_ADMINRECID"
+                       name="SIP_ADMINRECID" />
+
+            </div>
+
+            <!-- Product Serial Number -->
+            <div class="form-group">
+
+                <label class="form-label">
+                    @Html.LabelFor(model => model.SIP_PRODUCTSERIALNUMBER, "Product Serial No")
+                </label>
+
+                @Html.EditorFor(model => model.SIP_PRODUCTSERIALNUMBER,
+                                        new
+                                        {
+                                            htmlAttributes = new
+                                            {
+                                                @class = "form-input-text",
+                                                autocomplete = "off",
+                                                placeholder = "Enter serial number"
+                                            }
+                                        })
+
+            </div>
+
+            <!-- Warranty Upto -->
+            <div class="form-group">
+
+                <label class="form-label">
+                    @Html.LabelFor(model => model.SIP_WARRANTYUPTO)
+                </label>
+
+                @Html.TextBoxFor(model => model.SIP_WARRANTYUPTO,
+                                        new
+                                        {
+                                            @class = "form-input-text",
+                                            type = "date",
+                                            id = "SIP_WARRANTYUPTO",
+                                            @readonly = "readonly"
+                                        })
+
+                <span class="auto-badge">
+                    <i class="bi bi-magic"></i>
+                    Auto-calculated from product duration
+                </span>
+
+            </div>
+
+            <!-- Product Amount -->
+            <div class="form-group">
+
+                <label class="form-label">
+                    @Html.LabelFor(model => model.SIP_PRODUCTAMOUNT)
+                </label>
+
+                @Html.EditorFor(model => model.SIP_PRODUCTAMOUNT,
+                                        new
+                                        {
+                                            htmlAttributes = new
+                                            {
+                                                @class = "form-input-num",
+                                                autocomplete = "off",
+                                                id = "productAmountField",
+                                                placeholder = "0"
+                                            }
+                                        })
+
+            </div>
+
+            <!-- Sort Order -->
+            <div class="form-group">
+
+                <label class="form-label">
+                    @Html.LabelFor(model => model.SIP_SORTORDER)
+                </label>
+
+                @Html.EditorFor(model => model.SIP_SORTORDER,
+                                        new
+                                        {
+                                            htmlAttributes = new
+                                            {
+                                                @class = "form-input-num",
+                                                autocomplete = "off",
+                                                placeholder = "0"
+                                            }
+                                        })
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Legend -->
+    <div class="legend-bar">
+
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);"></span>
+            <span>Text Fields</span>
+        </div>
+
+        <div class="legend-item">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;"></span>
+            <span>Number Fields</span>
+        </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+
+        <a href="@Url.Action("List", "HelpdeskSalesInvoice", new { SalesinvoiceRecID = Session["SalesinvoiceRecID"], customerid = Session["customerid"] })"
+           class="btn-cancel">
+            <i class="bi bi-x-lg"></i>
+            Cancel
+        </a>
+
+        <button type="submit"
+                class="btn-save"
+                id="savebutton">
+            <i class="bi bi-floppy"></i>
+            Save
+        </button>
+
+    </div>
+
+</div>}
+
+
+@section Scripts {
+
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'
+          rel='stylesheet'>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script src="~/Scripts/Logoutjs.js"></script>
+
+    <!-- Init Select2 -->
+    <script>$(document).ready(function () {
+            $('#SelectedProduct').select2();
+        });</script>
+
+    <!-- Load Service Engineers on product change -->
+    <script>
+        $(document).ready(function () {
+
+            function loadAdmins() {
+
+                var precid   = $("#SelectedProduct").val();
+                var cmprecid = '@Session["CompanyID"]';
+
+                $("#AdminDropdown")
+                    .prop("disabled", true)
+                    .empty()
+                    .append('<option value="">Loading Service Engineer...</option>');
+
+                if (!precid) {
+                    $("#AdminDropdown")
+                        .empty()
+                        .append('<option value="">-- Select Service Engineer --</option>');
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("GetProductAdmins", "HelpdeskSalesInvoice")',
+                    type: 'GET',
+                    data: { cmprecid: cmprecid, precid: precid },
+                    success: function (res) {
+
+                        $("#AdminDropdown").empty();
+
+                        if (res.status === "Y" && res.data && res.data.length > 0) {
+
+                            $("#AdminDropdown")
+                                .append('<option value="">-- Select Service Engineer --</option>')
+                                .prop("disabled", false);
+
+                            $.each(res.data, function (i, admin) {
+                                $("#AdminDropdown").append(
+                                    `<option value="${admin.u_RECID}">${admin.u_USERNAME}</option>`
+                                );
+                            });
+
+                        } else {
+                            $("#AdminDropdown")
+                                .append('<option value="">No Service Engineer mapped</option>')
+                                .prop("disabled", true);
+                        }
+                    },
+                    error: function () {
+                        $("#AdminDropdown")
+                            .empty()
+                            .append('<option value="">Error loading Service Engineer</option>')
+                            .prop("disabled", true);
+                    }
+                });
+            }
+
+            function setWarrantyDate() {
+
+                var selected = $("#SelectedProduct option:selected");
+                var duration = parseInt(selected.attr("data-duration"));
+
+                console.log("duration", duration)
+
+                if (!duration || duration === 0) {
+                    $("#SIP_WARRANTYUPTO").val("");
+                    return;
+                }
+
+                var invoiceDateFromServer = '@ViewBag.invoicedate';
+
+                console.log("invoiceDateFromServer", invoiceDateFromServer);
+                var today = (invoiceDateFromServer && invoiceDateFromServer !== "")
+                    ? new Date(invoiceDateFromServer)
+                    : new Date();
+
+                today.setMonth(today.getMonth() + duration);
+                $("#SIP_WARRANTYUPTO").val(today.toISOString().split('T')[0]);
+            }
+
+            loadAdmins();
+            setWarrantyDate();
+
+            $("#SelectedProduct").on("change", function () {
+                loadAdmins();
+                setWarrantyDate();
+            });
+
+            $("#AdminDropdown").on("change", function () {
+                $("#SIP_ADMINRECID").val($(this).val());
+            });
+
+        });
+    </script>
+
+    <!-- Form submit with SweetAlert -->
+    <script>
+        $(document).ready(function () {
+
+
+            var $amt = $("#productAmountField");
+
+            // Format on load
+            if ($amt.val()) {
+                $amt.val(parseFloat($amt.val()).toLocaleString('en-IN', {
+                    minimumFractionDigits: 2, maximumFractionDigits: 2
+                }));
+            }
+
+            // Format on blur
+            $amt.on("blur", function () {
+                var num = parseFloat($(this).val().replace(/,/g, ''));
+                if (!isNaN(num)) $(this).val(num.toLocaleString('en-IN', {
+                    minimumFractionDigits: 2, maximumFractionDigits: 2
+                }));
+            });
+
+            // Live format while typing
+            $amt.on("input", function () {
+                var raw = $(this).val().replace(/,/g, '');
+                var parts = raw.split('.');
+                if (parts[0]) parts[0] = parseInt(parts[0]).toLocaleString('en-IN');
+                $(this).val(parts.join('.'));
+            });
+
+            $("#createform").submit(function (e) {
+
+                e.preventDefault();
+
+                // ✅ Strip commas BEFORE FormData captures the value
+                $amt.val($amt.val().replace(/,/g, ''));
+
+                var btn = $("#savebutton");
+                btn.prop("disabled", true);
+
+                var formData = new FormData(this);
+
+                Swal.fire({
+                    title: "Processing...",
+                    html: "Please wait while we save your changes.",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: function () {
+
+                        Swal.showLoading();
+
+                        $.ajax({
+                            url: '@Url.Action("Create", "HelpdeskSalesInvoice")',
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+
+                                if (response.success) {
+
+                                    setTimeout(function () {
+                                        Swal.fire({
+                                            title: "Success!",
+                                            text: response.message,
+                                            icon: "success",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Continue",
+                                            cancelButtonText: "Back to List",
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false,
+                                            customClass: {
+                                                confirmButton: "swal-btn-continue",
+                                                cancelButton: "swal-btn-back"
+                                            }
+                                        }).then(function (result) {
+                                            if (result.isConfirmed) {
+                                                location.reload();
+                                            } else {
+                                                window.location.href =
+                                                    '@Url.Action("List", "HelpdeskSalesInvoice", new { SalesinvoiceRecID = Session["SalesinvoiceRecID"], customerid = Session["customerid"] })';
+                                            }
+                                        });
+                                    }, 800);
+
+                                } else {
+                                    Swal.fire({
+                                        title: "Message",
+                                        text: response.message,
+                                        icon: "info"
+                                    });
+                                    resetButton();
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: "An unexpected error occurred.",
+                                    icon: "error"
+                                });
+                                resetButton();
+                            }
+                        });
+                    }
+                });
+            });
+
+            function resetButton() {
+                $("#savebutton").prop("disabled", false);
+            }
+
+        });
+    </script>
+
+
+}

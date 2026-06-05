@@ -135,7 +135,7 @@ namespace PSS_CMS.Controllers
 
             try
             {
-                using (HttpClientHandler handler = new HttpClientHandler())
+                using ( HttpClientHandler handler = new HttpClientHandler())
                 {
                     handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 

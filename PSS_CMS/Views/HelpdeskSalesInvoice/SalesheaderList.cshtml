@@ -1,0 +1,409 @@
+﻿@model IEnumerable<PSS_CMS.Models.Salesheader>
+
+@{ ViewData["Title"] = "Sales Invoice";
+    ViewBag.PageTitle = "Sales Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string searchPhrase = Request["searchPharse"] ?? "";
+
+    var filtered = Model?.Where(m =>
+        string.IsNullOrEmpty(searchPhrase) ||
+        (m.SIH_INVOICENO != null && m.SIH_INVOICENO.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+    ).ToList(); }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-receipt-cutoff nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Sales Invoice</span>
+    <i class="bi bi-chevron-right"></i>
+    List
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+
+            <!-- Search -->
+            @using (Html.BeginForm("SalesheaderList", "HelpdeskSalesInvoice", FormMethod.Get, new { id = "searchForm" }))
+            {
+<div class="search-box">
+    <i class="bi bi-search"></i>
+    <input type="text"
+           id="searchPharse"
+           name="searchPharse"
+           placeholder="Search invoices…"
+           autocomplete="off"
+           value="@searchPhrase"
+           onkeyup="autoSubmitSearch(this)" />
+    @if (!string.IsNullOrEmpty(searchPhrase))
+    {
+<a href="@Url.Action("SalesheaderList","HelpdeskSalesInvoice")" title="Clear">
+    <i class="bi bi-x-circle text-muted"></i>
+</a>}
+</div>      }
+
+            <!-- Add Invoice -->
+            <a href="@Url.Action("SalesheaderCreate","HelpdeskSalesInvoice", new {
+                        CU_CTRECID       = Session["RECID"],
+                        Name             = Session["ContractName"],
+                        CT_PRECID        = Session["CT_PRECID"],
+                        CT_CONTRACTAMOUNT = Session["ContractAmount"]
+                    })"
+               class="btn-add">
+                <i class="bi bi-plus-lg"></i> Add Invoice
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="grid-wrap table-responsive">
+
+        @if (Model != null && Model.Any())
+        {
+<table class="table align-middle mb-0 tickets-table">
+
+    <thead>
+        <tr>
+            <th class="text-center" style="width:55px;">S.No</th>
+            <th>Invoice Number</th>
+            <th style="width:140px;">Invoice Date</th>
+            <th class="text-end" style="width:160px;">Net Amount (₹)</th>
+            <th class="text-center" style="width:120px;">Status</th>
+            <th class="text-center" style="width:200px;">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var o in Model)
+        {
+
+            bool isProcessed = o.SIH_STATUS == "P";
+
+            var editUrl = Url.Action("SalesheaderEdit", "HelpdeskSalesInvoice", new { Recid = o.SIH_RECID });
+            var viewUrl = Url.Action("SalesheaderView", "HelpdeskSalesInvoice", new { Recid = o.SIH_RECID });
+            var processUrl = Url.Action("ProcessInvoice", "HelpdeskSalesInvoice", new { Recid = o.SIH_RECID });
+            var deleteUrl = Url.Action("SalesheaderDelete", "HelpdeskSalesInvoice", new { Recid = o.SIH_RECID });
+
+            var productsUrl = Url.Action("List", "HelpdeskSalesInvoice", new
+            {
+                SalesinvoiceRecID = o.SIH_RECID,
+                customerid = o.SIH_CURECID,
+                status = o.SIH_STATUS,
+                invoicedate = o.SIH_INVOICEDATE
+            });
+
+           
+
+            string invoiceDateDisplay = string.IsNullOrEmpty(o.SIH_INVOICEDATE)
+                ? "—"
+                : Convert.ToDateTime(o.SIH_INVOICEDATE).ToString("dd-MM-yyyy");
+
+<tr>
+    <td class="text-center serial-text">@o.SerialNumber</td>
+
+    <td>
+        @if (!string.IsNullOrEmpty(o.SIH_INVOICENO))
+        {
+<span class="inv-code">@o.SIH_INVOICENO</span> }
+else
+{
+<span style="color:var(--text-muted);font-style:italic;font-size:12px">—</span>}
+    </td>
+
+    <td style="font-size:12.5px;">@invoiceDateDisplay</td>
+
+    <td class="amount-cell">
+        @String.Format("{0:N2}", o.SIH_INVOICEAMOUNT)
+    </td>
+
+    <td class="text-center">
+        @if (isProcessed)
+        {
+<span class="badge-processed">
+    <i class="bi bi-check-circle"></i> Processed
+</span> }
+else
+{
+<span class="badge-pending">
+    <i class="bi bi-hourglass"></i> Pending
+</span>}
+    </td>
+
+    <td>
+        <div class="action-cell">
+
+            @if (isProcessed)
+            {<!-- View -->
+                                        <a href="@viewUrl"
+                                           class="act-btn act-view"
+                                           title="View">
+                                            <i class="bx bx-show"></i>
+                                        </a> <!-- Print -->
+                                                                <a href="javascript:void(0);"
+                                                                   class="act-btn"
+                                                                   onclick="openPrintPopup(@o.SIH_RECID)"
+                                                                   title="Print Invoice">
+                                                                    <i class="bx bx-printer" style="color:#185FA5"></i>
+                                                                </a>  }
+                                                                                    else
+                                                                                    { <!-- Edit -->
+                                                                                                                <a href="@editUrl"
+                                                                                                                   class="act-btn act-edit"
+                                                                                                                   title="Edit">
+                                                                                                                    <i class="bx bxs-pencil"></i>
+                                                                                                                </a> <!-- Process -->
+                                                                                                                                        <a href="javascript:void(0);"
+                                                                                                                                           class="act-btn"
+                                                                                                                                           onclick="confirmProcess('@processUrl')"
+                                                                                                                                           title="Process">
+                                                                                                                                            <i class="bx bx-check-circle" style="color:#1D9E75"></i>
+                                                                                                                                        </a>}
+
+            <!-- Delete (always shown) -->
+            <a href="@deleteUrl"
+               class="act-btn act-delete no-loader"
+               title="Delete"
+               data-name="@o.SIH_INVOICENO"
+               onclick="return confirmDelete(this);">
+                <i class="bx bxs-trash"></i>
+            </a>
+
+            <!-- View Products (always shown) -->
+            <a href="@productsUrl"
+               class="act-btn"
+               title="View Products">
+                <i class="bi bi-box-seam" style="color:#534AB7"></i>
+            </a>
+
+        </div>
+    </td>
+</tr>
+}
+    </tbody>
+
+</table> <!-- Pagination -->
+
+                <div class="table-pagination">
+
+                    <button id="prevBtn"
+                            class="page-btn">
+
+                        <i class="bi bi-chevron-left"></i>
+
+                        Previous
+
+                    </button>
+
+                    <span id="pageInfo"
+                          class="page-info">
+                    </span>
+
+                    <button id="nextBtn"
+                            class="page-btn">
+
+                        Next
+
+                        <i class="bi bi-chevron-right"></i>
+
+                    </button>
+
+                </div> }
+            else
+            {
+<div class="text-center py-5">
+    <i class="bi bi-inbox" style="font-size:40px;color:var(--text-muted)"></i>
+    <p class="mt-2 text-muted fw-semibold">No sales invoices available</p>
+</div>}
+
+    </div>
+
+</div>
+
+<!-- Legend bar -->
+<div class="legend-bar">
+
+    <div class="legend-item">
+        <i class="bx bxs-pencil" style="color:#6c5ce7;font-size:16px"></i>
+        <span>Edit</span>
+    </div>
+
+    <div class="legend-item">
+        <i class="bx bx-check-circle" style="color:#1D9E75;font-size:16px"></i>
+        <span>Process</span>
+    </div>
+
+    <div class="legend-item">
+        <i class="bx bx-show" style="color:#1D9E75;font-size:16px"></i>
+        <span>View</span>
+    </div>
+
+    <div class="legend-item">
+        <i class="bx bx-printer" style="color:#185FA5;font-size:16px"></i>
+        <span>Print</span>
+    </div>
+
+
+    <div class="legend-item">
+        <i class="bx bxs-trash" style="color:#e74c3c;font-size:16px"></i>
+        <span>Delete</span>
+    </div>
+
+    <div class="legend-item">
+        <i class="bi bi-box-seam" style="color:#534AB7;font-size:14px"></i>
+        <span>View Products</span>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Scripts/Fordelete.js"></script>
+    <script src="~/Scripts/UIPagination.js"></script>
+
+    <script>
+
+        /* ── Prevent disabled pagination links ───── */
+        document.querySelectorAll('.page-btn.disabled').forEach(function (el) {
+            el.addEventListener('click', function (e) { e.preventDefault(); });
+        });
+
+        /* ── Process invoice confirmation ────────── */
+        function confirmProcess(url) {
+            Swal.fire({
+                title: 'Process Invoice?',
+                text: 'This will lock the invoice. Are you sure?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#1D9E75',
+                cancelButtonColor: '#E24B4A',
+                confirmButtonText: 'Yes, Process'
+            }).then(function (result) {
+                if (result.isConfirmed) { window.location.href = url; }
+            });
+        }
+
+        /* ── Unlock invoice confirmation ─────────── */
+        function confirmUnlock(url) {
+            Swal.fire({
+                title: 'Unlock Invoice?',
+                text: 'This will re-open the invoice for editing.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#185FA5',
+                cancelButtonColor: '#E24B4A',
+                confirmButtonText: 'Yes, Unlock'
+            }).then(function (result) {
+                if (result.isConfirmed) { window.location.href = url; }
+            });
+        }
+
+        /* ── Print popup with annexure option ────── */
+        var selectedRecid = 0;
+
+        function openPrintPopup(recid) {
+            selectedRecid = recid;
+            Swal.fire({
+                title: 'Print Invoice',
+                html: '<div style="font-size:14px;text-align:left;padding:8px 0">' +
+                      '<label style="cursor:pointer;display:flex;align-items:center;gap:8px;">' +
+                      '<input type="checkbox" id="swalAnnexure" style="width:16px;height:16px;accent-color:#534AB7;" />' +
+                      'Include Warranty Annexure' +
+                      '</label></div>',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Print',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#185FA5'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    var isAnnexure = document.getElementById('swalAnnexure').checked;
+                    window.location.href = '/AccountantCustomerInvoice/ViewInvoicePdf?invoiceRecid='
+                        + selectedRecid + '&isAnnexure=' + isAnnexure;
+                }
+            });
+        }
+
+        /* ── Warranty PDF download ───────────────── */
+        function DownloadWarrantyPDF(id) {
+            Swal.fire({
+                title: 'Processing…',
+                text: 'Generating Warranty PDF',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: function () { Swal.showLoading(); }
+            });
+            $.ajax({
+                url: '/AccountantCustomerInvoice/WarrantyPDF',
+                type: 'POST',
+                data: { CU_RECID: id },
+                xhrFields: { responseType: 'blob' },
+                success: function (data) {
+                    var blob = new Blob([data], { type: 'application/pdf' });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'Warranty.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    Swal.close();
+                },
+                error: function () {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to download PDF' });
+                }
+            });
+        }
+
+        /* ── Send warranty email ─────────────────── */
+        function SendWarrantyEmail(id, email) {
+            Swal.fire({
+                title: 'Processing…',
+                text: 'Sending Warranty PDF to Email',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: function () { Swal.showLoading(); }
+            });
+            $.ajax({
+                url: '/AccountantCustomerInvoice/WarrantyPDFToEmail',
+                type: 'POST',
+                data: { CU_RECID: id, Email: email },
+                success: function (response) {
+                    Swal.close();
+                    Swal.fire({
+                        icon: response.status === 'Y' ? 'success' : 'error',
+                        title: response.status === 'Y' ? 'Success' : 'Error',
+                        text: response.message
+                    });
+                },
+                error: function () {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Something went wrong' });
+                }
+            });
+        }
+
+        /* ── TempData flash messages ─────────────── */
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+            Swal.fire({ icon: 'success', title: 'Success', text: '@TempData["SuccessMessage"]', confirmButtonColor: '#1D9E75' });
+            </text>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+            Swal.fire({ icon: 'error', title: 'Error', text: '@TempData["ErrorMessage"]', confirmButtonColor: '#E24B4A' });
+            </text>
+        }
+
+    </script>
+}

@@ -197,6 +197,10 @@
             color: #BA7517;
         }
 
+        span.act.act-picked i {
+            color: #1D9E75;
+        }
+
         .picked-badge {
             display: inline-flex;
             align-items: center;
@@ -401,7 +405,7 @@
 </div>            }
 
             <!-- Date range -->
-            <button type="button" class="tool-btn" id="daterange" title="Date Range Filter">
+            <button type="button" class="tool-btn" id="daterange" title="Date Range">
                 <i class="bi bi-calendar3" style="color:#3C3489;"></i>
             </button>
             <form id="dateForm" method="post" action="@Url.Action("RecentTicket", "RecentTickets")">
@@ -410,12 +414,12 @@
             </form>
 
             <!-- Excel -->
-            <a href="@Url.Action("ExcelAdminDownload","RecentTickets")" class="tool-btn no-loader" title="Export Excel">
+            <a href="@Url.Action("ExcelAdminDownload","RecentTickets")" class="tool-btn no-loader" title="Excel Export">
                 <i class="bi bi-file-earmark-excel" style="color:#1D9E75;font-size:18px;"></i>
             </a>
 
             <!-- PDF -->
-            <a href="@Url.Action("AdminTicketsPdfDownload","RecentTickets")" class="tool-btn no-loader" title="Export PDF">
+            <a href="@Url.Action("AdminTicketsPdfDownload","RecentTickets")" class="tool-btn no-loader" title="PDF">
                 <i class="bi bi-file-earmark-pdf-fill" style="color:#E24B4A;font-size:18px;"></i>
             </a>
 
@@ -496,10 +500,10 @@
                                 @* Assign To (Manager only, not Closed) *@
                                 @if (isManager && o.TC_STATUS != "C")
                                 {
-            <a href="@Url.Action("Assignto","AssignTo", new { Recid = o.TC_RECID })"
-               class="act act-assign" title="Assign To">
-                <i class="bx bx-user-plus"></i>
-            </a> } @* Review *@
+                            <a href="@Url.Action("Assignto","AssignTo", new { Recid = o.TC_RECID })"
+                               class="act act-assign" title="Assign To">
+                                <i class="bx bx-user-plus"></i>
+                            </a> } @* Review *@
                                 <a href="@Url.Action("AdminTickets","RecentTickets", new {
                                                recid2 = o.TC_RECID, userid = o.TC_URECID,
                                                status = o.TC_STATUS, adminresolvedname = o.TC_ADMINNAME,
@@ -512,38 +516,50 @@
                                 @* Material / Service (not Closed) *@
                                 @if (hasMC && o.TC_STATUS != "C")
                                 {
-            <a href="@Url.Action("List","MaterialConsumption", new {
+                            <a href="@Url.Action("List","MaterialConsumption", new {
                                                TC_RECID = o.TC_RECID, Type = "Material",
-                                               P_RECID = o.P_RECID, P_NAME = o.P_NAME,
+                                               P_RECID = o.P_RECID, P_NAME = o.P_NAME,customertypes = o.TC_CUSTOMERTYPE,
                                                Comprehensive = o.P_Comprehensivewarranty })"
-               class="act act-cart" title="Job Card Items">
-                <i class="bx bx-cart-alt"></i>
-            </a>
-                                    <a href="@Url.Action("List","MaterialConsumption", new {
+                               class="act act-cart" title="Job Card Items">
+                                <i class="bx bx-cart-alt"></i>
+                            </a>
+                                                    <a href="@Url.Action("List","MaterialConsumption", new {
                                                TC_RECID = o.TC_RECID, Type = "Service",
-                                               P_RECID = o.P_RECID, P_NAME = o.P_NAME,
+                                               P_RECID = o.P_RECID, P_NAME = o.P_NAME,customertypes = o.TC_CUSTOMERTYPE,
                                                Comprehensive = o.P_Comprehensivewarranty })"
-                                       class="act act-service" title="Services">
-                                        <i class="bi bi-card-checklist"></i>
-                                    </a> } @* PDF (Closed + MC flag) *@
+                                                       class="act act-service" title="Services">
+                                                        <i class="bi bi-card-checklist"></i>
+                                                    </a> } @* PDF (Closed + MC flag) *@
                                 @if (o.TC_STATUS == "C" && hasMC)
                                 {
-            <a href="#" class="act act-pdf download-pdf"
-               data-id="@o.TC_RECID" title="Download PDF">
-                <i class="bx bxs-file-pdf"></i>
-            </a> } @* Pick ticket *@
+                            <a href="#" class="act act-pdf download-pdf"
+                               data-id="@o.TC_RECID" title="Download PDF">
+                                <i class="bx bxs-file-pdf"></i>
+                            </a> string primaryActionUrl = Url.Action("GeneratePDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID });
+                                                    string primaryActionIcon = "bi bi-ticket-detailed";
+                                                    string primaryActionTitle = "Invoice Details";
+
+                                                    <a href="@primaryActionUrl"
+                                                       class="act-btn"
+                                                       title="@primaryActionTitle">
+                                                        <i class="@primaryActionIcon"
+                                                           style="color: @(primaryActionIcon.Contains("ticket") ? "#185FA5" : "#1D9E75")"></i>
+                                                    </a>
+                                                } @* Pick ticket *@
                                 @if (o.TC_STATUS != "C")
                                 {
                                     if (o.TC_ASSIGNFLAG == "Y" && o.TC_PICKFLAG == "N")
                                     {
-            <a class="act act-pick pick-ticket"
-               data-recid="@o.TC_RECID" title="Pick Ticket">
-                <i class="bx bx-select-multiple"></i>
-            </a> }
-                                    else if (o.TC_ASSIGNFLAG == "Y" && o.TC_PICKFLAG == "Y")
-                                    {
-            <span class="picked-badge"><i class="bx bx-check"></i> Picked</span>}
-                                }
+                            <a class="act act-pick pick-ticket"
+                               data-recid="@o.TC_RECID" title="Pick Ticket">
+                                <i class="bx bx-select-multiple"></i>
+                            </a> }
+                        else if (o.TC_ASSIGNFLAG == "Y" && o.TC_PICKFLAG == "Y")
+                        {
+                            <span class="act act-picked"><i class="bx bx-select-multiple"></i></span>}
+                    }
+
+
 
                             </div>
                         </td>
@@ -607,7 +623,7 @@
         <span>Pick Ticket</span>
     </div>
     <div class="legend-item">
-        <i class="bx bx-check" style="color:#1D9E75;font-size:15px;"></i>
+        <i class="bx bx-select-multiple" style="color: #1D9E75; font-size: 15px;"></i>
         <span>Picked</span>
     </div>
 </div>

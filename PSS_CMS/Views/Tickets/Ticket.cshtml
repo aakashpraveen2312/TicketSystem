@@ -261,15 +261,7 @@
             Raise New Ticket
         </h6>
 
-        <!-- Service selector -->
-        <div class="service-btn-group">
-            <button type="button" class="service-btn service-btn-contract" onclick="openContractModal()">
-                <i class="bi bi-file-earmark-text"></i> Contract Service
-            </button>
-            <button type="button" class="service-btn service-btn-warranty" onclick="openInvoiceModal()">
-                <i class="bi bi-shield-check"></i> Warranty Service
-            </button>
-        </div>
+      
     </div>
 
     @using (Html.BeginForm("Ticket", "Tickets", FormMethod.Post, new { id = "myForm", enctype = "multipart/form-data", @class = "no-preloader" }))
@@ -310,7 +302,7 @@
 
                                                         <div class="form-group">
                                                             @Html.LabelFor(m => m.TC_SUBJECT, "Subject", new { @class = "form-label" })
-                                                            @Html.TextBoxFor(m => m.TC_SUBJECT, new { @class = "form-input-text", id = "sub", tabindex = "3" })
+                                                            @Html.TextBoxFor(m => m.TC_SUBJECT, new { @class = "form-input-text", id = "sub", tabindex = "3",placeholder="Enter your subject..." })
                                                         </div>
 
                                                         <div class="form-group">
@@ -431,57 +423,6 @@
     </div>
 </div>
 
-<!-- ── Contract Modal ── -->
-<div id="contractModal" class="custom-modal">
-    <div class="custom-modal-content">
-        <div class="custom-modal-header">
-            <span style="display:flex;align-items:center;gap:8px;">
-                <i class="bi bi-file-earmark-text" style="color:var(--primary);"></i>
-                Select Contract
-            </span>
-            <span class="close-btn" onclick="closeContractModal()">&times;</span>
-        </div>
-        <div class="custom-modal-body">
-            <table id="contractTable">
-                <thead>
-                    <tr>
-                        <th>Contract No</th>
-                        <th style="text-align:right;">Amount</th>
-                        <th>Warranty Upto</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- ── Invoice Modal ── -->
-<div id="invoiceModal" class="custom-modal">
-    <div class="custom-modal-content">
-        <div class="custom-modal-header">
-            <span style="display:flex;align-items:center;gap:8px;">
-                <i class="bi bi-shield-check" style="color:#1D9E75;"></i>
-                Select Sales Invoice
-            </span>
-            <span class="close-btn" onclick="closeInvoiceModal()">&times;</span>
-        </div>
-        <div class="custom-modal-body">
-            <table id="invoiceTable">
-                <thead>
-                    <tr>
-                        <th>Invoice No</th>
-                        <th style="text-align:right;">Amount</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
   
@@ -607,8 +548,20 @@
     <!-- Warranty / checkbox logic -->
     <script>
         function loadMaterials(element) {
+
+            console.log("element",element);
+
             let selectedRecId = element.value;
-            let serialNo = $(element).find(':selected').data('serial');
+
+            let selectedText = $(element).find(':selected').text();
+
+            let serialNo = selectedText.split(' - ').pop().trim();
+
+            console.log(serialNo);
+
+            console.log("selectedRecId", selectedRecId);
+            console.log("serialNo", serialNo);
+
             $('#SerialNo').val(serialNo);
 
             $.ajax({
@@ -724,120 +677,4 @@
         });
     </script>
 
-    <!-- Modal logic (Contract + Invoice) -->
-    <script id="fullcssmodal01">
-        $(document).ready(function () {
-
-            let selectedCmpRecId = null;
-            let selectedContractRecId = null;
-
-            function formatDate(ds) {
-                if (!ds) return "";
-                if (typeof ds === "string" && ds.indexOf("/Date(") > -1) ds = parseInt(ds.replace(/[^0-9]/g, ""));
-                let d = new Date(ds);
-                if (isNaN(d.getTime())) return "";
-                return ("0" + d.getDate()).slice(-2) + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + d.getFullYear();
-            }
-
-            function openModal(id) { $("#" + id).addClass("open"); }
-            function closeModal(id) { $("#" + id).removeClass("open"); }
-
-            window.openContractModal = function () { loadContracts(); };
-            window.closeContractModal = function () { closeModal("contractModal"); };
-            window.openInvoiceModal = function () { loadInvoices(); };
-            window.closeInvoiceModal = function () { closeModal("invoiceModal"); };
-
-            function loadContracts() {
-                $.ajax({
-                    url: '/Tickets/GetContractsModal', type: 'GET',
-                    success: function (res) {
-                        if (res.Status === "Y" && res.Data.length > 0) {
-                            let tbody = $('#contractTable tbody').empty();
-                            $.each(res.Data, function (i, item) {
-                                let fd = formatDate(item.CU_WARRANTYUPTO);
-                                let amt = Number(item.CP_CONTRACTAMOUNT || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                tbody.append(`<tr class="contract-row" data-cmprecid="${item.CU_CRECID}" data-contractrecid="${item.CP_RECID}" data-date="${fd}" style="cursor:pointer">
-                                        <td><span class="contract-code">${item.CP_CODE}</span></td>
-                                        <td style="text-align:right;font-weight:600;">${amt}</td>
-                                        <td>${fd}</td></tr>`);
-                            });
-                            openModal("contractModal");
-                        } else { Swal.fire('Info', 'No contracts found', 'info'); }
-                    },
-                    error: function () { Swal.fire('Error', 'Failed to load contracts', 'error'); }
-                });
-            }
-
-            function loadInvoices() {
-                $.ajax({
-                    url: '/Tickets/GetSalesInvoiceModal', type: 'GET',
-                    success: function (res) {
-                        if (res.Status === "Y" && res.Data.length > 0) {
-                            let tbody = $('#invoiceTable tbody').empty();
-                            $.each(res.Data, function (i, item) {
-                                let fd = formatDate(item.SIH_INVOICEDATE);
-                                let amt = Number(item.SIH_INVOICEAMOUNT || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                tbody.append(`<tr class="invoice-row" data-invoicerecid="${item.SIH_RECID}" style="cursor:pointer">
-                                        <td><span class="inv-code">${item.SIH_INVOICENO}</span></td>
-                                        <td style="text-align:right;font-weight:600;">${amt}</td>
-                                        <td>${fd}</td></tr>`);
-                            });
-                            openModal("invoiceModal");
-                        } else { Swal.fire('Info', 'No invoices found', 'info'); }
-                    },
-                    error: function () { Swal.fire('Error', 'Failed to load invoices', 'error'); }
-                });
-            }
-
-            $(document).on('click', '.contract-row', function () {
-                selectedContractRecId = $(this).data('contractrecid');
-                selectedCmpRecId = $(this).data('cmprecid');
-                loadProductsByContract(selectedContractRecId);
-                closeModal("contractModal");
-            });
-
-            $(document).on('click', '.invoice-row', function () {
-                loadProductsByInvoice($(this).data('invoicerecid'));
-                closeModal("invoiceModal");
-            });
-
-            // Close on outside click
-            $(window).on('click', function (e) {
-                if ($(e.target).is('#contractModal')) closeModal("contractModal");
-                if ($(e.target).is('#invoiceModal')) closeModal("invoiceModal");
-            });
-        });
-
-        function loadProductsByContract(contractRecId) {
-            $.ajax({
-                url: '/Tickets/ComboBoxProductNewticket', type: 'GET',
-                data: { contractRecId: contractRecId },
-                success: function (res) {
-                    let dd = $('#SelectedProjectType').empty().append('<option value="">Select Product</option>');
-                    $.each(res, function (i, item) {
-                        dd.append(`<option value="${item.Value}" data-serial="${item.SerialNo}">${item.Text}</option>`);
-                    });
-                    dd.trigger('change');
-                },
-                error: function () { Swal.fire('Error', 'Failed to load products', 'error'); }
-            });
-        }
-
-        function loadProductsByInvoice(invoiceRecId) {
-            $.ajax({
-                url: '/Tickets/ComboBoxProductNewticket', type: 'GET',
-                data: { invoiceRecId: invoiceRecId },
-                success: function (res) {
-                    let dd = $('#SelectedProjectType').empty().append('<option value="">Select Product</option>');
-                    $.each(res, function (i, item) {
-                        dd.append(`<option value="${item.Value}" data-serial="${item.SerialNo}">${item.Text}</option>`);
-                    });
-                    dd.trigger('change');
-                },
-                error: function () { Swal.fire('Error', 'Failed to load products from invoice', 'error'); }
-            });
-        }
-    </script>
-
-   
 }

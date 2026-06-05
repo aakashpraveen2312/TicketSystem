@@ -1,0 +1,741 @@
+﻿@model PSS_CMS.Models.Salesheader
+
+@{ ViewData["Title"] = "Sales Invoice Create";
+    ViewBag.PageTitle = "Sales Invoice Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var cuCtrecid = Session["RECID"]?.ToString();
+    var contractName = Session["ContractName"]?.ToString();
+    var ctPrecid = Session["CT_PRECID"]?.ToString();
+    var contractAmount = Session["ContractAmount"]?.ToString(); }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+    <style>
+        /* ── Custom Tabs ───────────────────────────── */
+        .inv-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--border-color);
+            padding: 0 20px;
+            background: #fafafa;
+        }
+
+        .inv-tab-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 13px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: color .18s, border-color .18s;
+            white-space: nowrap;
+            cursor: pointer;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: inherit;
+        }
+
+            .inv-tab-link i {
+                font-size: 15px;
+            }
+
+            .inv-tab-link.active {
+                color: var(--primary);
+                border-bottom-color: var(--primary);
+            }
+
+            .inv-tab-link:hover:not(.active) {
+                color: var(--text-dark);
+            }
+
+            .inv-tab-link:disabled {
+                opacity: .45;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+
+        /* ── Tab Panes ─────────────────────────────── */
+        .tab-body {
+            padding: 24px 20px 8px;
+        }
+
+        .inv-pane {
+            display: none;
+        }
+
+            .inv-pane.show {
+                display: block;
+            }
+
+        /* ── Contact columns ───────────────────────── */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        @@media (max-width: 900px) {
+            .contact-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @@media (max-width: 600px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .contact-panel {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .contact-panel-header {
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .contact-panel-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* ── Pane footer actions ───────────────────── */
+        .pane-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 16px 0 4px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        /* ── Verify badge on button ────────────────── */
+        #btnVerifyCustomer.verified {
+            background: #1D9E75;
+        }
+
+            #btnVerifyCustomer.verified:hover {
+                background: #157a5a;
+            }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-receipt nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("SalesheaderList", "HelpdeskSalesInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })">
+        Sales Invoice Entry
+    </a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Create</span>
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-receipt" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            New Sales Invoice
+        </h6>
+    </div>
+
+    <!-- Tabs -->
+    <div class="inv-tabs">
+        <button type="button" class="inv-tab-link active" id="tab-btn-main" data-target="pane-main">
+            <i class="bi bi-file-text"></i> Main
+        </button>
+        <button type="button" class="inv-tab-link" id="tab-btn-customer" data-target="pane-customer">
+            <i class="bi bi-person"></i> Customer
+        </button>
+        <button type="button" class="inv-tab-link" id="tab-btn-statutory" data-target="pane-statutory" disabled>
+            <i class="bi bi-bank"></i> Statutory
+        </button>
+        <button type="button" class="inv-tab-link" id="tab-btn-contacts" data-target="pane-contacts" disabled>
+            <i class="bi bi-people"></i> Contacts
+        </button>
+    </div>
+
+    <!-- Tab Body -->
+    @using (Html.BeginForm("SalesheaderCreate", "HelpdeskSalesInvoice", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
+    {
+<div class="tab-body">
+
+    <!-- ── Pane: Main ─────────────────────────── -->
+    <div class="inv-pane show" id="pane-main">
+
+
+        <div class="form-grid" style="margin-bottom:18px;">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SIH_INVOICENO, new { @class = "form-label" })
+                @Html.EditorFor(m => m.SIH_INVOICENO, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SIH_INVOICEDATE, new { @class = "form-label" })
+                @Html.EditorFor(m => m.SIH_INVOICEDATE, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", type = "date" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SIH_INVOICEAMOUNT, new { @class = "form-label" })
+                @Html.EditorFor(m => m.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-input-auto intalignment", autocomplete = "off", @readonly = "readonly" } })
+                <span class="auto-badge"><i class="bi bi-calculator"></i> Auto-calculated</span>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SIH_SORTORDER, new { @class = "form-label" })
+                @Html.EditorFor(m => m.SIH_SORTORDER, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", placeholder = "0" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SIH_LTRECID, new { @class = "form-label" })
+                @if (ViewBag.LocationType != null)
+                {
+                    var locationList = ViewBag.LocationType as IEnumerable<SelectListItem>;
+                    if (locationList != null && locationList.Any())
+                    {
+                        var modifiedList = new List<SelectListItem>(locationList);
+                        modifiedList.Insert(0, new SelectListItem { Text = "-- Select Sales Source --", Value = "" });
+@Html.DropDownList("SelectedLocation", modifiedList, new { @class = "form-select-input", id = "SelectedLocation" }) }
+else
+{
+var modifiedList = new List<SelectListItem>();
+modifiedList.Insert(0, new SelectListItem { Text = "No Sales Sources available", Value = "" });
+@Html.DropDownList("SelectedLocation", modifiedList, new { @class = "form-select-input", id = "SelectedLocation" }) }
+}
+else
+{
+<select class="form-select-input" disabled><option>No Sales Sources available</option></select>}
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SIH_SPRECID, new { @class = "form-label" })
+                @{ var locationRefList = ViewBag.LocationRef as IEnumerable<SelectListItem>; }
+                @if (locationRefList != null && locationRefList.Any())
+                {
+                    var modifiedRefList = new List<SelectListItem>(locationRefList);
+                    modifiedRefList.Insert(0, new SelectListItem { Text = "-- Select Sales Location --", Value = "" });
+@Html.DropDownList("SelectedLocationRef", modifiedRefList, new { @class = "form-select-input", id = "LocationRefDropdown" }) }
+else
+{
+var modifiedRefList = new List<SelectListItem>();
+modifiedRefList.Insert(0, new SelectListItem { Text = "No Sales Location available", Value = "" });
+@Html.DropDownList("SelectedLocationRef", modifiedRefList, new { @class = "form-select-input", id = "LocationRefDropdown" })}
+            </div>
+
+        </div>
+
+        <div class="pane-actions">
+            <button type="button" class="btn-save" onclick="switchTab('pane-customer')">
+                <i class="bi bi-arrow-right-circle"></i> Next
+            </button>
+            <a href="@Url.Action("SalesheaderList", "HelpdeskSalesInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
+               class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ── Pane: Customer ─────────────────────── -->
+    <div class="inv-pane" id="pane-customer">
+
+
+        <div class="form-grid" style="margin-bottom:18px;">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.CU_NAME, new { @class = "form-label" })
+                @Html.EditorFor(m => m.CU_NAME, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_NAME" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.CU_EMAIL, new { @class = "form-label" })
+                @Html.EditorFor(m => m.CU_EMAIL, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_EMAIL" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.CU_MOBILENO, new { @class = "form-label" })
+                @Html.EditorFor(m => m.CU_MOBILENO, new
+                {
+                    htmlAttributes = new
+                    {
+                        @class = "form-input-num",
+                        autocomplete = "off",
+                        id = "CU_MOBILENO",
+                        maxlength = "10",
+                        onkeypress = "return isNumberKey(event)"
+                    }
+                })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.CU_ADDRESS, new { @class = "form-label" })
+                @Html.EditorFor(m => m.CU_ADDRESS, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+            </div>
+
+        </div>
+
+        <input type="hidden" id="HiddenCustomerRecid" name="HiddenCustomerRecid" />
+
+        <div class="pane-actions">
+            <button type="button" id="btnVerifyCustomer" class="btn-save">
+                <i class="bi bi-patch-check"></i> Verify &amp; Continue
+            </button>
+            <a href="@Url.Action("SalesheaderList", "HelpdeskSalesInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
+               class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ── Pane: Statutory ────────────────────── -->
+    <div class="inv-pane" id="pane-statutory">
+
+
+        <div class="form-grid" style="margin-bottom:18px;">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.CU_GST, new { @class = "form-label" })
+                @Html.EditorFor(m => m.CU_GST, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.CU_PANNUMBER, new { @class = "form-label" })
+                @Html.EditorFor(m => m.CU_PANNUMBER, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.CU_TANNUMBER, new { @class = "form-label" })
+                @Html.EditorFor(m => m.CU_TANNUMBER, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+            </div>
+
+        </div>
+
+        <div class="pane-actions">
+            <button type="button" class="btn-save" onclick="switchTab('pane-contacts')">
+                <i class="bi bi-arrow-right-circle"></i> Next
+            </button>
+            <a href="@Url.Action("SalesheaderList", "HelpdeskSalesInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
+               class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ── Pane: Contacts ─────────────────────── -->
+    <div class="inv-pane" id="pane-contacts">
+
+
+        <div class="contact-grid">
+
+            <!-- Contact Person 1 -->
+            <div class="contact-panel">
+                <div class="contact-panel-header">
+                    <i class="bi bi-person-circle"></i> Contact Person 1
+                </div>
+                <div class="contact-panel-body">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONNAME1, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONNAME1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONEMAILID1, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONMOBILE1, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE1, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONDESIGINATION1, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONDESIGINATION1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+                    <label class="check-row" style="margin-top:4px;">
+                        @Html.CheckBoxFor(m => m.CU_CONTACTACCESS1_BOOL, new { @class = "form-check-input" })
+                        <div class="check-row-label">
+                            <span>Access Credential</span>
+                            <small>Portal login access</small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Contact Person 2 -->
+            <div class="contact-panel">
+                <div class="contact-panel-header">
+                    <i class="bi bi-person-circle"></i> Contact Person 2
+                </div>
+                <div class="contact-panel-body">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONNAME2, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONNAME2, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONEMAILID2, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID2, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONMOBILE2, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE2, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONDESIGINATION2, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONDESIGINATION2, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+                    <label class="check-row" style="margin-top:4px;">
+                        @Html.CheckBoxFor(m => m.CU_CONTACTACCESS2_BOOL, new { @class = "form-check-input" })
+                        <div class="check-row-label">
+                            <span>Access Credential</span>
+                            <small>Portal login access</small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Contact Person 3 -->
+            <div class="contact-panel">
+                <div class="contact-panel-header">
+                    <i class="bi bi-person-circle"></i> Contact Person 3
+                </div>
+                <div class="contact-panel-body">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONNAME3, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONNAME3, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONEMAILID3, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID3, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONMOBILE3, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE3, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_CONTACTPERSONDESIGINATION3, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONDESIGINATION3, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+                    <label class="check-row" style="margin-top:4px;">
+                        @Html.CheckBoxFor(m => m.CU_CONTACTACCESS3_BOOL, new { @class = "form-check-input" })
+                        <div class="check-row-label">
+                            <span>Access Credential</span>
+                            <small>Portal login access</small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="pane-actions">
+            <button type="submit" class="btn-save" id="savebutton">
+                <i class="bi bi-floppy"></i> Save
+            </button>
+            <a href="@Url.Action("SalesheaderList", "HelpdeskSalesInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
+               class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+        </div>
+
+    </div>
+
+</div><!-- /tab-body -->}
+
+</div><!-- /page-card -->
+<!-- Legend bar -->
+<div class="legend-bar">
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+        <span>Text Field</span>
+    </div>
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
+        <span>Number Field</span>
+    </div>
+    <div class="legend-item">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#adb5bd;flex-shrink:0;"></span>
+        <span>Read-only</span>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // ── Tab Switching ──────────────────────────────
+        var isCustomerVerified = false;
+
+        function switchTab(targetId) {
+            // Guard: statutory & contacts require verification
+            if ((targetId === 'pane-statutory' || targetId === 'pane-contacts') && !isCustomerVerified) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Verification Required",
+                    text: "Please verify the customer email or mobile to continue."
+                });
+                return;
+            }
+
+            document.querySelectorAll('.inv-tab-link').forEach(function (b) {
+                b.classList.remove('active');
+            });
+            document.querySelectorAll('.inv-pane').forEach(function (p) {
+                p.classList.remove('show');
+            });
+            document.querySelector('[data-target="' + targetId + '"]').classList.add('active');
+            document.getElementById(targetId).classList.add('show');
+        }
+
+        // Tab button clicks
+        document.querySelectorAll('.inv-tab-link').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                if (!btn.disabled) {
+                    switchTab(btn.dataset.target);
+                }
+            });
+        });
+
+        // Enable statutory & contacts tabs after verification
+        function enableProtectedTabs() {
+            document.getElementById('tab-btn-statutory').disabled = false;
+            document.getElementById('tab-btn-contacts').disabled = false;
+        }
+
+        // ── Number-only key guard ──────────────────────
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            return !(charCode < 48 || charCode > 57);
+        }
+
+        document.getElementById("CU_MOBILENO").addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+
+        // ── Location Type → Location Ref AJAX ─────────
+        $(document).ready(function () {
+
+            $("#SelectedLocation").change(function () {
+                var locationId = $(this).val();
+                if (!locationId) return;
+
+                $.ajax({
+                    url: '@Url.Action("LocationRef", "HelpdeskSalesInvoice")',
+                    type: 'GET',
+                    data: { locationid: locationId },
+                    success: function (result) {
+                        var $dd = $("#LocationRefDropdown");
+                        $dd.empty();
+                        if (result && result.length > 0) {
+                            $dd.append($("<option>").val("").text("-- Select Sales Location --"));
+                            $.each(result, function (i, item) {
+                                $dd.append($("<option>").val(item.Value).text(item.Text));
+                            });
+                        } else {
+                            $dd.append($("<option>").val("").text("No Sales Location Available"));
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({ icon: "error", title: "Error", text: "Error fetching Location Ref: " + error });
+                    }
+                });
+            });
+
+            // ── Verify & Continue ──────────────────────
+            $(document).on("click", "#btnVerifyCustomer", function () {
+
+                // Already verified → just move to next tab
+                if (isCustomerVerified) {
+                    switchTab('pane-statutory');
+                    return;
+                }
+
+                var email  = $("#CU_EMAIL").val().trim();
+                var mobile = $("#CU_MOBILENO").val().trim();
+
+                if (email === "" && mobile === "") {
+                    Swal.fire({ icon: "warning", title: "Missing Info", text: "Please enter an Email or Mobile Number." });
+                    return;
+                }
+
+                if (mobile !== "" && !/^[0-9]{10}$/.test(mobile)) {
+                    Swal.fire({ icon: "warning", title: "Invalid Mobile", text: "Please enter a valid 10-digit mobile number." });
+                    return;
+                }
+
+                $("#btnVerifyCustomer").prop("disabled", true);
+
+                $.ajax({
+                    url: '/AccountantCustomerInvoice/GetCustomerByEmailFrom',
+                    type: 'GET',
+                    data: { email: email, mobile: mobile },
+                    success: function (res) {
+
+                        var status = res.status || res.Status;
+                        var data   = res.data   || res.Data;
+
+                        isCustomerVerified = true;
+                        enableProtectedTabs();
+
+                        // Update button to indicate verified state
+                        $("#btnVerifyCustomer")
+                            .addClass("verified")
+                            .html('<i class="bi bi-check-circle"></i> Next');
+
+                        if (status === "Y") {
+                            // Populate all fields from existing customer
+                            $("#CU_NAME").val(data.CU_NAME);
+                            $("#CU_EMAIL").val(data.CU_EMAIL);
+                            $("#CU_MOBILENO").val(data.CU_MOBILENO);
+                            $("#CU_ADDRESS").val(data.CU_ADDRESS);
+                            $("#CU_GST").val(data.CU_GST);
+                            $("#CU_PANNUMBER").val(data.CU_PANNUMBER);
+                            $("#CU_TANNUMBER").val(data.CU_TANNUMBER);
+                            $("#CU_CONTACTPERSONNAME1").val(data.CU_CONTACTPERSONNAME1);
+                            $("#CU_CONTACTPERSONEMAILID1").val(data.CU_CONTACTPERSONEMAILID1);
+                            $("#CU_CONTACTPERSONMOBILE1").val(data.CU_CONTACTPERSONMOBILE1);
+                            $("#CU_CONTACTPERSONDESIGINATION1").val(data.CU_CONTACTPERSONDESIGINATION1);
+                            $("#CU_CONTACTACCESS1_BOOL").prop("checked", (data.CU_CONTACTACCESS1 || "").trim() === "Y");
+                            $("#CU_CONTACTPERSONNAME2").val(data.CU_CONTACTPERSONNAME2);
+                            $("#CU_CONTACTPERSONEMAILID2").val(data.CU_CONTACTPERSONEMAILID2);
+                            $("#CU_CONTACTPERSONMOBILE2").val(data.CU_CONTACTPERSONMOBILE2);
+                            $("#CU_CONTACTPERSONDESIGINATION2").val(data.CU_CONTACTPERSONDESIGINATION2);
+                            $("#CU_CONTACTACCESS2_BOOL").prop("checked", (data.CU_CONTACTACCESS2 || "").trim() === "Y");
+                            $("#CU_CONTACTPERSONNAME3").val(data.CU_CONTACTPERSONNAME3);
+                            $("#CU_CONTACTPERSONEMAILID3").val(data.CU_CONTACTPERSONEMAILID3);
+                            $("#CU_CONTACTPERSONMOBILE3").val(data.CU_CONTACTPERSONMOBILE3);
+                            $("#CU_CONTACTPERSONDESIGINATION3").val(data.CU_CONTACTPERSONDESIGINATION3);
+                            $("#CU_CONTACTACCESS3_BOOL").prop("checked", (data.CU_CONTACTACCESS3 || "").trim() === "Y");
+                            $("#HiddenCustomerRecid").val(data.CU_RECID);
+
+                            Swal.fire({ icon: "success", title: "Customer Found", text: "Existing customer details loaded." });
+                        } else {
+                            // Clear dependent fields for new customer
+                            $("#HiddenCustomerRecid").val(0);
+                            $("#CU_NAME,#CU_ADDRESS,#CU_GST,#CU_PANNUMBER,#CU_TANNUMBER").val("");
+                            $("#CU_CONTACTPERSONNAME1,#CU_CONTACTPERSONEMAILID1,#CU_CONTACTPERSONMOBILE1,#CU_CONTACTPERSONDESIGINATION1").val("");
+                            $("#CU_CONTACTACCESS1_BOOL").prop("checked", false);
+                            $("#CU_CONTACTPERSONNAME2,#CU_CONTACTPERSONEMAILID2,#CU_CONTACTPERSONMOBILE2,#CU_CONTACTPERSONDESIGINATION2").val("");
+                            $("#CU_CONTACTACCESS2_BOOL").prop("checked", false);
+                            $("#CU_CONTACTPERSONNAME3,#CU_CONTACTPERSONEMAILID3,#CU_CONTACTPERSONMOBILE3,#CU_CONTACTPERSONDESIGINATION3").val("");
+                            $("#CU_CONTACTACCESS3_BOOL").prop("checked", false);
+
+                            Swal.fire({ icon: "info", title: "New Customer", text: "No existing customer found. Please fill in the details." });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({ icon: "error", title: "Error", text: "Error verifying customer. Please try again." });
+                    },
+                    complete: function () {
+                        $("#btnVerifyCustomer").prop("disabled", false);
+                    }
+                });
+            });
+
+            // ── Form Submit ────────────────────────────
+            $("#createform").submit(function (e) {
+                e.preventDefault();
+
+                var submitBtn = $("#savebutton");
+                submitBtn.prop("disabled", true);
+                $("body").css("pointer-events", "none");
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '@Url.Action("SalesheaderCreate", "HelpdeskSalesInvoice")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: "Processing...",
+                                html: "Please wait while we save your changes.",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                didOpen: () => { Swal.showLoading(); }
+                            });
+
+                            setTimeout(function () {
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: response.message,
+                                    icon: "success",
+                                    showCancelButton: true,
+                                    confirmButtonText: "Continue",
+                                    cancelButtonText: "Back to List",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    customClass: {
+                                        confirmButton: "swal-btn-continue",
+                                        cancelButton: "swal-btn-back"
+                                    },
+                                    didOpen: () => {
+                                        $(".swal2-container").css("pointer-events", "auto");
+                                    }
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    } else {
+                                        window.location.href = '@Url.Action("SalesheaderList", "HelpdeskSalesInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })';
+                                    }
+                                });
+                            }, 1000);
+
+                        } else {
+                            Swal.fire({
+                                title: "Message",
+                                text: response.message,
+                                icon: "info",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+                            resetButton();
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "An unexpected error occurred.",
+                            icon: "error",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        resetButton();
+                    }
+                });
+            });
+
+            function resetButton() {
+                $("#savebutton").prop("disabled", false);
+                $("body").css("pointer-events", "auto");
+            }
+        });
+    </script>
+}

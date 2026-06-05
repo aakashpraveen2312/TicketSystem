@@ -106,17 +106,20 @@
     <button class="btn-pdf btn-draft download-pdf">
         <i class="bi bi-file-earmark-pdf"></i> Draft PDF
     </button>
-
-    @if ((Session["Customertype"]?.ToString() ?? "") == "Contract")
+    @if ((Session["Customertype"]?.ToString() ?? "") != "Addon User")
     {
+        if ((Session["Customertype"]?.ToString() ?? "") == "Contract")
+        {
 <button class="btn-pdf btn-contract download-contractpdf">
     <i class="bi bi-file-earmark-text"></i> Contract Service
 </button> }
-                else
-                {
+else
+{
 <button class="btn-pdf btn-warranty download-warrantypdf">
     <i class="bi bi-shield-check"></i> Warranty Service
 </button>}
+    }
+
 </div>}
 
     <!-- Ticket thread -->

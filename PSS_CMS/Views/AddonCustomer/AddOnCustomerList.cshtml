@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<PSS_CMS.Models.User>
 
-@{ ViewData["Title"] = "Add on Customer List";
-    ViewBag.PageTitle = "Add on Customer List";
+@{ ViewData["Title"] = "Customer List";
+    ViewBag.PageTitle = "Customer List";
     Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 @section Styles {
@@ -15,7 +15,7 @@
 
     <i class="bi bi-chevron-right"></i>
 
-    <span>Add on Customer List</span>
+    <span>Customer List</span>
 
 </div>
 
@@ -54,7 +54,7 @@
           
 <a href="@Url.Action("Create", "AddonCustomer")" class="btn-add">
     <i class="bi bi-plus-lg"></i>
-    Add User
+    Adhoc Customer
 </a>
 
         </div>
@@ -131,44 +131,49 @@
     <div class="action-cell">
 
         <!-- Edit -->
-    
-<a href="@editUrl"
-   class="act-btn act-edit"
-   title="Edit">
-    <i class="bx bxs-pencil"></i>
-</a> <!-- Delete -->
-                            <a href="@deleteUrl"
-                               class="act-btn act-delete no-loader"
-                               title="Delete"
-                               data-code="@o.U_USERCODE"
-                               data-name="@o.U_USERNAME"
-                               onclick="return confirmDelete(this);">
-                                <i class="bx bxs-trash"></i>
-                            </a>
+
+        <a href="@editUrl"
+           class="act-btn act-edit"
+           title="Edit">
+            <i class="bx bxs-pencil"></i>
+        </a> <!-- Delete -->
+        <a href="@deleteUrl"
+           class="act-btn act-delete no-loader"
+           title="Delete"
+           data-code="@o.U_USERCODE"
+           data-name="@o.U_USERNAME"
+           onclick="return confirmDelete(this);">
+            <i class="bx bxs-trash"></i>
+        </a>
 
         <!-- User Admin Mapping -->
-  
-<a href="@Url.Action("UserAdminMappingList", "AddonCustomer", new {
+
+        <a href="@Url.Action("UserAdminMappingList", "AddonCustomer", new {
                                                    id   = o.U_RECID,
                                                    Name = o.U_USERNAME,
                                                    Role = o.U_RCODE
                                                })"
-   class="act-btn act-usermap"
-   title="User Mapping">
-    <i class="bx bx-info-circle"></i>
-</a>
+           class="act-btn act-usermap"
+           title="User Mapping">
+            <i class="bx bx-info-circle"></i>
+        </a>
 
         <!-- Product Mapping -->
 
-<a href="@Url.Action("UserProductMappingList", "AddonCustomer", new {
+        <a href="@Url.Action("UserProductMappingList", "AddonCustomer", new {
                                                    id                  = o.U_RECID,
                                                    Name                = o.U_USERNAME,
                                                    Productmapppingname = o.U_RCODE
                                                })"
-   class="act-btn act-productmap"
-   title="Product Mapping">
-    <i class="bi bi-box-seam"></i>
-</a>
+           class="act-btn act-productmap"
+           title="Product Mapping">
+            <i class="bi bi-box-seam"></i>
+        </a>
+
+        <a href="@Url.Action("Ticket", "HelpDesk")" class="btn-add">
+            <i class="bi bi-plus-lg"></i>
+            Create Ticket
+        </a>
 
     </div>
 </td>

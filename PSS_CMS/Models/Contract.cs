@@ -20,7 +20,7 @@ namespace PSS_CMS.Models
         public int CT_RECID { get; set; }
         [DisplayName("Contract Reference Number")]
         public string CT_CONTRACTREFERENCENUMBER { get; set; }
-        [DisplayName("Party")]
+        [DisplayName("Company/Customer Name")]
         public string CT_PARTY { get; set; }
         [DisplayName("From Date")]
         public string CT_FROMDATE { get; set; }

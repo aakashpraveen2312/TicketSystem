@@ -30,6 +30,19 @@ namespace PSS_CMS.Controllers
             
             try
             {
+
+                DateTime assignedDate = Convert.ToDateTime(assignTo.A_ASSIGNEDDATEANDTIME);
+                DateTime expectedDate = Convert.ToDateTime(assignTo.A_EXPECTEDDATEANDTIME);
+
+                if (assignedDate > expectedDate)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Assigned Date cannot be greater than Expected Date."
+                    });
+                }
+
                 var UpdateAssignUrl = ConfigurationManager.AppSettings["UpdateAssignTo"];
                 string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                 string APIKey = Session["APIKEY"].ToString();

@@ -113,11 +113,15 @@
                 {
                     <a href="@Url.Action("AddOnCustomerList", "AddonCustomer")" class="nav-item-link">
                         <i class="bi bi-person-plus nav-icon"></i>
-                        <span class="nav-label">Add on Customer</span>
+                        <span class="nav-label">Customer</span>
                     </a>
                     <a href="@Url.Action("Ticket", "HelpDesk")" class="nav-item-link">
                         <i class="bi bi-receipt-cutoff nav-icon"></i>
                         <span class="nav-label">Create Ticket</span>
+                    </a>
+                    <a href="@Url.Action("SalesheaderList", "HelpdeskSalesInvoice")" class="nav-item-link">
+                        <i class="bi bi-receipt-cutoff nav-icon"></i>
+                        <span class="nav-label">Sales Invoice</span>
                     </a>
                     <a href="@Url.Action("Ticket_History", "HelpDesk")" class="nav-item-link">
                         <i class="bi-ticket-detailed nav-icon"></i>
@@ -307,14 +311,14 @@
                     {
                         <a href="@Url.Action("FAQ", "Tickets")" class="nav-item-link">
                             <i class="bi bi-question-circle nav-icon"></i>
-                            <span class="nav-label">Faq</span>
+                            <span class="nav-label">FAQ</span>
                         </a>
                     }
                     else
                     {
                         <a href="@Url.Action("FAQADMIN", "RecentTickets")" class="nav-item-link">
                             <i class="bi bi-question-circle nav-icon"></i>
-                            <span class="nav-label">Faq</span>
+                            <span class="nav-label">FAQ</span>
                         </a>
                     }
 

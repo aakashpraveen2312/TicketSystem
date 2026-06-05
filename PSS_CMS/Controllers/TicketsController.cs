@@ -28,9 +28,15 @@ namespace PSS_CMS.Controllers
         }
         // GET: Tickets changes by aakash
         [HttpGet]
-        public async Task<ActionResult> Ticket()
+        public async Task<ActionResult> Ticket(int? contractRecId, int? invoiceRecId)
         {
+           
             var viewModel = new Tickets();
+            // Load Products
+            viewModel.TicketCombo2 = new TicketCombo2();
+            viewModel.TicketCombo2.TicketTypes2 =
+                await GetProducts(contractRecId, invoiceRecId);
+
             string Weburl = ConfigurationManager.AppSettings["COMBOBOXTICKETTYPE"];
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             string APIKey = Session["APIKEY"].ToString();
@@ -73,9 +79,6 @@ namespace PSS_CMS.Controllers
             {
                 ModelState.AddModelError(string.Empty, $"Exception occurred: {ex.Message}");
             }
-
-            // Pass the view model to the next method
-            //await ComboBoxProductNewticket(viewModel);
 
             return View(viewModel);
         }
@@ -791,7 +794,52 @@ namespace PSS_CMS.Controllers
 
             return View();
         }
+        private async Task<List<SelectListItem>> GetProducts(int? contractRecId, int? invoiceRecid)
+        {
+            Session["contractRecId"] = contractRecId == null
+                  ? 0
+                  : contractRecId;
+            string webUrlGet = ConfigurationManager.AppSettings["ROLEDBASEDPRODUCTS"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
 
+            string strparams = "companyId=" + Session["CompanyID"]
+                             + "&UserID=" + Session["UserRECID"]
+                             + "&contractRecId=" + contractRecId
+                             + "&invoiceRecId=" + invoiceRecid;
+
+            string url = webUrlGet + "?" + strparams;
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                    var response = await client.GetAsync(url);
+
+                    if (!response.IsSuccessStatusCode)
+                        return new List<SelectListItem>();
+
+                    var jsonString = await response.Content.ReadAsStringAsync();
+
+                    var rootObjects =
+                        JsonConvert.DeserializeObject<ApiResponseTicketsResponseTypes>(jsonString);
+
+                    var products = rootObjects?.Data ?? new List<TicketComboTypes>();
+
+                    return products.Select(x => new SelectListItem
+                    {
+                        Value = x.P_RECID.ToString(),
+                        Text = x.P_NAME + " - " + x.P_SERIALNUMBER,
+
+                    }).ToList();
+                }
+            }
+        }
         //new Ticket combo project type
         [HttpGet]
         public async Task<JsonResult> ComboBoxProductNewticket(int? contractRecId, int? invoiceRecid)
@@ -1613,6 +1661,17 @@ namespace PSS_CMS.Controllers
             }
         }
 
+        public ActionResult ContractAndWarranty()
+        {
+            return View();
+        }
 
+
+        public class ProductSelectItem
+        {
+            public string Value { get; set; }
+            public string Text { get; set; }
+            public string SerialNo { get; set; }
+        }
     }
 }

@@ -381,6 +381,7 @@
     <Compile Include="Controllers\CustomerNotificationController.cs" />
     <Compile Include="Controllers\ExclusionController.cs" />
     <Compile Include="Controllers\FollowUpReportController.cs" />
+    <Compile Include="Controllers\HelpdeskSalesInvoiceController.cs" />
     <Compile Include="Controllers\HSNCategoryController.cs" />
     <Compile Include="Controllers\HSNMasterController.cs" />
     <Compile Include="Controllers\InclusionController.cs" />
@@ -814,6 +815,15 @@
     <Content Include="Views\AddonCustomer\UserProductMappingList.cshtml" />
     <Content Include="Views\AddonCustomer\Edit.cshtml" />
     <Content Include="Views\Tickets\AddonCustomerCreateTicket.cshtml" />
+    <Content Include="Views\Tickets\ContractAndWarranty.cshtml" />
+    <Content Include="Views\HelpdeskSalesInvoice\SalesheaderList.cshtml" />
+    <Content Include="Views\HelpdeskSalesInvoice\SalesheaderCreate.cshtml" />
+    <Content Include="Views\HelpdeskSalesInvoice\SalesheaderEdit.cshtml" />
+    <Content Include="Views\HelpdeskSalesInvoice\List.cshtml" />
+    <Content Include="Views\HelpdeskSalesInvoice\Create.cshtml" />
+    <Content Include="Views\HelpdeskSalesInvoice\Edit.cshtml" />
+    <Content Include="Views\HelpdeskSalesInvoice\SalesheaderView.cshtml" />
+    <Content Include="Views\HelpdeskSalesInvoice\View.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

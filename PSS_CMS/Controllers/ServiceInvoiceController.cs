@@ -288,7 +288,7 @@ namespace PSS_CMS.Controllers
                     var rootObjects = JsonConvert.DeserializeObject<ApiPdfResponse>(jsonString);
                     if (rootObjects.Status=="Y")
                     {
-                        return RedirectToAction("Index");
+                        return RedirectToAction("RecentTicket", "RecentTickets");
                     }
                    
                 }

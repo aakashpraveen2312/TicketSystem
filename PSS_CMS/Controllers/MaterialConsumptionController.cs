@@ -18,7 +18,7 @@ namespace PSS_CMS.Controllers
     public class MaterialConsumptionController : Controller
     {
         // GET: MaterialConsumption
-        public async Task<ActionResult> List(string searchPharse,int? TC_RECID,string Type,int? P_RECID,string P_NAME, string Comprehensive)
+        public async Task<ActionResult> List(string searchPharse,int? TC_RECID,string Type,int? P_RECID,string P_NAME, string Comprehensive,string customertypes)
         {
             if (TC_RECID!=null && Type!=null && P_RECID!=null && P_NAME!=null && Comprehensive!=null)
             {
@@ -28,6 +28,9 @@ namespace PSS_CMS.Controllers
                 Session["P_NAME"] = P_NAME;
                 Session["Comprehensive"] = Comprehensive;
             }
+           
+                Session["customertypes"] = customertypes ??"";
+           
 
             Materialconsumption objmaterialconsumption = new Materialconsumption();
 
@@ -112,7 +115,7 @@ namespace PSS_CMS.Controllers
         {
             try
             {
-                if (Session["Comprehensive"].ToString() != null && Session["Comprehensive"].ToString() == "False")
+                if (Session["customertypes"].ToString() != null && Session["customertypes"].ToString() == "Addon User")
                 {
                     materialcategory.tM_BILLABLE = true;
 

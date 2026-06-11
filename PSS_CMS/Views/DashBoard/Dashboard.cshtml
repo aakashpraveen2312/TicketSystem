@@ -264,7 +264,7 @@
         </button>
     </div>
 
-   
+
 
     <!-- ══ HERO STAT CARDS ══ -->
     <div class="hero-row">
@@ -367,53 +367,6 @@
         </div>
 
     </div><!-- /hero-row -->
-    <!-- ══ TREND CHARTS ══ -->
-    <div class="db-sec">Ticket Trends</div>
-    <div class="chart-row">
-
-        <div class="chart-card">
-            <div class="cc-head">
-                <div>
-                    <div class="cc-title">Week to Date</div>
-                    <div class="cc-sub">Last 7 days including today</div>
-                </div>
-                <div class="cc-right">
-                    <span class="cc-badge cb-purple">WTD</span>
-                    <span class="cc-dots">···</span>
-                </div>
-            </div>
-            <div class="cc-body"><canvas id="ticketBarChartWTD" height="160"></canvas></div>
-        </div>
-
-        <div class="chart-card">
-            <div class="cc-head">
-                <div>
-                    <div class="cc-title">Month to Date</div>
-                    <div class="cc-sub">Last 27 days including today</div>
-                </div>
-                <div class="cc-right">
-                    <span class="cc-badge cb-green">MTD</span>
-                    <span class="cc-dots">···</span>
-                </div>
-            </div>
-            <div class="cc-body"><canvas id="ticketBarChartMTD" height="160"></canvas></div>
-        </div>
-
-        <div class="chart-card">
-            <div class="cc-head">
-                <div>
-                    <div class="cc-title">Overall Tickets</div>
-                    <div class="cc-sub">All-time summary</div>
-                </div>
-                <div class="cc-right">
-                    <span class="cc-badge cb-grey">ALL</span>
-                    <span class="cc-dots">···</span>
-                </div>
-            </div>
-            <div class="cc-body"><canvas id="ticketBarChart" height="160"></canvas></div>
-        </div>
-
-    </div><!-- /chart-row -->
     <!-- ══ ROLE-BASED MINI PILLS ══ -->
     @if (Session["UserRole"].ToString() == "Manager")
     {
@@ -471,6 +424,53 @@
                     </div>
                 </div>}
 
+    <!-- ══ TREND CHARTS ══ -->
+    <div class="db-sec">Ticket Trends</div>
+    <div class="chart-row">
+
+        <div class="chart-card">
+            <div class="cc-head">
+                <div>
+                    <div class="cc-title">Week to Date</div>
+                    <div class="cc-sub">Last 7 days including today</div>
+                </div>
+                <div class="cc-right">
+                    <span class="cc-badge cb-purple">WTD</span>
+                    <span class="cc-dots">···</span>
+                </div>
+            </div>
+            <div class="cc-body"><canvas id="ticketBarChartWTD" height="160"></canvas></div>
+        </div>
+
+        <div class="chart-card">
+            <div class="cc-head">
+                <div>
+                    <div class="cc-title">Month to Date</div>
+                    <div class="cc-sub">Last 27 days including today</div>
+                </div>
+                <div class="cc-right">
+                    <span class="cc-badge cb-green">MTD</span>
+                    <span class="cc-dots">···</span>
+                </div>
+            </div>
+            <div class="cc-body"><canvas id="ticketBarChartMTD" height="160"></canvas></div>
+        </div>
+
+        <div class="chart-card">
+            <div class="cc-head">
+                <div>
+                    <div class="cc-title">Overall Tickets</div>
+                    <div class="cc-sub">All-time summary</div>
+                </div>
+                <div class="cc-right">
+                    <span class="cc-badge cb-grey">ALL</span>
+                    <span class="cc-dots">···</span>
+                </div>
+            </div>
+            <div class="cc-body"><canvas id="ticketBarChart" height="160"></canvas></div>
+        </div>
+
+    </div><!-- /chart-row -->
     <!-- ══ PRIORITY + GAUGE ══ -->
     <div class="db-sec">Priority &amp; Completion</div>
     <div class="pg-row" style="margin-bottom:8px;">

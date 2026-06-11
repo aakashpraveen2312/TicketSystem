@@ -25,8 +25,36 @@ namespace PSS_CMS.Models
 
         public List<Ticketdashboard> RecentTickets { get; set; }
         public List<TicketTrendVM> ProductTrend { get; set; }
-    }
+        public List<CalendarCount> CalendarCounts { get; set; }
 
+        public List<CalendarTicket> CalendarTickets { get; set; }
+    }
+    public class CalendarTicket
+    {
+        public int TicketId { get; set; }
+
+        public string TicketNo { get; set; }
+
+        public DateTime? Date { get; set; }
+
+        public string Subject { get; set; }
+
+        public string Status { get; set; }
+
+        public string Priority { get; set; }
+
+        public string AssignedTo { get; set; }
+
+        public string CustomerName { get; set; }
+
+        public string Product { get; set; }
+    }
+    public class CalendarCount
+    {
+        public DateTime Date { get; set; }
+
+        public int TicketCount { get; set; }
+    }
     public class TicketTrendVM
     {
         public string productName { get; set; }

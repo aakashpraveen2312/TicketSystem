@@ -1,8 +1,8 @@
 ﻿@model PSS_CMS.Models.AssignTo
 
 @{ ViewData["Title"] = "Assign To";
-                ViewBag.PageTitle = "Assign To";
-                Layout = "~/Views/Shared/_Layout.cshtml"; }
+    ViewBag.PageTitle = "Assign To";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -16,9 +16,10 @@
         }
 
         @@media (max-width: 768px) {
-            .form-grid-3 { grid-template-columns: 1fr; }
+            .form-grid-3 {
+                grid-template-columns: 1fr;
+            }
         }
-
     </style>
 }
 
@@ -86,16 +87,16 @@
                         }
 @Html.DropDownList("SelectedAdmin", modifiedAdmin,
          new { @class = "form-input-text", required = "required", tabindex = "2" }) }
-                    else
-                    {
-                        var emptyList = new List<SelectListItem>
-                            {
+else
+{
+var emptyList = new List<SelectListItem>
+{
                                 new SelectListItem { Text = "No admins available", Value = "" }
                             };
 @Html.DropDownList("SelectedAdmin", emptyList, new { @class = "form-input-text" }) }
-                }
-                else
-                {
+}
+else
+{
 <p style="font-size:12px;color:var(--text-muted);">No admins available</p>}
             </div>
 
@@ -108,7 +109,7 @@
                 {
                     @class = "form-input-text",
                     id = "expecteddate",
-                    type = "datetime-local",
+                    type = "date",
                     required = "required",
                     tabindex = "3"
                 })
@@ -160,6 +161,66 @@
     </div>
 
 </div>}
+
+<!-- ── Assigned Tickets Panel ── -->
+<div id="assignedTicketsPanel" style="display:none;margin-top:20px;">
+
+    <!-- Summary chips -->
+    <div class="page-card" style="margin-bottom:16px;">
+        <div class="page-card-header">
+            <h6 class="page-card-title">
+                <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="bi bi-list-check" style="font-size:15px;color:#3C3489;"></i>
+                </span>
+                Assigned Ticket Summary
+            </h6>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <span class="custom-badge badge-warning">
+                    Assigned: <strong id="statAssigned">0</strong>
+                </span>
+                <span class="custom-badge" style="background:#E1F5EE;color:#085041;">
+                    Completed: <strong id="statCompleted">0</strong>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tickets table -->
+    <div class="page-card">
+        <div class="page-card-header">
+            <h6 class="page-card-title">
+                <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="bi bi-ticket-detailed" style="font-size:15px;color:#3C3489;"></i>
+                </span>
+                Ticket Details
+            </h6>
+        </div>
+        <div class="grid-wrap">
+            <table id="assignedTicketTable">
+                <thead>
+                    <tr>
+                        <th>Ref No</th>
+                        <th>User</th>
+                        <th>Subject</th>
+                        <th>Product Serial</th>
+                        <th>Ticket Type</th>
+                        <th>Priority</th>
+                        <th>Assigned Date</th>
+                        <th>Expected Date</th>
+                        <th style="text-align:center;">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="assignedTicketBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div id="assignedTicketsEmpty" style="display:none;padding:48px 20px;text-align:center;color:var(--text-muted);">
+            <i class="bi bi-inbox" style="font-size:36px;display:block;margin-bottom:10px;opacity:.4;"></i>
+            <span style="font-size:14px;font-weight:600;">No assigned tickets found</span>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -260,4 +321,116 @@
             function resetButton() { $("#submitBtn").prop("disabled", false); }
         });
     </script>
+
+    <script>
+$(document).ready(function () {
+
+    // ── Load assigned tickets when admin changes ──
+    $("#SelectedAdmin").on("change", function () {
+        loadAssignedTickets();
+    });
+
+    // ── Also reload when expected date changes ──
+    $("#expecteddate").on("change", function () {
+        if ($("#SelectedAdmin").val()) loadAssignedTickets();
+    });
+
+    function loadAssignedTickets() {
+
+        var adminId      = $("#SelectedAdmin").val();
+        var expectedDate = $("#expecteddate").val();
+        var cmprecid     = '@Session["CompanyID"]';
+
+        if (!adminId) {
+            $("#assignedTicketsPanel").hide();
+            return;
+        }
+
+        // Show panel with loading state
+        $("#assignedTicketsPanel").show();
+        $("#assignedTicketBody").html(
+            '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text-muted);">' +
+            '<i class="bi bi-hourglass-split"></i> Loading tickets...</td></tr>'
+        );
+        $("#assignedTicketsEmpty").hide();
+
+        $.ajax({
+            url: '@Url.Action("AssignedTicketList", "AssignTo")',
+            type: 'GET',
+            data: {
+                cmprecid:             cmprecid,
+                TC_ASSIGNTOURECID:    adminId,
+                TC_EXPECTEDDATETIME:  expectedDate
+            },
+            success: function (response) {
+
+                // Update summary chips
+               
+                $("#statAssigned").text(response.AssignedCount || 0);
+                $("#statCompleted").text(response.AssignedCompletedCount || 0);
+
+                var tickets = response.TicketDetails || [];
+                var $body   = $("#assignedTicketBody").empty();
+
+                if (tickets.length === 0) {
+                    $body.closest(".grid-wrap").hide();
+                    $("#assignedTicketsEmpty").show();
+                    return;
+                }
+
+                $body.closest(".grid-wrap").show();
+                $("#assignedTicketsEmpty").hide();
+
+                $.each(tickets, function (i, t) {
+
+                    var st      = (t.TC_STATUS || "").trim();
+                    var stClass = st === "S" ? "badge-pending"
+                                : st === "R" ? "badge-processed"
+                                : st === "C" ? "custom-badge"
+                                : "badge-pending";
+                    var stText  = st === "S" ? "Submitted"
+                               : st === "R" ? "Resolved"
+                               : st === "C" ? "Closed"
+                               : st === "O" ? "Re-Opened" : st;
+
+                    var priClass = (t.TC_PRIORITYTYPE || "").toLowerCase() === "urgent"    ? "color:#c47a00"
+                                 : (t.TC_PRIORITYTYPE || "").toLowerCase() === "critical"  ? "color:#e74c3c"
+                                 : (t.TC_PRIORITYTYPE || "").toLowerCase() === "emergency" ? "color:#3C3489"
+                                 : "color:var(--text-muted)";
+
+                    var assignedDt = t.TC_ASSIGNETODATETIME
+                        ? new Date(t.TC_ASSIGNETODATETIME).toLocaleString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })
+                        : '-';
+
+                    var expectedDt = t.TC_EXPECTEDDATETIME
+                        ? new Date(t.TC_EXPECTEDDATETIME).toLocaleString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })
+                        : '-';
+
+                    var row = '<tr>' +
+                        '<td><span class="contract-code">' + (t.TC_REFERENCENO || '-') + '</span></td>' +
+                        '<td>' + (t.TC_USERNAME || '-') + '</td>' +
+                        '<td>' + (t.TC_SUBJECT  || '-') + '</td>' +
+                        '<td style="font-size:12px;">' + (t.TC_PRODUCTSERIALNUMBER || '-') + '</td>' +
+                        '<td><span class="service-badge">' + (t.TC_TICKETTYPE || '-') + '</span></td>' +
+                        '<td><span style="font-size:12px;font-weight:600;' + priClass + '">' + (t.TC_PRIORITYTYPE || '-') + '</span></td>' +
+                        '<td style="font-size:12px;color:var(--text-muted);">' + assignedDt + '</td>' +
+                        '<td style="font-size:12px;color:var(--text-muted);">' + expectedDt + '</td>' +
+                        '<td style="text-align:center;"><span class="' + stClass + '">' + stText + '</span></td>' +
+                        '</tr>';
+
+                    $body.append(row);
+                });
+            },
+            error: function () {
+                $("#assignedTicketBody").html(
+                    '<tr><td colspan="10" style="text-align:center;padding:20px;color:#e74c3c;">' +
+                    '<i class="bi bi-exclamation-circle"></i> Failed to load tickets.</td></tr>'
+                );
+            }
+        });
+    }
+});
+    </script>
+
+
 }

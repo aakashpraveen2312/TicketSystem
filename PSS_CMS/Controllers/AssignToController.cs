@@ -232,6 +232,66 @@ namespace PSS_CMS.Controllers
 
         }
 
+        public async Task<JsonResult> AssignedTicketList(
+            int? TC_ASSIGNTOURECID,
+            string TC_EXPECTEDDATETIME = "")
+        {
+            string Weburl = ConfigurationManager.AppSettings["GetAssignedUserTickets"];
+
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            string strparams = "cmprecid=" + Session["CompanyID"] +
+                               "&TC_ASSIGNTOURECID=" + TC_ASSIGNTOURECID +
+                               "&TC_EXPECTEDDATETIME=" + TC_EXPECTEDDATETIME;
+
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept
+                            .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+
+                            var result = JsonConvert
+                                .DeserializeObject<AssignedTicketResponse>(jsonString);
+
+                            return Json(result, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                Status = "N",
+                                Message = response.ReasonPhrase
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    Status = "N",
+                    Message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
     }
 }

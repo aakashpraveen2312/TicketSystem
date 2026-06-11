@@ -195,7 +195,9 @@ namespace PSS_CMS.Models
         public string Message { get; set; }
         public string Status { get; set; }
 
+        public List<Recenttickets> adminTickets { get; set; }
 
+        public List<Recenttickets> managerTickets { get; set; }
 
     }
 

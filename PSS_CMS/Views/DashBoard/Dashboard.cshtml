@@ -256,6 +256,16 @@
 
 <div class="db-wrap">
 
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button"
+                class="btn-save"
+                onclick="window.location.href='@Url.Action("ManagerCalender","ManagerCalenderDashboard")'">
+            <i class="bi bi-calendar3 nav-icon"></i> Calender
+        </button>
+    </div>
+
+   
+
     <!-- ══ HERO STAT CARDS ══ -->
     <div class="hero-row">
 
@@ -409,43 +419,27 @@
     {
 <div class="db-sec">Assignment Status</div>
                 <div class="pill-row">
-                    <div class="mini-pill">
-                        <div class="mp-icon mpi-blue"><i class="bi bi-person-check-fill"></i></div>
+                    <div class="mini-pill"
+                         onclick="location.href='@Url.Action("FilterTickets", "RecentTickets",new { assignflag="Y"})'"
+                         style="cursor:pointer;">
+                        <div class="mp-icon mpi-blue">
+                            <i class="bi bi-person-check-fill"></i>
+                        </div>
                         <div>
                             <div class="mp-lbl">Assigned</div>
                             <div class="mp-val animated-num" data-target="@ViewBag.totalAssignedCount">0</div>
                         </div>
-                        <svg class="pill-spark" width="150" height="52" viewBox="0 0 150 52" preserveAspectRatio="none">
-                            <defs>
-                                <linearGradient id="grad-pick" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#00b894" stop-opacity="0.20" />
-                                    <stop offset="100%" stop-color="#00b894" stop-opacity="0" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M0,44 L30,32 L60,36 L90,20 L120,26 L150,10 L150,52 L0,52 Z"
-                                  fill="url(#grad-pick)" />
-                            <polyline points="0,44 30,32 60,36 90,20 120,26 150,10"
-                                      fill="none" stroke="#00b894" stroke-width="2" stroke-linecap="round" />
-                        </svg>
                     </div>
-                    <div class="mini-pill">
-                        <div class="mp-icon mpi-red"><i class="bi bi-person-x-fill"></i></div>
+                    <div class="mini-pill"
+                         onclick="location.href='@Url.Action("FilterTickets", "RecentTickets",new { assignflag="N"})'"
+                         style="cursor:pointer;">
+                        <div class="mp-icon mpi-red">
+                            <i class="bi bi-person-x-fill"></i>
+                        </div>
                         <div>
                             <div class="mp-lbl">UnAssigned</div>
                             <div class="mp-val animated-num" data-target="@ViewBag.totalUnAssignedCount">0</div>
                         </div>
-                        <svg class="pill-spark" width="150" height="52" viewBox="0 0 150 52" preserveAspectRatio="none">
-                            <defs>
-                                <linearGradient id="grad-unpick" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#e17055" stop-opacity="0.20" />
-                                    <stop offset="100%" stop-color="#e17055" stop-opacity="0" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M0,10 L30,22 L60,16 L90,32 L120,26 L150,40 L150,52 L0,52 Z"
-                                  fill="url(#grad-unpick)" />
-                            <polyline points="0,10 30,22 60,16 90,32 120,26 150,40"
-                                      fill="none" stroke="#e17055" stroke-width="2" stroke-linecap="round" />
-                        </svg>
                     </div>
                 </div>}
 
@@ -453,27 +447,27 @@
     {
 <div class="db-sec">Pick Status</div>
                 <div class="pill-row">
-                    <div class="mini-pill">
-                        <div class="mp-icon mpi-green"><i class="bi bi-bookmark-check-fill"></i></div>
+                    <div class="mini-pill"
+                         onclick="location.href='@Url.Action("FilterTickets", "RecentTickets",new { pickflag="Y"})'"
+                         style="cursor:pointer;">
+                        <div class="mp-icon mpi-green">
+                            <i class="bi bi-bookmark-check-fill"></i>
+                        </div>
                         <div>
                             <div class="mp-lbl">Picked Tickets</div>
                             <div class="mp-val animated-num" data-target="@ViewBag.totalPickedTicketCount">0</div>
                         </div>
-                        <svg class="pill-spark" viewBox="0 0 150 52" preserveAspectRatio="none">
-                            <polyline points="0,44 30,32 60,36 90,20 120,26 150,10"
-                                      fill="none" stroke="#00b894" stroke-width="2" stroke-linecap="round" />
-                        </svg>
                     </div>
-                    <div class="mini-pill">
-                        <div class="mp-icon mpi-red"><i class="bi bi-slash-circle-fill"></i></div>
+                    <div class="mini-pill"
+                         onclick="location.href='@Url.Action("FilterTickets", "RecentTickets",new { pickflag="N"})'"
+                         style="cursor:pointer;">
+                        <div class="mp-icon mpi-red">
+                            <i class="bi bi-slash-circle-fill"></i>
+                        </div>
                         <div>
                             <div class="mp-lbl">Unpicked Tickets</div>
                             <div class="mp-val animated-num" data-target="@ViewBag.totalUnpickedTicketCount">0</div>
                         </div>
-                        <svg class="pill-spark" viewBox="0 0 150 52" preserveAspectRatio="none">
-                            <polyline points="0,10 30,22 60,16 90,32 120,26 150,40"
-                                      fill="none" stroke="#e17055" stroke-width="2" stroke-linecap="round" />
-                        </svg>
                     </div>
                 </div>}
 

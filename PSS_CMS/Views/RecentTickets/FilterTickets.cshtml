@@ -1,0 +1,664 @@
+﻿@model IEnumerable<PSS_CMS.Models.Recenttickets>
+
+@{ ViewData["Title"] = "Tickets";
+    ViewBag.PageTitle = "Tickets";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <style>
+        /* ── Preloader ──────────────────────────────── */
+        #ticketLoader {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,.85);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ticket-spinner {
+            position: relative;
+            width: 64px;
+            height: 64px;
+        }
+
+            .ticket-spinner::before,
+            .ticket-spinner::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: 50%;
+            }
+
+            .ticket-spinner::before {
+                border: 4px solid #EEEDFE;
+            }
+
+            .ticket-spinner::after {
+                border: 4px solid transparent;
+                border-top-color: var(--primary);
+                border-right-color: var(--primary);
+                animation: tspin .8s linear infinite;
+            }
+
+        .ticket-icon {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        @@keyframes tspin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Filter selects ─────────────────────────── */
+        .filter-select {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 7px 12px;
+            font-size: 12.5px;
+            color: var(--text-dark);
+            background: #fff;
+            outline: none;
+            font-family: inherit;
+            cursor: pointer;
+            height: 36px;
+            min-width: 170px;
+            flex: 1;
+        }
+
+            .filter-select:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99,89,210,.08);
+            }
+
+        /* ── Filter strip ───────────────────────────── */
+        .filter-strip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: #fafafa;
+        }
+
+        /* ── Wide table ─────────────────────────────── */
+        .tickets-table {
+            width: 100%;
+            min-width: 1300px;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+
+            .tickets-table th,
+            .tickets-table td {
+                padding: 11px 12px;
+                vertical-align: middle;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                white-space: normal;
+            }
+
+                .tickets-table th:nth-child(1), .tickets-table td:nth-child(1) {
+                    width: 140px;
+                }
+
+                .tickets-table th:nth-child(2), .tickets-table td:nth-child(2) {
+                    width: 130px;
+                }
+
+                .tickets-table th:nth-child(3), .tickets-table td:nth-child(3) {
+                    width: 180px;
+                }
+
+                .tickets-table th:nth-child(4), .tickets-table td:nth-child(4) {
+                    width: 200px;
+                }
+
+                .tickets-table th:nth-child(5), .tickets-table td:nth-child(5) {
+                    width: 100px;
+                }
+
+                .tickets-table th:nth-child(6), .tickets-table td:nth-child(6) {
+                    width: 130px;
+                }
+
+                .tickets-table th:nth-child(7), .tickets-table td:nth-child(7) {
+                    width: 120px;
+                }
+
+                .tickets-table th:nth-child(8), .tickets-table td:nth-child(8) {
+                    width: 100px;
+                    text-align: center;
+                }
+
+                .tickets-table th:nth-child(9), .tickets-table td:nth-child(9) {
+                    width: 130px;
+                }
+
+                .tickets-table th:last-child, .tickets-table td:last-child {
+                    width: 130px;
+                    text-align: center;
+                }
+
+        .grid-wrap {
+            overflow-x: auto;
+        }
+
+        /* ── Action icons ───────────────────────────── */
+        .act {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background .12s;
+        }
+
+            .act:hover {
+                background: var(--body-bg);
+            }
+
+        .act-assign i {
+            color: #185FA5;
+        }
+
+        .act-review i {
+            color: #534AB7;
+        }
+
+        .act-cart i {
+            color: #1D9E75;
+        }
+
+        .act-service i {
+            color: #185FA5;
+        }
+
+        .act-pdf i {
+            color: #E24B4A;
+        }
+
+        .act-pick i {
+            color: #BA7517;
+        }
+
+        span.act.act-picked i {
+            color: #1D9E75;
+        }
+
+        .picked-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            color: #085041;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ── Status badges ──────────────────────────── */
+        .ts-submitted {
+            background: #eef6ff;
+            color: #1a73e8;
+        }
+
+        .ts-resolved {
+            background: #E1F5EE;
+            color: #085041;
+        }
+
+        .ts-closed {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .ts-reopened {
+            background: #fff4db;
+            color: #c47a00;
+        }
+
+        .t-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ── Priority badges ────────────────────────── */
+        .pri-normal {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .pri-urgent {
+            background: #fff4db;
+            color: #c47a00;
+        }
+
+        .pri-critical {
+            background: #ffeaea;
+            color: #e74c3c;
+        }
+
+        .pri-emergency {
+            background: #EEEDFE;
+            color: #3C3489;
+        }
+
+        .t-priority {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ── Tool icon button ───────────────────────── */
+        .tool-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background .12s;
+            color: var(--text-dark);
+            flex-shrink: 0;
+        }
+
+            .tool-btn:hover {
+                background: var(--body-bg);
+            }
+
+            .tool-btn i {
+                font-size: 17px;
+            }
+
+        /* ── Reset button ───────────────────────────── */
+        .btn-reset {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 14px;
+            background: var(--body-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background .12s;
+            white-space: nowrap;
+        }
+
+            .btn-reset:hover {
+                background: var(--border-color);
+            }
+
+        /* daterangepicker fix */
+        .daterangepicker .drp-buttons .btn {
+            margin-left: 4px !important;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 8px;
+        }
+    </style>
+}
+
+@{ bool isManager = Session["UserRole"]?.ToString() == "Manager";
+    bool hasMC = Session["MaterialConsumptionFlag"]?.ToString() == "Y"; }
+
+<!-- Preloader -->
+<div id="ticketLoader">
+    <div class="ticket-spinner">
+        <div class="ticket-icon"><i class="bi bi-ticket-perforated-fill"></i></div>
+    </div>
+</div>
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-ticket-detailed nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Tickets</span>
+</div>
+
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+        <h6 class="page-card-title">
+            <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-ticket-detailed" style="font-size:15px;color:#3C3489;"></i>
+            </span>
+            All Tickets
+        </h6>
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+
+            <!-- Search -->
+            @using (Html.BeginForm("RecentTicket", "RecentTickets", FormMethod.Get, new { id = "searchForm" }))
+            {
+<div class="search-box">
+    <i class="bi bi-search"></i>
+    <input type="text" id="searchPharse" name="searchPharse"
+           placeholder="Search tickets..."
+           autocomplete="off"
+           value="@Request["searchPharse"]"
+           onkeyup="autoSubmitSearch(this)" />
+    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
+    {
+<a href="@Url.Action("RecentTicket","RecentTickets")" title="Clear">
+    <i class="bi bi-x-circle" style="color:var(--text-muted);"></i>
+</a>}
+</div>      }
+
+
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="grid-wrap" id="ticketTable1">
+        @if (Model != null && Model.Any())
+        {
+<table class="tickets-table">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Date &amp; Time</th>
+            <th>Product</th>
+            <th>Comments</th>
+            <th>Priority</th>
+            <th>Ticket Type</th>
+            <th>Status</th>
+
+            @if (isManager)
+            {
+<th>Assigned To</th>}
+           
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in Model)
+        {
+            var st = (o.TC_STATUS ?? "").Trim();
+            var stClass = st == "S" ? "ts-submitted"
+                        : st == "R" ? "ts-resolved"
+                        : st == "C" ? "ts-closed"
+                        : st == "O" ? "ts-reopened" : "ts-closed";
+            var stIcon = st == "S" ? "bi-send"
+                       : st == "R" ? "bi-check-circle-fill"
+                       : st == "C" ? "bi-lock-fill"
+                       : st == "O" ? "bi-arrow-repeat" : "bi-circle";
+
+            var pri = (o.TC_PRIORITYTYPE ?? "").Trim().ToLower();
+            var priClass = pri == "urgent" ? "pri-urgent"
+                         : pri == "critical" ? "pri-critical"
+                         : pri == "emergency" ? "pri-emergency"
+                         : "pri-normal";
+<tr>
+    <td>@o.TC_USERNAME</td>
+    <td style="font-size:12px;color:var(--text-muted);">@o.TC_TICKETDATES</td>
+    <td><span class="product-serial">@o.P_NAME</span></td>
+    <td style="font-size:12.5px;">@o.TC_COMMENTS</td>
+    <td><span class="t-priority @priClass">@o.TC_PRIORITYTYPE</span></td>
+    <td><span class="service-badge">@o.TC_TICKETTYPE</span></td>
+    <td>
+        <span class="t-status @stClass">
+            <i class="bi @stIcon"></i>
+            @o.TC_STATUS_DISPLAY
+        </span>
+    </td>
+
+    @if (isManager)
+    {
+<td>@o.U_ASSIGNEDUSERNAME</td>}
+   
+</tr>
+}
+    </tbody>
+</table> <!-- Pagination -->
+                <div class="table-pagination">
+                    <button id="prevBtn" class="page-btn">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </button>
+                    <span id="pageInfo" class="page-info"></span>
+                    <button id="nextBtn" class="page-btn">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div> }
+            else
+            {
+<div style="padding:48px 20px;text-align:center;color:var(--text-muted);">
+    <i class="bi bi-inbox" style="font-size:36px;display:block;margin-bottom:10px;opacity:.4;"></i>
+    <span style="font-size:14px;font-weight:600;">No ticket records available</span>
+</div>}
+    </div>
+
+</div><!-- /page-card -->
+<!-- Legend bar -->
+<div class="legend-bar">
+    <div class="legend-item">
+        <i class="bi bi-calendar3" style="color:#185FA5;font-size:13px;"></i>
+        <span>Date Range</span>
+    </div>
+    <div class="legend-item">
+        <i class="bi bi-file-earmark-excel" style="color:#1D9E75;font-size:13px;"></i>
+        <span>Excel Export</span>
+    </div>
+    <div class="legend-item">
+        <i class="bx bx-reply-all" style="color:#534AB7;font-size:15px;"></i>
+        <span>Review</span>
+    </div>
+    @if (isManager)
+    {
+<div class="legend-item">
+    <i class="bx bx-user-plus" style="color:#185FA5;font-size:15px;"></i>
+    <span>Assign To</span>
+</div>}
+    @if (hasMC)
+    {
+<div class="legend-item">
+    <i class="bx bx-cart-alt" style="color:#1D9E75;font-size:15px;"></i>
+    <span>Job Card</span>
+</div>
+                <div class="legend-item">
+                    <i class="bi bi-card-checklist" style="color:#185FA5;font-size:13px;"></i>
+                    <span>Services</span>
+                </div>
+                                <div class="legend-item">
+                                    <i class="bx bxs-file-pdf" style="color:#E24B4A;font-size:15px;"></i>
+                                    <span>PDF</span>
+                                </div>}
+    <div class="legend-item">
+        <i class="bx bx-select-multiple" style="color:#BA7517;font-size:15px;"></i>
+        <span>Pick Ticket</span>
+    </div>
+    <div class="legend-item">
+        <i class="bx bx-select-multiple" style="color: #1D9E75; font-size: 15px;"></i>
+        <span>Picked</span>
+    </div>
+</div>
+
+@section Scripts {
+    <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Filters + Date Range -->
+    <script>
+        $(function () {
+
+            var savedStatus      = localStorage.getItem('ticketStatus')  || '';
+            var savedProjectType = localStorage.getItem('projectType')   || '';
+            var savedTicketType  = localStorage.getItem('ticketType')    || '';
+            var savedStart       = localStorage.getItem('StartDate')     || '';
+            var savedEnd         = localStorage.getItem('EndDate')       || '';
+
+            if (savedStatus)      $("#statusDropdown1").val(savedStatus);
+            if (savedProjectType) $("#projectTypeFilter1").val(savedProjectType);
+            if (savedTicketType)  $("#ticketTypeFilter1").val(savedTicketType);
+
+            function updateTickets() {
+                var status      = $("#statusDropdown1").val();
+                var projectType = $("#projectTypeFilter1").val();
+                var ticketType  = $("#ticketTypeFilter1").val();
+                var startDate   = $('input[name="StartDate"]').val();
+                var endDate     = $('input[name="EndDate"]').val();
+
+                localStorage.setItem('ticketStatus',  status);
+                localStorage.setItem('projectType',   projectType);
+                localStorage.setItem('ticketType',    ticketType);
+                localStorage.setItem('StartDate',     startDate);
+                localStorage.setItem('EndDate',       endDate);
+
+                var url = '@Url.Action("RecentTicket","RecentTickets")'
+                    + "?status="      + encodeURIComponent(status)
+                    + "&projectType=" + encodeURIComponent(projectType)
+                    + "&ticketType="  + encodeURIComponent(ticketType)
+                    + "&StartDate="   + encodeURIComponent(startDate)
+                    + "&EndDate="     + encodeURIComponent(endDate);
+
+                $("#ticketLoader").fadeIn(150).css("display","flex");
+
+                $.ajax({
+                    url: url, type: 'GET',
+                    success: function (response) {
+                        $("#ticketLoader").fadeOut(150);
+                        var html = $(response).find("#ticketTable1").html();
+                        if (html) { $("#ticketTable1").html(html); initializePagination(); }
+                    },
+                    error: function () { $("#ticketLoader").fadeOut(150); }
+                });
+            }
+
+            $("#statusDropdown1, #projectTypeFilter1, #ticketTypeFilter1").change(updateTickets);
+
+            $('#daterange').daterangepicker({
+                locale: { format: 'DD-MM-YYYY', cancelLabel: 'Cancel', applyLabel: 'Apply' },
+                opens: 'left', autoApply: false, showDropdowns: true
+            }, function (start, end) {
+                $('input[name="StartDate"]').val(start.format('YYYY-MM-DD'));
+                $('input[name="EndDate"]').val(end.format('YYYY-MM-DD'));
+                updateTickets();
+            });
+
+            $('#resetFilters').click(function () {
+                localStorage.clear();
+                $("#statusDropdown1, #projectTypeFilter1, #ticketTypeFilter1, #searchPharse").val('');
+                $('input[name="StartDate"], input[name="EndDate"]').val('');
+                updateTickets();
+            });
+
+            $("a, button, li").click(function () { localStorage.clear(); });
+            $(window).on("beforeunload", function () { localStorage.clear(); });
+        });
+    </script>
+
+    <!-- PDF download -->
+    <script>
+        $(document).on('click', '.download-pdf', function (e) {
+            e.preventDefault();
+            var trecid = $(this).data('id');
+            Swal.fire({ title: 'Processing PDF...', text: 'Please wait.', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            $.ajax({
+                url: '@Url.Action("DownloadPDF","PDF")', type: 'POST', data: { TRECID: trecid },
+                success: function (res) {
+                    Swal.close();
+                    if (res.status === "success") { window.open(res.url, '_blank'); }
+                    else { Swal.fire({ icon: 'info', title: 'Message', text: res.message }); }
+                },
+                error: function () {
+                    Swal.close();
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Something went wrong.' });
+                }
+            });
+        });
+    </script>
+
+    <!-- Pick ticket -->
+    <script>$(document).on("click", ".pick-ticket", function (e) {
+            e.preventDefault();
+            var recid2 = $(this).data("recid");
+            Swal.fire({ title: "Processing...", text: "Please wait.", icon: "info", showConfirmButton: false, allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            $.ajax({
+                url: "/AssignTo/PickTicket", type: "POST", data: { recid2: recid2 },
+                success: function (res) {
+                    Swal.close();
+                    if (res.success) {
+                        Swal.fire({ title: "Ticket Picked!", text: res.message, icon: "success", showConfirmButton: false, timer: 2000 })
+                            .then(() => { location.reload(); });
+                    } else {
+                        Swal.fire({ title: "Message", text: res.message, icon: "info", showConfirmButton: false, timer: 2000 });
+                    }
+                },
+                error: function () {
+                    Swal.close();
+                    Swal.fire({ title: "Error!", text: "Something went wrong.", icon: "error", showConfirmButton: false, timer: 2000 });
+                }
+            });
+        });</script>
+
+    <!-- Pagination -->
+    <script>function initializePagination() {
+            var rowsPerPage = 10;
+            var table = document.querySelector(".tickets-table tbody");
+            if (!table) return;
+            var rows = table.querySelectorAll("tr");
+            var pageInfo = document.getElementById("pageInfo");
+            var prevBtn = document.getElementById("prevBtn");
+            var nextBtn = document.getElementById("nextBtn");
+            if (!prevBtn || !nextBtn || !pageInfo) return;
+
+            var currentPage = 1;
+            var totalPages = Math.ceil(rows.length / rowsPerPage);
+
+            function showPage(page) {
+                var start = (page - 1) * rowsPerPage;
+                var end = start + rowsPerPage;
+                rows.forEach(function (row, i) {
+                    row.style.display = (i >= start && i < end) ? "" : "none";
+                });
+                pageInfo.innerText = "Page " + page + " of " + totalPages;
+                prevBtn.disabled = page === 1;
+                nextBtn.disabled = page === totalPages || totalPages === 0;
+            }
+
+            prevBtn.replaceWith(prevBtn.cloneNode(true));
+            nextBtn.replaceWith(nextBtn.cloneNode(true));
+            var np = document.getElementById("prevBtn");
+            var nn = document.getElementById("nextBtn");
+            np.addEventListener("click", function () { if (currentPage > 1) { currentPage--; showPage(currentPage); } });
+            nn.addEventListener("click", function () { if (currentPage < totalPages) { currentPage++; showPage(currentPage); } });
+            showPage(currentPage);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () { initializePagination(); });</script>
+}

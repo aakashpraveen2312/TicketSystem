@@ -388,6 +388,7 @@
     <Compile Include="Controllers\ItemCategoryController.cs" />
     <Compile Include="Controllers\ItemController.cs" />
     <Compile Include="Controllers\ItemGroupController.cs" />
+    <Compile Include="Controllers\ManagerCalenderDashboardController.cs" />
     <Compile Include="Controllers\ManagerSubordinateReportController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="Controllers\PriorityWiseReportController.cs" />
@@ -439,6 +440,7 @@
     <Compile Include="Models\Exclusion.cs" />
     <Compile Include="Models\FaildItemCategoryItems.cs" />
     <Compile Include="Models\Faq.cs" />
+    <Compile Include="Models\Filtertickets.cs" />
     <Compile Include="Models\Forgotpassword.cs" />
     <Compile Include="Models\HSNCategory.cs" />
     <Compile Include="Models\HSNMaster.cs" />
@@ -828,6 +830,8 @@
     <Content Include="Views\Contract\ContractUserList.cshtml" />
     <Content Include="Views\Contract\CreateContractUser.cshtml" />
     <Content Include="Views\Contract\EditContractUser.cshtml" />
+    <Content Include="Views\ManagerCalenderDashboard\ManagerCalender.cshtml" />
+    <Content Include="Views\RecentTickets\FilterTickets.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

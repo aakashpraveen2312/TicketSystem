@@ -8,6 +8,9 @@ namespace PSS_CMS.Models
 {
     public class Tickets : TicketComboTypes
     {
+        public string TC_USERNAME { get; set; }
+        public string TC_PRODUCTSERIALNUMBER { get; set; }
+        public string TC_REFERENCENO { get; set; }
         public string SelectedUser { get; set; }
         public int TC_RECID { get; set; }       
         public int TC_URECID { get; set; }       
@@ -52,6 +55,13 @@ namespace PSS_CMS.Models
                 return string.Empty; // Return an empty string or handle as needed if parsing fails
             }
         }
+
+
+
+
+   
+
+
         public string TC_TICKETDATE { get; set; }
         public int TC_REFERENCEID { get; set; }
         public string TC_SUBJECT { get; set; }
@@ -100,7 +110,21 @@ namespace PSS_CMS.Models
         public List<Tickets> Datas { get; set; }
     }
 
+    public class AssignedTicketResponse
+    {
+        public string Status { get; set; }
+        public string Message { get; set; }
 
+        public int TotalTickets { get; set; }
+
+        public int AssignedCount { get; set; }
+
+        public int AssignedCompletedCount { get; set; }
+
+        public List<ProductCount> ProductCount { get; set; }
+
+        public List<Tickets> TicketDetails { get; set; }
+    }
     public class TicketComboTypes
     {
         public int TT_RECID { get; set; }
@@ -126,7 +150,11 @@ namespace PSS_CMS.Models
         public string Message { get; set; }
         public List<TicketComboTypes> Data { get; set; }
     }
-
+    public class ProductCount
+    {
+        public int ProductId { get; set; }
+        public int TicketCount { get; set; }
+    }
     public class ApiResponse
     {
         public string Status { get; set; }

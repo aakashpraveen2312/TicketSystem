@@ -1412,5 +1412,55 @@ namespace PSS_CMS.Controllers
 
 
 
+        public async Task<ActionResult>FilterTickets(string assignflag,string pickflag)
+        {
+            Recenttickets objRecents = new Recenttickets();
+            string Weburl = ConfigurationManager.AppSettings["FILTERTICKETS"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            List<Recenttickets> RecentTicketList = new List<Recenttickets>();
+
+            string strparams = "USERID=" + Session["UserRECID"] + "&StrUsertype=" + Session["UserRole"] + "&cmprecid=" + Session["CompanyID"] + "&PickFlag=" + pickflag + "&AssignFlag=" + assignflag;
+            string url = Weburl + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+
+                            var rootObjects = JsonConvert.DeserializeObject<APIResponseRecentticket>(jsonString);
+
+                            if (Session["UserRole"].ToString() == "Admin")
+                            {
+                                RecentTicketList = rootObjects.adminTickets;
+                            }
+                            else if (Session["UserRole"].ToString() == "Manager")
+                            {
+                                RecentTicketList = rootObjects.managerTickets;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+            }
+            return View(RecentTicketList);
+        }
+
+
     }
 }

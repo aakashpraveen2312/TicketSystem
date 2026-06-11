@@ -54,6 +54,7 @@ namespace PSS_CMS.Models
         public string Status { get; set; }
         public List<ProductMaster> Data { get; set; }
     }
+   
     public class ProductMasterRootObjects
     {
         public string Message { get; set; }

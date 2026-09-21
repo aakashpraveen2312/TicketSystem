@@ -1,13 +1,49 @@
 ﻿@model IEnumerable<PSS_CMS.Models.ProductInvoice>
 
 @{ ViewData["Title"] = "Products Invoice List";
-                ViewBag.PageTitle = "Products Invoice List";
-                Layout = "~/Views/Shared/_Layout.cshtml"; }
+    ViewBag.PageTitle = "Products Invoice List";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
 }
+@*<script src="~/Scripts/Inactivitylogout.js"></script>*@
+<style>
+    .invoice-table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
 
+        .invoice-table th,
+        .invoice-table td {
+            width: 20%;
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+
+            /* S.No - left */
+            .invoice-table th:first-child,
+            .invoice-table td:first-child {
+                text-align: left;
+            }
+
+            /* Middle columns - center */
+            .invoice-table th:nth-child(2),
+            .invoice-table td:nth-child(2),
+            .invoice-table th:nth-child(3),
+            .invoice-table td:nth-child(3),
+            .invoice-table th:nth-child(4),
+            .invoice-table td:nth-child(4) {
+                text-align: center;
+            }
+
+            /* Invoice Amount - right */
+            .invoice-table th:last-child,
+            .invoice-table td:last-child {
+                text-align: right;
+            }
+</style>
 <!-- Breadcrumb -->
 <div class="page-breadcrumb">
 
@@ -38,26 +74,26 @@
                 FormMethod.Get,
                 new { id = "searchForm" }))
             {
-<div class="search-box">
+                <div class="search-box">
 
-    <i class="bi bi-search"></i>
+                    <i class="bi bi-search"></i>
 
-    <input type="text"
-           id="searchPharse"
-           name="searchPharse"
-           placeholder="Search"
-           autocomplete="off"
-           value="@Request["searchPharse"]"
-           onkeyup="autoSubmitSearch(this)" />
+                    <input type="text"
+                           id="searchPharse"
+                           name="searchPharse"
+                           placeholder="Search"
+                           autocomplete="off"
+                           value="@Request["searchPharse"]"
+                           onkeyup="autoSubmitSearch(this)" />
 
-    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
-    {
-<a href="@Url.Action("List", "ProductInvoice")"
-   title="Clear">
-    <i class="bi bi-x-circle text-muted"></i>
-</a>}
+                    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
+                    {
+                        <a href="@Url.Action("List", "ProductInvoice")"
+                           title="Clear">
+                            <i class="bi bi-x-circle text-muted"></i>
+                        </a>}
 
-</div>            }
+                </div>      }
 
         </div>
 
@@ -68,106 +104,83 @@
 
         @if (Model != null && Model.Any())
         {
-<table class="table align-middle mb-0 tickets-table">
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Invoice Date</th>
+                    <th>Invoice Number</th>
+                    <th>Product Serial No</th>
+                    <th>Invoice Amount</th>
+                </tr>
+            </thead>
 
-    <thead>
+            <tbody>
+                @foreach (var o in Model)
+                {
+                    var invoiceDate = string.IsNullOrEmpty(o.SIH_INVOICEDATE)
+                        ? ""
+                        : Convert.ToDateTime(o.SIH_INVOICEDATE).ToString("dd-MM-yyyy");
 
-        <tr>
+                    var invoiceAmount = String.Format("{0:N2}", o.SIH_INVOICEAMOUNT);
 
-            <th class="text-center"
-                style="width:60px;">
-                S.No
-            </th>
+                    <tr>
+                        <td>
+                            <span class="serial-text">@o.SerialNumber</span>
+                        </td>
 
-            <th>
-                Invoice Number
-            </th>
+                        <td>
+                            <span class="date-cell">@invoiceDate</span>
+                        </td>
 
-            <th class="text-center">
-                Invoice Date
-            </th>
+                        <td>
+                            <span class="contract-code">@o.SIH_INVOICENO</span>
+                        </td>
 
-            <th class="text-right"
-                style="text-align:right;">
-                Invoice Amount
-            </th>
+                        <td>
+                            <span class="product-serial">@o.SIP_PRODUCTSERIALNUMBER</span>
+                        </td>
 
-            <th>
-                Product Serial No
-            </th>
+                        <td>
+                            @invoiceAmount
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>   
+            
+            
+            <div class="table-pagination">
 
-        </tr>
+                <button id="prevBtn"
+                        class="page-btn">
+                    <i class="bi bi-chevron-left"></i>
+                    Previous
+                </button>
 
-    </thead>
+                <span id="pageInfo"
+                      class="page-info">
+                </span>
 
-    <tbody>
+                <button id="nextBtn"
+                        class="page-btn">
+                    Next
+                    <i class="bi bi-chevron-right"></i>
+                </button>
 
-        @foreach (var o in Model)
+            </div> }
+        else
         {
-            var invoiceDate = string.IsNullOrEmpty(o.SIH_INVOICEDATE)
-                ? ""
-                : Convert.ToDateTime(o.SIH_INVOICEDATE).ToString("dd-MM-yyyy");
+            <div class="text-center py-5">
 
-            var invoiceAmount = String.Format("{0:N2}", o.SIH_INVOICEAMOUNT);
+                <i class="bi bi-receipt"
+                   style="font-size:40px;color:var(--text-muted)"></i>
 
-<tr>
+                <p class="mt-2 text-muted fw-semibold">
+                    No invoice records available
+                </p>
 
-    <td class="text-center">
-        <span class="serial-text">@o.SerialNumber</span>
-    </td>
-
-    <td>
-        <span class="contract-code">@o.SIH_INVOICENO</span>
-    </td>
-
-    <td class="text-center">
-        <span class="date-cell">@invoiceDate</span>
-    </td>
-
-    <td class="amount-cell">
-        @invoiceAmount
-    </td>
-
-    <td>
-        <span class="product-serial">@o.SIP_PRODUCTSERIALNUMBER</span>
-    </td>
-
-</tr>}
-
-    </tbody>
-
-</table> <!-- Pagination -->
-                                <div class="table-pagination">
-
-                                    <button id="prevBtn"
-                                            class="page-btn">
-                                        <i class="bi bi-chevron-left"></i>
-                                        Previous
-                                    </button>
-
-                                    <span id="pageInfo"
-                                          class="page-info">
-                                    </span>
-
-                                    <button id="nextBtn"
-                                            class="page-btn">
-                                        Next
-                                        <i class="bi bi-chevron-right"></i>
-                                    </button>
-
-                                </div> }
-                                            else
-                                            {
-                                <div class="text-center py-5">
-
-                                    <i class="bi bi-receipt"
-                                       style="font-size:40px;color:var(--text-muted)"></i>
-
-                                    <p class="mt-2 text-muted fw-semibold">
-                                        No invoice records available
-                                    </p>
-
-                                </div>}
+            </div>}
 
     </div>
 
@@ -190,25 +203,27 @@
 
     @if (TempData["SuccessMessage"] != null)
     {
-<script>
+        <script>
             Swal.fire({
                 icon: 'success',
                 title: 'Success',
                 text: '@TempData["SuccessMessage"]',
                 confirmButtonColor: '#3085d6'
             });
-</script>}
+        </script>
+}
 
     @if (TempData["ErrorMessage"] != null)
     {
-<script>
+        <script>
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
                 text: '@TempData["ErrorMessage"]',
                 confirmButtonColor: '#d33'
             });
-</script>}
+        </script>
+}
 
     <script>
         function confirmProcess(url) {

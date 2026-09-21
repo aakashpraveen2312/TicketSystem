@@ -30,8 +30,23 @@ namespace PSS_CMS.Models
         [DisplayName("Free Service")]
         public int? CSP_FREESERVICE { get; set; }
 
+        [DisplayName("CGST(%)")]
+        public decimal? CSP_CGST { get; set; }   
+        
+        [DisplayName("SGST(%)")]
+        public decimal? CSP_SGST { get; set; }
+
+        [DisplayName("Amount")]
+        public decimal? CSP_AMOUNT { get; set; }
+
+
         [DisplayName("Invoice Amount")]
         public decimal? CSP_INVOICEAMOUNT { get; set; }
+
+
+
+
+
         [DisplayName("Product Amount")]
         public decimal? CSP_PRODUCTAMOUNT { get; set; }
 

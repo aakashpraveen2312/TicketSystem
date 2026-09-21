@@ -236,6 +236,11 @@
             gap: 6px;
             max-width: 320px;
         }
+        .required-star {
+            color: #e74c3c;
+            font-weight: 700;
+            margin-left: 3px;
+        }
     </style>
 }
 
@@ -277,36 +282,49 @@
                                                     <div class="form-grid" style="margin-bottom:24px;">
 
                                                         <div class="form-group">
-                                                            @Html.LabelFor(m => m.TC_Date, "Date", new { @class = "form-label" })
+                                                            @*@Html.LabelFor(m => m.TC_Date, "Date", new { @class = "form-label" })*@
+                                                            <label for="date" class="form-label">
+                                                                Date <span class="required-star">*</span>
+                                                            </label>
                                                             @Html.TextBoxFor(m => m.TC_Date, new { @class = "form-input-text", id = "date", type = "datetime-local", required = "required", tabindex = "1" })
                                                         </div>
 
                                                         <div class="form-group">
-                                                            @Html.LabelFor(m => m.SelectedProjectType, "Product", new { @class = "form-label" })
+                                                            @*@Html.LabelFor(m => m.SelectedProjectType, "Product", new { @class = "form-label" })*@
+                                                            <label for="SelectedProjectType" class="form-label">
+                                                                Product <span class="required-star">*</span>
+                                                            </label>
                                                             @if (Model.TicketCombo2.TicketTypes2 != null)
                                                             {
-                                            @Html.DropDownListFor(m => m.SelectedProjectType,
-                                                     Model.TicketCombo2.TicketTypes2,
-                                                     "Select Product",
-                                                     new { @class = "form-select-input", onchange = "loadMaterials(this)", tabindex = "2" }) }
+                                                                @Html.DropDownListFor(m => m.SelectedProjectType,
+                                                                         Model.TicketCombo2.TicketTypes2,
+                                                                         "Select Product",
+                                                                         new { @class = "form-select-input", onchange = "loadMaterials(this)", tabindex = "2" }) }
                                                             else
                                                             {
-                                            @Html.DropDownListFor(m => m.SelectedProjectType,
-                                                     Model.TicketCombo2.TicketTypes2,
-                                                     "No Products available",
-                                                     new { @class = "form-select-input" })}
+                                                                @Html.DropDownListFor(m => m.SelectedProjectType,
+                                                                         Model.TicketCombo2.TicketTypes2,
+                                                                         "No Products available",
+                                                                         new { @class = "form-select-input" })}
                                                             @Html.DropDownList("SelectedCustomer",
                                                                      new List<SelectListItem> { new SelectListItem { Text = "No Product is selected", Value = "", Selected = true } },
                                                                      new { @class = "form-select-input d-none", id = "CustomerDropdown" })
                                                         </div>
 
                                                         <div class="form-group">
-                                                            @Html.LabelFor(m => m.TC_SUBJECT, "Subject", new { @class = "form-label" })
-                                                            @Html.TextBoxFor(m => m.TC_SUBJECT, new { @class = "form-input-text", id = "sub", tabindex = "3",placeholder="Enter your subject..." })
+                                                            @*@Html.LabelFor(m => m.TC_SUBJECT, "Subject", new { @class = "form-label" })*@
+                                                            <label for="sub" class="form-label">
+                                                                Subject <span class="required-star">*</span>
+                                                            </label>
+                                                            @Html.TextBoxFor(m => m.TC_SUBJECT, new { @class = "form-input-text", id = "sub", tabindex = "3", placeholder = "Enter your subject..." })
                                                         </div>
 
                                                         <div class="form-group">
-                                                            @Html.LabelFor(m => m.TC_PRIORITYTYPE, "Priority Type", new { @class = "form-label" })
+                                                            @*@Html.LabelFor(m => m.TC_PRIORITYTYPE, "Priority Type", new { @class = "form-label" })*@
+                                                            <label for="priorityType" class="form-label">
+                                                                Priority Type <span class="required-star">*</span>
+                                                            </label>
+
                                                             @Html.DropDownListFor(m => m.TC_PRIORITYTYPE,
                                                                      new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
                                                                      "Select Priority Type",
@@ -314,7 +332,11 @@
                                                         </div>
 
                                                         <div class="form-group">
-                                                            @Html.LabelFor(m => m.SelectedTicketType, "Ticket Type", new { @class = "form-label" })
+                                                            @*@Html.LabelFor(m => m.SelectedTicketType, "Ticket Type", new { @class = "form-label" })*@
+                                                            <label for="ticketType" class="form-label">
+                                                                Ticket Type <span class="required-star">*</span>
+                                                            </label>
+
                                                             @Html.DropDownListFor(m => m.SelectedTicketType,
                                                                      Model.TicketCombo.TicketTypes,
                                                                      "Select Ticket Type",
@@ -349,7 +371,10 @@
                                                     <div style="margin-bottom:24px;">
 
                                                         <div class="form-group" style="margin-bottom:16px;">
-                                                            @Html.LabelFor(m => m.TC_COMMENTS, "User Comments", new { @class = "form-label" })
+                                                            @*@Html.LabelFor(m => m.TC_COMMENTS, "User Comments", new { @class = "form-label" })*@
+                                                            <label for="TC_COMMENTS" class="form-label">
+                                                                User Comments <span class="required-star">*</span>
+                                                            </label>
                                                             @Html.TextAreaFor(m => m.TC_COMMENTS, new
                                                             {
                                                                 @class = "form-textarea",

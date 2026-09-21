@@ -37,41 +37,186 @@
 
     <!-- Header -->
 
-    <div class="page-card-header">
+    <div class="page-card">
 
-       
+        <!-- Header -->
+        <div class="page-card-header">
 
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
 
-            <!-- Search -->
+                <!-- Search -->
 
-            @using (Html.BeginForm(
-                "List",
-                "ItemGroup",
-                FormMethod.Get,
-                new { id = "searchForm" }))
+                @using (Html.BeginForm(
+                    "List",
+                    "ItemGroup",
+                    FormMethod.Get,
+                    new { id = "searchForm" }))
+                {
+                    <div class="search-box">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text"
+                               id="searchphrase"
+                               name="searchphrase"
+                               placeholder="Search"
+                               autocomplete="off"
+                               value="@Request["searchphrase"]"
+                               onkeyup="autoSubmitSearch(this)" />
+
+                        @if (!string.IsNullOrEmpty(Request["searchphrase"]))
+                        {
+                            <a href="@Url.Action("List", "ItemGroup")"
+                               title="Clear">
+
+                                <i class="bi bi-x-circle text-muted"></i>
+
+                            </a>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+        <!-- Table -->
+
+        <div class="grid-wrap table-responsive">
+
+            @if (Model != null && Model.Any())
             {
-                <div class="search-box">
+                <table class="table align-middle mb-0 tickets-table">
 
-                    <i class="bi bi-search"></i>
+                    <thead>
 
-                    <input type="text"
-                           id="searchPharse"
-                           name="searchPharse"
-                           placeholder="Search"
-                           autocomplete="off"
-                           value="@Request["searchPharse"]"
-                           onkeyup="autoSubmitSearch(this)" />
+                        <tr>
 
-                    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
-                    {
-                        <a href="@Url.Action("List","ItemGroup")"
-                           title="Clear">
+                            <th class="text-center"
+                                style="width:70px;">
+                                S.No
+                            </th>
 
-                            <i class="bi bi-x-circle text-muted"></i>
+                            <th style="width:180px;">
+                                Code
+                            </th>
 
-                        </a>
-                    }
+                            <th>
+                                Description
+                            </th>
+
+                            <th class="text-center"
+                                style="width:90px;">
+                                Sort
+                            </th>
+
+                            <th class="text-center"
+                                style="width:140px;">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var o in Model)
+                        {
+                            var itemCategoryUrl = Url.Action(
+                                "List",
+                                "ItemCategory",
+                                new
+                                {
+                                    IGRECID = o.IG_RECID,
+                                    companyId = o.IG_CRECID,
+                                    Itemgroupname = o.IG_DESCRIPTION.ToUpper()
+                                });
+
+                            <tr>
+
+                                <td class="text-center">
+                                    @o.SerialNumber
+                                </td>
+
+                                <td>
+                                    @o.IG_CODE
+                                </td>
+
+                                <td>
+                                    @o.IG_DESCRIPTION
+                                </td>
+
+                                <td class="text-center">
+                                    @o.IG_SORTORDER
+                                </td>
+
+                                <td>
+
+                                    <div class="action-cell">
+
+                                        <!-- Item Category -->
+
+                                        <a href="@itemCategoryUrl"
+                                           title="Item Category"
+                                           class="act-btn">
+
+                                            <i class='bx bx-collection'
+                                               style="color:#0984e3"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+                <!-- Pagination -->
+
+                <div class="table-pagination">
+
+                    <button id="prevBtn"
+                            class="page-btn">
+
+                        <i class="bi bi-chevron-left"></i>
+
+                        Previous
+
+                    </button>
+
+                    <span id="pageInfo"
+                          class="page-info">
+                    </span>
+
+                    <button id="nextBtn"
+                            class="page-btn">
+
+                        Next
+
+                        <i class="bi bi-chevron-right"></i>
+
+                    </button>
+
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+
+                    <i class="bi bi-inbox"
+                       style="font-size:40px;color:var(--text-muted)">
+                    </i>
+
+                    <p class="mt-2 text-muted fw-semibold">
+                        No Item Groups available
+                    </p>
 
                 </div>
             }

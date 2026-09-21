@@ -67,6 +67,26 @@ namespace PSS_CMS.Controllers
 
                             HSNCategoryList = rootObjects.Data;
 
+
+                            if (!string.IsNullOrWhiteSpace(searchPhrase))
+                            {
+                                searchPhrase = searchPhrase.Trim();
+
+                                HSNCategoryList = HSNCategoryList
+                                    .Where(r =>
+                                        (!string.IsNullOrEmpty(r.HSNC_CODE) &&
+                                         r.HSNC_CODE.IndexOf(
+                                             searchPhrase,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+                                        ||
+                                        (!string.IsNullOrEmpty(r.HSNC_CATEGORYNAME) &&
+                                         r.HSNC_CATEGORYNAME.IndexOf(
+                                             searchPhrase,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+                                    )
+                                    .ToList();
+                            }
+
                             if (HSNCategoryList.Count > 0)
                             {
                                 // Assign serial numbers
@@ -75,18 +95,7 @@ namespace PSS_CMS.Controllers
                                     HSNCategoryList[i].SerialNumber = i + 1;
                                 }
                             }
-                            if (!string.IsNullOrEmpty(searchPhrase))
-                            {
-                                HSNCategoryList = HSNCategoryList
-                                    .Where(r => r.HSNC_CODE.ToLower().Contains(searchPhrase.ToLower()) ||
-
-                                                r.HSNC_CATEGORYNAME.ToLower().Contains(searchPhrase.ToLower()))
-                                    .ToList();
-                            }
-                            else
-                            {
-
-                            }
+                           
                         }
 
                         else

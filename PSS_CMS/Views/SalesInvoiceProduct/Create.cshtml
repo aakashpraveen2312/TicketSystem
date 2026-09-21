@@ -66,7 +66,7 @@
 </div>
 
 @using (Html.BeginForm("Create", "SalesInvoiceProduct", FormMethod.Post,
-    new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
+    new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader", novalidate = "novalidate" }))
 {
 <div class="page-card">
 
@@ -162,6 +162,7 @@ else
 
                 <label class="form-label">
                     @Html.LabelFor(model => model.SIP_ADMINRECID, "Service Engineer")
+                    <span class="req">*</span>
                 </label>
 
                 <select id="AdminDropdown"
@@ -181,18 +182,21 @@ else
 
                 <label class="form-label">
                     @Html.LabelFor(model => model.SIP_PRODUCTSERIALNUMBER, "Product Serial No")
+                    <span class="req">*</span>
                 </label>
 
                 @Html.EditorFor(model => model.SIP_PRODUCTSERIALNUMBER,
-                                   new
-                                   {
-                                       htmlAttributes = new
-                                       {
-                                           @class = "form-input-text",
-                                           autocomplete = "off",
-                                           placeholder = "Enter serial number"
-                                       }
-                                   })
+                                        new
+                                        {
+                                            htmlAttributes = new
+                                            {
+                                                @class = "form-input-text",
+                                                autocomplete = "off",
+                                                placeholder = "Enter serial number",
+                                                id = "SIP_PRODUCTSERIALNUMBER",
+                                                required = "required"
+                                            }
+                                        })
 
             </div>
 
@@ -204,13 +208,13 @@ else
                 </label>
 
                 @Html.TextBoxFor(model => model.SIP_WARRANTYUPTO,
-                                   new
-                                   {
-                                       @class = "form-input-text",
-                                       type = "date",
-                                       id = "SIP_WARRANTYUPTO",
-                                       @readonly = "readonly"
-                                   })
+                                        new
+                                        {
+                                            @class = "form-input-text",
+                                            type = "date",
+                                            id = "SIP_WARRANTYUPTO",
+                                            @readonly = "readonly"
+                                        })
 
                 <span class="auto-badge">
                     <i class="bi bi-magic"></i>
@@ -224,19 +228,24 @@ else
 
                 <label class="form-label">
                     @Html.LabelFor(model => model.SIP_PRODUCTAMOUNT)
+                    <span class="req">*</span>
                 </label>
 
                 @Html.EditorFor(model => model.SIP_PRODUCTAMOUNT,
-                                   new
-                                   {
-                                       htmlAttributes = new
-                                       {
-                                           @class = "form-input-num",
-                                           autocomplete = "off",
-                                           id = "productAmountField",
-                                           placeholder = "0"
-                                       }
-                                   })
+                                        new
+                                        {
+                                            htmlAttributes = new
+                                            {
+                                                @class = "form-input-num",
+                                                autocomplete = "off",
+                                                id = "productAmountField",
+                                                placeholder = "0",
+                                                min = "0",
+                                                step = "any",
+                                                oninput = "if(this.value < 0) this.value = 0;",
+                                                required = "required"
+                                            }
+                                        })
 
             </div>
 
@@ -248,15 +257,15 @@ else
                 </label>
 
                 @Html.EditorFor(model => model.SIP_SORTORDER,
-                                   new
-                                   {
-                                       htmlAttributes = new
-                                       {
-                                           @class = "form-input-num",
-                                           autocomplete = "off",
-                                           placeholder = "0"
-                                       }
-                                   })
+                                        new
+                                        {
+                                            htmlAttributes = new
+                                            {
+                                                @class = "form-input-num",
+                                                autocomplete = "off",
+                                                placeholder = "0"
+                                            }
+                                        })
 
             </div>
 
@@ -410,6 +419,82 @@ else
         });
     </script>
 
+    <!-- Sequential required-field validation, checked in field order:
+         Product -> Service Engineer -> Product Serial Number -> Product Amount.
+         Only the FIRST empty field is reported; once it's filled in and
+         Save is clicked again, the next empty field (if any) is checked. -->
+    <script>
+        function validateSalesInvoiceProductForm() {
+
+            // 1) Product
+            var productVal = $("#SelectedProduct").val();
+            if (!productVal || productVal.trim() === "") {
+                Swal.fire({
+                    title: "Message",
+                    text: "Please select the product.",
+                    icon: "info",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then(function () {
+                    $("#SelectedProduct").select2("open");
+                });
+                return false;
+            }
+
+            // 2) Service Engineer
+            var engineerVal = $("#SIP_ADMINRECID").val();
+            if (!engineerVal || engineerVal.trim() === "") {
+                Swal.fire({
+                    title: "Message",
+                    text: "Please select the service engineer.",
+                    icon: "info",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then(function () {
+                    $("#AdminDropdown").focus();
+                });
+                return false;
+            }
+
+            // 3) Product Serial Number
+            var serialVal = $("#SIP_PRODUCTSERIALNUMBER").val();
+            if (!serialVal || serialVal.trim() === "") {
+                var serialLabel = $("#SIP_PRODUCTSERIALNUMBER").closest(".form-group").find(".form-label").clone()
+                    .children().remove().end().text().trim();
+                Swal.fire({
+                    title: "Message",
+                    text: "Please fill in the " + serialLabel + " Product Serial Number.",
+                    icon: "info",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then(function () {
+                    $("#SIP_PRODUCTSERIALNUMBER").focus();
+                });
+                return false;
+            }
+
+            // 4) Product Amount / Price (Inclusion of GST) — must be a number greater than 0
+            var amountRaw = $("#productAmountField").val();
+            var amountNum = parseFloat((amountRaw || "").replace(/,/g, ""));
+            if (!amountRaw || amountRaw.replace(/,/g, "").trim() === "" || isNaN(amountNum) || amountNum <= 0) {
+                var amountLabel = $("#productAmountField").closest(".form-group").find(".form-label").clone()
+                    .children().remove().end().text().trim();
+                Swal.fire({
+                    title: "Message",
+                    text: "Please enter a " + amountLabel + "price greater than 0.",
+                    icon: "info",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then(function () {
+                    $("#productAmountField").focus();
+                });
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+
     <!-- Form submit with SweetAlert -->
     <script>
         $(document).ready(function () {
@@ -417,11 +502,17 @@ else
 
             var $amt = $("#productAmountField");
 
-            // Format on load
+            // Format on load — guard against NaN so an invalid/empty
+            // value never renders as the literal text "NaN".
             if ($amt.val()) {
-                $amt.val(parseFloat($amt.val()).toLocaleString('en-IN', {
-                    minimumFractionDigits: 2, maximumFractionDigits: 2
-                }));
+                var initialNum = parseFloat($amt.val().replace(/,/g, ''));
+                if (!isNaN(initialNum)) {
+                    $amt.val(initialNum.toLocaleString('en-IN', {
+                        minimumFractionDigits: 2, maximumFractionDigits: 2
+                    }));
+                } else {
+                    $amt.val('');
+                }
             }
 
             // Format on blur
@@ -436,13 +527,21 @@ else
             $amt.on("input", function () {
                 var raw = $(this).val().replace(/,/g, '');
                 var parts = raw.split('.');
-                if (parts[0]) parts[0] = parseInt(parts[0]).toLocaleString('en-IN');
+                if (parts[0]) {
+                    var intPart = parseInt(parts[0], 10);
+                    parts[0] = isNaN(intPart) ? '' : intPart.toLocaleString('en-IN');
+                }
                 $(this).val(parts.join('.'));
             });
 
             $("#createform").submit(function (e) {
 
                 e.preventDefault();
+
+                // ── Sequential mandatory-field validation ──
+                if (!validateSalesInvoiceProductForm()) {
+                    return;
+                }
 
                 // ✅ Strip commas BEFORE FormData captures the value
                 $amt.val($amt.val().replace(/,/g, ''));
@@ -524,6 +623,35 @@ else
 
         });
     </script>
-   
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var amountField = document.getElementById('productAmountField');
+            if (amountField) {
+                // Block typing a minus sign
+                amountField.addEventListener('keydown', function (e) {
+                    if (e.key === '-' || e.key === 'Subtract') {
+                        e.preventDefault();
+                    }
+                });
+
+                // Block pasting a negative value
+                amountField.addEventListener('paste', function (e) {
+                    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+                    if (parseFloat(pasted) < 0) {
+                        e.preventDefault();
+                    }
+                });
+
+                // Final safety net on any input change
+                amountField.addEventListener('input', function () {
+                    if (this.value !== '' && parseFloat(this.value) < 0) {
+                        this.value = 0;
+                    }
+                });
+            }
+        });
+    </script>
+
 
 }

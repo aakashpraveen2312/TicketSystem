@@ -9,6 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ticket System</title>
+    @*<script src="~/Scripts/Inactivitylogout.js"></script>*@
 
     <style>
         .table-pagination {
@@ -45,6 +46,7 @@
             color: #6b7280;
             font-weight: 600;
         }
+
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -182,27 +184,27 @@
         <div class="col-12 col-xl-12">
             <div class="dash-card">
                 <div class="dash-card-header">
-                    <h6 class="dash-card-title">Recent Tickets</h6>
+                    <h6 class="dash-card-title">Over all Tickets</h6>
 
-                    <div class="d-flex align-items-center gap-2">
+                    <!--<div class="d-flex align-items-center gap-2">-->
                         <!-- CURRENT WEEK -->
-                        <a href="@Url.Action(
+                        <!--<a href="@Url.Action(
                     "SuperAdminCountDashboard",
                     new { filter = "week" })"
                            class="view-all-btn">
 
                             This Week
-                        </a>
+                        </a>-->
 
                         <!-- ALL TICKETS -->
-                        <a href="@Url.Action(
+                        <!--<a href="@Url.Action(
                     "SuperAdminCountDashboard",
                     new { filter = "all" })"
                            class="view-all-btn">
 
                             View All
                         </a>
-                    </div>
+                    </div>-->
                 </div>
                 <div class="dash-card-body">
 
@@ -262,43 +264,43 @@
                                             priorityClass = "badge-medium";
                                         }
 
-                    <tr>
-                        <td>
-                            <span class="ticket-id">@item.TicketId</span>
-                        </td>
+                                        <tr>
+                                            <td>
+                                                <span class="ticket-id">@item.TicketId</span>
+                                            </td>
 
-                        <td>@item.Subject</td>
+                                            <td>@item.Subject</td>
 
-                        <td>@item.CustomerName</td>
+                                            <td>@item.CustomerName</td>
 
-                        <td>
-                            <span class="badge-status @statusClass">
-                                @statusText
-                            </span>
-                        </td>
+                                            <td>
+                                                <span class="badge-status @statusClass">
+                                                    @statusText
+                                                </span>
+                                            </td>
 
-                        <td>
-                            <span class="badge-priority @priorityClass">
-                                @item.Priority
-                            </span>
-                        </td>
+                                            <td>
+                                                <span class="badge-priority @priorityClass">
+                                                    @item.Priority
+                                                </span>
+                                            </td>
 
-                        <td style="color:var(--text-muted);font-size:12px">
-                            @item.Date.ToString("dd MMM yyyy")
-                        </td>
+                                            <td style="color:var(--text-muted);font-size:12px">
+                                                @item.Date.ToString("dd MMM yyyy")
+                                            </td>
 
 
-                    </tr>
- }
-            }
-            else
-            {
-            <tr>
-                <td colspan="7" class="text-center p-4">
-                    No Tickets Available
-                </td>
-            </tr>
-}
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center p-4">
+                                            No Tickets Available
+                                        </td>
+                                    </tr>
+                                }
 
                             </tbody>
                         </table>

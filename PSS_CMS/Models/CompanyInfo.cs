@@ -66,16 +66,39 @@ namespace PSS_CMS.Models
         [RegularExpression(@"^[a-zA-Z\s\.]*$", ErrorMessage = "Name should not contain digits")]
         public string C_AUTHPOSITION { get; set; }
         public string C_AUTHORIZESIGNATURE { get; set; }
+
         public string C_HEADERIMAGE { get; set; }
         public string C_FOOTERIMAGE { get; set; }
+        public string C_QRIMAGE { get; set; }
+
+        [DisplayName("Bank Name")]
         public string C_BANKNAME { get; set; }
+
+        [DisplayName("Branch Name")]
         public string C_BRANCHNAME { get; set; }
+
+
+        [DisplayName("Account No")]
         public string C_ACCOUNTNO { get; set; }
+
+
+        [DisplayName("Account Name")]
         public string C_ACCOUNTNAME { get; set; }
+
+        [DisplayName("Account Type")]
         public string C_ACCOUNTTYPE { get; set; }
+
+        [DisplayName("Bank Location")]
         public string C_BANKLOCATION { get; set; }
+
+        [DisplayName("Bank Address")]
         public string C_BANKADDRESS { get; set; }
+
+        [DisplayName("IFSC Code")]
+
         public string C_IFSCCODE { get; set; }
+
+
         [DisplayName("Logo")]
 
         public string C_LOGO { get; set; }

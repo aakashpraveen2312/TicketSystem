@@ -1,0 +1,372 @@
+﻿@model IEnumerable<PSS_CMS.Models.ContractInvoiceHeader>
+
+@{ ViewData["Title"] = "Invoice History";
+    ViewBag.PageTitle = "Invoice History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string searchPhrase = Request["searchPharse"] ?? "";
+
+    var filtered = Model?.Where(x =>
+        string.IsNullOrEmpty(searchPhrase) ||
+        (x.CIH_INVOICENO != null && x.CIH_INVOICENO.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0) ||
+        (x.CIH_STATUS != null && x.CIH_STATUS.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+    ).ToList(); }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
+
+@{
+    decimal invoiceAmount =
+        Convert.ToDecimal(Session["invoiceAmt"] ?? 0);
+
+    decimal totalInvoiceAmount =
+        Model?.Sum(x => x.CIH_TOTALINVOICEAMOUNT) ?? 0;
+
+    bool hideCreateButton =
+        totalInvoiceAmount >= invoiceAmount;
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-receipt nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Contracts</span>
+    <i class="bi bi-chevron-right"></i>
+    Invoice History
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+
+    <div class="page-card-header">
+
+        <h3 class="page-card-title">
+            <i class="bi bi-receipt"></i> Invoice History
+        </h3>
+        <div class="invoice-summary">
+            <strong>Invoice Amount:</strong>
+            ₹@Convert.ToDecimal(Session["invoiceAmt"] ?? 0).ToString("N2")
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+
+            @using (Html.BeginForm("InvoiceHistory", "Contract", FormMethod.Get,
+                new { id = "searchForm" }))
+            {
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+
+                    <input type="text"
+                           id="searchPharse"
+                           name="searchPharse"
+                           placeholder="Search invoice no. or status"
+                           autocomplete="off"
+                           value="@searchPhrase" />
+
+                    @if (!string.IsNullOrEmpty(searchPhrase))
+                    {
+                        <a href="@Url.Action("InvoiceHistory", "SMContractInvoiceHeader")"
+                           title="Clear">
+                            <i class="bi bi-x-circle text-muted"></i>
+                        </a>
+                    }
+                </div>
+            }
+
+            @if (!hideCreateButton)
+            {
+
+                <!-- Add Invoice Button -->
+                @*<a href="@Url.Action("AddInvoice", "SMContractInvoiceHeader")"
+                   class="res-btn res-btn-submit"
+                   style="padding:8px 15px; text-decoration:none; white-space:nowrap;">
+
+                    <i class="bi bi-plus-circle"></i>
+                    Add Invoice
+                </a>*@
+            }
+        </div>
+
+    </div>
+    <!-- Table -->
+    <div class="grid-wrap">
+        @if (filtered != null && filtered.Any())
+        {
+            <table id="invoiceHistoryTable">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">S.No</th>
+                        <th>Invoice No.</th>
+                        <th>Invoice Date</th>
+                        <th class="text-center">Amount</th>
+                        <th class="text-center" style="width:120px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int sno = 1; }
+                    @foreach (var o in filtered)
+                    {
+                        string statusClass = "status-pending";
+
+                        if (!string.IsNullOrEmpty(o.CIH_STATUS))
+                        {
+                            string status = o.CIH_STATUS.ToLower();
+
+                            if (status == "paid" || status == "processed")
+                            {
+                                statusClass = "status-processed";
+                            }
+                            else if (status == "unlocked")
+                            {
+                                statusClass = "status-unlocked";
+                            }
+                            else if (status == "overdue")
+                            {
+                                statusClass = "badge-expired";
+                            }
+                            else
+                            {
+                                statusClass = "status-pending";
+                            }
+                        }
+
+                        //var editUrl = Url.Action("EditInvoice", "SMContractInvoiceHeader", new { RecordId = o.CIH_RECID, companyId = o.CIH_COMPANYRECID });
+                        //var ViewUrl = Url.Action("View", "SMContractInvoiceHeader", new { RecordId = o.CIH_RECID, companyId = o.CIH_COMPANYRECID });
+                        //var deleteUrl = Url.Action("DeleteInvoice", "SMContractInvoiceHeader", new { InvoiceHeaderRecId = o.CIH_RECID, companyId = o.CIH_COMPANYRECID });
+                        var ProcessUrl = Url.Action("GenerateContractInvoicePdf", "SMContractInvoiceHeader", new { companyId = o.CIH_COMPANYRECID, InvoiceHeaderRecId = o.CIH_RECID });
+                       // var LineItemUrl = Url.Action("List", "SMContractInvoiceLineItems", new { companyId = o.CIH_COMPANYRECID, CIL_CIHRECID = o.CIH_RECID, Status = o.CIH_STATUS });
+                        var PaymentUrl = Url.Action("UserContractPayment", "InvoiceandContracts", new { CIP_CIHRECID = o.CIH_RECID, companyId = o.CIH_COMPANYRECID, PaymentAmount = o.CIH_TOTALINVOICEAMOUNT });
+
+                        <tr>
+                            <td class="text-center">@sno</td>
+                            <td><span class="inv-code">@o.CIH_INVOICENO</span></td>
+                            <td>@(o.CIH_INVOICEDATE?.ToString("dd MMM yyyy, hh:mm tt"))</td>
+                            <td class="amount-cell text-center">₹@o.CIH_TOTALINVOICEAMOUNT.ToString("N2")</td>
+                            <td class="text-center">
+                                <span class="status-badge @statusClass">@o.CIH_STATUS</span>
+                            </td>
+                            <td>
+                                <div class="action-cell">
+                                   
+                                    <a href="@PaymentUrl" class="act-btn act-edit" title="Payment">
+                                            <i class="bx bx-money"></i>
+                                    </a>
+                                  
+                                   
+
+                                    <!-- Generate & Download PDF -->
+                                    <a href="javascript:void(0);"
+                                       class="act-btn act-process no-loader"
+                                       title="Download Invoice PDF"
+                                       onclick="generateInvoicePdf(
+                                           @o.CIH_COMPANYRECID,
+                                           @o.CIH_RECID
+                                       );">
+
+                                        <i class="bx bx-download"></i>
+
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        sno++;
+                    }
+
+
+
+
+
+                </tbody>
+            </table> <!-- Pagination -->
+            <div class="table-pagination">
+                <button id="prevBtn" class="page-btn"><i class="bi bi-chevron-left"></i> Previous</button>
+                <span id="pageInfo" class="page-info"></span>
+                <button id="nextBtn" class="page-btn">Next <i class="bi bi-chevron-right"></i></button>
+            </div> }
+        else
+        {
+            <div class="alert alert-warning text-center m-3">
+                <b>No invoice history available</b>
+            </div>}
+    </div>
+</div>
+
+<!-- Legend -->
+<div class="legend-bar">
+    <div class="legend-item"><span class="status-badge status-processed">Paid</span></div>
+    <div class="legend-item"><span class="status-badge status-pending">Pending</span></div>
+    <div class="legend-item"><span class="status-badge badge-expired">Overdue</span></div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+(function () {
+            var pageSize = 10;
+            var table = document.getElementById("invoiceHistoryTable");
+            if (!table) return;
+
+            var rows = Array.prototype.slice.call(table.querySelectorAll("tbody tr"));
+            var totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+            var currentPage = 1;
+
+            var prevBtn = document.getElementById("prevBtn");
+            var nextBtn = document.getElementById("nextBtn");
+            var pageInfo = document.getElementById("pageInfo");
+
+            function renderPage() {
+                var start = (currentPage - 1) * pageSize;
+                var end = start + pageSize;
+
+                rows.forEach(function (row, idx) {
+                    row.style.display = (idx >= start && idx < end) ? "" : "none";
+                });
+
+                pageInfo.textContent = "Page " + currentPage + " of " + totalPages;
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+            }
+
+            prevBtn.addEventListener("click", function () {
+                if (currentPage > 1) { currentPage--; renderPage(); }
+            });
+
+            nextBtn.addEventListener("click", function () {
+                if (currentPage < totalPages) { currentPage++; renderPage(); }
+            });
+
+            renderPage();
+        })();
+
+
+        function deleteInvoice(recid, companyId) {
+
+    if (!confirm("Are you sure you want to delete this invoice?")) {
+        return;
+    }
+
+    $.ajax({
+        url: '@Url.Action("DeleteInvoice", "SMContractInvoiceHeader")',
+        type: 'POST',
+        data: {
+            InvoiceHeaderRecId: recid,
+            companyId: companyId
+        },
+        success: function (response) {
+
+            if (response.success) {
+
+                alert(response.message);
+
+                location.reload();
+
+            } else {
+
+                alert(response.message);
+            }
+        },
+        error: function (xhr) {
+
+            alert("Error while deleting the invoice.");
+        }
+    });
+}
+
+
+
+
+
+
+    </script>
+    <script>
+        function generateInvoicePdf(companyId, invoiceHeaderRecId) {
+
+    Swal.fire({
+        title: "Generate Invoice PDF?",
+        text: "The invoice PDF will be generated and downloaded.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Generate",
+        cancelButtonText: "Cancel"
+    }).then(function (result) {
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        Swal.fire({
+            title: "Generating PDF...",
+            text: "Please wait.",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: function () {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '@Url.Action("GenerateContractInvoicePdf", "SMContractInvoiceHeader")',
+            type: 'GET',
+            data: {
+                companyId: companyId,
+                InvoiceHeaderRecId: invoiceHeaderRecId
+            },
+
+            success: function (response) {
+
+                if (response.success) {
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "PDF Generated Successfully",
+                        text: response.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+
+                    // Download PDF through MVC
+                    setTimeout(function () {
+
+                        var downloadUrl =
+                            '@Url.Action("DownloadContractInvoicePdf", "SMContractInvoiceHeader")'
+                            + '?fileUrl='
+                            + encodeURIComponent(response.fileUrl);
+
+                        window.location.href = downloadUrl;
+
+                    }, 1000);
+
+                }
+                else {
+
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed",
+                        text: response.message || "PDF generation failed."
+                    });
+
+                }
+            },
+
+            error: function (xhr) {
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Something went wrong while generating the PDF."
+                });
+
+            }
+        });
+
+    });
+}
+
+
+
+    </script>
+
+}

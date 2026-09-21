@@ -102,73 +102,92 @@
 {
 @Html.AntiForgeryToken()
 
-                <div class="response-card">
+<div class="response-card">
 
-                    <!-- Header -->
-                    <div class="response-card-header">
-                        <div class="response-title">
-                            <i class="bi bi-reply-fill"></i>
-                            Your Response
-                        </div>
-                    </div>
 
-                    <!-- Body -->
-                    <div class="response-card-body">
 
-                        <!-- Comments -->
-                        <div class="res-form-group">
-                            <label class="res-label">
-                                @Html.LabelFor(m => m.TC_COMMENTS, "User Comments")
-                                <span class="req">*</span>
-                            </label>
-                            @Html.TextAreaFor(m => m.TC_COMMENTS, new
-                            {
-                                @class = "res-textarea",
-                                placeholder = "Please enter your comments here....",
-                                rows = "6",
-                                required = "required"
-                            })
-                        </div>
+    <div class="form-grid" style="margin-bottom:20px;">
 
-                        <!-- Attachment -->
-                        <div class="res-form-group">
-                            <label class="res-label">Attachments</label>
-                            <div class="file-upload-wrap">
-                                <div class="file-upload-icon">
-                                    <i class="bi bi-paperclip"></i>
-                                </div>
-                                <div class="file-upload-text">
-                                    <span id="res-fileNameDisplay">Choose file to attach</span>
-                                    <small>Supported: .pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv, .mp4</small>
-                                </div>
-                                <label class="btn-browse" for="myfile">
-                                    <i class="bi bi-folder2-open"></i> Browse
-                                </label>
-                                <input type="file" id="myfile" name="myfile"
-                                       class="file-input-hidden"
-                                       accept=".pdf,.xlsx,.jpeg,.png,.jpg,.docx,.csv,.mp4"
-                                       onchange="validateFile()" />
-                            </div>
-                            <small id="res-fileError">
-                                This file format is not supported. Allowed: .pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv, .mp4
-                            </small>
-                        </div>
+        <!-- Status -->
+        <div class="form-group">
+            @Html.LabelFor(m => m.Combo, "Status", new { @class = "form-label" })
+            @Html.DropDownListFor(m => m.Combo,
+                     new SelectList(new List<string> { "Re-open", "Close" }),
+                     "-- Select Status --",
+                     new { @class = "form-select-input", id = "statusDropdown", required = "required" })
+        </div>
 
-                    </div>
+    </div>
 
-                    <!-- Footer actions -->
-                    <div class="response-card-footer">
-                        <button type="button" class="btn-cancel"
-                                onclick="window.location.href='@Url.Action("Ticket_History","HelpDesk")'">
-                            <i class="bi bi-x-lg"></i> Cancel
-                        </button>
-                        <button type="submit" id="submitBtn" class="btn-save">
-                            <i class="bi bi-send"></i> Submit
-                        </button>
 
-                    </div>
+    @Html.HiddenFor(m => m.TC_PRECID)
 
-                </div>}
+
+    <!-- Header -->
+    <div class="response-card-header">
+        <div class="response-title">
+            <i class="bi bi-reply-fill"></i>
+            Your Response
+        </div>
+    </div>
+
+    <!-- Body -->
+    <div class="response-card-body">
+
+        <!-- Comments -->
+        <div class="res-form-group">
+            <label class="res-label">
+                @Html.LabelFor(m => m.TC_COMMENTS, "User Comments")
+                <span class="req">*</span>
+            </label>
+            @Html.TextAreaFor(m => m.TC_COMMENTS, new
+            {
+                @class = "res-textarea",
+                placeholder = "Please enter your comments here....",
+                rows = "6",
+                required = "required"
+            })
+        </div>
+
+        <!-- Attachment -->
+        <div class="res-form-group">
+            <label class="res-label">Attachments</label>
+            <div class="file-upload-wrap">
+                <div class="file-upload-icon">
+                    <i class="bi bi-paperclip"></i>
+                </div>
+                <div class="file-upload-text">
+                    <span id="res-fileNameDisplay">Choose file to attach</span>
+                    <small>Supported: .pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv, .mp4</small>
+                </div>
+                <label class="btn-browse" for="myfile">
+                    <i class="bi bi-folder2-open"></i> Browse
+                </label>
+                <input type="file" id="myfile" name="myfile"
+                       class="file-input-hidden"
+                       accept=".pdf,.xlsx,.jpeg,.png,.jpg,.docx,.csv,.mp4"
+                       onchange="validateFile()" />
+            </div>
+            <small id="res-fileError">
+                This file format is not supported. Allowed: .pdf, .xlsx, .jpeg, .png, .jpg, .docx, .csv, .mp4
+            </small>
+        </div>
+
+    </div>
+
+    <!-- Footer actions -->
+    <div class="response-card-footer">
+        <button type="button" class="btn-cancel"
+                onclick="window.location.href='@Url.Action("Ticket_History","HelpDesk")'">
+            <i class="bi bi-x-lg"></i> Cancel
+        </button>
+        <button type="submit" id="submitBtn" class="btn-save">
+            <i class="bi bi-send"></i> Submit
+        </button>
+
+    </div>
+
+</div>}
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

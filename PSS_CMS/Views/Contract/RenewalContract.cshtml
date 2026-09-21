@@ -1,0 +1,777 @@
+﻿@model PSS_CMS.Models.Contract
+
+@{ ViewData["Title"] = "Create Contract";
+    ViewBag.PageTitle = "Create Contract";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-file-text nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("ContractList", "Contract")">Party</a>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("ContractList", "Contract")">
+        @(Session["CT_CUSTOMERNAME"] != null ? Session["CT_CUSTOMERNAME"].ToString() : "")
+    </a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Contract</span>
+    <i class="bi bi-chevron-right"></i>
+    <span>Create</span>
+</div>
+
+@using (Html.BeginForm("RenewContract", "Contract", FormMethod.Post,
+    new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
+{
+    <div class="page-card">
+
+        <!-- Header -->
+        <div class="page-card-header">
+            <h6 class="page-card-title">
+                <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="bi bi-plus-circle" style="font-size:15px;color:#3C3489;"></i>
+                </span>
+                 Contract Renewal
+            </h6>
+        </div>
+
+        <!-- Form Body -->
+        <div class="form-body">
+
+            <!-- Section: Basic Info -->
+
+
+            <div class="form-grid">
+
+                <!-- Code -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Code
+                    </label>
+                    @Html.EditorFor(m => m.CP_CODE, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-auto",
+                            autocomplete = "off",
+                            @readonly = "readonly",
+                            placeholder = "Auto-Code"
+                        }
+                    })
+                    <span class="auto-badge">
+                        <i class="bi bi-arrow-repeat"></i> Auto-generated
+                    </span>
+                </div>
+
+                <!-- Contract Reference Number -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CT_CONTRACTREFERENCENUMBER)
+                    </label>
+                    @Html.EditorFor(m => m.CT_CONTRACTREFERENCENUMBER, new
+               {
+                   htmlAttributes = new
+                   {
+                       @class = "form-input-auto",
+                       autocomplete = "off",
+                       @readonly = "readonly",
+                   }
+               })
+                </div>
+
+            </div>
+
+            <div class="form-divider"></div>
+
+            <!-- Section: Contract Period -->
+
+            <div class="form-grid">
+
+                <!-- From Date -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CT_FROMDATE)
+                        <span class="req">*</span>
+                    </label>
+                    @*@Html.EditorFor(m => m.CT_FROMDATE, new
+        {
+            htmlAttributes = new
+            {
+                @class = "form-input-text",
+                autocomplete = "off",
+                type = "date"
+            }
+        })*@
+
+                    @Html.EditorFor(m => m.CT_FROMDATE, new
+    {
+        htmlAttributes = new
+        {
+            @class = "form-input-text",
+            autocomplete = "off",
+            type = "date",
+            id = "CT_FROMDATE"
+        }
+    })
+                </div>
+
+                <!-- To Date -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CT_TODATE)
+                        <span class="req">*</span>
+                    </label>
+                    @Html.EditorFor(m => m.CT_TODATE, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-text",
+                            autocomplete = "off",
+                            id = "CT_TODATE",
+                            type = "date"
+                        }
+                    })
+                </div>
+
+                <!-- Contract Amount -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CT_CONTRACTAMOUNT)
+                    </label>
+                    @Html.EditorFor(m => m.CT_CONTRACTAMOUNT, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-text",
+                            autocomplete = "off",
+                            inputmode = "decimal",
+                            oninput = "this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\\..*)\\./g,'$1')"
+                        }
+                    })
+                    <span class="auto-badge">
+                        <i class="bi bi-calculator"></i> Auto-calculated
+                    </span>
+                </div>
+                <!-- Created By -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CT_CONTRACTCREATEDBY)
+                    </label>
+                    @Html.EditorFor(m => m.CT_CONTRACTCREATEDBY, new
+               {
+                   htmlAttributes = new
+                   {
+                       @class = "form-input-auto",
+                       @readonly = "readonly",
+                       autocomplete = "off"
+                   }
+               })
+                </div>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <!-- Section: Authorization -->
+
+
+            <div class="form-grid">
+
+                <!-- Approved By -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CT_CONTRACTAPPROVEDBY)
+                    </label>
+                    @Html.EditorFor(m => m.CT_CONTRACTAPPROVEDBY, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-auto",
+                            autocomplete = "off",
+                               @readonly = "readonly"
+                        }
+                    })
+                </div>
+
+                <!-- Approved Date -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CT_CONTRACTAPPROVEDDATE)
+                    </label>
+                    @Html.EditorFor(m => m.CT_CONTRACTAPPROVEDDATE, new
+               {
+                   htmlAttributes = new
+                   {
+                       @class = "form-input-text",
+                       autocomplete = "off",
+                       type = "date"
+                   }
+               })
+                </div>
+                <!-- Sort Order -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CT_SORTORDER)
+                    </label>
+                    @Html.EditorFor(m => m.CT_SORTORDER, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-num",
+                            autocomplete = "off",
+                            type = "text",
+
+                            inputmode = "numeric",
+                            oninput = "this.value=this.value.replace(/[^0-9]/g,'')",
+                            placeholder = "0"
+                        }
+                    })
+                </div>
+
+
+
+                <!-- Approved Date -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CT_TENTATIVEHIKEPERCENTAGE)
+                    </label>
+                    @Html.EditorFor(m => m.CT_TENTATIVEHIKEPERCENTAGE, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-text",
+                            autocomplete = "off",
+                        }
+                    })
+                </div>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <!-- Section: Settings -->
+            <p class="form-section-title">Settings</p>
+
+            <div class="form-grid" style="margin-top:8px;">
+
+                <!-- Disable -->
+                <label class="check-row" for="newUserCheckbox">
+                    @Html.CheckBoxFor(m => m.CPDISABLE, new
+                    {
+                        @class = "form-check-input",
+                        id = "newUserCheckbox"
+                    })
+                    <div class="check-row-label">
+                        <span>@Html.DisplayNameFor(m => m.CPDISABLE)</span>
+                        <small>Hide this contract from active listings</small>
+                    </div>
+                </label>
+
+
+              
+
+            </div>
+
+        </div>
+
+        <!-- Legend Bar -->
+        <div class="legend-bar">
+            <div class="legend-item">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#adb5bd;flex-shrink:0;"></span>
+                <span>Read-only Field</span>
+            </div>
+            <div class="legend-item">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+                <span>Text Field</span>
+            </div>
+            <div class="legend-item">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
+                <span>Number Field</span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+            <a href="@Url.Action("ContractProductList", "Contract")" class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+            <button type="submit" class="btn-save" id="savebutton">
+                <i class="bi bi-floppy"></i> Renew
+            </button>
+        </div>
+
+    </div>}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        /* ── AJAX submit with processing spinner first ── */
+        $(document).ready(function () {
+            $("#createform").submit(function (e) {
+                e.preventDefault();
+
+                var btn      = $("#savebutton");
+                var formData = new FormData(this);
+
+                btn.prop("disabled", true);
+                $("body").css("pointer-events", "none");
+
+                Swal.fire({
+                    title: "Processing…",
+                    html: "Please wait while we save your changes.",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: function () {
+                        Swal.showLoading();
+
+                        $.ajax({
+                            url: '@Url.Action("RenewContract", "Contract")',
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                if (response.success) {
+                                    setTimeout(function () {
+                                        Swal.fire({
+                                            title: "Success!",
+                                            text: response.message,
+                                            icon: "success",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Continue",
+                                            cancelButtonText: "Back to List",
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false,
+                                            customClass: {
+                                                confirmButton: "swal-btn-continue",
+                                                cancelButton: "swal-btn-back"
+                                            },
+                                            didOpen: function () {
+                                                $(".swal2-container").css("pointer-events", "auto");
+                                            }
+                                        }).then(function (result) {
+                                            if (result.isConfirmed) {
+                                                location.reload();
+                                            } else {
+                                                window.location.href = '@Url.Action("ContractProductList", "Contract")';
+                                            }
+                                        });
+                                    }, 800);
+                                }
+                                else {
+                                    Swal.fire({
+                                        title: "Message",
+                                        text: response.message,
+                                        icon: "info",
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    resetButton();
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: "An unexpected error occurred.",
+                                    icon: "error",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                resetButton();
+                            }
+                        });
+                    }
+                });
+            });
+
+            function resetButton() {
+                $("#savebutton").prop("disabled", false);
+                $("body").css("pointer-events", "auto");
+            }
+        });
+    </script>
+
+    <script>
+    // ---------------------------------------------------------
+    // Renewal Contract Date Validation
+    //
+    // Old Contract To Date
+    //          ↓
+    // New From Date must be greater
+    //          ↓
+    // New To Date must be greater than New From Date
+    // ---------------------------------------------------------
+
+    @*$(document).ready(function () {
+
+        var oldToDate = '@(Model.CP_TODATE)';
+
+        // ---------------------------------------------------------
+        // 1. Set minimum From Date
+        // ---------------------------------------------------------
+
+        if (oldToDate) {
+
+            var dateParts = oldToDate.split('-');
+
+            if (dateParts.length === 3) {
+
+                var year = parseInt(dateParts[0]);
+                var month = parseInt(dateParts[1]) - 1;
+                var day = parseInt(dateParts[2]);
+
+                var oldDate = new Date(year, month, day);
+
+                // New From Date must be GREATER than old To Date
+                oldDate.setDate(oldDate.getDate() + 1);
+
+                var minFromDate =
+                    oldDate.getFullYear() + "-" +
+                    String(oldDate.getMonth() + 1).padStart(2, "0") + "-" +
+                    String(oldDate.getDate()).padStart(2, "0");
+
+                $("#CT_FROMDATE").attr("min", minFromDate);
+
+                $("#CT_FROMDATE").attr(
+                    "title",
+                    "Contract From Date must be greater than " + oldToDate
+                );
+            }
+        }
+
+
+        // ---------------------------------------------------------
+        // 2. When From Date changes
+        //    To Date must be greater than From Date
+        // ---------------------------------------------------------
+
+        $("#CT_FROMDATE").on("change", function () {
+
+            var fromDateValue = $(this).val();
+
+            if (!fromDateValue) {
+                $("#CT_TODATE").removeAttr("min");
+                return;
+            }
+
+            var fromParts = fromDateValue.split('-');
+
+            if (fromParts.length === 3) {
+
+                var fromYear = parseInt(fromParts[0]);
+                var fromMonth = parseInt(fromParts[1]) - 1;
+                var fromDay = parseInt(fromParts[2]);
+
+                var fromDate = new Date(
+                    fromYear,
+                    fromMonth,
+                    fromDay
+                );
+
+                // To Date must be GREATER than From Date
+                fromDate.setDate(fromDate.getDate() + 1);
+
+                var minToDate =
+                    fromDate.getFullYear() + "-" +
+                    String(fromDate.getMonth() + 1).padStart(2, "0") + "-" +
+                    String(fromDate.getDate()).padStart(2, "0");
+
+                $("#CT_TODATE").attr("min", minToDate);
+
+                $("#CT_TODATE").attr(
+                    "title",
+                    "Contract To Date must be greater than " + fromDateValue
+                );
+
+                // If currently selected To Date is invalid,
+                // clear it.
+                var currentToDate = $("#CT_TODATE").val();
+
+                if (currentToDate && currentToDate < minToDate) {
+                    $("#CT_TODATE").val("");
+                }
+            }
+        });
+
+
+        // ---------------------------------------------------------
+        // 3. Validate To Date when changed manually
+        // ---------------------------------------------------------
+
+        $("#CT_TODATE").on("change", function () {
+
+            var fromDateValue = $("#CT_FROMDATE").val();
+            var toDateValue = $(this).val();
+
+            if (!fromDateValue || !toDateValue) {
+                return;
+            }
+
+            if (toDateValue <= fromDateValue) {
+
+                Swal.fire({
+                    title: "Invalid To Date",
+                    text: "Contract To Date must be greater than the From Date.",
+                    icon: "warning",
+                    confirmButtonText: "OK"
+                });
+
+                $(this).val("");
+            }
+        });
+
+
+        // ---------------------------------------------------------
+        // 4. Final validation before submitting
+        // ---------------------------------------------------------
+
+        $("#createform").on("submit", function (e) {
+
+            var fromDateValue = $("#CT_FROMDATE").val();
+            var toDateValue = $("#CT_TODATE").val();
+
+            // Check From Date
+            if (!fromDateValue) {
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: "From Date Required",
+                    text: "Please select the Contract From Date.",
+                    icon: "warning",
+                    confirmButtonText: "OK"
+                });
+
+                return false;
+            }
+
+
+
+            // -----------------------------------------------------
+            // Validate From Date against old contract To Date
+            // -----------------------------------------------------
+
+            if (oldToDate) {
+
+                if (fromDateValue <= oldToDate) {
+
+                    e.preventDefault();
+
+                    Swal.fire({
+                        title: "Invalid From Date",
+                        text:
+                            "The new Contract From Date must be greater than the previous Contract To Date (" +
+                            oldToDate +
+                            ").",
+                        icon: "warning",
+                        confirmButtonText: "OK"
+                    });
+
+                    return false;
+                }
+            }
+
+
+            // -----------------------------------------------------
+            // Validate To Date against From Date
+            // -----------------------------------------------------
+
+            if (toDateValue <= fromDateValue) {
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: "Invalid To Date",
+                    text:
+                        "The Contract To Date must be greater than the From Date.",
+                    icon: "warning",
+                    confirmButtonText: "OK"
+                });
+
+                return false;
+            }
+
+            return true;
+        });
+
+    });*@
+
+    $(document).ready(function () {
+
+    // Previous contract To Date
+    var oldToDate = '@(Model.CP_TODATE)';
+
+    // ---------------------------------------------------------
+    // 1. Set minimum From Date
+    // ---------------------------------------------------------
+
+    if (oldToDate) {
+
+        // Old To Date itself is allowed
+        $("#CT_FROMDATE").attr("min", oldToDate);
+
+        $("#CT_FROMDATE").attr(
+            "title",
+            "Contract From Date must be " + oldToDate + " or later"
+        );
+    }
+
+
+    // ---------------------------------------------------------
+    // 2. When From Date changes
+    // ---------------------------------------------------------
+
+    $("#CT_FROMDATE").on("change", function () {
+
+        var fromDateValue = $(this).val();
+
+        if (!fromDateValue) {
+            $("#CT_TODATE").removeAttr("min");
+            return;
+        }
+
+        // To Date must be after From Date
+        var fromDate = new Date(fromDateValue + "T00:00:00");
+
+        if (isNaN(fromDate.getTime())) {
+            return;
+        }
+
+        fromDate.setDate(fromDate.getDate() + 1);
+
+        var minToDate =
+            fromDate.getFullYear() + "-" +
+            String(fromDate.getMonth() + 1).padStart(2, "0") + "-" +
+            String(fromDate.getDate()).padStart(2, "0");
+
+        $("#CT_TODATE").attr("min", minToDate);
+
+        var currentToDate = $("#CT_TODATE").val();
+
+        if (currentToDate && currentToDate < minToDate) {
+            $("#CT_TODATE").val("");
+        }
+    });
+
+
+    // ---------------------------------------------------------
+    // 3. Validate To Date
+    // ---------------------------------------------------------
+
+    $("#CT_TODATE").on("change", function () {
+
+        var fromDateValue = $("#CT_FROMDATE").val();
+        var toDateValue = $(this).val();
+
+        if (!fromDateValue || !toDateValue) {
+            return;
+        }
+
+        if (toDateValue <= fromDateValue) {
+
+            Swal.fire({
+                title: "Invalid To Date",
+                text: "Contract To Date must be greater than the From Date.",
+                icon: "warning",
+                confirmButtonText: "OK"
+            });
+
+            $(this).val("");
+        }
+    });
+
+
+    // ---------------------------------------------------------
+    // 4. Final validation before submit
+    // ---------------------------------------------------------
+
+    $("#createform").on("submit", function (e) {
+
+        var fromDateValue = $("#CT_FROMDATE").val();
+        var toDateValue = $("#CT_TODATE").val();
+
+        // From Date required
+        if (!fromDateValue) {
+
+            e.preventDefault();
+
+            Swal.fire({
+                title: "From Date Required",
+                text: "Please select the Contract From Date.",
+                icon: "warning",
+                confirmButtonText: "OK"
+            });
+
+            return false;
+        }
+
+        // To Date required
+        if (!toDateValue) {
+
+            e.preventDefault();
+
+            Swal.fire({
+                title: "To Date Required",
+                text: "Please select the Contract To Date.",
+                icon: "warning",
+                confirmButtonText: "OK"
+            });
+
+            return false;
+        }
+
+
+        // -----------------------------------------------------
+        // From Date must be equal to or greater than old To Date
+        // -----------------------------------------------------
+
+        if (oldToDate && fromDateValue < oldToDate) {
+
+            e.preventDefault();
+
+            Swal.fire({
+                title: "Invalid From Date",
+                text:
+                    "Contract From Date cannot be before the previous Contract To Date.",
+                icon: "warning",
+                confirmButtonText: "OK"
+            });
+
+            return false;
+        }
+
+
+        // -----------------------------------------------------
+        // To Date must be greater than From Date
+        // -----------------------------------------------------
+
+        if (toDateValue <= fromDateValue) {
+
+            e.preventDefault();
+
+            Swal.fire({
+                title: "Invalid To Date",
+                text:
+                    "Contract To Date must be greater than the From Date.",
+                icon: "warning",
+                confirmButtonText: "OK"
+            });
+
+            return false;
+        }
+
+        return true;
+    });
+
+});
+
+
+
+    </script>
+
+
+}

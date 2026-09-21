@@ -293,7 +293,7 @@ modifiedRefList.Insert(0, new SelectListItem { Text = "No Sales Location availab
 
             <div class="form-group">
                 @Html.LabelFor(m => m.CU_ADDRESS, new { @class = "form-label" })
-                @Html.EditorFor(m => m.CU_ADDRESS, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                @Html.EditorFor(m => m.CU_ADDRESS, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_ADDRESS" } })
             </div>
 
         </div>
@@ -361,15 +361,19 @@ modifiedRefList.Insert(0, new SelectListItem { Text = "No Sales Location availab
                 <div class="contact-panel-body">
                     <div class="form-group">
                         @Html.LabelFor(m => m.CU_CONTACTPERSONNAME1, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONNAME1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONNAME1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_CONTACTPERSONNAME1" } })
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.CU_CONTACTPERSONEMAILID1, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_CONTACTPERSONEMAILID1" } })
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.CU_CONTACTPERSONMOBILE1, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE1, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
+                        @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE1, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", id = "CU_CONTACTPERSONMOBILE1", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <input type="text" class="form-input-text" id="CU_CONTACTPERSONADDRESS1" name="CU_CONTACTPERSONADDRESS1" autocomplete="off" />
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.CU_CONTACTPERSONDESIGINATION1, new { @class = "form-label" })
@@ -536,8 +540,19 @@ modifiedRefList.Insert(0, new SelectListItem { Text = "No Sales Location availab
             this.value = this.value.replace(/\D/g, '').slice(0, 10);
         });
 
+        // ── Mirror Customer details into Contact Person 1 ──
+        function syncContactPerson1() {
+            $("#CU_CONTACTPERSONNAME1").val($("#CU_NAME").val());
+            $("#CU_CONTACTPERSONEMAILID1").val($("#CU_EMAIL").val());
+            $("#CU_CONTACTPERSONMOBILE1").val($("#CU_MOBILENO").val());
+            $("#CU_CONTACTPERSONADDRESS1").val($("#CU_ADDRESS").val());
+        }
+
         // ── Location Type → Location Ref AJAX ─────────
         $(document).ready(function () {
+
+            // Live sync: whenever Customer section fields change, mirror into Contact Person 1
+            $("#CU_NAME, #CU_EMAIL, #CU_MOBILENO, #CU_ADDRESS").on("input", syncContactPerson1);
 
             $("#SelectedLocation").change(function () {
                 var locationId = $(this).val();
@@ -632,17 +647,24 @@ modifiedRefList.Insert(0, new SelectListItem { Text = "No Sales Location availab
                             $("#CU_CONTACTACCESS3_BOOL").prop("checked", (data.CU_CONTACTACCESS3 || "").trim() === "Y");
                             $("#HiddenCustomerRecid").val(data.CU_RECID);
 
+                            // Mirror Customer info (Name/Email/Mobile/Address) into Contact Person 1
+                            syncContactPerson1();
+
                             Swal.fire({ icon: "success", title: "Customer Found", text: "Existing customer details loaded." });
                         } else {
                             // Clear dependent fields for new customer
                             $("#HiddenCustomerRecid").val(0);
                             $("#CU_NAME,#CU_ADDRESS,#CU_GST,#CU_PANNUMBER,#CU_TANNUMBER").val("");
                             $("#CU_CONTACTPERSONNAME1,#CU_CONTACTPERSONEMAILID1,#CU_CONTACTPERSONMOBILE1,#CU_CONTACTPERSONDESIGINATION1").val("");
+                            $("#CU_CONTACTPERSONADDRESS1").val("");
                             $("#CU_CONTACTACCESS1_BOOL").prop("checked", false);
                             $("#CU_CONTACTPERSONNAME2,#CU_CONTACTPERSONEMAILID2,#CU_CONTACTPERSONMOBILE2,#CU_CONTACTPERSONDESIGINATION2").val("");
                             $("#CU_CONTACTACCESS2_BOOL").prop("checked", false);
                             $("#CU_CONTACTPERSONNAME3,#CU_CONTACTPERSONEMAILID3,#CU_CONTACTPERSONMOBILE3,#CU_CONTACTPERSONDESIGINATION3").val("");
                             $("#CU_CONTACTACCESS3_BOOL").prop("checked", false);
+
+                            // Mirror whatever the user typed (Name/Email/Mobile/Address) into Contact Person 1
+                            syncContactPerson1();
 
                             Swal.fire({ icon: "info", title: "New Customer", text: "No existing customer found. Please fill in the details." });
                         }

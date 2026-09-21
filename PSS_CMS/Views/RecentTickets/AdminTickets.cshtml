@@ -243,9 +243,11 @@ else
                                 </div>
                                                                 <a href="data:@mimer;base64,@item.TC_RESPONSE_ATTPREFIX"
                                                                    download="Attachment.@ftr"
-                                                                   class="dl-btn dl-btn-green" style="margin-top:8px;">
+                                                                   class="dl-btn dl-btn-green no-preloader" style="margin-top:8px;">
                                                                     <i class="bi bi-download"></i> Download Image
-                                                                </a> }
+                                                                </a> 
+                                                                
+                                                                }
                                                                                             else
                                                                                             {
                                                                 <a href="data:@mimer;base64,@item.TC_RESPONSE_ATTPREFIX"
@@ -289,6 +291,16 @@ else
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        /* Prevent global preloader for file downloads */
+        $(document).on('click', '.no-preloader, .dl-btn', function (e) {
+
+            // Stop the click from reaching the global preloader handler
+            e.stopPropagation();
+
+            // If preloader is already visible, hide it
+            $('.preloader, #preloader, .page-loader, #page-loader, .loader-overlay')
+                .hide()
+                .removeClass('show active');
 
         /* ── Generic PDF handler ─────────────────── */
         function handlePdf(action) {
@@ -325,6 +337,6 @@ else
         }
         updateDateTime();
         setInterval(updateDateTime, 1000);
-
+        });
     </script>
 }

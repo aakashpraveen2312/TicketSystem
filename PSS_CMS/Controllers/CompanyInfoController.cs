@@ -49,6 +49,25 @@ namespace PSS_CMS.Controllers
                             companyinfo = rootObjects.Data.FirstOrDefault();
                             ViewBag.Logo = rootObjects.Data[0].C_LOGO;
                             Session["Logo"] = rootObjects.Data[0].C_LOGO;
+
+
+                            // Report Images
+
+                            // =====================================================
+                            // REPORT IMAGES
+                            // =====================================================
+
+                            ViewBag.imageHeader =
+                                companyinfo.C_HEADERIMAGE;
+
+                            ViewBag.imageFooter =
+                                companyinfo.C_FOOTERIMAGE;
+
+                            ViewBag.imageSign =
+                                companyinfo.C_AUTHORIZESIGNATURE;
+
+                            ViewBag.imageQR =
+                                companyinfo.C_QRIMAGE;
                             //if (logoBytes != null)
                             //{
                             //    string base64Logo = Convert.ToBase64String(logoBytes);
@@ -72,7 +91,40 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
+        private string GetImageSrc(string base64Image)
+        {
+            if (string.IsNullOrWhiteSpace(base64Image))
+            {
+                return "";
+            }
 
+            base64Image = base64Image.Trim();
+
+            // Already a data URI
+            if (base64Image.StartsWith("data:image", StringComparison.OrdinalIgnoreCase))
+            {
+                return base64Image;
+            }
+
+            // Remove possible existing prefix
+            if (base64Image.Contains(","))
+            {
+                base64Image =
+                    base64Image.Substring(base64Image.IndexOf(",") + 1);
+            }
+
+            try
+            {
+                // Validate Base64
+                Convert.FromBase64String(base64Image);
+
+                return "data:image/png;base64," + base64Image;
+            }
+            catch
+            {
+                return "";
+            }
+        }
         private byte[] ConvertToByteArray(HttpPostedFileBase file)
         {
             if (file != null && file.ContentLength > 0)
@@ -193,6 +245,544 @@ namespace PSS_CMS.Controllers
             return View();
         }
 
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateCompaniesBank(CompanyInfo ObjCompaniesinfo)
+        {
+
+            string companyId = "";
+            companyId = Session["CompanyId"].ToString();
+            var MaterialcatPostURL = ConfigurationManager.AppSettings["UpdateCompaniesBankDetail"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+
+            bool blresult = true;
+
+
+
+
+            if (blresult == true)
+            {
+                try
+                {
+                    var content = $@"{{
+    ""C_RECID"": {Session["companyId"]},
+    ""c_BANKNAME"": ""{ObjCompaniesinfo.C_BANKNAME}"",
+    ""c_BRANCHNAME"": ""{ObjCompaniesinfo.C_BRANCHNAME}"",
+    ""c_ACCOUNTNAME"": ""{ObjCompaniesinfo.C_ACCOUNTNAME}"",
+    ""c_ACCOUNTNO"": ""{ObjCompaniesinfo.C_ACCOUNTNO}"",
+    ""c_ACCOUNTTYPE"": ""{ObjCompaniesinfo.C_ACCOUNTTYPE}"",
+    ""c_IFSCCODE"": ""{ObjCompaniesinfo.C_IFSCCODE}"",
+    ""c_BANKLOCATION"": ""{ObjCompaniesinfo.C_BANKLOCATION}"",
+    ""c_BANKADDRESS"": ""{ObjCompaniesinfo.C_BANKADDRESS}""
+}}";
+
+                    var request = new HttpRequestMessage
+                    {
+                        RequestUri = new Uri(MaterialcatPostURL),
+                        Method = HttpMethod.Put,
+                        Headers =
+                        {
+                            {"X-Version", "1" },
+                            {HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+                        },
+
+                        Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                    };
+
+                    var handler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+
+                    };
+                    var client = new HttpClient(handler)
+                    {
+
+                    };
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    var response = await client.SendAsync(request);
+
+                    if (response.IsSuccessStatusCode)
+
+                    {
+
+                        string responseBody = await response.Content.ReadAsStringAsync();
+
+                        var apiResponse = JsonConvert.DeserializeObject<ApiResponseInfo>(responseBody);
+                        //Session["P_RECID"]= apiResponse.Recid;
+                        string message = apiResponse.Message;
+
+                        if (apiResponse.Status == "Y")
+                        {
+                            return Json(new { status = "success", message = "Bank Details Updated successfully" });
+                        }
+                        else if (apiResponse.Status == "U")
+                        {
+                            return Json(new { status = "error", message = apiResponse.Message });
+                        }
+                        else if (apiResponse.Status == "N")
+                        {
+                            return Json(new { status = "error", message = apiResponse.Message });
+                        }
+                        else
+                        {
+                            return RedirectToAction("List", "Party", new { id = companyId });
+
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+
+                }
+
+            }
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public async Task<ActionResult> UpdatePartyReportS(
+    CompanyInfo CompanyInfo,
+    HttpPostedFileBase Signimg,
+    HttpPostedFileBase Headerimg,
+    HttpPostedFileBase Footerimg,
+    HttpPostedFileBase QRimg,
+    HttpPostedFileBase CompanyLogoimg)
+        {
+            string companyId = Session["CompanyId"]?.ToString();
+
+            if (string.IsNullOrEmpty(companyId))
+            {
+                return Json(new
+                {
+                    status = "error",
+                    message = "Company session expired. Please login again."
+                });
+            }
+
+            try
+            {
+                // =========================================================
+                // EXISTING BASE64 VALUES FROM HIDDEN FIELDS
+                // =========================================================
+
+                string existingSign =
+                    Request.Form["ExistingSignImage"];
+
+                string existingHeader =
+                    Request.Form["ExistingHeaderImage"];
+
+                string existingFooter =
+                    Request.Form["ExistingFooterImage"];
+
+                string existingQR =
+                    Request.Form["ExistingQrImage"];
+
+                string existingLogo =
+                    Request.Form["ExistingLogoImage"];
+
+
+                // =========================================================
+                // SIGNATURE IMAGE
+                // =========================================================
+
+                string signBase64 = null;
+
+                if (Signimg != null && Signimg.ContentLength > 0)
+                {
+                    byte[] signBytes = ConvertToByteArray(Signimg);
+
+                    if (signBytes != null && signBytes.Length > 0)
+                    {
+                        signBase64 = Convert.ToBase64String(signBytes);
+                    }
+                }
+                else
+                {
+                    signBase64 = existingSign;
+
+                    // Fallback to model value
+                    if (string.IsNullOrWhiteSpace(signBase64))
+                    {
+                        signBase64 = CompanyInfo.C_AUTHORIZESIGNATURE;
+                    }
+                }
+
+
+                // =========================================================
+                // HEADER IMAGE
+                // =========================================================
+
+                string headerBase64 = null;
+
+                if (Headerimg != null && Headerimg.ContentLength > 0)
+                {
+                    byte[] headerBytes = ConvertToByteArray(Headerimg);
+
+                    if (headerBytes != null && headerBytes.Length > 0)
+                    {
+                        headerBase64 = Convert.ToBase64String(headerBytes);
+                    }
+                }
+                else
+                {
+                    headerBase64 = existingHeader;
+
+                    // Fallback to model value
+                    if (string.IsNullOrWhiteSpace(headerBase64))
+                    {
+                        headerBase64 = CompanyInfo.C_HEADERIMAGE;
+                    }
+                }
+
+
+                // =========================================================
+                // FOOTER IMAGE
+                // =========================================================
+
+                string footerBase64 = null;
+
+                if (Footerimg != null && Footerimg.ContentLength > 0)
+                {
+                    byte[] footerBytes = ConvertToByteArray(Footerimg);
+
+                    if (footerBytes != null && footerBytes.Length > 0)
+                    {
+                        footerBase64 = Convert.ToBase64String(footerBytes);
+                    }
+                }
+                else
+                {
+                    footerBase64 = existingFooter;
+
+                    // Fallback to model value
+                    if (string.IsNullOrWhiteSpace(footerBase64))
+                    {
+                        footerBase64 = CompanyInfo.C_FOOTERIMAGE;
+                    }
+                }
+
+
+                // =========================================================
+                // QR IMAGE
+                // =========================================================
+
+                string qrBase64 = null;
+
+                if (QRimg != null && QRimg.ContentLength > 0)
+                {
+                    byte[] qrBytes = ConvertToByteArray(QRimg);
+
+                    if (qrBytes != null && qrBytes.Length > 0)
+                    {
+                        qrBase64 = Convert.ToBase64String(qrBytes);
+                    }
+                }
+                else
+                {
+                    qrBase64 = existingQR;
+
+                    // Fallback to model value
+                    if (string.IsNullOrWhiteSpace(qrBase64))
+                    {
+                        qrBase64 = CompanyInfo.C_QRIMAGE;
+                    }
+                }
+
+
+                // =========================================================
+                // COMPANY LOGO
+                // =========================================================
+
+                string logoBase64 = null;
+
+                if (CompanyLogoimg != null && CompanyLogoimg.ContentLength > 0)
+                {
+                    byte[] logoBytes = ConvertToByteArray(CompanyLogoimg);
+
+                    if (logoBytes != null && logoBytes.Length > 0)
+                    {
+                        logoBase64 = Convert.ToBase64String(logoBytes);
+                    }
+                }
+                else
+                {
+                    logoBase64 = existingLogo;
+
+                    // Fallback to model value
+                    if (string.IsNullOrWhiteSpace(logoBase64))
+                    {
+                        logoBase64 = CompanyInfo.C_LOGO;
+                    }
+                }
+
+
+                // =========================================================
+                // VALIDATION
+                // =========================================================
+
+                if (string.IsNullOrWhiteSpace(signBase64))
+                {
+                    return Json(new
+                    {
+                        status = "error",
+                        message = "Please insert Signature Image"
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(headerBase64))
+                {
+                    return Json(new
+                    {
+                        status = "error",
+                        message = "Please insert Header Image"
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(footerBase64))
+                {
+                    return Json(new
+                    {
+                        status = "error",
+                        message = "Please insert Footer Image"
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(logoBase64))
+                {
+                    return Json(new
+                    {
+                        status = "error",
+                        message = "Please insert Company Logo"
+                    });
+                }
+
+
+                // =========================================================
+                // API URL / AUTHENTICATION
+                // =========================================================
+
+                string reportInfoUpdateURL =
+                    ConfigurationManager.AppSettings["ReportInfoUpdate"];
+
+                string authKey =
+                    ConfigurationManager.AppSettings["AuthKey"];
+
+                string apiKey =
+                    Session["APIKEY"]?.ToString();
+
+
+                if (string.IsNullOrEmpty(apiKey))
+                {
+                    return Json(new
+                    {
+                        status = "error",
+                        message = "API Key is missing. Please login again."
+                    });
+                }
+
+
+                // =========================================================
+                // REQUEST OBJECT
+                // =========================================================
+
+                var requestData = new
+                {
+                    c_RECID = Convert.ToInt32(companyId),
+
+                    c_AUTHSIGNNAME =
+                        CompanyInfo.C_AUTHSIGNNAME ?? "",
+
+                    c_AUTHPOSITION =
+                        CompanyInfo.C_AUTHPOSITION ?? "",
+
+                    c_AUTHORIZESIGNATURE =
+                        signBase64,
+
+                    c_HEADERIMAGE =
+                        headerBase64,
+
+                    c_FOOTERIMAGE =
+                        footerBase64,
+
+                    c_QRIMAGE =
+                        qrBase64 ?? "",
+
+                    c_LOGO =
+                        logoBase64
+                };
+
+
+                // =========================================================
+                // SERIALIZE JSON
+                // =========================================================
+
+                string content =
+                    JsonConvert.SerializeObject(requestData);
+
+
+                // =========================================================
+                // HTTP REQUEST
+                // =========================================================
+
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add(
+                            "ApiKey",
+                            apiKey
+                        );
+
+                        client.DefaultRequestHeaders.Add(
+                            "Authorization",
+                            authKey
+                        );
+
+                        client.DefaultRequestHeaders.Accept.Add(
+                            new MediaTypeWithQualityHeaderValue(
+                                "application/json"
+                            )
+                        );
+
+
+                        using (HttpRequestMessage request =
+                            new HttpRequestMessage())
+                        {
+                            request.RequestUri =
+                                new Uri(reportInfoUpdateURL);
+
+                            request.Method =
+                                HttpMethod.Put;
+
+                            request.Headers.Add(
+                                "X-Version",
+                                "1"
+                            );
+
+                            request.Content =
+                                new StringContent(
+                                    content,
+                                    System.Text.Encoding.UTF8,
+                                    "application/json"
+                                );
+
+
+                            // =================================================
+                            // SEND REQUEST
+                            // =================================================
+
+                            HttpResponseMessage response =
+                                await client.SendAsync(request);
+
+
+                            string responseBody =
+                                await response.Content.ReadAsStringAsync();
+
+
+                            // =================================================
+                            // API RESPONSE
+                            // =================================================
+
+                            if (response.IsSuccessStatusCode)
+                            {
+                                ApiResponseInfo apiResponse =
+                                    JsonConvert.DeserializeObject<ApiResponseInfo>(
+                                        responseBody
+                                    );
+
+                                if (apiResponse != null)
+                                {
+                                    if (apiResponse.Status == "Y")
+                                    {
+                                        return Json(new
+                                        {
+                                            status = "success",
+                                            message =
+                                                "Company Info Reported updated successfully"
+                                        });
+                                    }
+
+                                    if (apiResponse.Status == "U")
+                                    {
+                                        return Json(new
+                                        {
+                                            status = "error",
+                                            message =
+                                                apiResponse.Message
+                                        });
+                                    }
+
+                                    if (apiResponse.Status == "N")
+                                    {
+                                        return Json(new
+                                        {
+                                            status = "error",
+                                            message =
+                                                apiResponse.Message
+                                        });
+                                    }
+
+                                    return Json(new
+                                    {
+                                        status = "error",
+                                        message =
+                                            apiResponse.Message ??
+                                            "Unable to update company information."
+                                    });
+                                }
+
+                                return Json(new
+                                {
+                                    status = "error",
+                                    message = "Invalid response received from API."
+                                });
+                            }
+
+
+                            // =================================================
+                            // API HTTP ERROR
+                            // =================================================
+
+                            return Json(new
+                            {
+                                status = "error",
+                                message =
+                                    "Error: " +
+                                    response.ReasonPhrase +
+                                    " | " +
+                                    responseBody
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    status = "error",
+                    message =
+                        "Exception occurred: " +
+                        ex.Message
+                });
+            }
+        }
+
+       
 
         //public async Task<ActionResult> LocationList()
         //{

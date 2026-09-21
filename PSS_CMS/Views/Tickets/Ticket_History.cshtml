@@ -235,7 +235,7 @@
         {
 @Html.DropDownListFor(m => m.FirstOrDefault().SelectedProjectType,
          projectTypeList,
-         "All Products",
+         "Products",
          new { id = "projectTypeFilter", tabindex = "1" }) }
 else
 {
@@ -243,13 +243,13 @@ else
 
         @Html.DropDownListFor(m => m.FirstOrDefault().SelectedTicketType,
                       (IEnumerable<SelectListItem>)ViewBag.TicketTypes,
-                      "All Ticket Types",
+                      "Ticket Types",
                       new { id = "ticketTypeFilter", tabindex = "2" })
 
         @Html.DropDownList("Status",
                       new List<SelectListItem>
                       {
-                new SelectListItem { Text = "All Statuses", Value = "" },
+                new SelectListItem { Text = "Statuses", Value = "" },
                 new SelectListItem { Text = "Submitted",   Value = "S" },
                 new SelectListItem { Text = "Resolved",    Value = "R" },
                 new SelectListItem { Text = "Closed",      Value = "C" },
@@ -329,7 +329,7 @@ else
             @if ((item.TC_STATUS ?? "").Trim() == "R" || (item.TC_STATUS ?? "").Trim() == "O")
             {
 <a href="@Url.Action("ViewDetails", "Tickets", new { ticketRecID = item.TC_RECID })"
-   class="act-btn act-view" title="View Ticket">
+   class="act-btn act-view" title="service invoice">
     <i class="bi bi-eye-fill"></i>
 </a>}
 

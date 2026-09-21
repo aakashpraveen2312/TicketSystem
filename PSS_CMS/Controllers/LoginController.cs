@@ -27,11 +27,70 @@ namespace PSS_CMS.Controllers
        
         public async Task<ActionResult> Index(string U_EMAILID, string U_PASSWORD,string U_DOMAIN, Login model)        
         {
+            // ---------------------------------------------------------
+            // Validation
+            // ---------------------------------------------------------
+
+            bool isEmailEmpty = string.IsNullOrWhiteSpace(U_EMAILID);
+            bool isPasswordEmpty = string.IsNullOrWhiteSpace(U_PASSWORD);
+            bool isDomainEmpty = string.IsNullOrWhiteSpace(U_DOMAIN);
+
+            // All three empty
+            if (isEmailEmpty && isPasswordEmpty && isDomainEmpty)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "Please enter Email ID, Password and Domain."
+                );
+            }
+            // Email missing
+            else if (isEmailEmpty)
+            {
+                ModelState.AddModelError(
+                    "U_EMAILID",
+                    "Please enter Email ID."
+                );
+            }
+            // Password missing
+            else if (isPasswordEmpty)
+            {
+                ModelState.AddModelError(
+                    "U_PASSWORD",
+                    "Please enter Password."
+                );
+            }
+            // Domain missing
+            else if (isDomainEmpty)
+            {
+                ModelState.AddModelError(
+                    "U_DOMAIN",
+                    "Please enter Domain."
+                );
+
+            }
+
+            // ---------------------------------------------------------
+            // Stop login if validation failed
+            // ---------------------------------------------------------
+
+            if (!ModelState.IsValid)
+            {
+                // Put values back into model
+                model.U_EMAILID = U_EMAILID;
+                model.U_PASSWORD = U_PASSWORD;
+                model.U_DOMAIN = U_DOMAIN;
+
+                return View(model);
+            }
+
+
+
+
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];           
             var LogInurl = ConfigurationManager.AppSettings["LOGIN"];
             object content = "StrUserid=" + U_EMAILID + "&strPassword=" + U_PASSWORD + "&domain="+ U_DOMAIN;
             string urll = LogInurl + "?"+ content;
-
+            string errormessage = "";
             try
             {
                 var request = new HttpRequestMessage
@@ -58,9 +117,11 @@ namespace PSS_CMS.Controllers
                     var responseContent = responseTask.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     var Response = JsonConvert.DeserializeObject<APIResponseLogin>(responseContent);
 
-                    string errormessage = Response.Message;
+                     errormessage = Response.Message;
+
                     string Warning = Response.expiryWarning;
                     string Status = Response.Status;
+                    string RoleDescription = Response.Role;
                     
                     Session["MaterialConsumptionFlag"] = Response.MaterialConsumption?.Replace(" ", "").Trim();
 
@@ -93,7 +154,7 @@ namespace PSS_CMS.Controllers
                             roleName = "Technical Support";
                         else
                             roleName = roleCode;
-                        Session["Role"] = roleName;
+                        Session["Role"] = RoleDescription;
                         int CompanyID = data.U_CRECID;
                         if (role == "User" && data.U_PASSWORD == null)
                         {
@@ -160,7 +221,7 @@ namespace PSS_CMS.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception occurred: {ex.Message}");
-                TempData["ErrorMessage"] =" Invalid User name or Password";
+                TempData["ErrorMessage"] = errormessage;
             }
             return View();
 
@@ -177,10 +238,73 @@ namespace PSS_CMS.Controllers
 
         public async Task<ActionResult> IndexRole(string U_EMAILID, string U_PASSWORD, string U_DOMAIN, Login model)
         {
+
+            bool isEmailEmpty = string.IsNullOrWhiteSpace(U_EMAILID);
+            bool isPasswordEmpty = string.IsNullOrWhiteSpace(U_PASSWORD);
+
+            // Email missing
+            //if (isEmailEmpty)
+            //{
+            //    ModelState.AddModelError(
+            //        "U_EMAILID",
+            //        "Please enter Email ID."
+            //    );
+            //    model.U_EMAILID = U_EMAILID;
+
+            //    return View(model);
+            //}
+            //// Password missing
+            //else if (isPasswordEmpty)
+            //{
+            //    ModelState.AddModelError(
+            //        "U_PASSWORD",
+            //        "Please enter Password."
+            //    );
+            //    model.U_EMAILID = U_EMAILID;
+
+            //    return View(model);
+            //}
+
+            if (isEmailEmpty)
+            {
+                ModelState.AddModelError(
+                    "U_EMAILID",
+                    "Please enter Email ID."
+                );
+
+                // Preserve password
+                model.U_EMAILID = U_EMAILID;
+                model.U_PASSWORD = U_PASSWORD;
+                model.U_DOMAIN = U_DOMAIN;
+
+                return View(model);
+            }
+
+            if (isPasswordEmpty)
+            {
+                ModelState.AddModelError(
+                    "U_PASSWORD",
+                    "Please enter Password."
+                );
+
+                // Preserve email
+                model.U_EMAILID = U_EMAILID;
+                model.U_PASSWORD = U_PASSWORD;
+                model.U_DOMAIN = U_DOMAIN;
+
+                return View(model);
+            }
+
+
+
+
+
             string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
             var LogInurl = ConfigurationManager.AppSettings["LOGIN"];
             object content = "StrUserid=" + U_EMAILID + "&strPassword=" + U_PASSWORD + "&domain=" + U_DOMAIN;
             string urll = LogInurl + "?" + content;
+
+
 
             try
             {
@@ -227,7 +351,7 @@ namespace PSS_CMS.Controllers
                         }
                     }
                     string errormessage = Response.expiryWarning;
-                    string errormessage1 = responseContent;
+                    string errormessage1 = Response.Message;
 
 
                     string Status = Response.Status;
@@ -239,6 +363,8 @@ namespace PSS_CMS.Controllers
                         var data = Response.Data[0];
                         string role = data.U_RCODE;
                         string U_USERMANAGER = data.U_USERMANAGER;
+
+                        string RoleDescription = Response.Role;
                         // Common session assignments
                         Session["DOMAIN"] = data.U_DOMAIN;
                         Session["U_ADDONCUSTOMER"] = string.IsNullOrWhiteSpace(data.U_ADDONCUSTOMER)
@@ -251,6 +377,8 @@ namespace PSS_CMS.Controllers
                         Session["CompanyID"] = data.U_CRECID;
 
                         var roleCode = data.U_RCODE;
+
+
                         string roleName;
 
                         if (roleCode == "SA")
@@ -261,7 +389,9 @@ namespace PSS_CMS.Controllers
                             roleName = "Technical Support";
                         else
                             roleName = roleCode;
-                        Session["Role"] = roleName;
+
+                        Session["Role"] = RoleDescription;
+
                         int CompanyID = data.U_CRECID;
                         if (role == "User" && data.U_PASSWORD == null)
                         {
@@ -320,7 +450,7 @@ namespace PSS_CMS.Controllers
                     else
                     {
                         
-                        TempData["ErrorMessage"] = " Invalid User name or Password";
+                        TempData["ErrorMessage"] = errormessage1;
                     }
 
                 }
@@ -354,6 +484,10 @@ namespace PSS_CMS.Controllers
 
                 TempData["ErrorMessage"] = ex.Message;
             }
+            // Preserve entered values
+            model.U_EMAILID = U_EMAILID;
+            model.U_PASSWORD = U_PASSWORD;
+            model.U_DOMAIN = U_DOMAIN;
             return View();
 
         }

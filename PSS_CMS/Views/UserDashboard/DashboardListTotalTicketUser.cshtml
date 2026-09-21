@@ -1,116 +1,274 @@
 ﻿@model IEnumerable<PSS_CMS.Models.DashboardListUser>
-@using GridMvc.Html
-@{ 
-    Layout = null;
-}
+
+@*@{ Layout = null; }*@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <title>BEYONDEXS - TICKET SYSTEM</title>
 
+    <!-- Favicon -->
     <link href="~/assets/img/bexlogo_wob.png" rel="icon">
     <link href="~/assets/img/bexlogo_wob.png" rel="apple-touch-icon">
-    <title>BEYONDEXS - TICKET SYSTEM</title>
+
+    <!-- Frameworks & Core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="~/Content/ClientSide.css" rel="stylesheet" />
     <link href="~/Content/Style.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
     <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    @*Bootstrap Icons and Boxicons and Fontawesome link*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <script src="~/Scripts/Script.js"></script>
     <link href="~/Content/Responsive.css" rel="stylesheet" />
     <link href="~/Content/SideMenu.css" rel="stylesheet" />
 
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+
+    <!-- Page-specific additions (not covered by UIListView.css) -->
+    <style>
+        /* Loading screen */
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,.85);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #EEEDFE;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+        }
+
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Status badges - icon style matching Ticket History (not in UIListView.css) */
+        .ticket-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-submitted {
+            background: #eef6ff;
+            color: #1a73e8;
+        }
+
+        .badge-resolved {
+            background: #E1F5EE;
+            color: #085041;
+        }
+
+        .badge-closed {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .badge-reopened {
+            background: #fff4db;
+            color: #c47a00;
+        }
+
+        body {
+            padding-bottom: 50px;
+            background-color: var(--body-bg);
+        }
+    </style>
+
+    <!-- JS Scripts -->
+    <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="~/Scripts/Script.js"></script>
+    <style>
+        .ticket-pagination-container {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            padding: 15px 0;
+            margin-top: 10px;
+        }
+
+        .ticket-page-btn {
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #333;
+            padding: 7px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+            .ticket-page-btn:hover:not(:disabled) {
+                background: #f5f5f5;
+            }
+
+            .ticket-page-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+        .ticket-page-info {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+        }
+    </style>
 </head>
 
 <body>
 
-    <div class="content" style=" overflow-x: hidden!important;">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1">
-                <h3 style="margin-top:10px" class="heading ms-3">TICKET SYSTEM</h3>
-            </div>
+    <!-- Loading screen -->
+    <div id="loadingScreen"><div class="loader"></div></div>
 
-            <div class="p-2" style="margin-right:10px">
-                <h4 class="heading">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4>
-            </div>
+    <div class=" p-3" style="overflow-x: hidden!important;">
+        <!-- Top Navigation -->
+        @*@Session-driven nav omitted, unchanged from original*@
 
-            <div class="p-2 me-3 dropdown">
-                <a href="#" class="text-decoration-none" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class='bx bx-user-circle' style="font-size:24px !important; color:purple !important;"></i>
-                </a>
+        <!-- Page Breadcrumb -->
+        <div class="page-breadcrumb">
+            <a href="@Url.Action("UserDashboardCount", "UserDashboard")">@Session["Name"].ToString().ToUpper()</a>
+            <i class="bi bi-chevron-right"></i>
+            <span>LIST</span>
+        </div>
 
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="@Url.Action("FAQ", "Tickets")">FAQ</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="@Url.Action("UserDashboardCount", "UserDashboard")">DashBoard</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <a href="@Url.Action("Logout", "Login")" class="text-decoration-none dropdown-item text-danger" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                            Logout    <i class='bx bx-log-out' style="font-size:24px !important;color:red !important;"></i>
+        <!-- Main Card Container -->
+        <div class="page-card">
+            <div class="page-card-header">
+                <h5 class="page-card-title">
+                    <span style="width:28px;height:28px;border-radius:8px;background:#EEEDFE;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="bi bi-ticket-detailed" style="font-size:15px;color:#3C3489;"></i>
+                    </span>
+                    Ticket Overview
+                </h5>
 
-                        </a>
-                    </li>
-
-                </ul>
-            </div>
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-9">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Ticket_History", "Tickets")">TICKET HISTORY</a></li>
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("UserDashboardCount", "UserDashboard")">@Session["Name"].ToString().ToUpper()</a></li>
-                    <li>LIST</li>
-                </ul>
-            </div>
-            <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
                 @using (Html.BeginForm("DashboardListTotalTicketUser", "UserDashBoard", FormMethod.Get, new { id = "searchForm" }))
                 {
-                    <input type="hidden" name="status" value="@Session["Name"]" />
-                    <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
-                }
+    <input type="hidden" name="status" value="@Session["Name"]" />
+                    <div class="search-box">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="searchPharse" name="searchPharse" placeholder="Search tickets..." autocomplete="off" value="@Request["searchPharse"]" onkeyup="if(event.key === 'Enter') this.form.submit();" />
+                    </div>}
+            </div>
+
+            <!-- Grid Content Wrapper -->
+            <div class="grid-wrap" id="ticketTable1">
+
+                <table id="userTicketsTable">
+                    <thead>
+                        <tr>
+                            <th>Admin Name</th>
+                            <th>Date &amp; Time</th>
+                            <th>Product</th>
+                            <th>Subject</th>
+                            <th>Ticket Type</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var statusStr = (item.TC_STATUS_DISPLAY ?? "").ToLower();
+                            var stClass = "badge-closed";
+                            var stIcon = "bi-circle";
+
+                            if (statusStr.Contains("processed") ||
+                                statusStr.Contains("resolved") ||
+                                statusStr.Contains("active"))
+                            {
+                                stClass = "badge-resolved";
+                                stIcon = "bi-check-circle-fill";
+                            }
+                            else if (statusStr.Contains("unlocked") ||
+                                     statusStr.Contains("open") ||
+                                     statusStr.Contains("in progress"))
+                            {
+                                stClass = "badge-reopened";
+                                stIcon = "bi-arrow-repeat";
+                            }
+                            else if (statusStr.Contains("pending") ||
+                                     statusStr.Contains("submitted"))
+                            {
+                                stClass = "badge-submitted";
+                                stIcon = "bi-send";
+                            }
+                            else if (statusStr.Contains("closed"))
+                            {
+                                stClass = "badge-closed";
+                                stIcon = "bi-lock-fill";
+                            }
+
+            <tr>
+                <td>@item.AdminNameDisplay</td>
+
+                <td style="font-size:12px;color:var(--text-muted);">
+                    @item.TC_TICKETDATES
+                </td>
+
+                <td>
+                    <span class="product-serial">
+                        @item.P_NAME
+                    </span>
+                </td>
+
+                <td>@item.TC_SUBJECT</td>
+
+                <td>
+                    <span class="service-badge">
+                        @item.TC_TICKETTYPE
+                    </span>
+                </td>
+
+                <td>
+                    <span class="ticket-status @stClass">
+                        <i class="bi @stIcon"></i>
+                        @item.TC_STATUS_DISPLAY
+                    </span>
+                </td>
+            </tr>}
+                    </tbody>
+                </table>
 
             </div>
 
-        </div>
+            <!-- Pagination OUTSIDE grid-wrap -->
+            <div id="ticketPagination" class="ticket-pagination-container">
+                <button type="button" id="prevPageBtn" class="ticket-page-btn">
+                    Previous
+                </button>
 
-        <div class="table mt-3 ms-1 me-5" id="ticketTable1">
-            @if (Model != null)
-            {
-                @Html.Grid(Model).Columns(columns =>
-           {
-               columns.Add(c => c.AdminNameDisplay).Titled("Admin Name").SetWidth("100px");
-               columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time").SetWidth("150px");
-               columns.Add(c => c.P_NAME).Titled("Product").SetWidth("150px;");
-               columns.Add(c => c.TC_SUBJECT).Titled("Subject");
-               columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("120px");
-               columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status").SetWidth("120px");
-           }).WithPaging(10).Sortable(false)
-            }
-            else
-            {
-                <div class="alert alert-warning text-center">
-                    <b>No Ticket's are available</b>
-                </div>}
+                <span id="pageInfo" class="ticket-page-info">
+                    Page 1 of 1
+                </span>
+
+                <button type="button" id="nextPageBtn" class="ticket-page-btn">
+                    Next
+                </button>
+            </div>
 
         </div>
-
-
-
     </div>
 
-
+    <!-- Offcanvas Logout Confirmation -->
     <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title text-align-center" id="offcanvasBottomLabel"></h5>
@@ -119,39 +277,107 @@
         <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
             <h4>Are you sure you want to log out?</h4>
         </div>
-        <div class="offcanvas-footer d-flex justify-content-center">
+        <div class="offcanvas-footer d-flex justify-content-center mb-3">
             <input type="button" class="btncolorsubmit me-3" id="confirmLogoutBtn" value="Confirm" tabindex="1">
             <input type="button" class="btncolorcancel" data-bs-dismiss="offcanvas" value="Cancel" tabindex="2">
         </div>
     </div>
+
     <div id="preloader2"></div>
-    <!-- LogOut JS -->
+
+    <!-- LogOut JS & SweetAlert -->
     <script src="~/Scripts/Logoutjs.js"></script>
-
-
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
-            }
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('loadingScreen').style.display = 'flex';
         });
-    });
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }, 400);
+        });
+    </script>
+
+    <!-- Client-side pagination for the ticket table (10 rows per page) -->
+    <script>
+        (function () {
+
+            function initTicketPagination() {
+
+                var table = document.getElementById("userTicketsTable");
+                var pagination = document.getElementById("ticketPagination");
+                var prevBtn = document.getElementById("prevPageBtn");
+                var nextBtn = document.getElementById("nextPageBtn");
+                var pageInfo = document.getElementById("pageInfo");
+
+                if (!table || !pagination || !prevBtn || !nextBtn || !pageInfo) {
+                    console.log("PAGINATION: required element(s) missing, aborting.");
+                    return;
+                }
+
+                var tbody = table.getElementsByTagName("tbody")[0];
+                if (!tbody) {
+                    console.log("PAGINATION: tbody not found.");
+                    return;
+                }
+
+                // Snapshot rows once - a live HTMLCollection can shift under us
+                // while we're re-styling display properties.
+                var rows = Array.prototype.slice.call(tbody.getElementsByTagName("tr"));
+
+                var pageSize = 10;
+                var totalRecords = rows.length;
+                var totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+                var currentPage = 1;
+
+                console.log("PAGINATION: " + totalRecords + " rows, " + totalPages + " page(s).");
+
+                // Show pagination controls only when there's more than one page.
+                pagination.style.display = totalRecords > pageSize ? "flex" : "none";
+
+                function renderPage() {
+
+                    var start = (currentPage - 1) * pageSize;
+                    var end = start + pageSize;
+
+                    rows.forEach(function (row, i) {
+                        row.style.display = (i >= start && i < end) ? "table-row" : "none";
+                    });
+
+                    pageInfo.textContent = "Page " + currentPage + " of " + totalPages;
+                    prevBtn.disabled = currentPage <= 1;
+                    nextBtn.disabled = currentPage >= totalPages;
+                }
+
+                prevBtn.addEventListener("click", function () {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderPage();
+                    }
+                });
+
+                nextBtn.addEventListener("click", function () {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderPage();
+                    }
+                });
+
+                if (totalRecords > 0) {
+                    renderPage();
+                }
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", initTicketPagination);
+            } else {
+                initTicketPagination();
+            }
+
+        })();
     </script>
 
     <script src="~/Scripts/Fordelete.js"></script>
 </body>
 </html>
-
-

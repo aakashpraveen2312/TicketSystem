@@ -8,6 +8,7 @@
     var contractName = Session["ContractName"]?.ToString();
     var ctPrecid = Session["CT_PRECID"]?.ToString();
     var contractAmount = Session["ContractAmount"]?.ToString(); }
+@*<script src="~/Scripts/Inactivitylogout.js"></script>*@
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -19,7 +20,6 @@
             border-bottom: 2px solid var(--border-color);
             padding: 0 20px;
             background: #fafafa;
-           
         }
 
         .inv-tab-link {
@@ -182,289 +182,334 @@
     <!-- Tab Body -->
     @using (Html.BeginForm("SalesheaderCreate", "AccountantCustomerInvoice", FormMethod.Post, new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
     {
-<div class="tab-body">
+        <div class="tab-body">
 
-    <!-- ── Pane: Main ─────────────────────────── -->
-    <div class="inv-pane show" id="pane-main">
+            <!-- ── Pane: Main ─────────────────────────── -->
+            <div class="inv-pane show" id="pane-main">
 
-       
-        <div class="form-grid" style="margin-bottom:18px;">
+                <div class="form-grid" style="margin-bottom:18px;">
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.SIH_INVOICENO, new { @class = "form-label" })
-                @Html.EditorFor(m => m.SIH_INVOICENO, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.SIH_INVOICEDATE, new { @class = "form-label" })
-                @Html.EditorFor(m => m.SIH_INVOICEDATE, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", type = "date" } })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.SIH_INVOICEAMOUNT, new { @class = "form-label" })
-                @Html.EditorFor(m => m.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-input-auto intalignment", autocomplete = "off", @readonly = "readonly" } })
-                <span class="auto-badge"><i class="bi bi-calculator"></i> Auto-calculated</span>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.SIH_SORTORDER, new { @class = "form-label" })
-                @Html.EditorFor(m => m.SIH_SORTORDER, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", placeholder = "0" } })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.SIH_LTRECID, new { @class = "form-label" })
-                @if (ViewBag.LocationType != null)
-                {
-                    var locationList = ViewBag.LocationType as IEnumerable<SelectListItem>;
-                    if (locationList != null && locationList.Any())
-                    {
-                        var modifiedList = new List<SelectListItem>(locationList);
-                        modifiedList.Insert(0, new SelectListItem { Text = "-- Select Sales Source --", Value = "" });
-@Html.DropDownList("SelectedLocation", modifiedList, new { @class = "form-select-input", id = "SelectedLocation" }) }
-                    else
-                    {
-                        var modifiedList = new List<SelectListItem>();
-                        modifiedList.Insert(0, new SelectListItem { Text = "No Sales Sources available", Value = "" });
-@Html.DropDownList("SelectedLocation", modifiedList, new { @class = "form-select-input", id = "SelectedLocation" }) }
-                }
-                else
-                {
-<select class="form-select-input" disabled><option>No Sales Sources available</option></select>}
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.SIH_SPRECID, new { @class = "form-label" })
-                @{ var locationRefList = ViewBag.LocationRef as IEnumerable<SelectListItem>; }
-                @if (locationRefList != null && locationRefList.Any())
-                {
-                    var modifiedRefList = new List<SelectListItem>(locationRefList);
-                    modifiedRefList.Insert(0, new SelectListItem { Text = "-- Select Sales Location --", Value = "" });
-@Html.DropDownList("SelectedLocationRef", modifiedRefList, new { @class = "form-select-input", id = "LocationRefDropdown" }) }
-                else
-                {
-                    var modifiedRefList = new List<SelectListItem>();
-                    modifiedRefList.Insert(0, new SelectListItem { Text = "No Sales Location available", Value = "" });
-@Html.DropDownList("SelectedLocationRef", modifiedRefList, new { @class = "form-select-input", id = "LocationRefDropdown" })}
-            </div>
-
-        </div>
-
-        <div class="pane-actions">
-            <button type="button" class="btn-save" onclick="switchTab('pane-customer')">
-                <i class="bi bi-arrow-right-circle"></i> Next
-            </button>
-            <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
-               class="btn-cancel">
-                <i class="bi bi-x-lg"></i> Cancel
-            </a>
-        </div>
-
-    </div>
-
-    <!-- ── Pane: Customer ─────────────────────── -->
-    <div class="inv-pane" id="pane-customer">
-
-       
-        <div class="form-grid" style="margin-bottom:18px;">
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.CU_NAME, new { @class = "form-label" })
-                @Html.EditorFor(m => m.CU_NAME, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_NAME" } })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.CU_EMAIL, new { @class = "form-label" })
-                @Html.EditorFor(m => m.CU_EMAIL, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_EMAIL" } })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.CU_MOBILENO, new { @class = "form-label" })
-                @Html.EditorFor(m => m.CU_MOBILENO, new
-                {
-                    htmlAttributes = new
-                    {
-                        @class = "form-input-num",
-                        autocomplete = "off",
-                        id = "CU_MOBILENO",
-                        maxlength = "10",
-                        onkeypress = "return isNumberKey(event)"
-                    }
-                })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.CU_ADDRESS, new { @class = "form-label" })
-                @Html.EditorFor(m => m.CU_ADDRESS, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-            </div>
-
-        </div>
-
-        <input type="hidden" id="HiddenCustomerRecid" name="HiddenCustomerRecid" />
-
-        <div class="pane-actions">
-            <button type="button" id="btnVerifyCustomer" class="btn-save">
-                <i class="bi bi-patch-check"></i> Verify &amp; Continue
-            </button>
-            <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
-               class="btn-cancel">
-                <i class="bi bi-x-lg"></i> Cancel
-            </a>
-        </div>
-
-    </div>
-
-    <!-- ── Pane: Statutory ────────────────────── -->
-    <div class="inv-pane" id="pane-statutory">
-
-      
-        <div class="form-grid" style="margin-bottom:18px;">
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.CU_GST, new { @class = "form-label" })
-                @Html.EditorFor(m => m.CU_GST, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.CU_PANNUMBER, new { @class = "form-label" })
-                @Html.EditorFor(m => m.CU_PANNUMBER, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.CU_TANNUMBER, new { @class = "form-label" })
-                @Html.EditorFor(m => m.CU_TANNUMBER, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-            </div>
-
-        </div>
-
-        <div class="pane-actions">
-            <button type="button" class="btn-save" onclick="switchTab('pane-contacts')">
-                <i class="bi bi-arrow-right-circle"></i> Next
-            </button>
-            <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
-               class="btn-cancel">
-                <i class="bi bi-x-lg"></i> Cancel
-            </a>
-        </div>
-
-    </div>
-
-    <!-- ── Pane: Contacts ─────────────────────── -->
-    <div class="inv-pane" id="pane-contacts">
-
-       
-        <div class="contact-grid">
-
-            <!-- Contact Person 1 -->
-            <div class="contact-panel">
-                <div class="contact-panel-header">
-                    <i class="bi bi-person-circle"></i> Contact Person 1
-                </div>
-                <div class="contact-panel-body">
                     <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONNAME1, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONNAME1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONEMAILID1, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONMOBILE1, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE1, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONDESIGINATION1, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONDESIGINATION1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-                    </div>
-                    <label class="check-row" style="margin-top:4px;">
-                        @Html.CheckBoxFor(m => m.CU_CONTACTACCESS1_BOOL, new { @class = "form-check-input" })
-                        <div class="check-row-label">
-                            <span>Access Credential</span>
-                            <small>Portal login access</small>
+                        <div class="label-row">
+                            @Html.LabelFor(m => m.SIH_INVOICENO, new { @class = "form-label" })
+                            <span style="color: red;">*</span>
                         </div>
-                    </label>
-                </div>
-            </div>
+                        @Html.EditorFor(m => m.SIH_INVOICENO, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "SIH_INVOICENO" } })
+                    </div>
 
-            <!-- Contact Person 2 -->
-            <div class="contact-panel">
-                <div class="contact-panel-header">
-                    <i class="bi bi-person-circle"></i> Contact Person 2
-                </div>
-                <div class="contact-panel-body">
                     <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONNAME2, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONNAME2, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONEMAILID2, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID2, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONMOBILE2, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE2, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONDESIGINATION2, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONDESIGINATION2, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-                    </div>
-                    <label class="check-row" style="margin-top:4px;">
-                        @Html.CheckBoxFor(m => m.CU_CONTACTACCESS2_BOOL, new { @class = "form-check-input" })
-                        <div class="check-row-label">
-                            <span>Access Credential</span>
-                            <small>Portal login access</small>
+                        <div class="label-row">
+                            @Html.LabelFor(m => m.SIH_INVOICEDATE, new { @class = "form-label" })
+                            <span style="color: red;">*</span>
                         </div>
-                    </label>
-                </div>
-            </div>
+                        @Html.EditorFor(m => m.SIH_INVOICEDATE, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", type = "date", id = "SIH_INVOICEDATE" } })
+                    </div>
 
-            <!-- Contact Person 3 -->
-            <div class="contact-panel">
-                <div class="contact-panel-header">
-                    <i class="bi bi-person-circle"></i> Contact Person 3
-                </div>
-                <div class="contact-panel-body">
                     <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONNAME3, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONNAME3, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                        @Html.LabelFor(m => m.SIH_INVOICEAMOUNT, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.SIH_INVOICEAMOUNT, new { htmlAttributes = new { @class = "form-input-auto intalignment", autocomplete = "off", @readonly = "readonly" } })
+                        <span class="auto-badge"><i class="bi bi-calculator"></i> Auto-calculated</span>
                     </div>
+
                     <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONEMAILID3, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID3, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                        @Html.LabelFor(m => m.SIH_SORTORDER, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.SIH_SORTORDER, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", placeholder = "0" } })
                     </div>
+
                     <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONMOBILE3, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE3, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.CU_CONTACTPERSONDESIGINATION3, new { @class = "form-label" })
-                        @Html.EditorFor(m => m.CU_CONTACTPERSONDESIGINATION3, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
-                    </div>
-                    <label class="check-row" style="margin-top:4px;">
-                        @Html.CheckBoxFor(m => m.CU_CONTACTACCESS3_BOOL, new { @class = "form-check-input" })
-                        <div class="check-row-label">
-                            <span>Access Credential</span>
-                            <small>Portal login access</small>
+                        <div class="label-row">
+                            @Html.LabelFor(m => m.SIH_LTRECID, new { @class = "form-label" })
+                            <span style="color: red;">*</span>
                         </div>
-                    </label>
+                        @if (ViewBag.LocationType != null)
+                        {
+                            var locationList = ViewBag.LocationType as IEnumerable<SelectListItem>;
+                            if (locationList != null && locationList.Any())
+                            {
+                                var modifiedList = new List<SelectListItem>(locationList);
+                                modifiedList.Insert(0, new SelectListItem { Text = "-- Select Sales Source --", Value = "" });
+                                @Html.DropDownList("SelectedLocation", modifiedList, new { @class = "form-select-input", id = "SelectedLocation" })
+                            }
+                            else
+                            {
+                                var modifiedList = new List<SelectListItem>();
+                                modifiedList.Insert(0, new SelectListItem { Text = "No Sales Sources available", Value = "" });
+                                @Html.DropDownList("SelectedLocation", modifiedList, new { @class = "form-select-input", id = "SelectedLocation" })
+                            }
+                        }
+                        else
+                        {
+                            <select class="form-select-input" id="SelectedLocation" disabled><option>No Sales Sources available</option></select>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            @Html.LabelFor(m => m.SIH_SPRECID, new { @class = "form-label" })
+                            <span style="color: red;">*</span>
+                        </div>
+                        @{ var locationRefList = ViewBag.LocationRef as IEnumerable<SelectListItem>; }
+                        @if (locationRefList != null && locationRefList.Any())
+                        {
+                            var modifiedRefList = new List<SelectListItem>(locationRefList);
+                            modifiedRefList.Insert(0, new SelectListItem { Text = "-- Select Sales Location --", Value = "" });
+                            @Html.DropDownList("SelectedLocationRef", modifiedRefList, new { @class = "form-select-input", id = "LocationRefDropdown" })
+                        }
+                        else
+                        {
+                            var modifiedRefList = new List<SelectListItem>();
+                            modifiedRefList.Insert(0, new SelectListItem { Text = "No Sales Location available", Value = "" });
+                            @Html.DropDownList("SelectedLocationRef", modifiedRefList, new { @class = "form-select-input", id = "LocationRefDropdown" })
+                        }
+                    </div>
+
                 </div>
+
+                <div class="pane-actions">
+                    <button type="button" class="btn-save" onclick="validateMainTab()">
+                        <i class="bi bi-arrow-right-circle"></i> Next
+                    </button>
+                    <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
+                       class="btn-cancel">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
+                </div>
+
             </div>
 
-        </div>
+            <!-- ── Pane: Customer ─────────────────────── -->
+            <div class="inv-pane" id="pane-customer">
 
-        <div class="pane-actions">
-            <button type="submit" class="btn-save" id="savebutton">
-                <i class="bi bi-floppy"></i> Save
-            </button>
-            <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
-               class="btn-cancel">
-                <i class="bi bi-x-lg"></i> Cancel
-            </a>
-        </div>
 
-    </div>
+                <div class="form-grid" style="margin-bottom:18px;">
 
-</div><!-- /tab-body -->}
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_NAME, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_NAME, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_NAME" } })
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+
+                            @Html.LabelFor(m => m.CU_EMAIL, new { @class = "form-label" })
+                            <span style="color: red;">*</span>
+                        </div>
+
+                        @Html.EditorFor(m => m.CU_EMAIL, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_EMAIL" } })
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+
+                            @Html.LabelFor(m => m.CU_MOBILENO, new { @class = "form-label" })
+                            <span style="color: red;">*</span>
+                        </div>
+
+                        @Html.EditorFor(m => m.CU_MOBILENO, new
+
+                        {
+
+                            htmlAttributes = new
+
+                            {
+
+                                @class = "form-input-num",
+
+                                autocomplete = "off",
+
+                                id = "CU_MOBILENO",
+
+                                maxlength = "10",
+
+                                onkeypress = "return isNumberKey(event)"
+
+                            }
+
+                        })
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="label-row">
+
+                            @Html.LabelFor(m => m.CU_ADDRESS, new { @class = "form-label" })
+                            <span style="color: red;">*</span>
+                        </div>
+                        @Html.EditorFor(m => m.CU_ADDRESS, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_ADDRESS" } })
+                    </div>
+
+                </div>
+
+                <input type="hidden" id="HiddenCustomerRecid" name="HiddenCustomerRecid" />
+
+                <div class="pane-actions">
+                    <button type="button" id="btnVerifyCustomer" class="btn-save">
+                        <i class="bi bi-patch-check"></i> Verify &amp; Continue
+                    </button>
+                    <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
+                       class="btn-cancel">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- ── Pane: Statutory ────────────────────── -->
+            <div class="inv-pane" id="pane-statutory">
+
+
+                <div class="form-grid" style="margin-bottom:18px;">
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_GST, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_GST, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_PANNUMBER, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_PANNUMBER, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CU_TANNUMBER, new { @class = "form-label" })
+                        @Html.EditorFor(m => m.CU_TANNUMBER, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                    </div>
+
+                </div>
+
+                <div class="pane-actions">
+                    <button type="button" class="btn-save" onclick="validateMainTab()">
+                        <i class="bi bi-arrow-right-circle"></i> Next
+                    </button>
+                    <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
+                       class="btn-cancel">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- ── Pane: Contacts ─────────────────────── -->
+            <div class="inv-pane" id="pane-contacts">
+
+
+                <div class="contact-grid">
+
+                    <!-- Contact Person 1 -->
+                    <div class="contact-panel">
+                        <div class="contact-panel-header">
+                            <i class="bi bi-person-circle"></i> Contact Person 1
+                        </div>
+                        <div class="contact-panel-body">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONNAME1, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONNAME1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_CONTACTPERSONNAME1" } })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONEMAILID1, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", id = "CU_CONTACTPERSONEMAILID1" } })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONMOBILE1, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE1, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", id = "CU_CONTACTPERSONMOBILE1", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-input-text" id="CU_CONTACTPERSONADDRESS1" name="CU_CONTACTPERSONADDRESS1" autocomplete="off" />
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONDESIGINATION1, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONDESIGINATION1, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                            </div>
+                            <label class="check-row" style="margin-top:4px;">
+                                @Html.CheckBoxFor(m => m.CU_CONTACTACCESS1_BOOL, new { @class = "form-check-input" })
+                                <div class="check-row-label">
+                                    <span>Access Credential</span>
+                                    <small>Portal login access</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Contact Person 2 -->
+                    <div class="contact-panel">
+                        <div class="contact-panel-header">
+                            <i class="bi bi-person-circle"></i> Contact Person 2
+                        </div>
+                        <div class="contact-panel-body">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONNAME2, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONNAME2, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONEMAILID2, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID2, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONMOBILE2, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE2, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONDESIGINATION2, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONDESIGINATION2, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                            </div>
+                            <label class="check-row" style="margin-top:4px;">
+                                @Html.CheckBoxFor(m => m.CU_CONTACTACCESS2_BOOL, new { @class = "form-check-input" })
+                                <div class="check-row-label">
+                                    <span>Access Credential</span>
+                                    <small>Portal login access</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Contact Person 3 -->
+                    <div class="contact-panel">
+                        <div class="contact-panel-header">
+                            <i class="bi bi-person-circle"></i> Contact Person 3
+                        </div>
+                        <div class="contact-panel-body">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONNAME3, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONNAME3, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONEMAILID3, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONEMAILID3, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONMOBILE3, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONMOBILE3, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", maxlength = "10", onkeypress = "return isNumberKey(event)" } })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CU_CONTACTPERSONDESIGINATION3, new { @class = "form-label" })
+                                @Html.EditorFor(m => m.CU_CONTACTPERSONDESIGINATION3, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off" } })
+                            </div>
+                            <label class="check-row" style="margin-top:4px;">
+                                @Html.CheckBoxFor(m => m.CU_CONTACTACCESS3_BOOL, new { @class = "form-check-input" })
+                                <div class="check-row-label">
+                                    <span>Access Credential</span>
+                                    <small>Portal login access</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="pane-actions">
+                    <button type="submit" class="btn-save" id="savebutton">
+                        <i class="bi bi-floppy"></i> Save
+                    </button>
+                    <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice", new { CU_CTRECID = Session["RECID"], Name = Session["ContractName"], CT_PRECID = Session["CT_PRECID"], CT_CONTRACTAMOUNT = Session["ContractAmount"] })"
+                       class="btn-cancel">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
+                </div>
+
+            </div>
+
+        </div><!-- /tab-body -->}
 
 </div><!-- /page-card -->
 <!-- Legend bar -->
@@ -537,8 +582,23 @@
             this.value = this.value.replace(/\D/g, '').slice(0, 10);
         });
 
+        // ── Mirror Customer details into Contact Person 1 ──
+        function syncContactPerson1() {
+            var custName = $("input[name='CU_NAME']").val();
+            var custEmail = $("input[name='CU_EMAIL']").val();
+            var custMobile = $("input[name='CU_MOBILENO']").val();
+            var custAddress = $("input[name='CU_ADDRESS']").val();
+
+            $("#CU_CONTACTPERSONNAME1").val(custName);
+            $("#CU_CONTACTPERSONEMAILID1").val(custEmail);
+            $("#CU_CONTACTPERSONMOBILE1").val(custMobile);
+            $("#CU_CONTACTPERSONADDRESS1").val(custAddress);
+        }
         // ── Location Type → Location Ref AJAX ─────────
         $(document).ready(function () {
+
+            // Live sync: whenever Customer section fields change, mirror into Contact Person 1
+            $("#CU_NAME, #CU_EMAIL, #CU_MOBILENO, #CU_ADDRESS").on("input", syncContactPerson1);
 
             $("#SelectedLocation").change(function () {
                 var locationId = $(this).val();
@@ -577,9 +637,21 @@
 
                 var email  = $("#CU_EMAIL").val().trim();
                 var mobile = $("#CU_MOBILENO").val().trim();
+                var Address = $("#CU_ADDRESS").val().trim();
+                if (email === "") {
+                    Swal.fire({ icon: "warning", title: "Missing Info", text: "Please enter an Email." });
+                    return;
+                }
 
-                if (email === "" && mobile === "") {
-                    Swal.fire({ icon: "warning", title: "Missing Info", text: "Please enter an Email or Mobile Number." });
+                // ✅ every literal  escaped as @@ so Razor doesn't try to parse it as C#
+                const emailPattern = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]{2,}$/;
+
+                if (!emailPattern.test(email)) {
+                    Swal.fire({ icon: "warning", title: "Invalid Email", text: "Please enter a valid Email address." });
+                    return;
+                }
+                if (mobile === "") {
+                    Swal.fire({ icon: "warning", title: "Missing Info", text: "Please enter an  Mobile Number." });
                     return;
                 }
 
@@ -587,6 +659,12 @@
                     Swal.fire({ icon: "warning", title: "Invalid Mobile", text: "Please enter a valid 10-digit mobile number." });
                     return;
                 }
+
+                if (Address === "") {
+                    Swal.fire({ icon: "warning", title: "Missing Info", text: "Please enter an  Customer Address" });
+                    return;
+                }
+
 
                 $("#btnVerifyCustomer").prop("disabled", true);
 
@@ -607,7 +685,51 @@
                             .addClass("verified")
                             .html('<i class="bi bi-check-circle"></i> Next');
 
+                        if (status === "V") {
+                            isCustomerVerified = false;
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Invalid Email",
+                                text: res.Message || res.message
+                            });
+
+                            return;
+                        }
+
+                        // ---------------------------------------------------------
+                        // CUSTOMER NOT FOUND
+                        // ---------------------------------------------------------
+                        if (status === "N") {
+
+                            // Customer lookup completed successfully,
+                            // even though no existing customer was found.
+                            isCustomerVerified = true;
+
+                            enableProtectedTabs();
+
+                            $("#btnVerifyCustomer")
+                                .addClass("verified")
+                                .html('<i class="bi bi-check-circle"></i> Next');
+
+                            $("#HiddenCustomerRecid").val(0);
+
+                            Swal.fire({
+                                icon: "info",
+                                title: "New Customer",
+                                text: "No existing customer found. Please fill in the details."
+                            });
+
+                            return;
+                        }
                         if (status === "Y") {
+
+                            isCustomerVerified = true;
+                            enableProtectedTabs();
+
+                            $("#btnVerifyCustomer")
+                                .addClass("verified")
+                                .html('<i class="bi bi-check-circle"></i> Next');
+
                             // Populate all fields from existing customer
                             $("#CU_NAME").val(data.CU_NAME);
                             $("#CU_EMAIL").val(data.CU_EMAIL);
@@ -633,17 +755,25 @@
                             $("#CU_CONTACTACCESS3_BOOL").prop("checked", (data.CU_CONTACTACCESS3 || "").trim() === "Y");
                             $("#HiddenCustomerRecid").val(data.CU_RECID);
 
+                            // Mirror Customer info (Name/Email/Mobile/Address) into Contact Person 1
+                            syncContactPerson1();
+
                             Swal.fire({ icon: "success", title: "Customer Found", text: "Existing customer details loaded." });
                         } else {
+
                             // Clear dependent fields for new customer
                             $("#HiddenCustomerRecid").val(0);
                             $("#CU_NAME,#CU_ADDRESS,#CU_GST,#CU_PANNUMBER,#CU_TANNUMBER").val("");
                             $("#CU_CONTACTPERSONNAME1,#CU_CONTACTPERSONEMAILID1,#CU_CONTACTPERSONMOBILE1,#CU_CONTACTPERSONDESIGINATION1").val("");
+                            $("#CU_CONTACTPERSONADDRESS1").val("");
                             $("#CU_CONTACTACCESS1_BOOL").prop("checked", false);
                             $("#CU_CONTACTPERSONNAME2,#CU_CONTACTPERSONEMAILID2,#CU_CONTACTPERSONMOBILE2,#CU_CONTACTPERSONDESIGINATION2").val("");
                             $("#CU_CONTACTACCESS2_BOOL").prop("checked", false);
                             $("#CU_CONTACTPERSONNAME3,#CU_CONTACTPERSONEMAILID3,#CU_CONTACTPERSONMOBILE3,#CU_CONTACTPERSONDESIGINATION3").val("");
                             $("#CU_CONTACTACCESS3_BOOL").prop("checked", false);
+
+                            // Mirror whatever the user typed (Name/Email/Mobile/Address) into Contact Person 1
+                            syncContactPerson1();
 
                             Swal.fire({ icon: "info", title: "New Customer", text: "No existing customer found. Please fill in the details." });
                         }
@@ -738,5 +868,36 @@
                 $("body").css("pointer-events", "auto");
             }
         });
+
+        function validateMainTab() {
+            var invoiceNo = $("#SIH_INVOICENO").val()?.trim();
+            var invoiceDate = $("#SIH_INVOICEDATE").val()?.trim();
+            var salesSource = $("#SelectedLocation").val();
+            var salesLocation = $("#LocationRefDropdown").val();
+
+            if (!invoiceNo) {
+                Swal.fire({ icon: "warning", title: "Missing Info", text: "Please enter the Invoice Number." });
+                return;
+            }
+
+            if (!invoiceDate) {
+                Swal.fire({ icon: "warning", title: "Missing Info", text: "Please select the Invoice Date." });
+                return;
+            }
+
+            if (!salesSource) {
+                Swal.fire({ icon: "warning", title: "Missing Info", text: "Please select a Sales Source." });
+                return;
+            }
+
+            if (!salesLocation) {
+                Swal.fire({ icon: "warning", title: "Missing Info", text: "Please select a Sales Location." });
+                return;
+            }
+
+            // All good — move to the next tab
+            switchTab('pane-customer');
+        }
+
     </script>
 }

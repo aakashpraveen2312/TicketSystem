@@ -10,6 +10,7 @@
         string.IsNullOrEmpty(searchPhrase) ||
         (m.SIH_INVOICENO != null && m.SIH_INVOICENO.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
     ).ToList(); }
+@*<script src="~/Scripts/Inactivitylogout.js"></script>*@
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -35,21 +36,21 @@
             <!-- Search -->
             @using (Html.BeginForm("SalesheaderList", "AccountantCustomerInvoice", FormMethod.Get, new { id = "searchForm" }))
             {
-<div class="search-box">
-    <i class="bi bi-search"></i>
-    <input type="text"
-           id="searchPharse"
-           name="searchPharse"
-           placeholder="Search invoices…"
-           autocomplete="off"
-           value="@searchPhrase"
-           onkeyup="autoSubmitSearch(this)" />
-    @if (!string.IsNullOrEmpty(searchPhrase))
-    {
-<a href="@Url.Action("SalesheaderList","AccountantCustomerInvoice")" title="Clear">
-    <i class="bi bi-x-circle text-muted"></i>
-</a>}
-</div>  }
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text"
+                           id="searchPharse"
+                           name="searchPharse"
+                           placeholder="Search invoices…"
+                           autocomplete="off"
+                           value="@searchPhrase"
+                           onkeyup="autoSubmitSearch(this)" />
+                    @if (!string.IsNullOrEmpty(searchPhrase))
+                    {
+                        <a href="@Url.Action("SalesheaderList","AccountantCustomerInvoice")" title="Clear">
+                            <i class="bi bi-x-circle text-muted"></i>
+                        </a>}
+                </div>      }
 
             <!-- Add Invoice -->
             <a href="@Url.Action("SalesheaderCreate","AccountantCustomerInvoice", new {
@@ -70,170 +71,171 @@
 
         @if (Model != null && Model.Any())
         {
-<table class="table align-middle mb-0 tickets-table">
+            <table class="table align-middle mb-0 tickets-table">
 
-    <thead>
-        <tr>
-            <th class="text-center" style="width:55px;">S.No</th>
-            <th>Invoice Number</th>
-            <th style="width:140px;">Invoice Date</th>
-            <th class="text-end" style="width:160px;">Net Amount (₹)</th>
-            <th class="text-center" style="width:120px;">Status</th>
-            <th class="text-center" style="width:200px;">Actions</th>
-        </tr>
-    </thead>
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width:55px;">S.No</th>
+                        <th>Invoice Number</th>
+                        <th style="width:140px;">Invoice Date</th>
+                        <th class="text-end" style="width:160px;">Net Amount (₹)</th>
+                        <th class="text-center" style="width:120px;">Status</th>
+                        <th class="text-center" style="width:200px;">Actions</th>
+                    </tr>
+                </thead>
 
-    <tbody>
-        @foreach (var o in Model)
-        {
+                <tbody>
+                    @foreach (var o in Model)
+                    {
 
-            bool isProcessed = o.SIH_STATUS == "P";
+                        bool isProcessed = o.SIH_STATUS == "P";
 
-            var editUrl = Url.Action("SalesheaderEdit", "AccountantCustomerInvoice", new { Recid = o.SIH_RECID });
-            var viewUrl = Url.Action("SalesheaderView", "AccountantCustomerInvoice", new { Recid = o.SIH_RECID });
-            var processUrl = Url.Action("ProcessInvoice", "AccountantCustomerInvoice", new { Recid = o.SIH_RECID });
-            var deleteUrl = Url.Action("SalesheaderDelete", "AccountantCustomerInvoice", new { Recid = o.SIH_RECID });
+                        var editUrl = Url.Action("SalesheaderEdit", "AccountantCustomerInvoice", new { Recid = o.SIH_RECID });
+                        var viewUrl = Url.Action("SalesheaderView", "AccountantCustomerInvoice", new { Recid = o.SIH_RECID });
+                        var processUrl = Url.Action("ProcessInvoice", "AccountantCustomerInvoice", new { Recid = o.SIH_RECID });
+                        var deleteUrl = Url.Action("SalesheaderDelete", "AccountantCustomerInvoice", new { Recid = o.SIH_RECID });
 
-            var productsUrl = Url.Action("List", "SalesInvoiceProduct", new
-            {
-                SalesinvoiceRecID = o.SIH_RECID,
-                customerid = o.SIH_CURECID,
-                status = o.SIH_STATUS,
-                invoicedate = o.SIH_INVOICEDATE
-            });
+                        var productsUrl = Url.Action("List", "SalesInvoiceProduct", new
+                        {
+                            SalesinvoiceRecID = o.SIH_RECID,
+                            customerid = o.SIH_CURECID,
+                            status = o.SIH_STATUS,
+                            invoicedate = o.SIH_INVOICEDATE
+                        });
 
-            var paymentUrl = Url.Action("PaymentList", "SalesInvoiceProduct", new
-            {
-                SalesinvoiceRecID = o.SIH_RECID,
-                Invoiceamount = o.SIH_INVOICEAMOUNT,
-                Invoicenumber = o.SIH_INVOICENO,
-                Invoicedate = o.SIH_INVOICEDATE
-            });
+                        var paymentUrl = Url.Action("PaymentList", "SalesInvoiceProduct", new
+                        {
+                            SalesinvoiceRecID = o.SIH_RECID,
+                            Invoiceamount = o.SIH_INVOICEAMOUNT,
+                            Invoicenumber = o.SIH_INVOICENO,
+                            Invoicedate = o.SIH_INVOICEDATE
+                        });
 
-            string invoiceDateDisplay = string.IsNullOrEmpty(o.SIH_INVOICEDATE)
-                ? "—"
-                : Convert.ToDateTime(o.SIH_INVOICEDATE).ToString("dd-MM-yyyy");
+                        string invoiceDateDisplay = string.IsNullOrEmpty(o.SIH_INVOICEDATE)
+                            ? "—"
+                            : Convert.ToDateTime(o.SIH_INVOICEDATE).ToString("dd-MM-yyyy");
 
-<tr>
-    <td class="text-center serial-text">@o.SerialNumber</td>
+                        <tr>
+                            <td class="text-center serial-text">@o.SerialNumber</td>
 
-    <td>
-        @if (!string.IsNullOrEmpty(o.SIH_INVOICENO))
-        {
-<span class="inv-code">@o.SIH_INVOICENO</span> }
-else
-{
-<span style="color:var(--text-muted);font-style:italic;font-size:12px">—</span>}
-    </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(o.SIH_INVOICENO))
+                                {
+                                    <span class="inv-code">@o.SIH_INVOICENO</span> }
+                                else
+                                {
+                                    <span style="color:var(--text-muted);font-style:italic;font-size:12px">—</span>}
+                            </td>
 
-    <td style="font-size:12.5px;">@invoiceDateDisplay</td>
+                            <td style="font-size:12.5px;">@invoiceDateDisplay</td>
 
-    <td class="amount-cell">
-        @String.Format("{0:N2}", o.SIH_INVOICEAMOUNT)
-    </td>
+                            <td class="amount-cell">
+                                @String.Format("{0:N2}", o.SIH_INVOICEAMOUNT)
+                            </td>
 
-    <td class="text-center">
-        @if (isProcessed)
-        {
-<span class="badge-processed">
-    <i class="bi bi-check-circle"></i> Processed
-</span> }
-else
-{
-<span class="badge-pending">
-    <i class="bi bi-hourglass"></i> Pending
-</span>}
-    </td>
+                            <td class="text-center">
+                                @if (isProcessed)
+                                {
+                                    <span class="badge-processed">
+                                        <i class="bi bi-check-circle"></i> Processed
+                                    </span> }
+                                else
+                                {
+                                    <span class="badge-pending">
+                                        <i class="bi bi-hourglass"></i> Pending
+                                    </span>}
+                            </td>
 
-    <td>
-        <div class="action-cell">
+                            <td>
+                                <div class="action-cell">
 
-            @if (isProcessed)
-            {<!-- View -->
+                                    @if (isProcessed)
+                                    {<!-- View -->
                                         <a href="@viewUrl"
                                            class="act-btn act-view"
                                            title="View">
                                             <i class="bx bx-show"></i>
                                         </a> <!-- Print -->
-                                                                <a href="javascript:void(0);"
-                                                                   class="act-btn"
-                                                                   onclick="openPrintPopup(@o.SIH_RECID)"
-                                                                   title="Print Invoice">
-                                                                    <i class="bx bx-printer" style="color:#185FA5"></i>
-                                                                </a> <!-- Payment -->
-                                                                                        <a href="@paymentUrl"
-                                                                                           class="act-btn"
-                                                                                           title="Payment">
-                                                                                            <i class="bi bi-currency-rupee" style="color:#1D9E75"></i>
-                                                                                        </a> }
-                                                                                    else
-                                                                                    { <!-- Edit -->
-                                                                                                                <a href="@editUrl"
-                                                                                                                   class="act-btn act-edit"
-                                                                                                                   title="Edit">
-                                                                                                                    <i class="bx bxs-pencil"></i>
-                                                                                                                </a> <!-- Process -->
-                                                                                                                                        <a href="javascript:void(0);"
-                                                                                                                                           class="act-btn"
-                                                                                                                                           onclick="confirmProcess('@processUrl')"
-                                                                                                                                           title="Process">
-                                                                                                                                            <i class="bx bx-check-circle" style="color:#1D9E75"></i>
-                                                                                                                                        </a>}
+                                        <a href="javascript:void(0);"
+                                           class="act-btn"
+                                           onclick="openPrintPopup(@o.SIH_RECID)"
+                                           title="Print Invoice">
+                                            <i class="bx bx-printer" style="color:#185FA5"></i>
+                                        </a> <!-- Payment -->
+                                        <a href="@paymentUrl"
+                                           class="act-btn"
+                                           title="Payment">
+                                            <i class="bi bi-currency-rupee" style="color:#1D9E75"></i>
+                                        </a> }
+                                    else
+                                    { <!-- Edit -->
+                                        <a href="@editUrl"
+                                           class="act-btn act-edit"
+                                           title="Edit">
+                                            <i class="bx bxs-pencil"></i>
+                                        </a> <!-- Process -->
+                                        <a href="javascript:void(0);"
+                                           class="act-btn"
+                                           onclick="confirmProcess('@processUrl')"
+                                           title="Process">
+                                            <i class="bx bx-check-circle" style="color:#1D9E75"></i>
+                                        </a>}
 
-            <!-- Delete (always shown) -->
-            <a href="@deleteUrl"
-               class="act-btn act-delete no-loader"
-               title="Delete"
-               data-name="@o.SIH_INVOICENO"
-               onclick="return confirmDelete(this);">
-                <i class="bx bxs-trash"></i>
-            </a>
+                                    <!-- Delete (always shown) -->
+                                    <a href="@deleteUrl"
+                                       class="act-btn act-delete no-loader"
+                                       title="Delete"
+                                       data-name="@o.SIH_INVOICENO"
+                                       onclick="return confirmDelete(this);">
+                                        <i class="bx bxs-trash"></i>
+                                    </a>
 
-            <!-- View Products (always shown) -->
-            <a href="@productsUrl"
-               class="act-btn"
-               title="View Products">
-                <i class="bi bi-box-seam" style="color:#534AB7"></i>
-            </a>
+                                    <!-- View Products (always shown) -->
+                                    <a href="@productsUrl"
+                                       class="act-btn"
+                                       title="View Products">
+                                        <i class="bi bi-box-seam" style="color:#534AB7"></i>
+                                    </a>
 
-        </div>
-    </td>
-</tr>}
-    </tbody>
+                                </div>
+                            </td>
+                        </tr>
+}
+                </tbody>
 
-</table> <!-- Pagination -->
+            </table> <!-- Pagination -->
 
-                <div class="table-pagination">
+            <div class="table-pagination">
 
-                    <button id="prevBtn"
-                            class="page-btn">
+                <button id="prevBtn"
+                        class="page-btn">
 
-                        <i class="bi bi-chevron-left"></i>
+                    <i class="bi bi-chevron-left"></i>
 
-                        Previous
+                    Previous
 
-                    </button>
+                </button>
 
-                    <span id="pageInfo"
-                          class="page-info">
-                    </span>
+                <span id="pageInfo"
+                      class="page-info">
+                </span>
 
-                    <button id="nextBtn"
-                            class="page-btn">
+                <button id="nextBtn"
+                        class="page-btn">
 
-                        Next
+                    Next
 
-                        <i class="bi bi-chevron-right"></i>
+                    <i class="bi bi-chevron-right"></i>
 
-                    </button>
+                </button>
 
-                </div> }
-            else
-            {
-<div class="text-center py-5">
-    <i class="bi bi-inbox" style="font-size:40px;color:var(--text-muted)"></i>
-    <p class="mt-2 text-muted fw-semibold">No sales invoices available</p>
-</div>}
+            </div> }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-inbox" style="font-size:40px;color:var(--text-muted)"></i>
+                <p class="mt-2 text-muted fw-semibold">No sales invoices available</p>
+            </div>}
 
     </div>
 

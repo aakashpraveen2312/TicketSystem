@@ -1,97 +1,103 @@
 ﻿@model IEnumerable<PSS_CMS.Models.DashBoardList>
-@using GridMvc.Html
+@{ ViewData["Title"] = "Contracts";
+    ViewBag.PageTitle = "Contracts";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 <!DOCTYPE html>
 <html>
 <head>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <link href="~/Content/ClientSide.css" rel="stylesheet" />
-    <link href="~/Content/Style1.css" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
     <script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    @*Bootstrap Icons and Boxicons and Fontawesome link*@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> @*Bootstrap Icons and Boxicons and Fontawesome link*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="~/Scripts/Script.js"></script>
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/SideMenu.css" rel="stylesheet" />
 
 </head>
 
 <body>
 
-    <div class="content" style=" overflow-x: hidden!important;">
-        <nav class="nav d-flex">
-            <div class="p-2 flex-grow-1"> <h3 style="margin-top:10px" class="heading ms-3 adminheadinres">TICKET SYSTEM</h3></div>
-            <div class="p-2" style="margin-right:10px"><h4 class="heading adminlogoutres">@Session["UserName"].ToString().ToUpper() - @Session["Role"]</h4></div>
-            <div class="p-2 me-3 logout" style="margin-right:10px" data-toggle="tooltip" data-placement="bottom" title="Log out">
-                <a href="@Url.Action("Logout", "Login")" class="text-decoration-none" id="logoutlink" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                    <i class='bx bx-log-out' style="font-size:24px;color:red !important;" id="logoutresiconadmin"></i>
+    <div class="content" style="overflow-x:hidden!important;">
 
-                </a>
-            </div>
+        <div class="page-breadcrumb" style="margin-top:14px">
+            <a href="@Url.Action("Dashboard", "Dashboard")">@Session["Name"].ToString().ToUpper()</a>
+            <i class="bi bi-chevron-right"></i>
+            <span>LIST</span>
+        </div>
 
-        </nav>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-9">
-                <ul class="breadcrumb mt-1" style="margin-bottom:0px!important">
-                    <li class="" style="color: #2888bb;text-decoration:none"><a href="@Url.Action("Dashboard", "Dashboard")">@Session["Name"].ToString().ToUpper()</a></li>
-                    <li>LIST</li>
-                </ul>
-            </div>
-            <div class="col-lg-3" style="display:flex;align-items:end;justify-content:end;">
-                @using (Html.BeginForm("DashboardListTotalTicket", "Dashboard", FormMethod.Get, new { id = "searchForm"}))
+        <div class="page-card mt-2" id="ticketTable1">
+            <div class="page-card-header">
+                <h3 class="page-card-title"><i class="bi bi-ticket-detailed"></i> Tickets</h3>
+
+                @using (Html.BeginForm("DashboardListTotalTicket", "Dashboard", FormMethod.Get, new { id = "searchForm" }))
                 {
-                    <input type="hidden" name="status" value="@Session["Name"]" />
-                    <input type="text" id="searchPharse" name="searchPharse" class="inputcustom" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" style="margin-top:3px; padding-right: 40px;width:100%;" />
-                }
-
+    <input type="hidden" name="status" value="@Session["Name"]" />
+                    <div class="search-box">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="searchPharse" name="searchPharse" placeholder="Search" autocomplete="off" value="@Request["searchPharse"]" onchange="document.getElementById('searchForm').submit();" />
+                    </div>}
             </div>
 
-        </div>
-
-        <div class="table mt-3 ms-1 me-5" id="ticketTable1">
-            @if (Model != null)
+            <div class="grid-wrap">
+                @if (Model != null && Model.Any())
+                {
+    <table>
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Date &amp; Time</th>
+                <th>Product</th>
+                <th>Comments</th>
+                <th>Priority</th>
+                <th>Ticket Type</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
             {
-                @Html.Grid(Model).Columns(columns =>
-           {
-               columns.Add(c => c.TC_USERNAME).Titled("User Name").SetWidth("120px");
-               columns.Add(c => c.TC_TICKETDATES).Titled("Date & Time").SetWidth("150px");
-               columns.Add(c => c.P_NAME).Titled("Product");
-               columns.Add(c => c.TC_COMMENTS).Titled("Comments");
-               columns.Add(c => c.TC_PRIORITYTYPE).Titled("Priority").SetWidth("100px");
-               columns.Add(c => c.TC_TICKETTYPE).Titled("Ticket type").SetWidth("100px");
-               columns.Add(c => c.TC_STATUS_DISPLAY).Titled("Status").SetWidth("100px");
-           }).WithPaging(10).Sortable(false)
+<tr>
+    <td>@item.TC_USERNAME</td>
+    <td>@item.TC_TICKETDATES</td>
+    <td>@item.P_NAME</td>
+    <td>@item.TC_COMMENTS</td>
+    <td>@item.TC_PRIORITYTYPE</td>
+    <td>@item.TC_TICKETTYPE</td>
+    <td>
+        @{ var statusText = item.TC_STATUS_DISPLAY?.ToString() ?? "";
+            var statusClass = "status-pending";
+            if (statusText.IndexOf("process", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                statusClass = "status-processed";
             }
-            else
+            else if (statusText.IndexOf("unlock", StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                <div class="alert alert-warning text-center">
-                    <b>No Ticket's are available</b>
-                </div>}
-
+                statusClass = "status-unlocked";
+            } }
+        <span class="status-badge @statusClass">@statusText</span>
+    </td>
+</tr>}
+        </tbody>
+    </table> }
+else
+{
+<div class="alert alert-warning text-center m-3">
+    <b>No Ticket's are available</b>
+</div>}
+            </div>
         </div>
 
-
-        @*<footer class="footer">
-              <ul>
-                  <li class="lists"><i class='bx bx-plus-circle'></i> - Create</li>
-                  <li class="lists"><i class='bx bxs-pencil bx-sm'></i> - Edit</li>
-                  <li class="lists"><i class='bx bxs-trash bx-sm red'></i> - Delete</li>
-              </ul>
-            </footer>*@
+        <div class="legend-bar">
+            <div class="legend-item"><span class="status-badge status-processed">Processed</span></div>
+            <div class="legend-item"><span class="status-badge status-unlocked">Unlocked</span></div>
+            <div class="legend-item"><span class="status-badge status-pending">Pending</span></div>
+        </div>
     </div>
-
 
     <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" style="height: 150px;">
         <div class="offcanvas-header">
@@ -110,30 +116,26 @@
     <!-- LogOut JS -->
     <script src="~/Scripts/Logoutjs.js"></script>
 
-
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    document.getElementById("logoutLink").addEventListener("click", function () {
-        Swal.fire({
-            title: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirm",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '@Url.Action("Logout", "Login")';
-            }
+        document.getElementById("logoutLink")?.addEventListener("click", function () {
+            Swal.fire({
+                title: "Are you sure you want to log out?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Confirm",
+                cancelButtonText: "Cancel",
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#dc3545",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '@Url.Action("Logout", "Login")';
+                }
+            });
         });
-    });
     </script>
 
     <script src="~/Scripts/Fordelete.js"></script>
 </body>
 </html>
-
-

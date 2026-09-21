@@ -123,11 +123,12 @@
                     <span class="req">*</span>
                 </label>
                 @Html.TextBoxFor(m => m.U_USERNAME, new
-                {
-                    @class = "form-input-text",
-                    autocomplete = "off",
-                    placeholder = "Enter full name"
-                })
+                    {
+                        @class = "form-input-text",
+                        autocomplete = "off",
+                        placeholder = "Enter name",
+                        oninput = "this.value = this.value.replace(/[0-9]/g, '')"
+                    })
                 @Html.ValidationMessageFor(m => m.U_USERNAME, "", new { @class = "text-danger", style = "font-size:11px" })
             </div>
 
@@ -151,13 +152,15 @@
             <div class="form-group">
                 <label class="form-label" for="U_MOBILENO">
                     @Html.DisplayNameFor(m => m.U_MOBILENO)
+                    <span class="req">*</span>
                 </label>
                 @Html.TextBoxFor(m => m.U_MOBILENO, new
-                {
-                    @class = "form-input-text",
-                    autocomplete = "off",
-                    placeholder = "Enter mobile number"
-                })
+           {
+               @class = "form-input-num",
+               autocomplete = "off",
+               placeholder = "Enter mobile number",
+               style = "text-align: right;"
+           })
             </div>
 
             <!-- Sort Order -->
@@ -178,6 +181,7 @@
 <div class="form-group">
     <label class="form-label" for="LT_RECID">
         @Html.DisplayNameFor(m => m.LT_RECID)
+        <span class="req">*</span>
     </label>
     @Html.DropDownList("LT_RECID",
             (IEnumerable<SelectListItem>)ViewBag.LocationTypeList,

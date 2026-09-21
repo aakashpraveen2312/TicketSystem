@@ -223,14 +223,27 @@
     <!-- Product -->
     <div class="form-group">
         <label>Priority Type</label>
-        <select id="comboBox" name="Type" class="filter-input">
+        @Html.DropDownList(
+    "Type",
+    new List<SelectListItem>
+    {
+        new SelectListItem { Text = "-- Select Priority Type --", Value = "" },
+        new SelectListItem { Text = "All", Value = "All" },
+        new SelectListItem { Text = "Normal", Value = "Normal" },
+        new SelectListItem { Text = "Urgent", Value = "Urgent" },
+        new SelectListItem { Text = "Critical", Value = "Critical" },
+        new SelectListItem { Text = "Emergency", Value = "Emergency" }
+    },
+    new { id = "comboBox", @class = "filter-input" }
+)
+        @*<select id="comboBox" name="Type" class="filter-input">
             <option value="">-- Select Priority Type --</option>
             <option value="All">All</option>
             <option value="Normal">Normal</option>
             <option value="Urgent">Urgent</option>
             <option value="Critical">Critical</option>
             <option value="Emergency">Emergency</option>
-        </select>
+        </select>*@
     </div>
 
 </div>

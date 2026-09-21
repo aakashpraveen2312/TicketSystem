@@ -85,9 +85,21 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public ActionResult FortgotOTPVerify()
+        //public ActionResult FortgotOTPVerify()
+        //{
+        //    return View();
+        //}
+        //[HttpPost]
+        public ActionResult FortgotOTPVerify(string email)
         {
-            return View();
+            var model = new Forgotpassword();
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                model.Username = email;
+            }
+
+            return View(model);
         }
         [HttpPost]
         public async Task<ActionResult> FortgotOTPVerify(Forgotpassword forgotpassword)

@@ -1,51 +1,75 @@
-﻿
-let warningTimeout;
+﻿let warningTimeout;
 let logoutTimeout;
 let warningShown = false;
 
 function resetTimers() {
+
+    console.log("resetTimers called");
+
     clearTimeout(warningTimeout);
     clearTimeout(logoutTimeout);
 
-    // Refresh session
-    fetch('/InActivity/KeepSessionAlive', { method: 'POST' });
+    // Keep ASP.NET session alive
+    fetch('/InActivity/KeepSessionAlive', {
+        method: 'POST',
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            console.log("KeepSessionAlive:", response.status);
+        })
+        .catch(error => {
+            console.error("KeepSessionAlive error:", error);
+        });
 
-    // Clear warning toast if shown
+    // Clear warning if user becomes active
     if (warningShown) {
         toastr.clear();
         warningShown = false;
     }
 
-    // Start warning timer: 5 min
-    warningTimeout = setTimeout(showToastrWarning, 300000);
+    // Show warning after 2 minutes of inactivity
+    warningTimeout = setTimeout(showToastrWarning, 2 * 60 * 1000);
 }
 
 function showToastrWarning() {
-    warningShown = true;
-    toastr.warning('You will be logged out in 15 seconds due to inactivity.', 'Session Timeout', {
-        timeOut: 15000,
-        extendedTimeOut: 0,
-        closeButton: true,
-        onHidden: function () {
-            if (warningShown) {
-                logoutUser(); // only logout if user didn't interact
-            }
-        }
-    });
 
-    // Set logout fallback in case toast doesn't trigger onHidden 15 sec
-    logoutTimeout = setTimeout(logoutUser, 15000);
+    console.log("showToastrWarning called");
+
+    warningShown = true;
+
+    toastr.warning(
+        'You will be logged out in 30 seconds due to inactivity.',
+        'Session Timeout',
+        {
+            timeOut: 30000,
+            extendedTimeOut: 0,
+            closeButton: true
+        }
+    );
+
+    // Logout after 30 seconds
+    logoutTimeout = setTimeout(logoutUser, 30000);
 }
 
 function logoutUser() {
-    fetch('/InActivity/ClearSession', { method: 'POST' })
-        .then(() => location.href = '/Login/Index');
+
+    console.log("logoutUser called");
+
+    fetch('/InActivity/ClearSession', {
+        method: 'POST',
+        credentials: 'same-origin'
+    })
+        .then(() => {
+            location.href = '/Login/Index';
+        })
+        .catch(error => {
+            console.error("Logout error:", error);
+        });
 }
 
-// User activity events
 window.onload = resetTimers;
+
 document.onmousemove = resetTimers;
 document.onkeydown = resetTimers;
 document.onclick = resetTimers;
 document.onscroll = resetTimers;
-

@@ -1544,6 +1544,8 @@ namespace PSS_CMS.Controllers
                 return Json(new { status = "error", message = "Exception occurred: " + ex.Message });
             }
         }
+      
+        
         public async Task<ActionResult> ViewDetails(int ticketRecID)
         {
             ServiceInvoiceData invoiceData = new ServiceInvoiceData();
@@ -1617,6 +1619,69 @@ namespace PSS_CMS.Controllers
 
             return View(invoiceData);
         }
+
+
+        [HttpPost]
+        public async Task<ActionResult> CreateRazorPayOrder(decimal amount)
+        {
+            string APIKey = Session["APIKEY"].ToString();
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+
+            var CreateRazorPayOrderURL =
+                ConfigurationManager.AppSettings["CreateRazorPayOrderServicePayment"];
+            PaymentUpdate paymentupdate = new PaymentUpdate();
+            try
+            {
+                var content = $@"{{
+            ""CompanyRecID"": ""{Session["CompanyID"]}"",
+            ""InvoiceNumber"": ""{paymentupdate.TC_InvoiceNumber}"",
+            ""Amount"": ""{amount}""
+        }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(CreateRazorPayOrderURL),
+                    Method = HttpMethod.Post,
+                    Content = new StringContent(
+                        content,
+                        Encoding.UTF8,
+                        "application/json")
+                };
+
+                request.Headers.Add("X-Version", "1");
+
+                using (var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true
+                })
+                using (var client = new HttpClient(handler))
+                {
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                    var response =
+                        await client.SendAsync(request);
+
+                    var responseBody =
+                        await response.Content.ReadAsStringAsync();
+
+                    return Content(
+                        responseBody,
+                        "application/json");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    Status = "N",
+                    Message = ex.Message
+                });
+            }
+        }
+
+
 
 
         public async Task ComboBoxProduct(Tickets viewModel)

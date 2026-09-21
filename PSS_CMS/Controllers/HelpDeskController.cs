@@ -351,6 +351,10 @@ namespace PSS_CMS.Controllers
                     return Json(new { status = "error", Message = "Please enter the Subject" });
                 }
 
+                if (string.IsNullOrWhiteSpace(tickets.SelectedCustomer))
+                {
+                    return Json(new { status = "error", Message = "Please select the Customer" });
+                }
                 if (string.IsNullOrWhiteSpace(tickets.TC_PRIORITYTYPE))
                 {
                     return Json(new { status = "error", Message = "Please select the Priority Type" });
@@ -360,6 +364,8 @@ namespace PSS_CMS.Controllers
                 {
                     return Json(new { status = "error", Message = "Please select the Ticket Type" });
                 }
+                
+               
 
                 if (string.IsNullOrWhiteSpace(tickets.TC_COMMENTS))
                 {
@@ -514,7 +520,7 @@ namespace PSS_CMS.Controllers
                             //}
                             if (!string.IsNullOrEmpty(projectType))
                             {
-                                RecentTicketListall = RecentTicketListall.Where(t => t.P_RECID.ToString() == projectType).ToList();
+                                RecentTicketListall = RecentTicketListall.Where(t => t.TC_PRECID.ToString() == projectType).ToList();
                             }
 
                             if (!string.IsNullOrEmpty(StartDate) && !string.IsNullOrEmpty(EndDate))
@@ -769,6 +775,7 @@ namespace PSS_CMS.Controllers
                             Session["Subject"] = content.Data[0].TC_SUBJECT;
                             Session["TC_PRIORITYTYPE"] = content.Data[0].TC_PRIORITYTYPE;
                             Session["TC_TICKETTYPE"] = content.Data[0].TC_TICKETTYPE;
+                            Session["TC_PRECID"] = content.Data[0].TC_PRECID;
                         }
                     }
                 }
@@ -829,14 +836,67 @@ namespace PSS_CMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ClientResponseTicket(Reviewtickets tickets, HttpPostedFileBase myfile, string statusparam)
         {
-            var combox ="C";
+            //var combox ="C";
+            //changed by aakash 04/09/2026
+            var combox = tickets.Combo == "Re-open" ? "O" :
+                        (tickets.Combo == "Close" ? "C" : "S");
 
             try
             {
                 // Handle File Upload
                 string base64Image = ProcessFileUpload(Request.Files);
 
-                    var apiUrl = ConfigurationManager.AppSettings["UpdateComboresponseHD"];
+                if (combox == "O")
+                {
+                    var apiUrl = ConfigurationManager.AppSettings["ClientResponse"];
+                    string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                    string APIKey = Session["APIKEY"].ToString();
+
+                    var content = JsonConvert.SerializeObject(new
+                    {
+                        tC_URECID = Session["UserRECID"],
+                        tC_CRECID = Session["CompanyID"],
+                        //tC_PRECID = Session["ProjectID"] ?? Session["TC_PRECID"],
+                        tC_PRECID = Session["TC_PRECID"],
+                        tC_TICKETDATE = DateTime.Now.ToString("yyyy-MM-dd"),
+                        tC_SUBJECT = Session["Subject"],
+                        tC_OTP = "6757",
+                        tC_COMMENTS = HttpUtility.JavaScriptStringEncode(tickets.TC_COMMENTS),
+                        tC_REQUEST_ATTPREFIX = base64Image,
+                        tC_REQUEST_DATETIME = DateTime.Now.ToString("yyyy-MM-dd"),
+                        tC_STATUS = combox,
+                        tC_PRIORITYTYPE = Session["TC_PRIORITYTYPE"],
+                        tC_TICKETTYPE = Session["TC_TICKETTYPE"],
+                        tC_USERNAME = Session["REOPENUSERNAME"],
+                        tC_REFERENCETRECID = Session["ReferenceRecID"]
+                    });
+                    // Set up HTTP client with custom validation (for SSL certificates)
+                    var handler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                    };
+
+                    var client = new HttpClient(handler);
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                    var apiResponse = await SendApiRequest(apiUrl, content, HttpMethod.Post, APIKey, AuthKey);
+
+
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new { status = "Y", message = "Ticket reopened successfully!" });
+                    }
+
+                    else
+                    {
+                        return Json(new { status = "N", message = apiResponse.Message });
+                    }
+
+                }
+                else
+                {
+                    var apiUrl = ConfigurationManager.AppSettings["UpdateComboresponse"];
                     string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
                     string APIKey = Session["APIKEY"].ToString();
 
@@ -846,7 +906,8 @@ namespace PSS_CMS.Controllers
                         tC_RECID = Session["RECORDID"],
                         tC_CRECID = Session["CompanyID"],
                         tC_USERNAME = Session["REOPENUSERNAME"],
-                        tC_STATUS = combox
+                        tC_STATUS = combox,
+                        tC_SISTATUS = "YG"
                     });
                     // Set up HTTP client with custom validation (for SSL certificates)
                     var handler = new HttpClientHandler
@@ -870,12 +931,73 @@ namespace PSS_CMS.Controllers
                         return Json(new { status = "N", message = apiResponse.Message });
                     }
 
-                
+                }
             }
             catch (Exception ex)
             {
                 return Json(new { status = "Error", message = "Exception occurred: " + ex.Message });
             }
+
+
+            //var combo = tickets.Combo == "Re-open" ? "O" :
+            //  tickets.Combo == "Close" ? "C" :
+            //  tickets.Combo;
+            //try
+            //{
+            //    // Handle File Upload
+            //    string base64Image = ProcessFileUpload(Request.Files);
+
+            //        var apiUrl = ConfigurationManager.AppSettings["UpdateComboresponseHD"];
+            //        string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            //        string APIKey = Session["APIKEY"].ToString();
+
+
+            //        var content = JsonConvert.SerializeObject(new
+            //        {
+            //            tC_RECID = Session["RECORDID"],
+            //            tC_CRECID = Session["CompanyID"],
+            //            tC_USERNAME = Session["REOPENUSERNAME"],
+            //            tC_STATUS = combo
+            //        });
+            //        // Set up HTTP client with custom validation (for SSL certificates)
+            //        var handler = new HttpClientHandler
+            //        {
+            //            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            //        };
+
+            //        var client = new HttpClient(handler);
+            //        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+            //        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+            //        var apiResponse = await SendApiRequest(apiUrl, content, HttpMethod.Put, APIKey, AuthKey);
+
+
+            //        if (apiResponse.Status == "Y")
+            //        {
+            //            return Json(new { status = "Y", message = "Ticket closed successfully!" });
+            //        }
+
+            //        else
+            //        {
+            //            return Json(new { status = "N", message = apiResponse.Message });
+            //        }
+
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    return Json(new { status = "Error", message = "Exception occurred: " + ex.Message });
+            //}
+
+
+
+
+
+
+
+
+
+
+
         }
 
 

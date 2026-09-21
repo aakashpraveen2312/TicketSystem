@@ -1348,14 +1348,80 @@ namespace PSS_CMS.Controllers
                 .SetBorder(iText.Layout.Borders.Border.NO_BORDER);
         }
 
-        //Count
+        ////Count
+        //[HttpGet]
+        //public async Task<ActionResult> GetContractExpiryCount()
+        //{
+        //    try
+        //    {
+        //        int cmprecid = Convert.ToInt32(Session["CompanyID"]);
+
+        //        if (cmprecid == 0)
+        //        {
+        //            return Json(new
+        //            {
+        //                Status = "N",
+        //                Message = "Invalid Company ID"
+        //            }, JsonRequestBehavior.AllowGet);
+        //        }
+
+        //        string apiUrl = ConfigurationManager.AppSettings["GetContractExpiryCount"];
+        //        string authKey = ConfigurationManager.AppSettings["AuthKey"];
+        //        string apiKey = Session["APIKEY"]?.ToString();
+
+        //        string finalUrl = $"{apiUrl}?cmprecid={cmprecid}";
+
+        //        using (HttpClientHandler handler = new HttpClientHandler())
+        //        {
+        //            handler.ServerCertificateCustomValidationCallback +=
+        //                (sender, cert, chain, sslPolicyErrors) => true;
+
+        //            using (HttpClient client = new HttpClient(handler))
+        //            {
+        //                client.DefaultRequestHeaders.Add("ApiKey", apiKey);
+        //                client.DefaultRequestHeaders.Add("Authorization", authKey);
+        //                client.DefaultRequestHeaders.Accept.Add(
+        //                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //                var response = await client.GetAsync(finalUrl);
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    var jsonString = await response.Content.ReadAsStringAsync();
+        //                    var content = JsonConvert.DeserializeObject<ContractMasterObject>(jsonString);
+
+        //                    ViewBag.ExpiredContracts = content.ExpiredContracts;
+        //                    ViewBag.YetToExpireContracts = content.YetToExpireContracts;
+        //                }
+        //                if (!response.IsSuccessStatusCode)
+        //                {
+        //                    return Json(new
+        //                    {
+        //                        Status = "N",
+        //                        Message = response.ReasonPhrase
+        //                    }, JsonRequestBehavior.AllowGet);
+        //                }
+
+        //                var json = await response.Content.ReadAsStringAsync();
+        //                return Content(json, "application/json");
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new
+        //        {
+        //            Status = "N",
+        //            Message = ex.Message
+        //        }, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
+
         [HttpGet]
         public async Task<ActionResult> GetContractExpiryCount()
         {
             try
             {
                 int cmprecid = Convert.ToInt32(Session["CompanyID"]);
-
                 if (cmprecid == 0)
                 {
                     return Json(new
@@ -1368,7 +1434,6 @@ namespace PSS_CMS.Controllers
                 string apiUrl = ConfigurationManager.AppSettings["GetContractExpiryCount"];
                 string authKey = ConfigurationManager.AppSettings["AuthKey"];
                 string apiKey = Session["APIKEY"]?.ToString();
-
                 string finalUrl = $"{apiUrl}?cmprecid={cmprecid}";
 
                 using (HttpClientHandler handler = new HttpClientHandler())
@@ -1384,14 +1449,17 @@ namespace PSS_CMS.Controllers
                             new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await client.GetAsync(finalUrl);
+
                         if (response.IsSuccessStatusCode)
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var content = JsonConvert.DeserializeObject<ContractMasterObject>(jsonString);
 
-                            ViewBag.ExpiredContracts = content.ExpiredContracts;
-                            ViewBag.YetToExpireContracts = content.YetToExpireContracts;
+                            ViewBag.ActiveContracts = content.ActiveContracts;
+                            ViewBag.InactiveContracts = content.InactiveContracts;
+                            ViewBag.AboutToExpireContracts = content.AboutToExpireContracts;
                         }
+
                         if (!response.IsSuccessStatusCode)
                         {
                             return Json(new
@@ -1415,8 +1483,6 @@ namespace PSS_CMS.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
-
-
         public async Task<ActionResult> SendContractExpiryMails()
         {
             try
@@ -1432,7 +1498,7 @@ namespace PSS_CMS.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
 
-                string apiUrl = ConfigurationManager.AppSettings["SendContractExpiryMails"];
+                string apiUrl = ConfigurationManager.AppSettings["SendContractExpiryMail"];
                 string authKey = ConfigurationManager.AppSettings["AuthKey"];
                 string apiKey = Session["APIKEY"]?.ToString();
 
@@ -2026,7 +2092,7 @@ namespace PSS_CMS.Controllers
         }
 
         public async Task<ActionResult> ContractProductList(string searchPharse,int ? CT_RECID,string ProductName,int? CT_URECID,string CT_EXISTINGUSER,string CT_CUSTOMERNAME)
-        {
+       {
             if (CT_CUSTOMERNAME != null)
             {
               
@@ -2097,28 +2163,61 @@ namespace PSS_CMS.Controllers
                             var content = JsonConvert.DeserializeObject<RootObjectsContract>(jsonString);
                             contractsList = content.Data ?? new List<Contract>();
 
-                            if (contractsList.Count > 0)
+                            if (!string.IsNullOrWhiteSpace(searchPharse))
+                            {
+                                searchPharse = searchPharse.Trim();
+
+                                contractsList = contractsList
+                                    .Where(r =>
+                                        (!string.IsNullOrEmpty(r.CP_CONTRACTREF) &&
+                                         r.CP_CONTRACTREF.IndexOf(
+                                             searchPharse,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+
+                                        ||
+
+                                        r.CP_CONTRACTAMOUNT.ToString()
+                                            .IndexOf(
+                                                searchPharse,
+                                                StringComparison.OrdinalIgnoreCase) >= 0
+
+                                        ||
+
+                                        r.CP_CONTRACTCREATEDBY.ToString()
+                                            .IndexOf(
+                                                searchPharse,
+                                                StringComparison.OrdinalIgnoreCase) >= 0
+
+                                        ||
+
+                                        r.CP_CONTRACTAPPROVEDBY.ToString()
+                                            .IndexOf(
+                                                searchPharse,
+                                                StringComparison.OrdinalIgnoreCase) >= 0
+
+                                        ||
+
+                                        r.CP_CONTRACTAPPROVEDDATE.ToString()
+                                            .IndexOf(
+                                                searchPharse,
+                                                StringComparison.OrdinalIgnoreCase) >= 0
+                                    )
+                                    .ToList();
+                            }
+
+
+                            if (contractsList != null && contractsList.Count > 0)
                             {
                                 // Assign serial numbers
                                 for (int i = 0; i < contractsList.Count; i++)
                                 {
-                                    contractsList[i].SerialNumber = i + 1;
+                                    if (contractsList[i] != null)
+                                    {
+                                        contractsList[i].SerialNumber = i + 1;
+                                    }
                                 }
                             }
-                            if (!string.IsNullOrEmpty(searchPharse))
-                            {
-                                contractsList = contractsList
-                                    .Where(r => r.CP_CONTRACTREF.ToLower().Contains(searchPharse.ToLower()) ||
-                                 
-                                   r.CP_CONTRACTAMOUNT.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-                                  
-                                   r.CP_CONTRACTCREATEDBY.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-                                   r.CP_CONTRACTAPPROVEDBY.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-                                  
-                                   r.CP_CONTRACTAPPROVEDDATE.ToString().ToLower().Contains(searchPharse.ToLower()))
-                                    .ToList();
 
-                            }
 
                         }
                         else
@@ -2263,6 +2362,292 @@ namespace PSS_CMS.Controllers
 
         }
 
+        public async Task<ActionResult> RenewalContract(int? CP_RECID, string ProductName,int? CT_CPRECID,int? CP_CTURECID,string CP_USERTYPE,decimal CP_PAIDAMOUNT,decimal CP_BALANACEAMOUNT,decimal CP_TOTALAMOUNT)
+        {
+
+            Session["CP_USERTYPE"] = CP_USERTYPE;
+            Session["CP_CTURECID"] = CP_CTURECID;
+            //Session["CT_CPRECID"] = CT_CPRECID;
+            Session["CP_RECID"] = CP_RECID;
+            //Session["ProductName"] = ProductName;
+            //Session["CP_PAIDAMOUNT"] = CP_PAIDAMOUNT;
+            //Session["CP_TOTALAMOUNT"] = CP_TOTALAMOUNT;
+            //Session["CP_BALANACEAMOUNT"] = CP_BALANACEAMOUNT;
+            string WEBURLGETBYID = ConfigurationManager.AppSettings["RenewalProductContract"];
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+            string APIKey = Session["APIKEY"].ToString();
+            Contract contract = null;
+
+            string strparams = "recID=" + CP_RECID + "&cmprecid=" + Session["CompanyID"];
+            string finalurl = WEBURLGETBYID + "?" + strparams;
+
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                        client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = await client.GetAsync(finalurl);
+                        //if (response.IsSuccessStatusCode)
+                        //{
+                        //    var jsonString = await response.Content.ReadAsStringAsync();
+                        //    var content = JsonConvert.DeserializeObject<ContractMasterObject>(jsonString);
+                        //    contract = content.Data;
+                        //    Session["CT_ATTACHMENT"] = content.Data.CT_ATTACHMENT;
+                        //    contract.CT_CONTRACTREFERENCENUMBER = content.Data.CP_CODE;
+                        //    contract.CP_CODE = "Auto Code";
+                        //    contract.CT_TODATE = content.Data.CP_FROMDATE;
+                        //    contract.CT_FROMDATE = content.Data.CP_TODATE;
+                        //    contract.CT_CONTRACTAPPROVEDBY = content.Data.CP_CONTRACTAPPROVEDBY;
+                        //    contract.CT_CONTRACTCREATEDBY = content.Data.CP_CONTRACTCREATEDBY;
+                        //    contract.CT_CONTRACTAPPROVEDDATE = content.Data.CP_CONTRACTAPPROVEDDATE;
+                        //    contract.CT_CONTRACTAMOUNT = content.Data.CP_CONTRACTAMOUNT;
+                        //}
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var jsonString = await response.Content.ReadAsStringAsync();
+
+                            var content = JsonConvert.DeserializeObject<ContractMasterObject>(jsonString);
+
+                            if (content != null && content.Data != null)
+                            {
+                                contract = content.Data;
+
+                                Session["CT_ATTACHMENT"] = content.Data.CT_ATTACHMENT;
+
+                                contract.CT_CONTRACTREFERENCENUMBER = content.Data.CP_CODE;
+                                contract.CP_CODE = "Auto Code";
+
+                                // Original contract dates
+                                DateTime cpFromDate = Convert.ToDateTime(content.Data.CP_FROMDATE);
+                                DateTime cpToDate = Convert.ToDateTime(content.Data.CP_TODATE);
+
+                                // Calculate the contract duration
+                                int contractYears = cpToDate.Year - cpFromDate.Year;
+
+                                // Renewal starts exactly from previous contract To Date
+                                DateTime newFromDate = cpToDate;
+
+                                // Add the same contract duration
+                                DateTime newToDate = newFromDate.AddYears(contractYears);
+
+                                // Store as string for the model
+                                contract.CT_FROMDATE = newFromDate.ToString("yyyy-MM-dd");
+                                contract.CT_TODATE = newToDate.ToString("yyyy-MM-dd");
+
+                                contract.CT_CONTRACTAPPROVEDBY =
+                                    content.Data.CP_CONTRACTAPPROVEDBY;
+
+                                contract.CT_CONTRACTCREATEDBY =
+                                    content.Data.CP_CONTRACTCREATEDBY;
+
+                                contract.CT_CONTRACTAPPROVEDDATE =
+                                    content.Data.CP_CONTRACTAPPROVEDDATE;
+
+                                contract.CT_CONTRACTAMOUNT =
+                                    content.Data.CP_CONTRACTAMOUNT;
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Exception occured: " + ex.Message);
+            }
+       
+            
+            
+            
+            //int productid = contract.CP_PRECID;
+            //await LoadProductCombo(contract.CP_PRECID);
+            //await ComboCustomerSelection();
+            return View(contract);
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> RenewContract(Contract model)
+        {
+            try
+            {
+                // ---------------------------------------------------------
+                // 1. Get required values from Session
+                // ---------------------------------------------------------
+
+                if (Session["CP_RECID"] == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Contract information is missing."
+                    });
+                }
+
+                int cpRecId = Convert.ToInt32(Session["CP_RECID"]);
+
+                string apiUrl = ConfigurationManager.AppSettings["CreateContractNewVersion"];
+                string authKey = ConfigurationManager.AppSettings["AuthKey"];
+                string apiKey = Session["APIKEY"]?.ToString();
+
+                if (string.IsNullOrWhiteSpace(apiKey))
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "API Key is missing."
+                    });
+                }
+
+
+                // ---------------------------------------------------------
+                // 2. Create API request object
+                // ---------------------------------------------------------
+
+                var requestData = new
+                {
+                    CP_RECID = cpRecId,
+
+                    // New renewal values
+                    CP_FROMDATE = model.CT_FROMDATE,
+                    CP_TODATE = model.CT_TODATE,
+
+                    CP_CONTRACTAMOUNT = model.CT_CONTRACTAMOUNT,
+
+                    CP_CONTRACTAPPROVEDBY = model.CT_CONTRACTAPPROVEDBY,
+                    CP_CONTRACTCREATEDBY = model.CT_CONTRACTCREATEDBY,
+                    CP_CONTRACTAPPROVEDDATE = model.CT_CONTRACTAPPROVEDDATE,
+
+                    CP_TENTATIVEHIKEPERCENTAGE =
+                        model.CT_TENTATIVEHIKEPERCENTAGE,
+
+                    CP_CRECID =
+                        Convert.ToInt32(Session["CompanyID"]),
+
+                    CP_CTURECID =
+                        Session["CP_CTURECID"] != null
+                            ? Convert.ToInt32(Session["CP_CTURECID"])
+                            : 0,
+
+                    CP_USERTYPE =
+                        Session["CP_USERTYPE"]?.ToString(),
+
+                    CP_PAIDAMOUNT =
+                        Session["CP_PAIDAMOUNT"] != null
+                            ? Convert.ToDecimal(Session["CP_PAIDAMOUNT"])
+                            : 0
+                };
+
+
+                // ---------------------------------------------------------
+                // 3. Serialize request
+                // ---------------------------------------------------------
+
+                string json = JsonConvert.SerializeObject(requestData);
+
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    handler.ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true;
+
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        client.DefaultRequestHeaders.Add(
+                            "ApiKey",
+                            apiKey);
+
+                        client.DefaultRequestHeaders.Add(
+                            "Authorization",
+                            authKey);
+
+                        client.DefaultRequestHeaders.Accept.Add(
+                            new MediaTypeWithQualityHeaderValue(
+                                "application/json"));
+
+
+                        // -------------------------------------------------
+                        // 4. POST to API
+                        // -------------------------------------------------
+
+                        var content = new StringContent(
+                            json,
+                            Encoding.UTF8,
+                            "application/json");
+
+                        var response = await client.PostAsync(
+                            apiUrl,
+                            content);
+
+
+                        // -------------------------------------------------
+                        // 5. Read API response
+                        // -------------------------------------------------
+
+                        string responseBody =
+                            await response.Content.ReadAsStringAsync();
+
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message =
+                                    "API Error: " + responseBody
+                            });
+                        }
+
+
+                        // -------------------------------------------------
+                        // 6. Deserialize API response
+                        // -------------------------------------------------
+
+                        dynamic apiResponse =
+                            JsonConvert.DeserializeObject(responseBody);
+
+
+                        if (apiResponse.Status == "Y")
+                        {
+                            return Json(new
+                            {
+                                success = true,
+                                message =
+                                    (string)apiResponse.Message
+                            });
+                        }
+
+
+                        return Json(new
+                        {
+                            success = false,
+                            message =
+                                (string)apiResponse.Message
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
         public async Task<ActionResult> EditContractProduct(int? CP_RECID, string ProductName,int? CT_CPRECID,int? CP_CTURECID,string CP_USERTYPE,decimal CP_PAIDAMOUNT,decimal CP_BALANACEAMOUNT,decimal CP_TOTALAMOUNT)
         {
 
@@ -2322,6 +2707,9 @@ namespace PSS_CMS.Controllers
             //await ComboCustomerSelection();
             return View(contract);
         }
+      
+        
+        
         [HttpPost]
         public async Task<ActionResult> EditContractProduct(Contract contract, HttpPostedFileBase Attachment)
         {
@@ -2493,7 +2881,7 @@ namespace PSS_CMS.Controllers
         }
 
 
-        public async Task<ActionResult> ContractInvoice(int? CP_CTURECID, int? CP_CRECID)
+        public async Task<ActionResult> ContractInvoice(int? CP_CTURECID, int? CP_CRECID,int CP_RECID)
         {
             var Weburl = ConfigurationManager.AppSettings["ContractPDF"];
 
@@ -2501,7 +2889,7 @@ namespace PSS_CMS.Controllers
             string APIKey = Session["APIKEY"]?.ToString();
 
 
-            string url = $"{Weburl}?cmprecid={CP_CRECID}&userid={CP_CTURECID}";
+            string url = $"{Weburl}?cmprecid={CP_CRECID}&userid={CP_CTURECID}&CP_RECID={CP_RECID}";
 
             try
             {
@@ -2711,6 +3099,71 @@ namespace PSS_CMS.Controllers
                             var content = JsonConvert.DeserializeObject<RootObjectsContract>(jsonString);
                             contractsList = content.Data;
 
+
+                            // SEARCH
+                            if (!string.IsNullOrWhiteSpace(searchPharse))
+                            {
+                                searchPharse = searchPharse.Trim();
+
+                                contractsList = contractsList
+                                    .Where(r =>
+                                        // Contract Reference
+                                        (!string.IsNullOrEmpty(r.CP_CONTRACTREF) &&
+                                         r.CP_CONTRACTREF.IndexOf(
+                                             searchPharse,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+
+                                        ||
+
+                                        // Contract Amount
+                                        (r.CP_CONTRACTAMOUNT != null &&
+                                         r.CP_CONTRACTAMOUNT.ToString()
+                                             .IndexOf(
+                                                 searchPharse,
+                                                 StringComparison.OrdinalIgnoreCase) >= 0)
+
+                                        ||
+
+                                        // Created By
+                                        (r.CP_CONTRACTCREATEDBY != null &&
+                                         r.CP_CONTRACTCREATEDBY.ToString()
+                                             .IndexOf(
+                                                 searchPharse,
+                                                 StringComparison.OrdinalIgnoreCase) >= 0)
+
+                                        ||
+
+                                        // Approved By
+                                        (r.CP_CONTRACTAPPROVEDBY != null &&
+                                         r.CP_CONTRACTAPPROVEDBY.ToString()
+                                             .IndexOf(
+                                                 searchPharse,
+                                                 StringComparison.OrdinalIgnoreCase) >= 0)
+
+                                        ||
+                                        // Code
+                                        (r.CP_CODE != null &&
+                                         r.CP_CODE.ToString()
+                                             .IndexOf(
+                                                 searchPharse,
+                                                 StringComparison.OrdinalIgnoreCase) >= 0)
+
+                                        ||
+
+                                        // Approved Date
+                                        (r.CP_CONTRACTAPPROVEDDATE != null &&
+                                         r.CP_CONTRACTAPPROVEDDATE.ToString()
+                                             .IndexOf(
+                                                 searchPharse,
+                                                 StringComparison.OrdinalIgnoreCase) >= 0)
+                                    )
+                                    .ToList();
+                            }
+
+
+
+
+
                             if (contractsList.Count > 0)
                             {
                                 // Assign serial numbers
@@ -2719,20 +3172,7 @@ namespace PSS_CMS.Controllers
                                     contractsList[i].SerialNumber = i + 1;
                                 }
                             }
-                            if (!string.IsNullOrEmpty(searchPharse))
-                            {
-                                contractsList = contractsList
-                                    .Where(r => r.CP_CONTRACTREF.ToLower().Contains(searchPharse.ToLower()) ||
-
-                                   r.CP_CONTRACTAMOUNT.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-
-                                   r.CP_CONTRACTCREATEDBY.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-                                   r.CP_CONTRACTAPPROVEDBY.ToString().ToLower().Contains(searchPharse.ToLower()) ||
-
-                                   r.CP_CONTRACTAPPROVEDDATE.ToString().ToLower().Contains(searchPharse.ToLower()))
-                                    .ToList();
-
-                            }
+                           
 
                         }
                         else
@@ -2807,6 +3247,159 @@ namespace PSS_CMS.Controllers
         }
 
 
-    }
+        //ContractRenewalNotification
 
+        [HttpGet]
+        public async Task<ActionResult> ContractRenewalNotification()
+        {
+            
+                var URL = ConfigurationManager.AppSettings["ContractRenewalNotification"];
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+                List<Tickethistory> ContractNotification = new List<Tickethistory>();
+
+                string strparams = "cmprecid=" + Session["CompanyID"];
+                string finalurl = URL + "?" + strparams;
+                try
+                {
+
+
+                  
+                    using (HttpClientHandler handler = new HttpClientHandler())
+                    {
+                        handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                        using (HttpClient client = new HttpClient(handler))
+                        {
+                            client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                            client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+                            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                            var response = await client.GetAsync(finalurl);
+
+
+                            if (response.IsSuccessStatusCode)
+                            {
+                                var jsonString = await response.Content.ReadAsStringAsync();
+                                //GlobalVariables.ResponseStructure = jsonString;
+                                var content = JsonConvert.DeserializeObject<ApiResponseTicketsHistoryResponse>(jsonString);
+                                ContractNotification = content.Data;
+
+
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+
+                            }
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception occurred: {ex.Message}");
+                }
+                return View(ContractNotification);
+
+        }
+    
+
+            [HttpPost]
+            public async Task<ActionResult> CompleteTicket(int Recid)
+              {
+            try
+            {
+                var CompleteTicketURL = ConfigurationManager.AppSettings["COMPLETETICKET"];
+
+                string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+                string APIKey = Session["APIKEY"].ToString();
+
+                var contentObject = new
+                {
+                    Recid = Recid
+                };
+
+                var content = JsonConvert.SerializeObject(contentObject);
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(CompleteTicketURL),
+                    Method = HttpMethod.Post,
+                    Headers =
+    {
+        { "X-Version", "1" },
+        { HttpRequestHeader.Accept.ToString(), "application/json, application/xml" }
+    },
+                    Content = new StringContent(
+                        content,
+                        Encoding.UTF8,
+                        "application/json"
+                    )
+                };
+
+                // HTTP Client Handler
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+
+                // Add API Headers
+                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                // Send Request
+                var response = await client.SendAsync(request);
+
+                // Check Response
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    var apiResponse =
+                        JsonConvert.DeserializeObject<UserGroupObjects>(responseBody);
+
+                    if (apiResponse.Status == "Y")
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            message = apiResponse.Message
+                        });
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = apiResponse.Message
+                        });
+                    }
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Error: Something went wrong."
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Exception: " + ex.Message
+                });
+            }
+        }
+
+
+    
+    }
 }

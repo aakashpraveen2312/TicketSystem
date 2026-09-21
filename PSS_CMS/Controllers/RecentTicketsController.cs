@@ -93,7 +93,7 @@ namespace PSS_CMS.Controllers
                             // Apply Project Type Filter
                             if (!string.IsNullOrEmpty(projectType))
                             {
-                                RecentTicketList = RecentTicketList.Where(t => t.P_RECID.ToString() == projectType).ToList();
+                                RecentTicketList = RecentTicketList.Where(t => t.TC_PRECID.ToString() == projectType).ToList();
                             }
 
                             // Apply Ticket Type Filter
@@ -299,7 +299,7 @@ namespace PSS_CMS.Controllers
                     }
                     else
                     {
-                        return Json(new { success = false, message = "Submission failed. Please try again." });
+                        return Json(new { success = false, message = apiResponse.Message });
                     }
                 }
                 else

@@ -1,0 +1,130 @@
+﻿@model PSS_CMS.Models.ContractInvoiceHeader
+
+@{ ViewData["Title"] = "Edit Invoice";
+    ViewBag.PageTitle = "Edit Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-receipt nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("List", "SMContractInvoiceHeader",new { companyId=  Session["companyId"],CIH_CONTRACTRECID = Session["CIH_CONTRACTRECID"] })">Contract Invoice </a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Edit</span>
+</div>
+
+@using (Html.BeginForm("EditInvoice", "SMContractInvoiceHeader", FormMethod.Post, new { id = "createform", @class = "no-preloader" }))
+{
+@Html.AntiForgeryToken()
+
+                <div class="page-card">
+
+                    <!-- Header -->
+                    <div class="page-card-header">
+                        <h6 class="page-card-title">
+                            <span class="title-icon">
+                                <i class="bi bi-plus-circle"></i>
+                            </span>
+                            Edit Invoice
+                        </h6>
+                    </div>
+
+                    <!-- Form Body -->
+                    <div class="form-body">
+
+                        <p class="form-section-title">Invoice Information</p>
+
+                        <div class="form-grid">
+
+                            <!-- Invoice No -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    @Html.DisplayNameFor(m => m.CIH_INVOICENO)
+                                    <span class="req">*</span>
+                                </label>
+
+                                @Html.TextBoxFor(m => m.CIH_INVOICENO, new
+                                {
+                                    @class = "form-input-text",
+                                    autocomplete = "off",
+                                    placeholder = "Enter invoice number"
+                                })
+
+                            </div>
+
+                            <!-- Invoice Date -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    @Html.DisplayNameFor(m => m.CIH_INVOICEDATE)
+                                    <span class="req">*</span>
+                                </label>
+
+                                @Html.TextBoxFor(m => m.CIH_INVOICEDATE, "{0:yyyy-MM-ddTHH:mm}", new
+                                {
+                                    @class = "form-input-text",
+                                    type = "datetime-local",
+                                    autocomplete = "off"
+                                })
+
+                            </div>
+
+                            <!-- Invoice Amount -->
+                            <div class="form-group">
+
+                            </div>
+                            @Html.HiddenFor(m => m.CIH_STATUS)
+
+
+                        </div>
+
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="legend-bar">
+
+                        <div class="legend-item">
+                            <span class="field-dot dot-text"></span>
+                            <span>Text Field</span>
+                        </div>
+
+                        <div class="legend-item">
+                            <span class="field-dot dot-num"></span>
+                            <span>Number Field</span>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="form-actions">
+                        <a href="@Url.Action("List", "SMContractInvoiceHeader",new { companyId=  Session["companyId"],CIH_CONTRACTRECID = Session["CIH_CONTRACTRECID"] })" class="btn-cancel">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn-save" id="savebutton">
+                            <i class="bi bi-floppy"></i> Save
+                        </button>
+                    </div>
+
+                </div>}
+
+@section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>$(document).ready(function () {
+
+            $("#createform").submit(function () {
+
+                $("#savebutton")
+                    .prop("disabled", true)
+                    .html('<i class="bi bi-hourglass-split"></i> Saving...');
+
+            });
+
+        });</script>
+
+}
+

@@ -145,8 +145,8 @@
                 contentType: false,
                 success: function (response) {
                     Swal.fire({
-                        icon: response.success ? "success" : "error",
-                        title: response.success ? "Success!" : "Error!",
+                        icon: response.success ? "success" : "info",
+                        title: response.success ? "Success!" : "Message!",
                         text: response.message || (response.success
                             ? "Response submitted successfully!"
                             : "Submission failed. Please try again."),
@@ -164,8 +164,8 @@
                 },
                 error: function (xhr) {
                     Swal.fire({
-                        icon: "error",
-                        title: "Error!",
+                        icon: "info",
+                        title: "Message!",
                         text: xhr.responseJSON && xhr.responseJSON.message
                             ? xhr.responseJSON.message
                             : "Something went wrong. Please try again.",

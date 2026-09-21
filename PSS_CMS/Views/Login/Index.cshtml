@@ -255,7 +255,7 @@
     </div>
     @*<div id="loadingScreen"><div class="loader"></div></div>*@
 
-    @{
+    @*@{
         var sessionMsg = TempData["SessionExpired"] as string;
         if (!string.IsNullOrEmpty(sessionMsg))
         {
@@ -266,14 +266,14 @@
                 });
             </script>
         }
-    }
+    }*@
 
     <div class="page-wrap">
         <div class="login-card">
 
             <!-- ════ LEFT ════ -->
             <div class="left-panel">
-                <div class="scene-label">Service Management</div>
+                <div class="scene-label">TICKET SYSTEM</div>
                 <div class="illus-wrap">
                     <svg width="100%" viewBox="0 0 680 480" role="img" xmlns="http://www.w3.org/2000/svg">
                         <title>Support Ticket Management</title>
@@ -603,14 +603,14 @@
             </text>
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('loadingScreen').style.display = 'flex';
-        });
-        window.addEventListener('load', function () {
-            setTimeout(function () {
-                document.getElementById('loadingScreen').style.display = 'none';
-            }, 450);
-        });
+        //document.addEventListener('DOMContentLoaded', function () {
+        //    document.getElementById('loadingScreen').style.display = 'flex';
+        //});
+        //window.addEventListener('load', function () {
+        //    setTimeout(function () {
+        //        document.getElementById('loadingScreen').style.display = 'none';
+        //    }, 450);
+        //});
 
         setTimeout(function () { window.history.forward(); }, 0);
     </script>
@@ -698,11 +698,11 @@
         });
     </script>
 
-    <script>
+    @*<script>
         document.getElementById('loginForm').addEventListener('submit', function () {
             document.getElementById('loginLoader').classList.add('active');
         });
-  </script> 
+  </script>*@ 
  
 
    

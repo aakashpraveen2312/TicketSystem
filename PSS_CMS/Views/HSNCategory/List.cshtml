@@ -42,26 +42,26 @@
             <!-- Search -->
 
             @using (Html.BeginForm(
-                "List",
-                "HSNCategory",
-                FormMethod.Get,
-                new { id = "searchForm" }))
+     "List",
+     "HSNCategory",
+     FormMethod.Get,
+     new { id = "searchForm" }))
             {
                 <div class="search-box">
 
                     <i class="bi bi-search"></i>
 
                     <input type="text"
-                           id="searchPharse"
-                           name="searchPharse"
+                           id="searchPhrase"
+                           name="searchPhrase"
                            placeholder="Search"
                            autocomplete="off"
-                           value="@Request["searchPharse"]"
+                           value="@Request["searchPhrase"]"
                            onkeyup="autoSubmitSearch(this)" />
 
-                    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
+                    @if (!string.IsNullOrEmpty(Request["searchPhrase"]))
                     {
-                        <a href="@Url.Action("List","HSNCategory")"
+                        <a href="@Url.Action("List", "HSNCategory")"
                            title="Clear">
 
                             <i class="bi bi-x-circle text-muted"></i>
@@ -71,7 +71,6 @@
 
                 </div>
             }
-
             <!-- Add -->
 
             <a href="@Url.Action("Create", "HSNCategory")"

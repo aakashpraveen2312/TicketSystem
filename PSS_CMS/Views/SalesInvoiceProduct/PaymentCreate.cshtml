@@ -81,86 +81,110 @@
 
     @using (Html.BeginForm("PaymentCreate", "SalesInvoiceProduct", FormMethod.Post, new { id = "paymentform", @class = "no-preloader" }))
     {<!-- ── 2-column field grid ── -->
-                <div class="pay-grid">
+        <div class="pay-grid">
 
-                    <!-- Row 1 -->
-                    <div class="pay-group">
-                        @Html.LabelFor(m => m.PP_INVOICENUMBER, new { @class = "pay-label" })
-                        @Html.EditorFor(m => m.PP_INVOICENUMBER, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
-                    </div>
+            <!-- Row 1 -->
+            <div class="pay-group">
+                @Html.LabelFor(m => m.PP_INVOICENUMBER, new { @class = "pay-label" })
+                @Html.EditorFor(m => m.PP_INVOICENUMBER, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly" } })
+            </div>
 
-                    <div class="pay-group">
-                        @Html.LabelFor(m => m.PP_INVOICEDATE, new { @class = "pay-label" })
-                        @Html.EditorFor(m => m.PP_INVOICEDATE, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", type = "date", @readonly = "readonly" } })
-                    </div>
+            <div class="pay-group">
+                @Html.LabelFor(m => m.PP_INVOICEDATE, new { @class = "pay-label" })
+                @Html.EditorFor(m => m.PP_INVOICEDATE, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", type = "date", @readonly = "readonly" } })
+            </div>
 
-                    <!-- Row 2 -->
-                    <div class="pay-group">
-                        <label class="pay-label">
-                            @Html.LabelFor(m => m.PP_MODEOFPAYMENT)
-                            <span class="req">*</span>
-                        </label>
-                        @Html.DropDownListFor(m => m.PP_MODEOFPAYMENT,
-                                 new List<SelectListItem>
-                                 {
-                        new SelectListItem { Text = "Select Payment Mode", Value = "" },
-                        new SelectListItem { Text = "Cash", Value = "Cash" },
-                        new SelectListItem { Text = "UPI",  Value = "UPI"  },
-                        new SelectListItem { Text = "Bank Transfer", Value = "Bank Transfer" },
-                        new SelectListItem { Text = "Cheque", Value = "Cheque" }
-                         },
-                                 new { @class = "form-select-input" })
-                    </div>
+            <!-- Row 2 -->
+            <div class="pay-group">
+                <label class="pay-label">
+                    @Html.LabelFor(m => m.PP_MODEOFPAYMENT)
+                    <span class="req">*</span>
+                </label>
+                @Html.DropDownListFor(m => m.PP_MODEOFPAYMENT,
+                         new List<SelectListItem>
+                         {
+                new SelectListItem { Text = "Select Payment Mode", Value = "" },
+                new SelectListItem { Text = "Cash", Value = "Cash" },
+                new SelectListItem { Text = "UPI",  Value = "UPI"  },
+                new SelectListItem { Text = "Bank Transfer", Value = "Bank Transfer" },
+                new SelectListItem { Text = "Cheque", Value = "Cheque" },
+                new SelectListItem { Text = "RazorPay", Value = "RazorPay" }
+                 },
+                         new { @class = "form-select-input" })
+            </div>
 
-                    <div class="pay-group">
-                        <label class="pay-label">
-                            @Html.LabelFor(m => m.PP_DATEOFPAYMENT)
-                            <span class="req">*</span>
-                        </label>
-                        @Html.EditorFor(m => m.PP_DATEOFPAYMENT, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", type = "date" } })
-                    </div>
+            <div class="pay-group">
+                <label class="pay-label">
+                    @Html.LabelFor(m => m.PP_DATEOFPAYMENT)
+                    <span class="req">*</span>
+                </label>
+                @*@Html.EditorFor(m => m.PP_DATEOFPAYMENT, new { htmlAttributes = new { @class = "form-input-text", autocomplete = "off", type = "date" } })*@
 
-                    <!-- Row 3 -->
-                    <div class="pay-group">
-                        @Html.LabelFor(m => m.PP_SOFARPAID, new { @class = "pay-label" })
-                        @Html.EditorFor(m => m.PP_SOFARPAID, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", placeholder = "0.00", @readonly = "readonly", id = "SoFarPaid" } })
-                    </div>
+                @Html.EditorFor(
+        m => m.PP_DATEOFPAYMENT,
+        new
+        {
+            htmlAttributes = new
+            {
+                @class = "form-input-text",
+                autocomplete = "off",
+                type = "date",
+                max = DateTime.Today.ToString("yyyy-MM-dd")
+            }
+        })
 
-                    <div class="pay-group">
-                        @Html.LabelFor(m => m.PP_TOTALAMOUNT, new { @class = "pay-label" })
-                        @Html.EditorFor(m => m.PP_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly", id = "TotalAmount" } })
-                    </div>
 
-                    <!-- Row 4 -->
-                    <div class="pay-group">
-                        <label class="pay-label">
-                            @Html.LabelFor(m => m.PP_PAIDAMOUNT)
-                            <span class="req">*</span>
-                        </label>
-                        @Html.EditorFor(m => m.PP_PAIDAMOUNT, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", id = "PaidAmount", placeholder = "0.00" } })
-                    </div>
+            </div>
 
-                    <div class="pay-group">
-                        @Html.LabelFor(m => m.PP_BALANCEAMOUNT, new { @class = "pay-label" })
-                        @Html.EditorFor(m => m.PP_BALANCEAMOUNT, new { htmlAttributes = new { @class = "form-input-auto",  autocomplete = "off", id = "BalanceAmount", @readonly = "readonly" } })
-                    </div>
+            <!-- Row 3 -->
+            <div class="pay-group">
+                @Html.LabelFor(m => m.PP_SOFARPAID, new { @class = "pay-label" })
+                @Html.EditorFor(m => m.PP_SOFARPAID, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", placeholder = "0.00", @readonly = "readonly", id = "SoFarPaid" } })
+            </div>
 
-                    <!-- Row 5 — Payment Status (full width) -->
-                    <div class="pay-group">
-                        @Html.LabelFor(m => m.PP_PAYMENTSTATUS, new { @class = "pay-label" })
-                        @Html.EditorFor(m => m.PP_PAYMENTSTATUS, new { htmlAttributes = new { @class = "form-input-auto",  autocomplete = "off", id = "PaymentStatus", @readonly = "readonly" } })
-                        <span class="auto-badge"><i class="bi bi-info-circle"></i> Auto-updated</span>
-                    </div>
+            <div class="pay-group">
+                @Html.LabelFor(m => m.PP_TOTALAMOUNT, new { @class = "pay-label" })
+                @Html.EditorFor(m => m.PP_TOTALAMOUNT, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", @readonly = "readonly", id = "TotalAmount" } })
+            </div>
 
-                </div> <!-- ── Actions ── -->
-                                                <div class="pay-actions">
-                                                    <a href="@Url.Action("PaymentList", "SalesInvoiceProduct")" class="btn-cancel">
-                                                        <i class="bi bi-x-lg"></i> Cancel
-                                                    </a>
-                                                    <button type="submit" class="btn-save" id="savebutton">
-                                                        <i class="bi bi-floppy"></i> Update Payment
-                                                    </button>
-                                                </div>}
+            <!-- Row 4 -->
+            <div class="pay-group">
+                <label class="pay-label">
+                    @Html.LabelFor(m => m.PP_PAIDAMOUNT)
+                    <span class="req">*</span>
+                </label>
+                @Html.EditorFor(m => m.PP_PAIDAMOUNT, new { htmlAttributes = new { @class = "form-input-num", autocomplete = "off", id = "PaidAmount", placeholder = "0.00" } })
+            </div>
+
+            <div class="pay-group">
+                @Html.LabelFor(m => m.PP_BALANCEAMOUNT, new { @class = "pay-label" })
+                @Html.EditorFor(m => m.PP_BALANCEAMOUNT, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", id = "BalanceAmount", @readonly = "readonly" } })
+            </div>
+
+            <!-- Row 5 — Payment Status (full width) -->
+            <div class="pay-group">
+                @Html.LabelFor(m => m.PP_PAYMENTSTATUS, new { @class = "pay-label" })
+                @Html.EditorFor(m => m.PP_PAYMENTSTATUS, new { htmlAttributes = new { @class = "form-input-auto", autocomplete = "off", id = "PaymentStatus", @readonly = "readonly" } })
+                <span class="auto-badge"><i class="bi bi-info-circle"></i> Auto-updated</span>
+            </div>
+
+        </div> <!-- ── Actions ── -->
+        <div class="pay-actions">
+            <a href="@Url.Action("PaymentList", "SalesInvoiceProduct")" class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+            <button type="submit" class="btn-save" id="savebutton">
+                <i class="bi bi-floppy"></i> Update Payment
+            </button>
+        </div>
+
+
+        <input type="hidden" id="RazorPayOrderId" />
+        <input type="hidden" id="RazorPayPaymentId" />
+        <input type="hidden" id="RazorPaySignature" />
+
+
+    }
 
 </div><!-- /page-card -->
 <!-- Legend bar -->
@@ -183,7 +207,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/Scripts/Logoutjs.js"></script>
-
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         $(document).ready(function () {
 
@@ -236,7 +260,7 @@
             updateCalculation();
 
             // ── Form Submit ─────────────────────────────
-            $("#paymentform").on("submit", function (e) {
+            @*$("#paymentform").on("submit", function (e) {
                 e.preventDefault();
 
                 $("#savebutton").prop("disabled", true);
@@ -283,7 +307,305 @@
                         resetForm();
                     }
                 });
+            });*@
+
+
+
+
+           // ── Form Submit ─────────────────────────────
+
+            $("#paymentform").on("submit", function (e) {
+
+                e.preventDefault();
+
+                var paymentMode = $("#PP_MODEOFPAYMENT").val();
+
+                if (paymentMode === "RazorPay") {
+
+                    $("#savebutton").prop("disabled", true);
+
+                    CreateRazorPayOrder();
+
+                } else {
+
+                    SaveNormalPayment();
+                }
             });
+
+            function SaveNormalPayment() {
+
+                $("#savebutton").prop("disabled", true);
+                $("body").css("pointer-events", "none");
+
+                $.ajax({
+                    url: $("#paymentform").attr("action"),
+                    type: "POST",
+                    data: new FormData($("#paymentform")[0]),
+                    processData: false,
+                    contentType: false,
+
+                    success: function (response) {
+
+                        if (response.success) {
+
+                            Swal.fire({
+                                title: "Processing...",
+                                html: "Please wait while we update your payment details.",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+                            setTimeout(function () {
+
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: response.message,
+                                    icon: "success",
+                                    confirmButtonText: "Back to List",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    customClass: {
+                                        confirmButton: "swal-btn-continue"
+                                    },
+                                    didOpen: () => {
+                                        $(".swal2-container").css("pointer-events", "auto");
+                                    }
+                                }).then(function () {
+
+                                    window.location.href =
+                                        '@Url.Action("PaymentList", "SalesInvoiceProduct")';
+
+                                });
+
+                            }, 1000);
+
+                        }
+                        else {
+
+                            Swal.fire({
+                                title: "Message",
+                                text: response.message,
+                                icon: "info",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+
+                            resetForm();
+                        }
+                    },
+
+                    error: function () {
+
+                        Swal.fire({
+                            title: "Error!",
+                            text: "An unexpected error occurred.",
+                            icon: "error",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+
+                        resetForm();
+                    }
+                });
+            }
+
+            function CreateRazorPayOrder() {
+
+                $.ajax({
+
+                    url: '@Url.Action("CreateRazorPayOrder","SalesInvoiceProduct")',
+
+                    type: 'POST',
+
+                    data: {
+                        amount: $("#PaidAmount").val()
+                    },
+
+                    success: function (response) {
+
+                        if (response.Status === "Y") {
+
+                            OpenRazorPay(response);
+
+                        } else {
+
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: response.Message
+                            });
+
+                            resetForm();
+                        }
+                    },
+
+                    error: function () {
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Unable to create RazorPay order."
+                        });
+
+                        resetForm();
+                    }
+                });
+            }
+
+            function OpenRazorPay(data) {
+
+                var options = {
+
+                    key: data.Key,
+
+                    amount: data.Amount,
+
+                    currency: "INR",
+
+                    order_id: data.OrderId,
+
+                    name: "PSS CMS",
+
+                    description: "Invoice Payment",
+
+                    handler: function (response) {
+
+                        $("#RazorPayOrderId")
+                            .val(response.razorpay_order_id);
+
+                        $("#RazorPayPaymentId")
+                            .val(response.razorpay_payment_id);
+
+                        $("#RazorPaySignature")
+                            .val(response.razorpay_signature);
+
+                        VerifyPayment(response);
+                    },
+
+                    modal: {
+
+                        ondismiss: function () {
+
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Payment Cancelled",
+                                text: "You cancelled the payment."
+                            });
+
+                            resetForm();
+                        }
+                    }
+                };
+
+                var rzp = new Razorpay(options);
+
+                rzp.open();
+            }
+
+            function VerifyPayment(response) {
+
+                $.ajax({
+
+                    url: '@Url.Action("VerifyRazorPayPayment","SalesInvoiceProduct")',
+
+                    type: 'POST',
+
+                    data: {
+
+                        OrderId: response.razorpay_order_id,
+
+                        PaymentId: response.razorpay_payment_id,
+
+                        Signature: response.razorpay_signature,
+
+                        PP_INVOICENUMBER: $("#PP_INVOICENUMBER").val(),
+
+                        PP_TOTALAMOUNT: $("#TotalAmount").val(),
+
+                        PP_PAIDAMOUNT: $("#PaidAmount").val(),
+
+                        PP_SOFARPAID: $("#SoFarPaid").val(),
+
+                        PP_BALANCEAMOUNT: $("#BalanceAmount").val(),
+
+                        PP_PAYMENTSTATUS: $("#PaymentStatus").val(),
+
+                        PP_INVOICEDATE: $("#PP_INVOICEDATE").val(),
+
+                        PP_DATEOFPAYMENT: $("#PP_DATEOFPAYMENT").val(),
+
+                        PP_MODEOFPAYMENT: "RazorPay"
+                    },
+
+                    success: function (result) {
+
+                        if (result.Status === "Y") {
+
+                            Swal.fire({
+                                title: "Processing...",
+                                html: "Please wait while we verify your payment.",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+                            setTimeout(function () {
+
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: "Payment verified and saved successfully.",
+                                    icon: "success",
+                                    confirmButtonText: "Back to List",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    customClass: {
+                                        confirmButton: "swal-btn-continue"
+                                    }
+                                }).then(function () {
+
+                                    window.location.href =
+                                        '@Url.Action("PaymentList", "SalesInvoiceProduct")';
+
+                                });
+
+                            }, 1000);
+
+                        } else {
+
+                            Swal.fire({
+                                icon: "error",
+                                title: "Verification Failed",
+                                text: result.Message
+                            });
+
+                            resetForm();
+                        }
+                    },
+
+                    error: function () {
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Unable to verify payment."
+                        });
+
+                        resetForm();
+                    }
+                });
+            }
+
+            function resetForm() {
+
+                $("#savebutton").prop("disabled", false);
+
+                $("body").css("pointer-events", "auto");
+            }
 
             function resetForm() {
                 $("#savebutton").prop("disabled", false);

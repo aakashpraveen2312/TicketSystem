@@ -22,36 +22,134 @@ namespace PSS_CMS.Controllers
         {
             return View();
         }
-        [HttpPost]
-        public async Task<ActionResult> ContractexpiryReport(Prioritywise prioritywise, DateTime? FromDate, DateTime? ToDate, string Type,string ActionType, string PastExpiry)
-        {
-            bool hasDateRange = FromDate.HasValue && ToDate.HasValue;
-            bool hasType = !string.IsNullOrWhiteSpace(Type);
 
-            //if (!hasDateRange && !hasType)
-            //{
-            //    TempData["ErrorMessage"] = "Please select either a Date Range or a Type";
-            //    return RedirectToAction("ContractexpiryReport");
-            //}
-            // 2️⃣ Check ToDate >= FromDate
+        //   public async Task<ActionResult> ContractexpiryReport(Prioritywise prioritywise, DateTime? FromDate, DateTime? ToDate, string Type,string ActionType, string PastExpiry)
+        //   {
+        //       bool hasDateRange = FromDate.HasValue && ToDate.HasValue;
+        //       bool hasType = !string.IsNullOrWhiteSpace(Type);
+
+        //       //if (!hasDateRange && !hasType)
+        //       //{
+        //       //    TempData["ErrorMessage"] = "Please select either a Date Range or a Type";
+        //       //    return RedirectToAction("ContractexpiryReport");
+        //       //}
+        //       // 2️⃣ Check ToDate >= FromDate
+        //       if (FromDate.HasValue && ToDate.HasValue && ToDate < FromDate)
+        //       {
+        //           TempData["ErrorMessage"] = "To Date must be greater than or equal to From Date";
+        //           return RedirectToAction("ContractexpiryReport");
+        //       }
+
+        //       List<Prioritywise> list = new List<Prioritywise>();
+
+        //       string Weburl = ConfigurationManager.AppSettings[
+        //ActionType == "PDF" ? "CONTRACTEXPIRYREPORT" : "CONTRACTEXPIRYREPORTLISTVIEW"];
+
+
+        //       //string Weburl = ConfigurationManager.AppSettings["CONTRACTEXPIRYREPORT"];
+        //       string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+        //       string APIKey = Session["APIKEY"]?.ToString();
+
+
+        //       string url = $"{Weburl}?companyRecID={Session["CompanyId"]}&fromDate={FromDate:yyyy-MM-dd}&toDate={ToDate:yyyy-MM-dd}&type={Type}&PastExpiry={PastExpiry}";
+
+        //       try
+        //       {
+        //           using (HttpClientHandler handler = new HttpClientHandler())
+        //           using (HttpClient client = new HttpClient(handler))
+        //           {
+        //               handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+        //               client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+        //               client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+        //               client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //               var response = await client.GetAsync(url);
+
+        //               var responseContent = await response.Content.ReadAsStringAsync();
+
+        //               if (!response.IsSuccessStatusCode)
+        //               {
+        //                   return Content($"Status: {response.StatusCode}<br/>{responseContent}");
+        //               }
+        //               if (!response.IsSuccessStatusCode)
+        //                   return Content("Error fetching data: " + response.ReasonPhrase);
+
+        //               var jsonString = await response.Content.ReadAsStringAsync();
+        //               var rootObjects = JsonConvert.DeserializeObject<Prioritywisepdfobjects>(jsonString);
+
+        //               if (rootObjects == null || rootObjects.Status != "Y")
+        //                   return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
+
+        //               if (ActionType == "Filter")
+        //               {
+        //                   if (rootObjects != null && rootObjects.Status == "Y")
+        //                   {
+        //                       list = rootObjects.Data;
+        //                   }
+        //                   return View(list);
+        //               }
+        //               else
+        //               {
+        //                   // The API already returns a PDF URL
+        //                   string pdfUrl = rootObjects.fileUrl;
+        //                   var fileBytes = await client.GetByteArrayAsync(pdfUrl);
+        //                   var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
+
+        //                   // Download
+        //                   return File(fileBytes, "application/pdf", fileName);
+
+
+        //               }
+
+        //           }
+        //       }
+        //       catch (Exception ex)
+        //       {
+        //           return Content("Exception occurred: " + ex.Message);
+        //       }
+        //   }
+
+        [HttpPost]
+        public async Task<ActionResult> ContractexpiryReport(DateTime? FromDate, DateTime? ToDate, string Type, string ActionType, string PastExpiry)
+        {
+            // Format once, reuse everywhere (also matches the yyyy-MM-dd format
+            // required by <input type="date">)
+            string fromDateStr = FromDate.HasValue ? FromDate.Value.ToString("yyyy-MM-dd") : "";
+            string toDateStr = ToDate.HasValue ? ToDate.Value.ToString("yyyy-MM-dd") : "";
+
+            // ── Validate date range ──────────────────────────────────────
             if (FromDate.HasValue && ToDate.HasValue && ToDate < FromDate)
             {
                 TempData["ErrorMessage"] = "To Date must be greater than or equal to From Date";
+
+                // FIX: TempData (not ViewBag) survives a redirect, so the filter
+                // values are still available on the next GET and the form won't
+                // appear cleared to the user.
+                TempData["FromDate"] = fromDateStr;
+                TempData["ToDate"] = toDateStr;
+                TempData["Type"] = Type;
+                TempData["PastExpiry"] = PastExpiry;
+
                 return RedirectToAction("ContractexpiryReport");
             }
+
+            // ── Expose current filter values to the view ─────────────────
+            // Prefer values carried over from a redirect (TempData) if present,
+            // otherwise use whatever was just submitted on this request.
+            ViewBag.FromDate = TempData["FromDate"] as string ?? fromDateStr;
+            ViewBag.ToDate = TempData["ToDate"] as string ?? toDateStr;
+            ViewBag.Type = TempData["Type"] as string ?? Type;
+            ViewBag.PastExpiry = TempData["PastExpiry"] as string ?? PastExpiry;
 
             List<Prioritywise> list = new List<Prioritywise>();
 
             string Weburl = ConfigurationManager.AppSettings[
-     ActionType == "PDF" ? "CONTRACTEXPIRYREPORT" : "CONTRACTEXPIRYREPORTLISTVIEW"];
-
-
-            //string Weburl = ConfigurationManager.AppSettings["CONTRACTEXPIRYREPORT"];
+                ActionType == "PDF" ? "CONTRACTEXPIRYREPORT" : "CONTRACTEXPIRYREPORTLISTVIEW"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
             string APIKey = Session["APIKEY"]?.ToString();
 
-
-            string url = $"{Weburl}?companyRecID={Session["CompanyId"]}&fromDate={FromDate:yyyy-MM-dd}&toDate={ToDate:yyyy-MM-dd}&type={Type}&PastExpiry={PastExpiry}";
+            string url = $"{Weburl}?companyRecID={Session["CompanyId"]}&fromDate={fromDateStr}&toDate={toDateStr}&type={Type}&PastExpiry={PastExpiry}";
 
             try
             {
@@ -59,47 +157,62 @@ namespace PSS_CMS.Controllers
                 using (HttpClient client = new HttpClient(handler))
                 {
                     handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
                     client.DefaultRequestHeaders.Add("ApiKey", APIKey);
                     client.DefaultRequestHeaders.Add("Authorization", AuthKey);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     var response = await client.GetAsync(url);
-                    if (!response.IsSuccessStatusCode)
-                        return Content("Error fetching data: " + response.ReasonPhrase);
+                    var responseContent = await response.Content.ReadAsStringAsync();
 
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var rootObjects = JsonConvert.DeserializeObject<Prioritywisepdfobjects>(jsonString);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        // FIX: show the error via the normal view + TempData instead of
+                        // Content(), which wipes out the whole page (layout, filter form,
+                        // and all input values) and replaces it with plain text.
+                        TempData["ErrorMessage"] = $"Status: {response.StatusCode} — {responseContent}";
+                        return View(list);
+                    }
+
+                    var rootObjects = JsonConvert.DeserializeObject<Prioritywisepdfobjects>(responseContent);
 
                     if (rootObjects == null || rootObjects.Status != "Y")
-                        return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
-
-                    if (ActionType == "Filter")
                     {
-                        if (rootObjects != null && rootObjects.Status == "Y")
-                        {
-                            list = rootObjects.Data;
-                        }
+                        TempData["ErrorMessage"] = rootObjects?.Message ?? "No data found for the selected criteria.";
+                        return View(list);
+                    }
+
+                    // FIX: treat anything that is NOT explicitly "PDF" as the list/filter
+                    // view. Previously this only matched ActionType == "Filter", so the
+                    // very first page load (ActionType is null) fell through to the PDF
+                    // branch and threw trying to download a non-existent file URL —
+                    // which was silently swallowed by the outer catch.
+                    if (ActionType != "PDF")
+                    {
+                        list = rootObjects.Data ?? new List<Prioritywise>();
                         return View(list);
                     }
                     else
                     {
-                        // The API already returns a PDF URL
                         string pdfUrl = rootObjects.fileUrl;
+
+                        if (string.IsNullOrWhiteSpace(pdfUrl))
+                        {
+                            TempData["ErrorMessage"] = "PDF could not be generated for the selected criteria.";
+                            return View(list);
+                        }
+
                         var fileBytes = await client.GetByteArrayAsync(pdfUrl);
-                        var fileName = Path.GetFileName(pdfUrl); // GstInReport_20250924052413.pdf
-
-                        // Download
+                        var fileName = Path.GetFileName(pdfUrl); // e.g. GstInReport_20250924052413.pdf
                         return File(fileBytes, "application/pdf", fileName);
-
-
                     }
-
                 }
             }
             catch (Exception ex)
             {
-                return Content("Exception occurred: " + ex.Message);
+                // FIX: same reasoning — keep the user on the real view with their
+                // filters intact instead of a bare exception message replacing the page.
+                TempData["ErrorMessage"] = "Exception occurred: " + ex.Message;
+                return View(list);
             }
         }
         public async Task<ActionResult> ProductFinanceReport()

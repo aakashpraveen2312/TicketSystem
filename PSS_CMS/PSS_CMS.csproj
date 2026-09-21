@@ -377,6 +377,7 @@
     <Compile Include="Controllers\ContractExpiryReportController.cs" />
     <Compile Include="Controllers\ContractInclusionController.cs" />
     <Compile Include="Controllers\ContractInvoiceController.cs" />
+    <Compile Include="Controllers\ContractPaymentController.cs" />
     <Compile Include="Controllers\ContractProductController.cs" />
     <Compile Include="Controllers\CustomerNotificationController.cs" />
     <Compile Include="Controllers\ExclusionController.cs" />
@@ -385,9 +386,11 @@
     <Compile Include="Controllers\HSNCategoryController.cs" />
     <Compile Include="Controllers\HSNMasterController.cs" />
     <Compile Include="Controllers\InclusionController.cs" />
+    <Compile Include="Controllers\InvoiceandContractsController.cs" />
     <Compile Include="Controllers\ItemCategoryController.cs" />
     <Compile Include="Controllers\ItemController.cs" />
     <Compile Include="Controllers\ItemGroupController.cs" />
+    <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\ManagerCalenderDashboardController.cs" />
     <Compile Include="Controllers\ManagerSubordinateReportController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
@@ -395,6 +398,8 @@
     <Compile Include="Controllers\SalesInvoiceProductController.cs" />
     <Compile Include="Controllers\ServiceInvoiceController.cs" />
     <Compile Include="Controllers\ServiceMaterialConsumptionController.cs" />
+    <Compile Include="Controllers\SMContractInvoiceHeaderController.cs" />
+    <Compile Include="Controllers\SMContractInvoiceLineItemsController.cs" />
     <Compile Include="Controllers\UserManagerController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\ForgotpasswordController.cs" />
@@ -414,6 +419,7 @@
     <Compile Include="Controllers\UserDashboardController.cs" />
     <Compile Include="Controllers\UserGroupController.cs" />
     <Compile Include="Controllers\UserLoginController.cs" />
+    <Compile Include="Controllers\UserPaymentController.cs" />
     <Compile Include="Fillter\ApiKeyAuthorizeAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -427,6 +433,10 @@
     <Compile Include="Models\ContractExclusion.cs" />
     <Compile Include="Models\ContractInclusion.cs" />
     <Compile Include="Models\ContractInvoice.cs" />
+    <Compile Include="Models\ContractInvoiceHeader.cs" />
+    <Compile Include="Models\ContractInvoiceLineItems.cs" />
+    <Compile Include="Models\ContractInvoiceList.cs" />
+    <Compile Include="Models\ContractInvoicePayment.cs" />
     <Compile Include="Models\ContractServiceProduct.cs" />
     <Compile Include="Models\ContractUser.cs" />
     <Compile Include="Models\Customernotification.cs" />
@@ -559,6 +569,7 @@
     <Content Include="Content\Gallery.css" />
     <Content Include="Content\Gridmvc.css" />
     <Content Include="Content\Item.css" />
+    <Content Include="Content\LocationToastScript.css" />
     <Content Include="Content\Login.css" />
     <Content Include="Content\main.css" />
     <Content Include="Content\MainMenuTicket.css" />
@@ -566,6 +577,7 @@
     <Content Include="Content\SideMenu.css" />
     <Content Include="Content\Style.css" />
     <Content Include="Content\Style1.css" />
+    <Content Include="Content\SweetalertCSS.css" />
     <Content Include="Content\UIListView.css" />
     <Content Include="Content\UILogin.css" />
     <Content Include="Content\UISidebarLayout.css" />
@@ -832,12 +844,33 @@
     <Content Include="Views\Contract\EditContractUser.cshtml" />
     <Content Include="Views\ManagerCalenderDashboard\ManagerCalender.cshtml" />
     <Content Include="Views\RecentTickets\FilterTickets.cshtml" />
+    <Content Include="Views\Contract\RenewalContract.cshtml" />
+    <Content Include="Views\Location\Create.cshtml" />
+    <Content Include="Views\Location\Edit.cshtml" />
+    <Content Include="Views\Location\LocationList.cshtml" />
+    <Content Include="Views\Contract\ContractRenewalNotification.cshtml" />
+    <Content Include="Views\SMContractInvoiceHeader\List.cshtml" />
+    <Content Include="Views\SMContractInvoiceHeader\AddInvoice.cshtml" />
+    <Content Include="Views\SMContractInvoiceHeader\EditInvoice.cshtml" />
+    <Content Include="Views\SMContractInvoiceLineItems\Create.cshtml" />
+    <Content Include="Views\SMContractInvoiceLineItems\Edit.cshtml" />
+    <Content Include="Views\SMContractInvoiceLineItems\List.cshtml" />
+    <Content Include="Views\SMContractInvoiceLineItems\View.cshtml" />
+    <Content Include="Views\SMContractInvoiceHeader\View.cshtml" />
+    <Content Include="Views\ContractPayment\List.cshtml" />
+    <Content Include="Views\ContractPayment\Create.cshtml" />
+    <Content Include="Views\ContractPayment\Edit.cshtml" />
+    <Content Include="Views\InvoiceandContracts\List.cshtml" />
+    <Content Include="Views\InvoiceandContracts\Index.cshtml" />
+    <Content Include="Views\InvoiceandContracts\UserContractInvoice.cshtml" />
+    <Content Include="Views\InvoiceandContracts\UserContractPayment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\InActivity\" />
     <Folder Include="Views\PDF\" />
+    <Folder Include="Views\UserPayment\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

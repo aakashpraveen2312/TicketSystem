@@ -1,0 +1,544 @@
+﻿
+@model PSS_CMS.Models.ContractInvoicePayment
+
+@{ ViewData["Title"] = "Edit Payment";
+    ViewBag.PageTitle = "Edit Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+    <link href="~/Content/SweetalertCSS.css" rel="stylesheet" />
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-cash-coin nav-icon"></i>
+    <a href="@Url.Action("List", "SMContractInvoiceHeader" ,new { companyId =  Session["companyId"] , CIH_CONTRACTRECID = Session["CIH_CONTRACTRECID"]})">Invoice History</a>
+
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("List", "ContractPayment" ,new { CIP_CIHRECID = Session["CIP_CIHRECID"],
+                   companyId =  Session["companyId"],PaymentAmount =  Session["PaymentAmount"]})">Payment History</a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Create</span>
+</div>
+
+@using (Html.BeginForm("Create", "ContractPayment", FormMethod.Post, new { id = "createform", @class = "no-preloader" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="page-card">
+
+        <!-- Header -->
+        <div class="page-card-header">
+            <h6 class="page-card-title">
+                <span class="title-icon">
+                    <i class="bi bi-plus-circle"></i>
+                </span>
+                Edit Payment
+            </h6>
+        </div>
+
+        <!-- Form Body -->
+        <div class="form-body">
+
+            <p class="form-section-title">Payment Information</p>
+
+            <div class="form-grid">
+
+                <!-- Payment Date -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CIP_PAYMENTDATE)
+                        <span class="req">*</span>
+                    </label>
+
+
+                    @Html.TextBoxFor(
+     m => m.CIP_PAYMENTDATE,
+     "{0:yyyy-MM-dd}",
+     new
+     {
+         @class = "form-input-text",
+         type = "date",
+         autocomplete = "off",
+         @Value = Model.CIP_PAYMENTDATE == DateTime.MinValue
+                     ? DateTime.Now.ToString("yyyy-MM-dd")
+                     : Model.CIP_PAYMENTDATE.ToString("yyyy-MM-dd")
+     }
+ )
+
+
+
+                    @Html.ValidationMessageFor(m => m.CIP_PAYMENTDATE, "", new { @class = "text-danger" })
+                </div>
+                <!-- Invoice Amount -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CIP_INVOICEAMOUNT)
+                    </label>
+
+                    @Html.TextBoxFor(m => m.CIP_INVOICEAMOUNT, new
+                    {
+                        @class = "form-input-num",
+                        type = "number",
+                        step = "0.01",
+                        min = "0",
+                        placeholder = "0.00",
+                        @readonly = "readonly"
+                    })
+                </div>
+
+
+                <!-- Previously Paid Amount -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Previously Paid Amount
+                    </label>
+
+                    @Html.TextBoxFor(m => m.CIP_PREVIOUSLYPAIDAMOUNT, new
+                    {
+                        @class = "form-input-num",
+                        type = "number",
+                        step = "0.01",
+                        min = "0",
+                        placeholder = "0.00",
+                        @readonly = "readonly"
+                    })
+                </div>
+
+
+                <!-- Remaining Amount -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Remaining Amount
+                    </label>
+
+                    @Html.TextBoxFor(m => m.CIP_REMAININGAMOUNT, new
+                    {
+                        @class = "form-input-num",
+                        type = "number",
+                        step = "0.01",
+                        min = "0",
+                        placeholder = "0.00",
+                        @readonly = "readonly"
+                    })
+                </div>
+                <!-- Payment Amount -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CIP_PAYMENTAMOUNT)
+                        <span class="req">*</span>
+                    </label>
+
+                    @Html.TextBoxFor(m => m.CIP_PAYMENTAMOUNT, new
+                    {
+                        @class = "form-input-num",
+                        type = "number",
+                        step = "0.01",
+                        min = "0",
+                        placeholder = "0.00"
+                    })
+
+                    @Html.ValidationMessageFor(m => m.CIP_PAYMENTAMOUNT, "", new { @class = "text-danger" })
+                </div>
+
+
+
+                <!-- Payment Mode -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CIP_PAYMENTMODE)
+                    </label>
+
+                    @Html.DropDownListFor(m => m.CIP_PAYMENTMODE,
+                        new SelectList(new[] { "Cash", "Cheque", "Bank Transfer", "UPI", "Card" }),
+                        "-- Select Payment Mode --",
+                        new { @class = "form-select" })
+
+                    @Html.ValidationMessageFor(m => m.CIP_PAYMENTMODE, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Reference No -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CIP_REFERENCENO)
+                    </label>
+
+                    @Html.TextBoxFor(m => m.CIP_REFERENCENO, new
+                    {
+                        @class = "form-input-text",
+                        autocomplete = "off",
+                        placeholder = "Enter transaction / cheque reference"
+                    })
+
+                    @Html.ValidationMessageFor(m => m.CIP_REFERENCENO, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Status -->
+                <!-- Payment Status -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Payment Status
+                    </label>
+
+                    @Html.TextBoxFor(m => m.CIP_STATUS, new
+                    {
+                        @class = "form-input-text",
+                        @readonly = "readonly",
+                        placeholder = "Payment status will be calculated automatically"
+                    })
+                </div>
+
+                <!-- Remarks -->
+                <div class="form-group full">
+                    <label class="form-label">
+                        @Html.DisplayNameFor(m => m.CIP_REMARKS)
+                    </label>
+
+                    @Html.TextAreaFor(m => m.CIP_REMARKS, new
+                    {
+                        @class = "form-textarea",
+                        placeholder = "Enter any additional remarks",
+                        rows = 3
+                    })
+
+                    @Html.ValidationMessageFor(m => m.CIP_REMARKS, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-bar">
+
+            <div class="legend-item">
+                <span class="field-dot dot-text"></span>
+                <span>Text Field</span>
+            </div>
+
+            <div class="legend-item">
+                <span class="field-dot dot-num"></span>
+                <span>Number Field</span>
+            </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+            <a href="@Url.Action("List", "ContractPayment", new
+{
+    companyId = Session["companyId"],
+    CIP_CIHRECID = Session["CIP_CIHRECID"],
+    PaymentAmount = Session["PaymentAmount"]
+})" class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+            <button type="submit" class="btn-save" id="savebutton">
+                <i class="bi bi-floppy"></i> Save
+            </button>
+        </div>
+
+
+    </div>}
+
+@section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Calculate immediately when page loads
+            calculatePayment();
+
+            // Recalculate when payment amount changes
+            $("#CIP_PAYMENTAMOUNT").on("input change", function () {
+                calculatePayment();
+            });
+
+        });
+
+        function calculatePayment() {
+
+            var invoiceAmount =
+                parseFloat($("#CIP_INVOICEAMOUNT").val()) || 0;
+
+            var previousPaid =
+                parseFloat($("#CIP_PREVIOUSLYPAIDAMOUNT").val()) || 0;
+
+            var paymentAmount =
+                parseFloat($("#CIP_PAYMENTAMOUNT").val()) || 0;
+
+
+            // =====================================
+            // AVAILABLE / REMAINING AMOUNT
+            // =====================================
+
+            var availableAmount = invoiceAmount - previousPaid;
+
+            if (availableAmount < 0) {
+                availableAmount = 0;
+            }
+
+
+            // =====================================
+            // MAX PAYMENT ALLOWED
+            // =====================================
+
+            $("#CIP_PAYMENTAMOUNT").attr(
+                "max",
+                availableAmount.toFixed(2)
+            );
+
+
+            // =====================================
+            // VALIDATE PAYMENT
+            // =====================================
+
+            if (paymentAmount > availableAmount) {
+
+                $("#CIP_PAYMENTAMOUNT").val(
+                    availableAmount.toFixed(2)
+                );
+
+                paymentAmount = availableAmount;
+
+                Swal.fire({
+                    icon: "warning",
+                    title: "Invalid Payment Amount",
+                    text: "Maximum allowed payment amount is " +
+                        availableAmount.toFixed(2)
+                });
+            }
+
+
+            // =====================================
+            // REMAINING AMOUNT
+            // =====================================
+
+            var remainingAmount =
+                availableAmount - paymentAmount;
+
+            $("#CIP_REMAININGAMOUNT").val(
+                remainingAmount.toFixed(2)
+            );
+
+
+            // =====================================
+            // PAYMENT STATUS
+            // =====================================
+
+            var totalPaid =
+                previousPaid + paymentAmount;
+
+            if (paymentAmount <= 0) {
+
+                $("#CIP_STATUS").val("");
+
+            }
+            else if (totalPaid >= invoiceAmount) {
+
+                $("#CIP_STATUS").val("Fully Paid");
+
+            }
+            else {
+
+                $("#CIP_STATUS").val("Partially Paid");
+
+            }
+
+
+            return paymentAmount <= availableAmount;
+        }
+
+        $("#CIP_PAYMENTAMOUNT").on(
+            "input change",
+            function () {
+
+                calculatePayment();
+
+            }
+        );
+        $(document).ready(function () {
+
+            $("#createform").submit(function (e) {
+
+                e.preventDefault();
+                var isValid = calculatePayment();
+
+                if (!isValid) {
+
+                    Swal.fire({
+
+                        icon: 'warning',
+
+                        title: 'Invalid Payment Amount',
+
+                        text: 'Payment amount cannot exceed the remaining invoice amount.'
+
+                    });
+
+                    return;
+                }
+
+                var form = $(this);
+
+                // Disable Save Button
+                $("#savebutton")
+                    .prop("disabled", true)
+                    .html('<i class="bi bi-hourglass-split"></i> Saving...');
+
+
+                $.ajax({
+
+                    url: form.attr("action"),
+
+                    type: "POST",
+
+                    data: form.serialize(),
+
+                    success: function (response) {
+
+                        // ==============================
+                        // SUCCESS
+                        // ==============================
+
+                        if (response.success) {
+                            var CIP_CIHRECID = response.CIP_CIHRECID;
+                            Swal.fire({
+
+                                icon: 'success',
+
+                                title: 'Success!',
+
+                                text: response.message ||
+                                    'Payment inserted successfully.',
+
+                                showCancelButton: true,
+
+                                confirmButtonText:
+                                    '<i class="bi bi-plus-circle"></i> Continue',
+
+                                cancelButtonText:
+                                    '<i class="bi bi-arrow-left"></i> Back to List',
+
+                                reverseButtons: false,
+
+                                allowOutsideClick: false,
+
+                                allowEscapeKey: false,
+
+                                customClass: {
+
+                                    popup: 'success-popup',
+
+                                    confirmButton: 'continue-btn',
+
+                                    cancelButton: 'back-btn'
+
+                                }
+                                  // You can access it here
+
+                            }).then((result) => {
+
+                                // ==============================
+                                // CONTINUE
+                                // ==============================
+
+                                if (result.isConfirmed) {
+
+                                    // Clear Form
+                                    $("#createform")[0].reset();
+
+                                    // Enable Save Button
+                                    $("#savebutton")
+                                        .prop("disabled", false)
+                                        .html('<i class="bi bi-floppy"></i> Save');
+
+                                }
+
+                                // ==============================
+                                // BACK TO LIST
+                                // ==============================
+
+                                else {
+
+                                   window.location.href =
+                    '@Url.Action("List", "ContractPayment")'
+                    + '?companyId=' + encodeURIComponent('@Session["companyId"]')
+                    + '&CIP_CIHRECID=' + encodeURIComponent(cipCihRecId)
+                    + '&PaymentAmount=' + encodeURIComponent('@Session["PaymentAmount"]');
+
+
+                                }
+
+                            });
+
+                        }
+
+                        // ==============================
+                        // API ERROR
+                        // ==============================
+
+                        else {
+
+                            Swal.fire({
+
+                                icon: 'error',
+
+                                title: 'Error!',
+
+                                text: response.message ||
+                                    'Payment could not be inserted.',
+
+                                confirmButtonText: 'OK',
+
+                                allowOutsideClick: false
+
+                            });
+
+                            $("#savebutton")
+                                .prop("disabled", false)
+                                .html('<i class="bi bi-floppy"></i> Save');
+
+                        }
+
+                    },
+
+                    // ==============================
+                    // AJAX ERROR
+                    // ==============================
+
+                    error: function () {
+
+                        Swal.fire({
+
+                            icon: 'error',
+
+                            title: 'Error!',
+
+                            text: 'Something went wrong. Please try again.',
+
+                            confirmButtonText: 'OK'
+
+                        });
+
+                        $("#savebutton")
+                            .prop("disabled", false)
+                            .html('<i class="bi bi-floppy"></i> Save');
+
+                    }
+
+                });
+
+            });
+
+        });
+
+    </script>
+
+
+}

@@ -57,6 +57,45 @@ namespace PSS_CMS.Controllers
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var rootObjects = JsonConvert.DeserializeObject<ProductMasterRootObject>(jsonString);
                             productmasterlist = rootObjects.Data;
+
+
+
+                            if (!string.IsNullOrWhiteSpace(searchPharse))
+                            {
+                                searchPharse = searchPharse.Trim();
+
+                                productmasterlist = productmasterlist
+                                    .Where(r =>
+                                        // Product Name
+                                        (!string.IsNullOrEmpty(r.P_NAME) &&
+                                         r.P_NAME.IndexOf(
+                                             searchPharse,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+
+                                        ||
+
+                                        // Product Code
+                                        (!string.IsNullOrEmpty(r.P_CODE) &&
+                                         r.P_CODE.IndexOf(
+                                             searchPharse,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+
+                                        ||
+
+                                        // Sort Order
+                                        r.P_SORTORDER.ToString().IndexOf(
+                                            searchPharse,
+                                            StringComparison.OrdinalIgnoreCase) >= 0
+                                    )
+                                    .ToList();
+                            }
+
+
+
+
+
+
+
                             if (productmasterlist.Count > 0)
                             {
                                 // Assign serial numbers
@@ -66,13 +105,7 @@ namespace PSS_CMS.Controllers
                                 }
                             }
 
-                            if (!string.IsNullOrEmpty(searchPharse))
-                            {
-                                productmasterlist = productmasterlist
-                                    .Where(r => r.P_NAME.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.P_SORTORDER.ToString().Contains(searchPharse.ToLower()))
-                                    .ToList();
-                            }
+                           
 
                         }
                         else
@@ -97,7 +130,35 @@ namespace PSS_CMS.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ProductMaster productmaster)
         {
-            
+            if (string.IsNullOrWhiteSpace(productmaster.P_CODE))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Please enter the code."
+                });
+            }
+
+            if (string.IsNullOrWhiteSpace(productmaster.P_NAME))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Please enter the Product Name."
+                });
+            }
+
+
+
+            if (productmaster.P_DURATION <= 0)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Warranty Duration must be greater than zero."
+                });
+            }
+
             try
             {
                 var ProductmasterPostURL = ConfigurationManager.AppSettings["PRODUCTPOST"];

@@ -5,6 +5,7 @@
     ViewBag.PageTitle = "Sales Invoice";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@*<script src="~/Scripts/Inactivitylogout.js"></script>*@
 
 @section Styles {
 
@@ -40,10 +41,10 @@
             <!-- Search -->
 
             @using (Html.BeginForm(
-                "",
-                "",
-                FormMethod.Get,
-                new { id = "searchForm" }))
+     "SalesheaderAdminListView",
+     "AccountantCustomerInvoice",
+     FormMethod.Get,
+     new { id = "searchForm" }))
             {
                 <div class="search-box">
 
@@ -59,7 +60,7 @@
 
                     @if (!string.IsNullOrEmpty(Request["searchPharse"]))
                     {
-                        <a href="@Url.Action("","")"
+                        <a href="@Url.Action("SalesheaderAdminListView", "AccountantCustomerInvoice")"
                            title="Clear">
 
                             <i class="bi bi-x-circle text-muted"></i>

@@ -24,20 +24,20 @@ namespace PSS_CMS.Controllers
         string Status;
         string Message;
         // GET: ItemGroup
-        public async Task<ActionResult> List(int? CompanyId, int? CategoryRecid, string ItemCatName, string searchPhrase)
+
+
+        public async Task<ActionResult> List(
+    int? CompanyId,
+    int? CategoryRecid,
+    string ItemCatName,
+    string searchPhrase)
         {
             if (CategoryRecid != null && CompanyId != null && ItemCatName != null)
             {
-
-                //GlobalVariables.ItemCatName = ItemCatName;
                 Session["ItemCatName"] = ItemCatName;
-                //Session["ItemCatName1"] = ItemCatName.ToUpper();
                 Session["CompanyId"] = CompanyId.ToString();
-                //GlobalVariables.ICRECID = CategoryRecid.ToString();
                 Session["CategoryRecid"] = CategoryRecid.ToString();
             }
-
-
 
             Items objitems = new Items();
 
@@ -45,9 +45,8 @@ namespace PSS_CMS.Controllers
 
             if (SerialNo == 0)
             {
-                SerialNo = 1; // Initialize to 1 if it's 0
+                SerialNo = 1;
             }
-
 
             string Weburl = ConfigurationManager.AppSettings["GETITEM"];
             string AuthKey = ConfigurationManager.AppSettings["Authkey"];
@@ -56,73 +55,193 @@ namespace PSS_CMS.Controllers
 
             APIKey = Session["APIKEY"].ToString();
 
-            string strparams = "companyId=" + Session["CompanyId"] + "&CategoryRecid=" + Session["CategoryRecid"] + "";
+            string strparams =
+                "companyId=" + Session["CompanyId"] +
+                "&CategoryRecid=" + Session["CategoryRecid"];
+
             string url = Weburl + "?" + strparams;
 
             try
             {
                 using (HttpClientHandler handler = new HttpClientHandler())
                 {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    handler.ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true;
 
                     using (HttpClient client = new HttpClient(handler))
                     {
                         client.DefaultRequestHeaders.Add("ApiKey", APIKey);
                         client.DefaultRequestHeaders.Add("Authorization", AuthKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        client.DefaultRequestHeaders.Accept.Add(
+                            new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await client.GetAsync(url);
 
                         if (response.IsSuccessStatusCode)
                         {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<IRootObjects>(jsonString);
+                            var jsonString =
+                                await response.Content.ReadAsStringAsync();
 
-                            ItemList = rootObjects.Data;
+                            var rootObjects =
+                                JsonConvert.DeserializeObject<IRootObjects>(jsonString);
 
-                            if (ItemList.Count > 0)
+                            ItemList = rootObjects?.Data ?? new List<Items>();
+
+                            // Search
+                            if (!string.IsNullOrWhiteSpace(searchPhrase))
                             {
+                                searchPhrase = searchPhrase.Trim();
 
-                                // Assign serial numbers
-                                for (int i = 0; i < ItemList.Count; i++)
-                                {
-                                    ItemList[i].SerialNumber = i + 1;
-                                }
-
-
-
-                            }
-                            if (!string.IsNullOrEmpty(searchPhrase))
-                            {
                                 ItemList = ItemList
-                                 .Where(r => r.I_DESCRIPTION.ToLower().Contains(searchPhrase.ToLower()) ||
-                                     r.I_CODE.ToLower().Contains(searchPhrase.ToLower())) // Use OR (||) instead of chaining .Where()
-                                .ToList();
-
+                                    .Where(r =>
+                                        (!string.IsNullOrEmpty(r.I_DESCRIPTION) &&
+                                         r.I_DESCRIPTION.IndexOf(
+                                             searchPhrase,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+                                        ||
+                                        (!string.IsNullOrEmpty(r.I_CODE) &&
+                                         r.I_CODE.IndexOf(
+                                             searchPhrase,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+                                    )
+                                    .ToList();
                             }
-                            else
-                            {
 
+                            // Assign serial numbers AFTER filtering
+                            for (int i = 0; i < ItemList.Count; i++)
+                            {
+                                ItemList[i].SerialNumber = i + 1;
                             }
                         }
-
                         else
                         {
-                            // Handle the error response here
-                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                            ModelState.AddModelError(
+                                string.Empty,
+                                "Error: " + response.ReasonPhrase);
                         }
                     }
                 }
-
             }
             catch (Exception ex)
             {
-                // Handle exceptions (e.g., logging)
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Exception occurred: " + ex.Message);
             }
 
             return View(ItemList);
         }
+
+
+
+
+        //public async Task<ActionResult> List(int? CompanyId, int? CategoryRecid, string ItemCatName, string searchPhrase)
+        //{
+        //    if (CategoryRecid != null && CompanyId != null && ItemCatName != null)
+        //    {
+
+        //        //GlobalVariables.ItemCatName = ItemCatName;
+        //        Session["ItemCatName"] = ItemCatName;
+        //        //Session["ItemCatName1"] = ItemCatName.ToUpper();
+        //        Session["CompanyId"] = CompanyId.ToString();
+        //        //GlobalVariables.ICRECID = CategoryRecid.ToString();
+        //        Session["CategoryRecid"] = CategoryRecid.ToString();
+        //    }
+
+
+
+        //    Items objitems = new Items();
+
+        //    int SerialNo = objitems.SerialNumber;
+
+        //    if (SerialNo == 0)
+        //    {
+        //        SerialNo = 1; // Initialize to 1 if it's 0
+        //    }
+
+
+        //    string Weburl = ConfigurationManager.AppSettings["GETITEM"];
+        //    string AuthKey = ConfigurationManager.AppSettings["Authkey"];
+
+        //    List<Items> ItemList = new List<Items>();
+
+        //    APIKey = Session["APIKEY"].ToString();
+
+        //    string strparams = "companyId=" + Session["CompanyId"] + "&CategoryRecid=" + Session["CategoryRecid"] + "";
+        //    string url = Weburl + "?" + strparams;
+
+        //    try
+        //    {
+        //        using (HttpClientHandler handler = new HttpClientHandler())
+        //        {
+        //            handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+        //            using (HttpClient client = new HttpClient(handler))
+        //            {
+        //                client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+        //                client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //                var response = await client.GetAsync(url);
+
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    var jsonString = await response.Content.ReadAsStringAsync();
+        //                    var rootObjects = JsonConvert.DeserializeObject<IRootObjects>(jsonString);
+
+        //                    ItemList = rootObjects.Data;
+
+
+
+
+
+
+
+
+
+        //                    if (ItemList.Count > 0)
+        //                    {
+
+        //                        // Assign serial numbers
+        //                        for (int i = 0; i < ItemList.Count; i++)
+        //                        {
+        //                            ItemList[i].SerialNumber = i + 1;
+        //                        }
+
+
+
+        //                    }
+        //                    if (!string.IsNullOrEmpty(searchPhrase))
+        //                    {
+        //                        ItemList = ItemList
+        //                         .Where(r => r.I_DESCRIPTION.ToLower().Contains(searchPhrase.ToLower()) ||
+        //                             r.I_CODE.ToLower().Contains(searchPhrase.ToLower())) // Use OR (||) instead of chaining .Where()
+        //                        .ToList();
+
+        //                    }
+        //                    else
+        //                    {
+
+        //                    }
+        //                }
+
+        //                else
+        //                {
+        //                    // Handle the error response here
+        //                    ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+        //                }
+        //            }
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Handle exceptions (e.g., logging)
+        //        ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+        //    }
+
+        //    return View(ItemList);
+        //}
 
         public async Task<ActionResult> Create(int? carecid, string categoryName, string GroupName)
         {

@@ -23,84 +23,215 @@ namespace PSS_CMS.Controllers
         string Status;
         string Message;
         // GET: ItemCategory
-        public async Task<ActionResult> List(string IGRECID, string ItemgroupName, string searchPhrase, string reload)
-        {
 
+        public async Task<ActionResult> List(
+    string IGRECID,
+    string ItemgroupName,
+    string searchPhrase,
+    string reload)
+        {
             if (IGRECID != null)
             {
                 Session["IGRECID"] = IGRECID;
                 IGRECID = Session["IGRECID"].ToString();
             }
+
             int serialNo = 1;
 
-            // Initialize configurations for ItemCategory API call
-            string webUrlGet = ConfigurationManager.AppSettings["ITEMCATEGORYGET"];
-            string authKey = ConfigurationManager.AppSettings["Authkey"];
+            string webUrlGet =
+                ConfigurationManager.AppSettings["ITEMCATEGORYGET"];
 
-            // Check API Key
+            string authKey =
+                ConfigurationManager.AppSettings["Authkey"];
+
             if (Session["APIKEY"] == null)
             {
-                ModelState.AddModelError(string.Empty, "API Key is missing.");
+                ModelState.AddModelError(
+                    string.Empty,
+                    "API Key is missing.");
+
                 return View(new List<ItemCategory>());
             }
 
             string apiKey = Session["APIKEY"].ToString();
+
             if (ItemgroupName != null && IGRECID != null)
             {
                 Session["ItemgroupName"] = ItemgroupName;
                 Session["IC_IGRECID"] = IGRECID;
             }
+
             string companyId = Session["CompanyId"]?.ToString();
-            string strParams = $"GroupRecid={Session["IGRECID"]}&companyId={companyId}";
-            string finalUrl = $"{webUrlGet}?{strParams}";
 
+            string strParams =
+                $"GroupRecid={Session["IGRECID"]}&companyId={companyId}";
 
-            //DataTable dt = Session["ItemCategoryListTable"] as DataTable;
-            List<ItemCategory> itemCategoryList = new List<ItemCategory>();
+            string finalUrl =
+                $"{webUrlGet}?{strParams}";
+
+            List<ItemCategory> itemCategoryList =
+                new List<ItemCategory>();
 
             try
             {
                 using (HttpClientHandler handler = new HttpClientHandler())
                 {
-                    handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    handler.ServerCertificateCustomValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
 
                     using (HttpClient client = new HttpClient(handler))
                     {
-                        client.DefaultRequestHeaders.Add("ApiKey", apiKey);
-                        client.DefaultRequestHeaders.Add("Authorization", authKey);
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        client.DefaultRequestHeaders.Add(
+                            "ApiKey",
+                            apiKey);
 
+                        client.DefaultRequestHeaders.Add(
+                            "Authorization",
+                            authKey);
 
-                        var response = await client.GetAsync(finalUrl);
+                        client.DefaultRequestHeaders.Accept.Add(
+                            new MediaTypeWithQualityHeaderValue(
+                                "application/json"));
+
+                        var response =
+                            await client.GetAsync(finalUrl);
 
                         if (response.IsSuccessStatusCode)
                         {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var rootObjects = JsonConvert.DeserializeObject<ItemconetntObject>(jsonString);
-                            itemCategoryList = rootObjects?.Data ?? new List<ItemCategory>();
+                            var jsonString =
+                                await response.Content.ReadAsStringAsync();
 
-                            // Set SerialNumber for each ItemCategory
+                            var rootObjects =
+                                JsonConvert.DeserializeObject<ItemconetntObject>(
+                                    jsonString);
+
+                            itemCategoryList =
+                                rootObjects?.Data ??
+                                new List<ItemCategory>();
+
+                            // Search
+                            if (!string.IsNullOrWhiteSpace(searchPhrase))
+                            {
+                                searchPhrase = searchPhrase.Trim();
+
+                                itemCategoryList = itemCategoryList
+                                    .Where(x =>
+                                        (!string.IsNullOrEmpty(x.IC_CODE) &&
+                                         x.IC_CODE.IndexOf(
+                                             searchPhrase,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+                                        ||
+                                        (!string.IsNullOrEmpty(x.IC_DESCRIPTION) &&
+                                         x.IC_DESCRIPTION.IndexOf(
+                                             searchPhrase,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+                                    )
+                                    .ToList();
+                            }
+
+                            // Assign serial numbers AFTER filtering
                             foreach (var item in itemCategoryList)
                             {
                                 item.SerialNumber = serialNo++;
                             }
-
-
                         }
                         else
                         {
-                            ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+                            ModelState.AddModelError(
+                                string.Empty,
+                                "Error: " + response.ReasonPhrase);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Exception occurred: " + ex.Message);
             }
 
             return View(itemCategoryList);
         }
+
+        //public async Task<ActionResult> List(string IGRECID, string ItemgroupName, string searchPhrase, string reload)
+        //{
+
+        //    if (IGRECID != null)
+        //    {
+        //        Session["IGRECID"] = IGRECID;
+        //        IGRECID = Session["IGRECID"].ToString();
+        //    }
+        //    int serialNo = 1;
+
+        //    // Initialize configurations for ItemCategory API call
+        //    string webUrlGet = ConfigurationManager.AppSettings["ITEMCATEGORYGET"];
+        //    string authKey = ConfigurationManager.AppSettings["Authkey"];
+
+        //    // Check API Key
+        //    if (Session["APIKEY"] == null)
+        //    {
+        //        ModelState.AddModelError(string.Empty, "API Key is missing.");
+        //        return View(new List<ItemCategory>());
+        //    }
+
+        //    string apiKey = Session["APIKEY"].ToString();
+        //    if (ItemgroupName != null && IGRECID != null)
+        //    {
+        //        Session["ItemgroupName"] = ItemgroupName;
+        //        Session["IC_IGRECID"] = IGRECID;
+        //    }
+        //    string companyId = Session["CompanyId"]?.ToString();
+        //    string strParams = $"GroupRecid={Session["IGRECID"]}&companyId={companyId}";
+        //    string finalUrl = $"{webUrlGet}?{strParams}";
+
+
+        //    //DataTable dt = Session["ItemCategoryListTable"] as DataTable;
+        //    List<ItemCategory> itemCategoryList = new List<ItemCategory>();
+
+        //    try
+        //    {
+        //        using (HttpClientHandler handler = new HttpClientHandler())
+        //        {
+        //            handler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+        //            using (HttpClient client = new HttpClient(handler))
+        //            {
+        //                client.DefaultRequestHeaders.Add("ApiKey", apiKey);
+        //                client.DefaultRequestHeaders.Add("Authorization", authKey);
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+        //                var response = await client.GetAsync(finalUrl);
+
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    var jsonString = await response.Content.ReadAsStringAsync();
+        //                    var rootObjects = JsonConvert.DeserializeObject<ItemconetntObject>(jsonString);
+        //                    itemCategoryList = rootObjects?.Data ?? new List<ItemCategory>();
+
+        //                    // Set SerialNumber for each ItemCategory
+        //                    foreach (var item in itemCategoryList)
+        //                    {
+        //                        item.SerialNumber = serialNo++;
+        //                    }
+
+
+        //                }
+        //                else
+        //                {
+        //                    ModelState.AddModelError(string.Empty, "Error: " + response.ReasonPhrase);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ModelState.AddModelError(string.Empty, "Exception occurred: " + ex.Message);
+        //    }
+
+        //    return View(itemCategoryList);
+        //}
 
         public ActionResult Create()
         {

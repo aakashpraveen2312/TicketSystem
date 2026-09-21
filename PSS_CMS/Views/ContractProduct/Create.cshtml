@@ -30,12 +30,6 @@
         .select2-container {
             width: 100% !important;
         }
-
-       
-
-       
-
-     
     </style>
 }
 
@@ -90,7 +84,7 @@ new { id = "createform", @class = "no-preloader" }))
         <!-- Form -->
         <div class="form-body">
 
-          
+
 
             <div class="form-grid">
 
@@ -146,11 +140,12 @@ new { id = "createform", @class = "no-preloader" }))
 
                     <label class="form-label">
                         Service Engineer
+                        <span class="req">*</span>
                     </label>
 
                     <div class="engineer-card">
 
-                      
+
 
                         <div style="flex:1;">
 
@@ -177,6 +172,7 @@ new { id = "createform", @class = "no-preloader" }))
 
                     <label class="form-label">
                         Product Serial Number
+                        <span class="req">*</span>
                     </label>
 
                     @Html.EditorFor(model => model.CSP_PRODUCTUNIQUENUMBER,
@@ -187,26 +183,6 @@ new { id = "createform", @class = "no-preloader" }))
                             @class = "form-input-text",
                             autocomplete = "off",
                             placeholder = "Enter serial number"
-                        }
-                    })
-
-                </div>
-
-                <!-- Amount -->
-                <div class="form-group">
-
-                    <label class="form-label">
-                        Contract Product Amount
-                    </label>
-
-                    @Html.EditorFor(model => model.CSP_PRODUCTAMOUNT,
-                    new
-                    {
-                        htmlAttributes = new
-                        {
-                            @class = "form-input-num",
-                            autocomplete = "off",
-                            placeholder = "0"
                         }
                     })
 
@@ -231,6 +207,92 @@ new { id = "createform", @class = "no-preloader" }))
                     })
 
                 </div>
+                <!-- Amount -->
+                <div class="form-group">
+
+                    <label class="form-label">
+                        CGST
+                        <span class="req">*</span>
+                    </label>
+
+                    @Html.EditorFor(model => model.CSP_CGST,
+                    new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-num",
+                            autocomplete = "off",
+                            placeholder = "0"
+                        }
+                    })
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        SGST
+                        <span class="req">*</span>
+                    </label>
+
+                    @Html.EditorFor(model => model.CSP_SGST,
+                    new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-num",
+                            autocomplete = "off",
+                            placeholder = "0",
+                            @readonly = "readonly"
+                        }
+                    })
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Amount
+                        <span class="req">*</span>
+                    </label>
+
+                    @Html.EditorFor(model => model.CSP_AMOUNT,
+                    new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-num",
+                            autocomplete = "off",
+                            placeholder = "0"
+                        }
+                    })
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Contract Product Amount
+                    </label>
+
+                    @Html.EditorFor(model => model.CSP_PRODUCTAMOUNT,
+                    new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input-num",
+                            autocomplete = "off",
+                            placeholder = "0",
+                            @readonly = "readonly"
+                        }
+                    })
+
+                </div>
+
+
 
             </div>
 
@@ -292,6 +354,43 @@ new { id = "createform", @class = "no-preloader" }))
 
         });
 
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            function calculateContractProductAmount() {
+
+                var amount = parseFloat($("#CSP_AMOUNT").val()) || 0;
+                var cgst = parseFloat($("#CSP_CGST").val()) || 0;
+                var sgst = parseFloat($("#CSP_SGST").val()) || 0;
+
+                // Calculate GST amounts
+                var cgstAmount = amount * cgst / 100;
+                var sgstAmount = amount * sgst / 100;
+
+                // Final Contract Product Amount
+                var productAmount = amount + cgstAmount + sgstAmount;
+
+                $("#CSP_PRODUCTAMOUNT").val(productAmount.toFixed(2));
+            }
+
+            // Recalculate whenever Amount / CGST / SGST changes
+            $("#CSP_AMOUNT, #CSP_CGST, #CSP_SGST").on("input change", function () {
+                calculateContractProductAmount();
+            });
+
+            // Calculate on page load
+            calculateContractProductAmount();
+
+        });
+        $("#CSP_CGST").on("input", function () {
+
+            var cgst = parseFloat($(this).val()) || 0;
+
+            $("#CSP_SGST").val(cgst);
+
+            calculateContractProductAmount();
+        });
     </script>
 
     <!-- Save -->

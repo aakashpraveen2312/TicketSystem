@@ -129,45 +129,110 @@
         </h6>
     </div>
 
-    <form method="post" action="@Url.Action("PrioritywiseReport","HelpDesk")" id="filterForm">
+    <form method="post" action="@Url.Action("PrioritywiseReport","HelpDesk")" id="filterForm"  class="no-preloader">
         <div class="filter-card">
             <div class="filter-row">
 
                 <!-- From Date -->
+                <!--<div class="filter-group">
+        <label class="filter-label">From Date</label>
+        <input type="date" name="FromDate" id="fromDate"
+               class="form-input-text" style="font-size:12.5px;padding:8px 10px;" />
+    </div>-->
+                <!-- To Date -->
+                <!--<div class="filter-group">
+        <label class="filter-label">To Date</label>
+        <input type="date" name="ToDate" id="toDate"
+               class="form-input-text" style="font-size:12.5px;padding:8px 10px;" />
+    </div>-->
+                <!-- Priority Type -->
+                <!--<div class="filter-group" style="min-width:200px;">
+        <label class="filter-label">Priority Type</label>
+        <select id="comboBox" name="Type" class="form-select-input"
+                style="font-size:12.5px;padding:8px 10px;">
+            <option value="">-- Select Priority Type --</option>
+            <option value="All">All</option>
+            <option value="Normal">Normal</option>
+            <option value="Urgent">Urgent</option>
+            <option value="Critical">Critical</option>
+            <option value="Emergency">Emergency</option>
+        </select>
+    </div>-->
+                <!-- From Date -->
                 <div class="filter-group">
                     <label class="filter-label">From Date</label>
-                    <input type="date" name="FromDate" id="fromDate"
-                           class="form-input-text" style="font-size:12.5px;padding:8px 10px;" />
+                    <input type="date"
+                           name="FromDate"
+                           id="fromDate"
+                           class="form-input-text"
+                           style="font-size:12.5px;padding:8px 10px;"
+                           value="@Request["FromDate"]" />
                 </div>
 
                 <!-- To Date -->
                 <div class="filter-group">
                     <label class="filter-label">To Date</label>
-                    <input type="date" name="ToDate" id="toDate"
-                           class="form-input-text" style="font-size:12.5px;padding:8px 10px;" />
+                    <input type="date"
+                           name="ToDate"
+                           id="toDate"
+                           class="form-input-text"
+                           style="font-size:12.5px;padding:8px 10px;"
+                           value="@Request["ToDate"]" />
                 </div>
 
                 <!-- Priority Type -->
                 <div class="filter-group" style="min-width:200px;">
                     <label class="filter-label">Priority Type</label>
-                    <select id="comboBox" name="Type" class="form-select-input"
+
+                    <select id="comboBox"
+                            name="Type"
+                            class="form-select-input"
                             style="font-size:12.5px;padding:8px 10px;">
+
                         <option value="">-- Select Priority Type --</option>
-                        <option value="All">All</option>
-                        <option value="Normal">Normal</option>
-                        <option value="Urgent">Urgent</option>
-                        <option value="Critical">Critical</option>
-                        <option value="Emergency">Emergency</option>
+
+                        <option value="All"
+                                @(Request["Type"] == "All" ? "selected" : "")>
+                            All
+                        </option>
+
+                        <option value="Normal"
+                                @(Request["Type"] == "Normal" ? "selected" : "")>
+                            Normal
+                        </option>
+
+                        <option value="Urgent"
+                                @(Request["Type"] == "Urgent" ? "selected" : "")>
+                            Urgent
+                        </option>
+
+                        <option value="Critical"
+                                @(Request["Type"] == "Critical" ? "selected" : "")>
+                            Critical
+                        </option>
+
+                        <option value="Emergency"
+                                @(Request["Type"] == "Emergency" ? "selected" : "")>
+                            Emergency
+                        </option>
+
                     </select>
                 </div>
-
                 <!-- Buttons -->
                 <div class="filter-group" style="flex-direction:row;gap:8px;align-items:flex-end;min-width:auto;flex:0;">
                     <button type="submit" name="ActionType" value="Filter" class="btn-save">
                         <i class="bi bi-funnel"></i> Filter
                     </button>
-                    <button type="submit" name="ActionType" value="PDF"
-                            class="btn-save" style="background:#e74c3c;">
+                    @*<button type="submit" name="ActionType" value="PDF"
+                class="btn-save" style="background:#e74c3c;">
+            <i class="bi bi-file-earmark-pdf"></i> PDF
+        </button>*@
+                    <button type="submit"
+                            name="ActionType"
+                            value="PDF"
+                            id="pdfBtn"
+                            class="btn-save"
+                            style="background:#e74c3c;">
                         <i class="bi bi-file-earmark-pdf"></i> PDF
                     </button>
                 </div>
@@ -283,6 +348,7 @@
 
     <!-- Client-side pagination -->
     <script>
+
         document.addEventListener("DOMContentLoaded", function () {
             var table = document.querySelector("#reportTable table");
             if (!table) return;
@@ -315,7 +381,15 @@
             showPage(1);
         });
     </script>
+    <script>
+        $(document).ready(function () {
 
+            $("#pdfBtn").on("click", function () {
+                $("#filterForm").addClass("no-preloader");
+            });
+
+        });
+    </script>
     <!-- TempData error -->
     <script>
         $(document).ready(function () {

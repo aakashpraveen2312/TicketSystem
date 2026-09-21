@@ -207,7 +207,7 @@ namespace PSS_CMS.Models
     {
         public string Status { get; set; }
         public string Message { get; set; }
-        public string FileUrl { get; set; }
+        public string fileUrl { get; set; }
     }
     public class ServiceInvoiceRootObjects
     {

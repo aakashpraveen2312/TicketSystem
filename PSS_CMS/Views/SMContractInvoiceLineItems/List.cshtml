@@ -1,0 +1,327 @@
+﻿@model IEnumerable<PSS_CMS.Models.ContractInvoiceLineItems>
+
+@{ ViewData["Title"] = "Invoice Line Items";
+                ViewBag.PageTitle = "Invoice Line Items";
+                Layout = "~/Views/Shared/_Layout.cshtml";
+
+                string searchPhrase = Request["searchPharse"] ?? "";
+
+                var filtered = Model?.Where(x =>
+                    string.IsNullOrEmpty(searchPhrase) ||
+                    (x.CIL_DESCRIPTION != null && x.CIL_DESCRIPTION.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+                ).ToList();
+
+                decimal grandTotal = filtered != null ? filtered.Sum(x => x.CIL_PRICE) : 0; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-list-ul nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("List", "SMContractInvoiceHeader",new { companyId=  Session["companyId"],CIH_CONTRACTRECID = Session["CIH_CONTRACTRECID"],invoiceAmt =  Session["invoiceAmt"] })">Contract Invoice </a>
+    <i class="bi bi-chevron-right"></i>
+
+    <a href="@Url.Action("List", "SMContractInvoiceLineItems",new { companyId = Session["CompanyID"] ,CIL_CIHRECID = Session["CIL_CIHRECID"],Status =  Session["Status"]})">Contract Line Item </a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Line Items</span>
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+
+        <h3 class="page-card-title">
+            <i class="bi bi-list-ul"></i> Invoice Line Items
+        </h3>
+
+        <div style="display:flex; align-items:center; gap:10px;">
+            @using (Html.BeginForm(
+                "List",
+                "SMContractInvoiceLineItems",
+                FormMethod.Get,
+                new { id = "searchForm" }))
+            {
+        <input type="hidden"
+               name="companyId"
+               value="@Session["CompanyID"]" />
+
+                        <input type="hidden"
+                               name="CIL_CIHRECID"
+                               value="@Session["CIL_CIHRECID"]" />
+
+                                        <input type="hidden"
+                                               name="Status"
+                                               value="@Session["Status"]" />
+
+                                                        <div class="search-box">
+                                                            <i class="bi bi-search"></i>
+
+                                                            <input type="text"
+                                                                   id="searchPharse"
+                                                                   name="searchPharse"
+                                                                   placeholder="Search description"
+                                                                   autocomplete="off"
+                                                                   value="@searchPhrase" />
+
+                                                            @if (!string.IsNullOrEmpty(searchPhrase))
+                                                            {
+                                            <a href="@Url.Action(
+                "List",
+                "SMContractInvoiceLineItems",
+                new
+                {
+                    companyId = Session["CompanyID"],
+                    CIL_CIHRECID = Session["CIL_CIHRECID"],
+                    Status = Session["Status"]
+                })"
+                                               title="Clear">
+                                                <i class="bi bi-x-circle text-muted"></i>
+                                            </a>}
+                                                        </div>}
+
+            <!-- Add Line Item -->
+            <a href="@Url.Action("Create", "SMContractInvoiceLineItems")"
+               class="res-btn res-btn-submit"
+               style="padding:8px 15px; text-decoration:none; white-space:nowrap;">
+                <i class="bi bi-plus-circle"></i>
+                Add Line Item
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- Table -->
+    <div class="grid-wrap">
+        @if (filtered != null && filtered.Any())
+        {
+<table id="lineItemsTable">
+    <thead>
+        <tr>
+            <th style="width:70px;">S.No</th>
+            <th>Description</th>
+            <th class="text-center" style="width:150px;">Price</th>
+            <th class="text-center" style="width:100px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ int sno = 1; }
+        @foreach (var o in filtered)
+        {
+            var editUrl = Url.Action("Edit", "SMContractInvoiceLineitems", new { RecordId = o.CIL_RECID, companyId = o.CIL_COMPANYRECID, Status= Session["Status"] });
+            var ViewUrl = Url.Action("View", "SMContractInvoiceLineitems", new { RecordId = o.CIL_RECID, companyId = o.CIL_COMPANYRECID });
+            var deleteUrl = Url.Action("DeleteInvoiceLine", "SMContractInvoiceLineitems", new { InvoiceLineRecId = o.CIL_RECID, companyId = o.CIL_COMPANYRECID });
+
+<tr>
+    <td class="text-center">@sno</td>
+    <td>@o.CIL_DESCRIPTION</td>
+    <td class="amount-cell text-center">₹@o.CIL_PRICE.ToString("N2")</td>
+    <td>
+        <div class="action-cell">
+
+            @if (Session["Status"].ToString() != "Processed")
+            {
+                <!-- Edit -->
+                <a href="@editUrl" class="act-btn act-edit" title="Edit">
+                    <i class="bx bxs-pencil"></i>
+                </a>
+
+                <!-- Delete -->
+                <a href="javascript:void(0);"
+                   class="act-btn act-delete no-loader"
+                   title="Delete"
+                   data-name="@o.CIL_DESCRIPTION"
+                   data-recid="@o.CIL_RECID"
+                   data-companyid="@o.CIL_COMPANYRECID"
+                   onclick="return confirmDelete(this);">
+
+                    <i class="bx bxs-trash"></i>
+                </a>
+            }
+            else
+            {
+                <!-- View -->
+                <a href="@ViewUrl" class="act-btn act-edit" title="Edit">
+                    <i class="bx bx-show"></i>
+                </a>
+              
+
+
+
+            }
+        </div>
+    </td>
+</tr>sno++;
+                }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="2" style="text-align:right; font-weight:700; padding:11px 14px;">Total</td>
+            <td class="net-amount-cell text-center">₹@grandTotal.ToString("N2")</td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table> <!-- Pagination -->
+                                <div class="table-pagination">
+                                    <button id="prevBtn" class="page-btn"><i class="bi bi-chevron-left"></i> Previous</button>
+                                    <span id="pageInfo" class="page-info"></span>
+                                    <button id="nextBtn" class="page-btn">Next <i class="bi bi-chevron-right"></i></button>
+                                </div> }
+                                            else
+                                            {
+                                <div class="alert alert-warning text-center m-3">
+                                    <b>No line items available</b>
+                                </div>}
+    </div>
+</div>
+
+<!-- Legend -->
+<div class="legend-bar">
+    <div class="legend-item">
+        <span class="act-btn act-edit" style="width:22px;height:22px;font-size:13px"><i class='bx bxs-pencil'></i></span>
+        Edit
+    </div>
+    <div class="legend-item">
+        <span class="act-btn act-delete" style="width:22px;height:22px;font-size:13px"><i class='bx bxs-trash'></i></span>
+        Delete
+    </div>
+</div>
+
+@section Scripts {
+
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+(function () {
+            var pageSize = 10;
+            var table = document.getElementById("lineItemsTable");
+            if (!table) return;
+
+            var rows = Array.prototype.slice.call(table.querySelectorAll("tbody tr"));
+            var totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+            var currentPage = 1;
+
+            var prevBtn = document.getElementById("prevBtn");
+            var nextBtn = document.getElementById("nextBtn");
+            var pageInfo = document.getElementById("pageInfo");
+
+            function renderPage() {
+                var start = (currentPage - 1) * pageSize;
+                var end = start + pageSize;
+
+                rows.forEach(function (row, idx) {
+                    row.style.display = (idx >= start && idx < end) ? "" : "none";
+                });
+
+                pageInfo.textContent = "Page " + currentPage + " of " + totalPages;
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+            }
+
+            prevBtn.addEventListener("click", function () {
+                if (currentPage > 1) { currentPage--; renderPage(); }
+            });
+
+            nextBtn.addEventListener("click", function () {
+                if (currentPage < totalPages) { currentPage++; renderPage(); }
+            });
+
+            renderPage();
+        })();
+
+        // ── Delete confirmation ──
+     function confirmDelete(el) {
+
+    var name = el.getAttribute("data-name") || "this line item";
+
+    var recid = el.getAttribute("data-recid");
+    var companyId = el.getAttribute("data-companyid");
+
+    Swal.fire({
+        title: "Delete this line item?",
+        text: name + " will be removed. This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Delete",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#e74c3c",
+        cancelButtonColor: "#6b7280",
+        reverseButtons: true
+    }).then(function (result) {
+
+        if (result.isConfirmed) {
+
+            $.ajax({
+                url: '@Url.Action("DeleteInvoiceLine", "SMContractInvoiceLineItems")',
+                type: 'POST',
+
+                data: {
+                    InvoiceLineRecId: recid,
+                    companyId: companyId
+                },
+
+                success: function (response) {
+
+                    if (response.success) {
+
+                        Swal.fire({
+                            icon: "success",
+                            title: "Deleted!",
+                            text: response.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(function () {
+
+                            location.reload();
+
+                        });
+
+                    }
+                    else {
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error!",
+                            text: response.message
+                        });
+
+                    }
+                },
+
+                error: function () {
+
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error!",
+                        text: "Something went wrong while deleting the line item."
+                    });
+
+                }
+
+            });
+
+        }
+
+    });
+
+    return false;
+}
+
+
+
+
+
+    </script>
+
+
+
+
+
+}

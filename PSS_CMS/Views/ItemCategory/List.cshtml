@@ -51,35 +51,33 @@
             <!-- Search -->
 
             @using (Html.BeginForm(
-                "List",
-                "ItemCategory",
-                FormMethod.Get,
-                new { id = "searchForm" }))
+      "List",
+      "ItemCategory",
+      FormMethod.Get,
+      new { id = "searchForm" }))
             {
-                <div class="search-box">
+        <div class="search-box">
 
-                    <i class="bi bi-search"></i>
+            <i class="bi bi-search"></i>
 
-                    <input type="text"
-                           id="searchPharse"
-                           name="searchPharse"
-                           placeholder="Search"
-                           autocomplete="off"
-                           value="@Request["searchPharse"]"
-                           onkeyup="autoSubmitSearch(this)" />
+            <input type="text"
+                   id="searchPhrase"
+                   name="searchPhrase"
+                   placeholder="Search"
+                   autocomplete="off"
+                   value="@Request["searchPhrase"]"
+                   onkeyup="autoSubmitSearch(this)" />
 
-                    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
-                    {
-                        <a href="@Url.Action("List","ItemCategory")"
-                           title="Clear">
+            @if (!string.IsNullOrEmpty(Request["searchPhrase"]))
+            {
+        <a href="@Url.Action("List", "ItemCategory")"
+           title="Clear">
 
-                            <i class="bi bi-x-circle text-muted"></i>
+            <i class="bi bi-x-circle text-muted"></i>
 
-                        </a>
-                    }
+        </a>}
 
-                </div>
-            }
+        </div>}
 
             <!-- Add -->
 

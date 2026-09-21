@@ -222,12 +222,12 @@ namespace PSS_CMS.Controllers
                     if (rootObjects == null || rootObjects.Status != "Y")
                         return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
 
-                    if (string.IsNullOrEmpty(rootObjects.FileUrl))
+                    if (string.IsNullOrEmpty(rootObjects.fileUrl))
                         return Content("PDF URL not returned from API.");
 
                     // ✅ Fetch the actual PDF bytes
-                    var fileBytes = await client.GetByteArrayAsync(rootObjects.FileUrl);
-                    var fileName = Path.GetFileName(rootObjects.FileUrl);
+                    var fileBytes = await client.GetByteArrayAsync(rootObjects.fileUrl);
+                    var fileName = Path.GetFileName(rootObjects.fileUrl);
 
                     return File(fileBytes, "application/pdf", fileName);// Forces download/open in browser
                 }
@@ -718,12 +718,12 @@ namespace PSS_CMS.Controllers
                     if (rootObjects == null || rootObjects.Status != "Y")
                         return Content(rootObjects?.Message ?? "No data found for the selected criteria.");
 
-                    if (string.IsNullOrEmpty(rootObjects.FileUrl))
+                    if (string.IsNullOrEmpty(rootObjects.fileUrl))
                         return Content("PDF URL not returned from API.");
 
                     // ✅ Fetch the actual PDF bytes
-                    var fileBytes = await client.GetByteArrayAsync(rootObjects.FileUrl);
-                    var fileName = Path.GetFileName(rootObjects.FileUrl);
+                    var fileBytes = await client.GetByteArrayAsync(rootObjects.fileUrl);
+                    var fileName = Path.GetFileName(rootObjects.fileUrl);
 
                     return File(fileBytes, "application/pdf", fileName);// Forces download/open in browser
                 }

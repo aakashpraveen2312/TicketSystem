@@ -21,6 +21,7 @@ namespace PSS_CMS.Models
         public string TC_PICKFLAG { get; set; }
         public string TC_ASSIGNFLAG { get; set; }
         public int TC_RECID { get; set; }
+        public int TC_PRECID { get; set; }
         public string TC_USERID { get; set; }
         public string TC_COMPANYID { get; set; }
         public string TC_PROJECTID { get; set; }

@@ -1,8 +1,8 @@
 ﻿@model IEnumerable<PSS_CMS.Models.WhitePaper>
 
 @{ ViewData["Title"] = "White Papers";
-                ViewBag.PageTitle = "White Papers";
-                Layout = "~/Views/Shared/_Layout.cshtml"; }
+    ViewBag.PageTitle = "White Papers";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -228,30 +228,30 @@
 
             <!-- Product Filter -->
             @{ var projectTypeList = ViewBag.Product as IEnumerable<SelectListItem>;
-                            var defaultSelectedValue = projectTypeList?.FirstOrDefault()?.Value ?? ""; }
+                var defaultSelectedValue = projectTypeList?.FirstOrDefault()?.Value ?? ""; }
             @if (projectTypeList != null && projectTypeList.Any())
             {
 @Html.DropDownList(
-         "SelectedProjectType2",
-         projectTypeList,
-         new
-         {
-             @class = "filter-select",
-             id = "projectTypeFilter2",
-             data_default = defaultSelectedValue
-         }) }
-            else
-            {
+              "SelectedProjectType2",
+              projectTypeList,
+              new
+              {
+                  @class = "filter-select",
+                  id = "projectTypeFilter2",
+                  data_default = defaultSelectedValue
+              }) }
+else
+{
 @Html.DropDownList(
-         "SelectedProjectType2",
-         projectTypeList,
-         "No products available",
-         new
-         {
-             @class = "filter-select",
-             id = "projectTypeFilter2",
-             data_default = defaultSelectedValue
-         })            }
+              "SelectedProjectType2",
+              projectTypeList,
+              "No products available",
+              new
+              {
+                  @class = "filter-select",
+                  id = "projectTypeFilter2",
+                  data_default = defaultSelectedValue
+              })}
 
             <!-- Search -->
             @using (Html.BeginForm("Whitepaper", "KnowledgeBased", FormMethod.Get, new { id = "searchForm" }))
@@ -263,14 +263,15 @@
            name="searchPharse"
            placeholder="Search"
            autocomplete="off"
-           value="@Request["searchPharse"]"
-           onkeyup="autoSubmitSearch(this)" />
+           value="@Request["searchPharse"]" />
+    <!-- keeps the currently selected product filter alive when the search form submits -->
+    <input type="hidden" id="projectIDHidden" name="projectID" value="@Request["projectID"]" />
     @if (!string.IsNullOrEmpty(Request["searchPharse"]))
     {
 <a href="@Url.Action("Whitepaper","KnowledgeBased")" title="Clear">
     <i class="bi bi-x-circle text-muted"></i>
 </a>}
-</div>            }
+</div>}
 
             <!-- New White Paper -->
             <a href="@Url.Action("WhitepaperPost","KnowledgeBased")"
@@ -338,12 +339,12 @@
             {
 <a href="data:@mimeType;base64,@wp.WP_ATTACHEMENT"
    download="@(wp.WP_TITLE).@fileType"
-   class="dl-btn">
+   class="dl-btn no-loader">
     <i class="bi bi-download"></i>
     Download
 </a> }
-                    else
-                    {
+else
+{
 <span class="no-file">No attachment</span>}
 
             <div class="wp-act-btns">
@@ -371,12 +372,12 @@
     </div>}
 
                 </div> }
-                            else
-                            {
-                <div class="wp-empty">
-                    <i class="bi bi-inbox"></i>
-                    <p>No white papers available</p>
-                </div>}
+            else
+            {
+<div class="wp-empty">
+    <i class="bi bi-inbox"></i>
+    <p>No white papers available</p>
+</div>}
 
 </div>
 
@@ -409,18 +410,31 @@
     <script>
         $(document).ready(function () {
 
-            /* ── Search on keyup ──────────────────── */
-            $('#searchPharse').on('keyup', function () {
-                $('#searchForm').submit();
-            });
-
-            /* ── Product filter redirect ──────────── */
             var urlParams        = new URLSearchParams(window.location.search);
             var currentProjectId = urlParams.get("projectID");
             var storedProjectId  = sessionStorage.getItem("selectedProjectID");
 
+            /* Keep the hidden projectID field in the search form in sync,
+               so submitting search never drops the active product filter. */
+            var activeProjectId = currentProjectId || storedProjectId || "";
+            $("#projectIDHidden").val(activeProjectId);
+
             if (storedProjectId) {
                 $("#projectTypeFilter2").val(storedProjectId);
+            }
+
+            /* ── Redirect helper: MERGES into existing query params
+               instead of rebuilding the URL from scratch, so
+               searchPharse (or anything else already in the URL)
+               is preserved when projectID changes. This was the
+               actual cause of the search box "clearing" — the old
+               code replaced the whole querystring with just
+               ?projectID=..., wiping out searchPharse. ------------ */
+            function redirectToPage(projectId) {
+                var mergedParams = new URLSearchParams(window.location.search);
+                mergedParams.set("projectID", projectId);
+                window.location.href = '@Url.Action("Whitepaper","KnowledgeBased")' +
+                    "?" + mergedParams.toString();
             }
 
             if (!currentProjectId) {
@@ -436,14 +450,19 @@
                 var val = $(this).val();
                 if (val) {
                     sessionStorage.setItem("selectedProjectID", val);
+                    $("#projectIDHidden").val(val);
                     redirectToPage(val);
                 }
             });
 
-            function redirectToPage(projectId) {
-                window.location.href = '@Url.Action("Whitepaper","KnowledgeBased")' +
-                    "?projectID=" + encodeURIComponent(projectId);
-            }
+            /* ── Search: debounced auto-submit ────── */
+            var searchDebounce;
+            $('#searchPharse').on('keyup', function () {
+                clearTimeout(searchDebounce);
+                searchDebounce = setTimeout(function () {
+                    $('#searchForm').submit();
+                }, 500);
+            });
 
             /* ── Clear session on nav away ────────── */
             $(document).on("click", "a, button, li", function () {

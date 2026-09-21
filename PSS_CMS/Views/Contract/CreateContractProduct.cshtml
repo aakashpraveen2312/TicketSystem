@@ -1,8 +1,8 @@
 ﻿@model PSS_CMS.Models.Contract
 
 @{ ViewData["Title"] = "Create Contract";
-                ViewBag.PageTitle = "Create Contract";
-                Layout = "~/Views/Shared/_Layout.cshtml"; }
+    ViewBag.PageTitle = "Create Contract";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -24,7 +24,7 @@
 </div>
 
 @using (Html.BeginForm("CreateContractProduct", "Contract", FormMethod.Post,
-    new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
+    new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader", novalidate = "novalidate" }))
 {
 <div class="page-card">
 
@@ -49,7 +49,7 @@
             <!-- Code -->
             <div class="form-group">
                 <label class="form-label">
-                  Code
+                    Code
                 </label>
                 @Html.EditorFor(m => m.CP_CODE, new
                 {
@@ -70,13 +70,15 @@
             <div class="form-group">
                 <label class="form-label">
                     @Html.DisplayNameFor(m => m.CT_CONTRACTREFERENCENUMBER)
+                    <span class="req">*</span>
                 </label>
                 @Html.EditorFor(m => m.CT_CONTRACTREFERENCENUMBER, new
                 {
                     htmlAttributes = new
                     {
                         @class = "form-input-text",
-                        autocomplete = "off"
+                        autocomplete = "off",
+                        required = "required"
                     }
                 })
             </div>
@@ -101,7 +103,11 @@
                     {
                         @class = "form-input-text",
                         autocomplete = "off",
-                        type = "date"
+                        type = "date",
+                        id = "CT_FROMDATE",
+                        required = "required",
+                        onkeydown = "return false;",
+                        onpaste = "return false;"
                     }
                 })
             </div>
@@ -118,9 +124,16 @@
                     {
                         @class = "form-input-text",
                         autocomplete = "off",
-                        type = "date"
+                        type = "date",
+                        id = "CT_TODATE",
+                        required = "required",
+                        onkeydown = "return false;",
+                        onpaste = "return false;"
                     }
                 })
+                <span id="dateRangeError" class="field-error" style="display:none;color:#e74c3c;font-size:12px;margin-top:4px;">
+                    To Date cannot be earlier than From Date.
+                </span>
             </div>
 
             <!-- Contract Amount -->
@@ -147,13 +160,15 @@
             <div class="form-group">
                 <label class="form-label">
                     @Html.DisplayNameFor(m => m.CT_CONTRACTCREATEDBY)
+                    <span class="req">*</span>
                 </label>
                 @Html.EditorFor(m => m.CT_CONTRACTCREATEDBY, new
                 {
                     htmlAttributes = new
                     {
                         @class = "form-input-text",
-                        autocomplete = "off"
+                        autocomplete = "off",
+                        required = "required"
                     }
                 })
             </div>
@@ -170,13 +185,15 @@
             <div class="form-group">
                 <label class="form-label">
                     @Html.DisplayNameFor(m => m.CT_CONTRACTAPPROVEDBY)
+                    <span class="req">*</span>
                 </label>
                 @Html.EditorFor(m => m.CT_CONTRACTAPPROVEDBY, new
                 {
                     htmlAttributes = new
                     {
                         @class = "form-input-text",
-                        autocomplete = "off"
+                        autocomplete = "off",
+                        required = "required"
                     }
                 })
             </div>
@@ -185,6 +202,7 @@
             <div class="form-group">
                 <label class="form-label">
                     @Html.DisplayNameFor(m => m.CT_CONTRACTAPPROVEDDATE)
+                    <span class="req">*</span>
                 </label>
                 @Html.EditorFor(m => m.CT_CONTRACTAPPROVEDDATE, new
                 {
@@ -192,7 +210,11 @@
                     {
                         @class = "form-input-text",
                         autocomplete = "off",
-                        type = "date"
+                        type = "date",
+                        id = "CT_CONTRACTAPPROVEDDATE",
+                        required = "required",
+                        onkeydown = "return false;",
+                        onpaste = "return false;"
                     }
                 })
             </div>
@@ -273,10 +295,71 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        /* ── Date range guard: To Date can never be before From Date ── */
+        $(document).ready(function () {
+
+            function validateDateRange() {
+                var fromVal = $("#CT_FROMDATE").val();
+                var toVal = $("#CT_TODATE").val();
+
+                if (fromVal && toVal && new Date(toVal) < new Date(fromVal)) {
+                    $("#dateRangeError").show();
+                    $("#CT_TODATE")[0].setCustomValidity("To Date cannot be earlier than From Date.");
+                    return false;
+                }
+
+                $("#dateRangeError").hide();
+                $("#CT_TODATE")[0].setCustomValidity("");
+                return true;
+            }
+
+            $("#CT_FROMDATE, #CT_TODATE").on("change", validateDateRange);
+
+            /* Expose for the submit handler below */
+            window.__validateDateRange = validateDateRange;
+        });
+    </script>
+
+    <script>
         /* ── AJAX submit with processing spinner first ── */
         $(document).ready(function () {
             $("#createform").submit(function (e) {
                 e.preventDefault();
+
+                /* ── Required-field check → one field at a time ── */
+                var firstMissing = null;
+                $("#createform [required]").each(function () {
+                    if (!$(this).val() || $(this).val().trim() === "") {
+                        firstMissing = $(this);
+                        return false; // stop at the first empty required field
+                    }
+                });
+
+                if (firstMissing) {
+                    var fieldLabel = firstMissing.closest(".form-group").find(".form-label").text().replace("*", "").trim();
+                    Swal.fire({
+                        title: "Message",
+                        text: "Please fill  the " + fieldLabel + "",
+                        icon: "info",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(function () {
+                        firstMissing.focus();
+                    });
+                    return;
+                }
+
+                /* ── Date range check → modal popup ── */
+                if (typeof window.__validateDateRange === "function" && !window.__validateDateRange()) {
+                    Swal.fire({
+                        title: "Message",
+                        text: "To Date cannot be earlier than From Date.",
+                        icon: "info",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    return;
+                }
 
                 var btn      = $("#savebutton");
                 var formData = new FormData(this);

@@ -354,16 +354,16 @@
         {
 @Html.DropDownListFor(m => m.FirstOrDefault().SelectedProjectType,
          (IEnumerable<SelectListItem>)ViewBag.product,
-         "All Products",
+         "Products",
          new { @class = "filter-select", id = "projectTypeFilter1" })}
 
         @Html.DropDownListFor(m => m.FirstOrDefault().SelectedTicketType,
                  (IEnumerable<SelectListItem>)ViewBag.TicketTypes,
-                 "All Ticket Types",
+                 "Ticket Types",
                  new { @class = "filter-select", id = "ticketTypeFilter1" })
 
         <select class="filter-select" id="statusDropdown1">
-            <option value="">All Statuses</option>
+            <option value="">Statuses</option>
             <option value="S">Submitted</option>
             <option value="R">Resolved</option>
             <option value="C">Closed</option>

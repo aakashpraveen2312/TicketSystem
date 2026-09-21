@@ -1,0 +1,405 @@
+﻿@model PSS_CMS.Models.Locations
+
+@{ ViewData["Title"] = "Edit Location";
+    ViewBag.PageTitle = "Edit Location";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+<link href="~/Content/Style1.css" rel="stylesheet" />
+<link href="~/Content/FooterResponsive.css" rel="stylesheet" />
+<link href="~/Content/ClientSide.css" rel="stylesheet" />
+<link href="~/Content/UIListView.css" rel="stylesheet" />
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-geo-alt nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <a href="@Url.Action("LocationList", "Location", new { id = Session["CompanyId"] })">Locations</a>
+    <i class="bi bi-chevron-right"></i>
+    <span>Edit</span>
+</div>
+
+@using (Html.BeginForm("Edit", "Location", FormMethod.Post, new { id = "editform", @class = "no-preloader" }))
+{
+@Html.AntiForgeryToken()
+
+                <div class="page-card">
+
+                    <!-- Header -->
+                    <div class="page-card-header">
+                        <h6 class="page-card-title">
+                            <span class="title-icon">
+                                <i class="bi bi-pencil-square"></i>
+                            </span>
+                            Edit Location
+                        </h6>
+                    </div>
+
+                    <!-- Form Body -->
+                    <div class="form-body">
+
+                        <p class="form-section-title">Location Information</p>
+
+                        <div class="form-grid">
+
+                            <!-- Location Code -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    @Html.DisplayNameFor(m => m.L_CODE)
+                                    <span class="req">*</span>
+                                </label>
+
+                                @Html.TextBoxFor(m => m.L_CODE, new
+                                {
+                                    @class = "form-input-text",
+                                    autocomplete = "off",
+                                    placeholder = "Enter location code"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.L_CODE, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Partner Name -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    @Html.DisplayNameFor(m => m.L_PartnerName)
+                                    <span class="req">*</span>
+                                </label>
+
+                                @Html.TextBoxFor(m => m.L_PartnerName, new
+                                {
+                                    @class = "form-input-text",
+                                    autocomplete = "off",
+                                    placeholder = "Enter partner name"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.L_PartnerName, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Contact Number -->
+                            <div class="form-group">
+                                <label class="form-label">
+
+                                    @Html.DisplayNameFor(m => m.L_ContactNumber)
+                                    <span class="req">*</span>
+                                </label>
+
+                                @Html.TextBoxFor(m => m.L_ContactNumber, new
+                                {
+                                    @class = "form-input-text",
+                                    autocomplete = "off",
+                                    placeholder = "Enter contact number"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.L_ContactNumber, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    @Html.DisplayNameFor(m => m.L_EmailID)
+                                    <span class="req">*</span>
+                                </label>
+
+                                @Html.TextBoxFor(m => m.L_EmailID, new
+                                {
+                                    @class = "form-input-text",
+                                    autocomplete = "off",
+                                    placeholder = "Enter email address"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.L_EmailID, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- GST Number -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    @Html.DisplayNameFor(m => m.L_GSTNumber)
+                                </label>
+
+                                @Html.TextBoxFor(m => m.L_GSTNumber, new
+                                {
+                                    @class = "form-input-text",
+                                    autocomplete = "off",
+                                    placeholder = "Enter GST number"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.L_GSTNumber, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Location Name -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    @Html.DisplayNameFor(m => m.L_NAME)
+
+                                    <span class="req">*</span>
+                                </label>
+
+                                @Html.TextBoxFor(m => m.L_NAME, new
+                                {
+                                    @class = "form-input-text",
+                                    autocomplete = "off",
+                                    placeholder = "Enter location name"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.L_NAME, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Location Type -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    @Html.DisplayNameFor(m => m.LT_RECID)
+                                    <span class="req">*</span>
+
+                                </label>
+
+                                @Html.DropDownList(
+                                                   "LT_RECID",
+                                                   (SelectList)ViewBag.LocationTypeList,
+                                                   "-- Select Location Type --",
+                                                   new { @class = "form-select" })
+
+                                @Html.ValidationMessageFor(m => m.LT_RECID, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Sort Order -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    @Html.DisplayNameFor(m => m.L_SORTORDER)
+                                </label>
+
+                                @Html.TextBoxFor(m => m.L_SORTORDER, new
+                                {
+                                    @class = "form-input-num",
+                                    type = "number",
+                                    min = "0",
+                                    placeholder = "0"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.L_SORTORDER, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+
+                        <div class="form-divider"></div>
+
+                        <!-- Settings -->
+                        <p class="form-section-title">Settings</p>
+
+                        <div class="form-grid">
+
+                            <label class="check-row" for="Disable">
+                                @Html.CheckBoxFor(m => m.Disable, new
+                                {
+                                    @class = "form-check-input",
+                                    id = "Disable"
+                                })
+
+                                <div class="check-row-label">
+                                    <span>@Html.DisplayNameFor(m => m.Disable)</span>
+                                    <small>Hide this location from active listings</small>
+                                </div>
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="legend-bar">
+
+                        <div class="legend-item">
+                            <span class="field-dot dot-text"></span>
+                            <span>Text Field</span>
+                        </div>
+
+                        <div class="legend-item">
+                            <span class="field-dot dot-num"></span>
+                            <span>Number Field</span>
+                        </div>
+
+                        <div class="legend-item">
+                            <span class="field-dot dot-toggle"></span>
+                            <span>Toggle Field</span>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="form-actions">
+
+                        <input type="submit" value="Save" class="submitbuttons me-3" tabindex="" id="savebutton" />
+                        <input type="button" value="Cancel" class="cancelbuttons" tabindex="" id="" onclick="window.location.href='@Url.Action("LocationList", "Location", new { id = Session["CompanyId"] })'" />
+
+
+
+                    </div>
+
+                </div>}
+
+@section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("#editform").submit(function (e) {
+
+                e.preventDefault();
+
+                var form = $(this);
+                var saveButton = $("#savebutton");
+
+                // Prevent multiple clicks
+                if (saveButton.prop("disabled")) {
+                    return;
+                }
+
+                // Disable button
+                saveButton
+                    .prop("disabled", true)
+                    .val("Updating...");
+
+                $.ajax({
+
+                    url: form.attr("action"),
+
+                    type: "POST",
+
+                    data: form.serialize(),
+
+                    dataType: "json",
+
+                    success: function (response) {
+
+                        // ==========================================
+                        // VALIDATION / ERROR
+                        // ==========================================
+
+                        if (response.Status === "N") {
+
+                            Swal.fire({
+
+                                icon: "info",
+
+                                title: "Information",
+
+                                text: response.Message,
+
+                                confirmButtonText: "Ok",
+
+                                confirmButtonColor: "#6f61b5",
+
+                                allowOutsideClick: false,
+
+                                allowEscapeKey: false
+
+                            });
+
+                            // Enable button again
+                            saveButton
+                                .prop("disabled", false)
+                                .val("Save");
+
+                            return;
+                        }
+
+                        // ==========================================
+                        // SUCCESS
+                        // ==========================================
+
+                        if (response.Status === "Y") {
+
+                            Swal.fire({
+
+                                icon: "success",
+
+                                title: "Success!",
+
+                                text: response.Message,
+
+                                confirmButtonText: "Ok",
+
+                                confirmButtonColor: "#65d5d5",
+
+                                allowOutsideClick: false,
+
+                                allowEscapeKey: false
+
+                            }).then(function (result) {
+
+                                if (result.isConfirmed) {
+
+                                    window.location.href =
+                                        response.RedirectUrl;
+
+                                }
+
+                            });
+
+                            return;
+                        }
+
+                        // ==========================================
+                        // UNKNOWN RESPONSE
+                        // ==========================================
+
+                        Swal.fire({
+
+                            icon: "error",
+
+                            title: "Error!",
+
+                            text: "Unexpected response from server.",
+
+                            confirmButtonText: "Ok",
+
+                            confirmButtonColor: "#6f61b5",
+
+                            allowOutsideClick: false,
+
+                            allowEscapeKey: false
+
+                        });
+
+                        saveButton
+                            .prop("disabled", false)
+                            .val("Save");
+                    },
+
+                    error: function (xhr) {
+
+                        console.log(xhr.status);
+                        console.log(xhr.responseText);
+
+                        Swal.fire({
+
+                            icon: "error",
+
+                            title: "Error!",
+
+                            text: "Unable to update the location. Please try again.",
+
+                            confirmButtonText: "Ok",
+
+                            confirmButtonColor: "#6f61b5",
+
+                            allowOutsideClick: false,
+
+                            allowEscapeKey: false
+
+                        });
+
+                        saveButton
+                            .prop("disabled", false)
+                            .val("Save");
+                    }
+
+                });
+
+            });
+
+        });
+
+    </script>
+}

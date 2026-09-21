@@ -85,11 +85,11 @@
                         </a>
                     </li>
                     @*<li class="nav-link">
-                        <a href="@Url.Action("List", "AccountantCustomerInvoice")">
-                            <i class='bi bi-person-check' style="font-size:20px"></i>
-                            <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
-                        </a>
-                    </li>*@
+                            <a href="@Url.Action("List", "AccountantCustomerInvoice")">
+                                <i class='bi bi-person-check' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Sales Invoice</span>
+                            </a>
+                        </li>*@
                     <li class="nav-link">
                         <a href="@Url.Action("ContractList", "Contract")">
                             <i class='bi bi-tools' style="font-size:20px"></i>
@@ -122,17 +122,17 @@
                         </a>
                     </li>
                     @*<li class="nav-link">
-            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
-                <i class='bx bx-credit-card' style="font-size:20px"></i>
-                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
-            </a>
-        </li>
-        <li class="nav-link">
-            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
-                <i class='bx bx-wallet' style="font-size:20px"></i>
-                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
-            </a>
-        </li>*@
+                            <a href="@Url.Action("ProductFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-credit-card' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Product Finance</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="@Url.Action("CustomerFinanceReport", "ContractExpiryReport")">
+                                <i class='bx bx-wallet' style="font-size:20px"></i>
+                                <span class="text nav-text" style="margin-left:15px">Customer Finance</span>
+                            </a>
+                        </li>*@
                     <!-- Settings Section -->
                     <li class="nav-link openfold" style="margin-top:10px;">
                         <img src="~/assets/img/cyber-security.png" class="settingsIcon" style="width: 25px; height: 25px; margin-bottom: 5px;" />
@@ -245,7 +245,7 @@
                 var EditlinkHtml = $"<a href='{Editurl}' data-toggle='tooltip' data-placement='top' title='Edit'>{EditiconHtml}</a>";
 
 
-                var CustomerNotifyurl = Url.Action("List", "CustomerNotification", new { CustomerRecID = o.CU_RECID, Name = o.CU_NAME,InvoiceNo = o.CU_INVOICENO});
+                var CustomerNotifyurl = Url.Action("List", "CustomerNotification", new { CustomerRecID = o.CU_RECID, Name = o.CU_NAME, InvoiceNo = o.CU_INVOICENO });
                 var CustomerNotifyIconHtml = "<i class='bi bi-bell bx-sm'></i>";
                 var CustomerNotifylinkHtml = $"<a href='{CustomerNotifyurl}' data-toggle='tooltip' data-placement='top' title='Follow-up'>{CustomerNotifyIconHtml}</a>";
 
@@ -280,62 +280,62 @@
                 <div class="alert alert-warning text-center">
                     <b>No Customers are available</b>
                 </div>}
-        <footer>
-            <div class="footer">
-                <div class="flex-container" style="padding-top:5px;padding-left:5px">
+            <footer>
+                <div class="footer">
+                    <div class="flex-container" style="padding-top:5px;padding-left:5px">
 
-                    <div class="flex-item mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
-                        </div>&nbsp;- Create
-                    </div>
+                        <div class="flex-item mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <img src="~/assets/img/icons8-add-32.png" alt="Add" width="15" height="15" />
+                            </div>&nbsp;- Create
+                        </div>
 
-                    <div class="flex-item mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
+                        <div class="flex-item mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i style="color:#337ab7" class='bx bxs-pencil bx-sm'> </i>
+                            </div>
+                            &nbsp;- Edit
                         </div>
-                        &nbsp;- Edit
-                    </div>
 
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bx bxs-trash bx-sm red mb-1'> </i>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bx bxs-trash bx-sm red mb-1'> </i>
+                            </div>
+                            &nbsp;- Delete
                         </div>
-                        &nbsp;- Delete
-                    </div> 
-                    
-                   
-                    
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-bell bx-sm '> </i>
+
+
+
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-bell bx-sm '> </i>
+                            </div>
+                            &nbsp;- Follow Ups
+                        </div>  <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
+                            </div>
+                            &nbsp;- Warranty PDF
                         </div>
-                        &nbsp;- Follow Ups
-                    </div>  <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-file-earmark-pdf-fill text-danger bx-sm '> </i>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <i class='bi bi-envelope-check text-primary bx-sm'> </i>
+                            </div>
+                            &nbsp;- Email (Warranty PDF)
                         </div>
-                        &nbsp;- Warranty PDF
-                    </div>  
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <i class='bi bi-envelope-check text-primary bx-sm'> </i>
+                        <div class="flex-item  mt-1">
+                            <div class="d-flex justify-content-center footerb">
+                                <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
+                            </div>
+                            &nbsp;- Excel Export
                         </div>
-                        &nbsp;- Email (Warranty PDF)
-                    </div>  
-                    <div class="flex-item  mt-1">
-                        <div class="d-flex justify-content-center footerb">
-                            <img src="~/assets/img/Excel image.png" alt="Add" width="20" height="20" />
-                        </div>
-                        &nbsp;- Excel Export
                     </div>
                 </div>
-            </div>
-        </footer>
+            </footer>
         </div>
 
 
-      
+
 
     </div>
 
@@ -358,6 +358,7 @@
     <script src="~/Scripts/Logoutjs.js"></script>
 
 
+    @*<script src="~/Scripts/Inactivitylogout.js"></script>*@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

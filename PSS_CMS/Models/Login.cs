@@ -20,7 +20,7 @@ namespace PSS_CMS.Models
         public string U_DOMAIN { get; set; }
 
         [DisplayName("User ID")]
-        [Required(ErrorMessage = "Please enter the User ID")]
+        [Required(ErrorMessage = "Please enter the User ID / Email ID / Mobile Number")]
         public string U_EMAILID { get; set; }
         public string U_RCODE { get; set; }
         public string U_ADDONCUSTOMER { get; set; }
@@ -41,6 +41,7 @@ namespace PSS_CMS.Models
     public class APIResponseLogin
     {
         public List<Login> Data { get; set; }
+        public string Role { get; set; }
         public string U_USERNAME { get; set; }
         public string U_EMAILID { get; set; }
         public string U_PASSWORD { get; set; }

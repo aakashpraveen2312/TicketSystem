@@ -115,6 +115,31 @@ namespace PSS_CMS.Controllers
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(materialcategory.SelectedItemGroup))
+                {
+                    return Json(new { success = false, message = "Please select the Item Group " });
+                }
+                if (string.IsNullOrWhiteSpace(materialcategory.SelectedItemCategory))
+                {
+                    return Json(new { success = false, message = "Please select the Item Category " });
+                } 
+                if (string.IsNullOrWhiteSpace(materialcategory.SelectedMaterial))
+                {
+                    return Json(new { success = false, message = "Please select the Item  " });
+                }
+
+                if (materialcategory.tM_QUANTITY <= 0)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Please enter the Item Quantity"
+                    });
+                }
+
+
+
+
                 if (Session["customertypes"].ToString() != null && Session["customertypes"].ToString() == "Addon User")
                 {
                     materialcategory.tM_BILLABLE = true;

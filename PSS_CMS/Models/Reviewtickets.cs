@@ -35,6 +35,7 @@ namespace PSS_CMS.Models
         public string TC_USERID { get; set; }
         public string TC_COMPANYID { get; set; }
         public string TC_PROJECTID { get; set; }
+        public int TC_PRECID { get; set; }
         public string TC_Date { get; set; }
         public string TC_TICKETDATE { get; set; }
 

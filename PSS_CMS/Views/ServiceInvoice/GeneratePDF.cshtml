@@ -284,7 +284,7 @@
     <i class="bi bi-house-door-fill"></i>
     <span>Service Invoice</span>
     <i class="bi bi-chevron-right"></i>
-    <a href="@Url.Action("Index","ServiceInvoice")">List</a>
+    <span>List</span>
     <i class="bi bi-chevron-right"></i>
     <span>Invoice Draft</span>
 </div>
@@ -302,207 +302,219 @@
     @using (Html.BeginForm("GenerateInvoice", "ServiceInvoice", FormMethod.Post,
         new { @class = "no-preloader" }))
     {<!-- Custom Tabs -->
-                <div class="inv-tabs">
-                    <button type="button" class="inv-tab-link active" data-target="pane-info">
-                        <i class="bi bi-info-circle"></i> Invoice Info
+        <div class="inv-tabs">
+            <button type="button" class="inv-tab-link active" data-target="pane-info">
+                <i class="bi bi-info-circle"></i> Invoice Info
+            </button>
+            <button type="button" class="inv-tab-link" data-target="pane-materials">
+                <i class="bi bi-box-seam"></i> Materials &amp; Services
+            </button>
+        </div> <!-- Tab Body -->
+        <div class="tab-body">
+
+            <!-- ── Pane: Invoice Info ─────────────────── -->
+            <div class="inv-pane show" id="pane-info">
+
+                <p class="form-section-title">Basic Invoice Information</p>
+                <div class="form-grid-3" style="margin-bottom:18px;">
+                    @{ var firstBillable = Model?.BillableMaterials?.FirstOrDefault(); }
+
+                    @if (firstBillable != null)
+                    {
+                        <div class="form-group">
+                            @Html.Label("InvoiceNumber", "Invoice Number", new { @class = "form-label" })
+                            @Html.TextBox("InvoiceNumber", firstBillable.InvoiceNumber,
+                                     new { @class = "form-input-auto", @readonly = "readonly" })
+                        </div> }
+                    else
+                    {
+                        <div class="form-group">
+                            @Html.Label("InvoiceNumber", "Invoice Number", new { @class = "form-label" })
+                            @Html.TextBox("InvoiceNumber", "", new { @class = "form-input-auto", @readonly = "readonly" })
+                        </div>}
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().InvoiceDate, new { @class = "form-label" })
+                        @Html.TextBox("InvoiceDate",
+                                 string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.InvoiceDate)
+                                     ? ""
+                                     : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().InvoiceDate).ToString("dd/MM/yyyy"),
+                                 new { @class = "form-input-auto", @readonly = "readonly" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().TicketRaisedDate, new { @class = "form-label" })
+                        @Html.TextBox("TicketRaisedDate",
+                                 string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.TicketRaisedDate)
+                                     ? ""
+                                     : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().TicketRaisedDate).ToString("dd/MM/yyyy"),
+                                 new { @class = "form-input-auto", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <hr class="form-divider" />
+
+                <p class="form-section-title">Customer Details</p>
+                <div class="form-grid" style="margin-bottom:18px;">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().CustomerName, new { @class = "form-label" })
+                        @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerName,
+                                 new { @class = "form-input-auto", @readonly = "readonly" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress, new { @class = "form-label" })
+                        @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress,
+                                 new { @class = "form-input-auto", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <hr class="form-divider" />
+
+                <p class="form-section-title">Product &amp; Warranty</p>
+                <div class="form-grid" style="margin-bottom:18px;">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().ProductName, new { @class = "form-label" })
+                        @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().ProductName,
+                                 new { @class = "form-input-auto", @readonly = "readonly" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().WarrantyUpto, new { @class = "form-label" })
+                        @Html.TextBox("WarrantyUpto",
+                                 string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.WarrantyUpto)
+                                     ? ""
+                                     : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().WarrantyUpto).ToString("dd/MM/yyyy"),
+                                 new { @class = "form-input-auto", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <hr class="form-divider" />
+
+                <p class="form-section-title">Comments / Remarks</p>
+                <div class="form-grid" style="margin-bottom:8px;">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().Comments, new { @class = "form-label" })
+                        @Html.TextAreaFor(m => m.BillableMaterials.FirstOrDefault().Comments,
+                                 new { @class = "form-textarea", @readonly = "readonly" })
+                    </div>
+                    <div></div>
+                </div>
+
+                <!-- Next button -->
+                <div class="pane-actions">
+                    <button type="button" class="btn-save" id="btn-next-info">
+                        <i class="bi-arrow-right-circle"></i> Next
                     </button>
-                    <button type="button" class="inv-tab-link" data-target="pane-materials">
-                        <i class="bi bi-box-seam"></i> Materials &amp; Services
-                    </button>
-                </div> <!-- Tab Body -->
-                                                <div class="tab-body">
+                </div>
 
-                                                    <!-- ── Pane: Invoice Info ─────────────────── -->
-                                                    <div class="inv-pane show" id="pane-info">
+            </div>
 
-                                                        <p class="form-section-title">Basic Invoice Information</p>
-                                                        <div class="form-grid-3" style="margin-bottom:18px;">
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().InvoiceNumber, new { @class = "form-label" })
-                                                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().InvoiceNumber,
-                                                                         new { @class = "form-input-auto", @readonly = "readonly" })
-                                                            </div>
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().InvoiceDate, new { @class = "form-label" })
-                                                                @Html.TextBox("InvoiceDate",
-                                                                         string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.InvoiceDate)
-                                                                             ? ""
-                                                                             : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().InvoiceDate).ToString("dd/MM/yyyy"),
-                                                                         new { @class = "form-input-auto", @readonly = "readonly" })
-                                                            </div>
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().TicketRaisedDate, new { @class = "form-label" })
-                                                                @Html.TextBox("TicketRaisedDate",
-                                                                         string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.TicketRaisedDate)
-                                                                             ? ""
-                                                                             : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().TicketRaisedDate).ToString("dd/MM/yyyy"),
-                                                                         new { @class = "form-input-auto", @readonly = "readonly" })
-                                                            </div>
-                                                        </div>
+            <!-- ── Pane: Materials & Services ─────────── -->
+            <div class="inv-pane" id="pane-materials">
 
-                                                        <hr class="form-divider" />
+                <div class="sub-heading">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Billable Materials &amp; Services
+                </div>
+                <div class="grid-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Material Name</th>
+                                <th class="td-right">Qty</th>
+                                <th class="td-right">Price</th>
+                                <th class="td-right">Discount (%)</th>
+                                <th class="td-right">Amount</th>
+                                <th class="td-right">CGST (%)</th>
+                                <th class="td-right">SGST (%)</th>
+                                <th class="td-right">Net Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.BillableMaterials)
+                            {
+                                <tr>
+                                    <td>@item.MaterialName</td>
+                                    <td class="td-right">@item.Quantity</td>
+                                    <td class="amount-cell">@String.Format("{0:N2}", item.Price)</td>
+                                    <td class="td-right">@String.Format("{0:N2}", item.Discount)</td>
+                                    <td class="amount-cell">@String.Format("{0:N2}", item.Amount)</td>
+                                    <td class="td-right">@String.Format("{0:N2}", item.CGST)</td>
+                                    <td class="td-right">@String.Format("{0:N2}", item.SGST)</td>
+                                    <td class="net-amount-cell">@String.Format("{0:N2}", item.NetAmount)</td>
+                                </tr>
+}
+                        </tbody>
+                    </table>
+                </div>
 
-                                                        <p class="form-section-title">Customer Details</p>
-                                                        <div class="form-grid" style="margin-bottom:18px;">
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().CustomerName, new { @class = "form-label" })
-                                                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerName,
-                                                                         new { @class = "form-input-auto", @readonly = "readonly" })
-                                                            </div>
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress, new { @class = "form-label" })
-                                                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().CustomerAddress,
-                                                                         new { @class = "form-input-auto", @readonly = "readonly" })
-                                                            </div>
-                                                        </div>
+                <hr class="form-divider" />
 
-                                                        <hr class="form-divider" />
+                <div class="sub-heading nb-heading">
+                    <i class="bi bi-x-circle-fill"></i>
+                    Non-Billable Materials &amp; Services
+                </div>
+                <div class="grid-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Material Name</th>
+                                <th class="td-right">Qty</th>
+                                <th class="td-right">Price</th>
+                                <th class="td-right">Net Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.NonBillableMaterials)
+                            {
+                                <tr>
+                                    <td>@item.MaterialName</td>
+                                    <td class="td-right">@item.Quantity</td>
+                                    <td class="amount-cell">@String.Format("{0:N2}", item.Price)</td>
+                                    <td class="net-amount-cell">@String.Format("{0:N2}", item.NetAmount)</td>
+                                </tr>
+}
+                        </tbody>
+                    </table>
+                </div>
 
-                                                        <p class="form-section-title">Product &amp; Warranty</p>
-                                                        <div class="form-grid" style="margin-bottom:18px;">
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().ProductName, new { @class = "form-label" })
-                                                                @Html.TextBoxFor(m => m.BillableMaterials.FirstOrDefault().ProductName,
-                                                                         new { @class = "form-input-auto", @readonly = "readonly" })
-                                                            </div>
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().WarrantyUpto, new { @class = "form-label" })
-                                                                @Html.TextBox("WarrantyUpto",
-                                                                         string.IsNullOrEmpty(Model.BillableMaterials.FirstOrDefault()?.WarrantyUpto)
-                                                                             ? ""
-                                                                             : DateTime.Parse(Model.BillableMaterials.FirstOrDefault().WarrantyUpto).ToString("dd/MM/yyyy"),
-                                                                         new { @class = "form-input-auto", @readonly = "readonly" })
-                                                            </div>
-                                                        </div>
+                <!-- Actions: amounts left, buttons right -->
+                <div class="pane-actions-full">
 
-                                                        <hr class="form-divider" />
+                    <!-- Left: Amount Summary -->
+                    <div class="inline-amounts">
+                        <div class="inline-amount-item">
+                            <span class="inline-amount-label" style="color:#BA7517;">
+                                <i class="bi bi-receipt" style="margin-right:3px;"></i> Total (Before Tax)
+                            </span>
+                            <span class="inline-amount-value" style="color:#633806;">
+                                &#8377; @String.Format("{0:N2}", Model.BillableMaterials.Sum(x => x.Amount))
+                            </span>
+                        </div>
+                        <div class="inline-divider"></div>
+                        <div class="inline-amount-item">
+                            <span class="inline-amount-label" style="color:#1D9E75;">
+                                <i class="bi bi-check2-all" style="margin-right:3px;"></i> Net Amount (After Tax)
+                            </span>
+                            <span class="inline-amount-value" style="color:#085041;">
+                                &#8377; @String.Format("{0:N2}", Model.BillableMaterials.Sum(x => x.NetAmount))
+                            </span>
+                        </div>
+                    </div>
 
-                                                        <p class="form-section-title">Comments / Remarks</p>
-                                                        <div class="form-grid" style="margin-bottom:8px;">
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(m => m.BillableMaterials.FirstOrDefault().Comments, new { @class = "form-label" })
-                                                                @Html.TextAreaFor(m => m.BillableMaterials.FirstOrDefault().Comments,
-                                                                         new { @class = "form-textarea", @readonly = "readonly" })
-                                                            </div>
-                                                            <div></div>
-                                                        </div>
+                    <!-- Right: Buttons -->
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="btn-cancel"
+                                onclick="window.location.href='@Url.Action("RecentTicket","RecentTickets")'">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn-save">
+                            <i class="bi bi-file-earmark-pdf-fill"></i> Generate
+                        </button>
+                    </div>
 
-                                                        <!-- Next button -->
-                                                        <div class="pane-actions">
-                                                            <button type="button" class="btn-save" id="btn-next-info">
-                                                                <i class="bi-arrow-right-circle"></i> Next
-                                                            </button>
-                                                        </div>
+                </div>
 
-                                                    </div>
+            </div>
 
-                                                    <!-- ── Pane: Materials & Services ─────────── -->
-                                                    <div class="inv-pane" id="pane-materials">
-
-                                                        <div class="sub-heading">
-                                                            <i class="bi bi-check-circle-fill"></i>
-                                                            Billable Materials &amp; Services
-                                                        </div>
-                                                        <div class="grid-wrap">
-                                                            <table>
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Material Name</th>
-                                                                        <th class="td-right">Qty</th>
-                                                                        <th class="td-right">Price</th>
-                                                                        <th class="td-right">Discount (%)</th>
-                                                                        <th class="td-right">Amount</th>
-                                                                        <th class="td-right">CGST (%)</th>
-                                                                        <th class="td-right">SGST (%)</th>
-                                                                        <th class="td-right">Net Amount</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @foreach (var item in Model.BillableMaterials)
-                                                                    {
-                                                    <tr>
-                                                        <td>@item.MaterialName</td>
-                                                        <td class="td-right">@item.Quantity</td>
-                                                        <td class="amount-cell">@String.Format("{0:N2}", item.Price)</td>
-                                                        <td class="td-right">@String.Format("{0:N2}", item.Discount)</td>
-                                                        <td class="amount-cell">@String.Format("{0:N2}", item.Amount)</td>
-                                                        <td class="td-right">@String.Format("{0:N2}", item.CGST)</td>
-                                                        <td class="td-right">@String.Format("{0:N2}", item.SGST)</td>
-                                                        <td class="net-amount-cell">@String.Format("{0:N2}", item.NetAmount)</td>
-                                                    </tr>}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-
-                                                        <hr class="form-divider" />
-
-                                                        <div class="sub-heading nb-heading">
-                                                            <i class="bi bi-x-circle-fill"></i>
-                                                            Non-Billable Materials &amp; Services
-                                                        </div>
-                                                        <div class="grid-wrap">
-                                                            <table>
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Material Name</th>
-                                                                        <th class="td-right">Qty</th>
-                                                                        <th class="td-right">Price</th>
-                                                                        <th class="td-right">Net Amount</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @foreach (var item in Model.NonBillableMaterials)
-                                                                    {
-                                                    <tr>
-                                                        <td>@item.MaterialName</td>
-                                                        <td class="td-right">@item.Quantity</td>
-                                                        <td class="amount-cell">@String.Format("{0:N2}", item.Price)</td>
-                                                        <td class="net-amount-cell">@String.Format("{0:N2}", item.NetAmount)</td>
-                                                    </tr>}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-
-                                                        <!-- Actions: amounts left, buttons right -->
-                                                        <div class="pane-actions-full">
-
-                                                            <!-- Left: Amount Summary -->
-                                                            <div class="inline-amounts">
-                                                                <div class="inline-amount-item">
-                                                                    <span class="inline-amount-label" style="color:#BA7517;">
-                                                                        <i class="bi bi-receipt" style="margin-right:3px;"></i> Total (Before Tax)
-                                                                    </span>
-                                                                    <span class="inline-amount-value" style="color:#633806;">
-                                                                        &#8377; @String.Format("{0:N2}", Model.BillableMaterials.Sum(x => x.Amount))
-                                                                    </span>
-                                                                </div>
-                                                                <div class="inline-divider"></div>
-                                                                <div class="inline-amount-item">
-                                                                    <span class="inline-amount-label" style="color:#1D9E75;">
-                                                                        <i class="bi bi-check2-all" style="margin-right:3px;"></i> Net Amount (After Tax)
-                                                                    </span>
-                                                                    <span class="inline-amount-value" style="color:#085041;">
-                                                                        &#8377; @String.Format("{0:N2}", Model.BillableMaterials.Sum(x => x.NetAmount))
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Right: Buttons -->
-                                                            <div style="display:flex; gap:8px;">
-                                                                <button type="button" class="btn-cancel"
-                                                                        onclick="window.location.href='@Url.Action("RecentTicket","RecentTickets")'">
-                                                                    <i class="bi bi-x-lg"></i> Cancel
-                                                                </button>
-                                                                <button type="submit" class="btn-save">
-                                                                    <i class="bi bi-file-earmark-pdf-fill"></i> Generate
-                                                                </button>
-                                                            </div>
-
-                                                        </div>
-
-                                                    </div>
-
-                                                </div><!-- /tab-body -->}
+        </div><!-- /tab-body -->}
 
 </div><!-- /page-card -->
 <!-- Legend bar -->

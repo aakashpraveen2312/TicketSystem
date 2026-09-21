@@ -9,6 +9,15 @@ namespace PSS_CMS.Models
 {
     public class InvoicePayment
     {
+
+        //razorpay
+        public int CompanyRecID { get; set; }
+        public string OrderId { get; set; }
+        public string PaymentId { get; set; }
+        public string Signature { get; set; }
+
+
+
         public int SerialNumber { get; set; }
         public int PP_RECID { get; set; }
         public int PP_SIHRECID { get; set; }

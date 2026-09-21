@@ -346,10 +346,14 @@ namespace PSS_CMS.Controllers
                             }
                             if (!string.IsNullOrEmpty(searchPharse))
                             {
+                                string search = searchPharse.ToLower();
+
                                 projectmasterlist = projectmasterlist
-                                    .Where(r => r.SIH_CODE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.SIH_INVOICENO.ToString().Contains(searchPharse.ToLower()) ||
-                                                r.SIH_SORTORDER.ToString().Contains(searchPharse.ToLower()))
+                                    .Where(r =>
+                                        (!string.IsNullOrEmpty(r.SIH_CODE) && r.SIH_CODE.ToLower().Contains(search)) ||
+                                        (r.SIH_INVOICENO != null && r.SIH_INVOICENO.ToString().ToLower().Contains(search)) ||
+                                        (r.SIH_SORTORDER != null && r.SIH_SORTORDER.ToString().ToLower().Contains(search))
+                                    )
                                     .ToList();
                             }
 
@@ -412,6 +416,33 @@ namespace PSS_CMS.Controllers
                             var rootObjects = JsonConvert.DeserializeObject<SalesheaderRootObject>(jsonString);
                             projectmasterlist = rootObjects.Data ?? new List<Salesheader>();
 
+                            if (!string.IsNullOrWhiteSpace(searchPharse))
+                            {
+                                searchPharse = searchPharse.Trim();
+
+                                projectmasterlist = projectmasterlist
+                                    .Where(r =>
+                                        (!string.IsNullOrEmpty(r.SIH_CODE) &&
+                                         r.SIH_CODE.IndexOf(
+                                             searchPharse,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+
+                                        ||
+
+                                        r.SIH_INVOICENO.ToString()
+                                            .IndexOf(
+                                                searchPharse,
+                                                StringComparison.OrdinalIgnoreCase) >= 0
+
+                                        ||
+
+                                        r.SIH_SORTORDER.ToString()
+                                            .IndexOf(
+                                                searchPharse,
+                                                StringComparison.OrdinalIgnoreCase) >= 0
+                                    )
+                                    .ToList();
+                            }
                             if (projectmasterlist.Count > 0)
                             {
                                 // Assign serial numbers
@@ -420,14 +451,7 @@ namespace PSS_CMS.Controllers
                                     projectmasterlist[i].SerialNumber = i + 1;
                                 }
                             }
-                            if (!string.IsNullOrEmpty(searchPharse))
-                            {
-                                projectmasterlist = projectmasterlist
-                                    .Where(r => r.SIH_CODE.ToLower().Contains(searchPharse.ToLower()) ||
-                                                r.SIH_INVOICENO.ToString().Contains(searchPharse.ToLower()) ||
-                                                r.SIH_SORTORDER.ToString().Contains(searchPharse.ToLower()))
-                                    .ToList();
-                            }
+                          
 
                         }
                         else
@@ -456,6 +480,50 @@ namespace PSS_CMS.Controllers
         [HttpPost]
         public async Task<ActionResult> SalesheaderCreate(Salesheader salesheader)
         {
+
+
+            // ---------------------------------------------------------
+            // Validate Email
+            // ---------------------------------------------------------
+
+            bool isEmailEmpty = string.IsNullOrWhiteSpace(salesheader.CU_EMAIL);
+
+            if (isEmailEmpty)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "Please enter Email ID."
+                );
+            }
+            else
+            {
+                string email = salesheader.CU_EMAIL.Trim();
+
+                if (!email.Contains("@") || !email.Contains("."))
+                {
+                    ModelState.AddModelError(
+                        "",
+                        "Please enter a valid Email ID."
+                    );
+                }
+            }
+
+
+            // ---------------------------------------------------------
+            // Stop if validation failed
+            // ---------------------------------------------------------
+
+            if (!ModelState.IsValid)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .FirstOrDefault()
+                });
+            }
             try
             {
                 string customerPostUrl = ConfigurationManager.AppSettings["CUSTOMERPRODUCTPOST"];
@@ -1013,6 +1081,34 @@ namespace PSS_CMS.Controllers
         [HttpGet]
         public async Task<ActionResult> GetCustomerByEmailFrom(string email, string mobile)
         {
+
+
+            // ---------------------------------------------------------
+            // 1. Validate Email
+            // ---------------------------------------------------------
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return Json(new
+                {
+                    Status = "V",
+                    Message = "Please enter Email ID."
+                }, JsonRequestBehavior.AllowGet);
+            }
+
+            email = email.Trim();
+
+            if (!email.Contains("@") || !email.Contains("."))
+            {
+                return Json(new
+                {
+                    Status = "V",
+                    Message = "Please enter a valid Email ID."
+                }, JsonRequestBehavior.AllowGet);
+            }
+
+
+
             try
             {
                 string apiUrl = ConfigurationManager.AppSettings["GETCUSTOMERBYEMAIL"];

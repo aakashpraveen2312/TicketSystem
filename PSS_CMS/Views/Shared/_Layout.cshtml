@@ -7,6 +7,8 @@
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
     <!-- Box Icons -->
@@ -26,7 +28,7 @@
         <div class="pre-spinner">
             <div class="pre-icon"><i class="bi bi-ticket-perforated-fill"></i></div>
         </div>
-       
+
     </div>
     <!-- Sidebar Backdrop (mobile) -->
     <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
@@ -34,306 +36,340 @@
     <!-- ─── SIDEBAR ─── -->
     <nav id="sidebar">
         <!-- Brand / Logo -->
-            <a class="sidebar-brand">
-                @if (Session["Logo"] != null)
+        <a class="sidebar-brand">
+            @if (Session["Logo"] != null)
+            {
+                <img src="data:image/png;base64,@Session["Logo"]" alt="Logo" class="brand-logo" />
+            }
+            else
+            {
+                <div class="brand-icon"><i class="bi bi-ticket-perforated-fill"></i></div>
+            }
+            <span class="brand-text">TICKET SYSTEM</span>
+        </a>
+
+        <div class="sidebar-scroll">
+
+            <!-- OVERVIEW -->
+            <div class="nav-section-label">Overview</div>
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa")
+            {
+
+
+                <a href="@Url.Action("SuperAdminCountDashboard", "DashBoard")" class="nav-item-link">
+                    <i class="bi bi-house-door-fill nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            }
+            else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "accountant")
+            {
+
+
+                <a href="@Url.Action("ContractDashboard", "Contract")" class="nav-item-link">
+                    <i class="bi bi-house-door-fill nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            }
+            else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
+            {
+
+
+                <a href="@Url.Action("UserDashboardCount", "UserDashboard")" class="nav-item-link">
+                    <i class="bi bi-house-door-fill nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                
+                
+                <a href="@Url.Action("List", "InvoiceandContracts",new {Userid = Session["UserRECID"]})" class="nav-item-link">
+                    <i class="bi bi-file-earmark-text nav-icon"></i>
+                    <span class="nav-label">Contracts</span>
+                </a>
+                
+                <a href="@Url.Action("Index", "InvoiceandContracts",new {Userid = Session["UserRECID"]})" class="nav-item-link">
+                    <i class="bi bi-file-earmark-text nav-icon"></i>
+                    <span class="nav-label">Service Invoice</span>
+                </a>
+
+
+            }
+            else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
+            {
+
+
+                <a href="@Url.Action("HDDashboard", "HelpDesk")" class="nav-item-link">
+                    <i class="bi bi-house-door-fill nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("Dashboard", "DashBoard")" class="nav-item-link">
+                    <i class="bi bi-house-door-fill nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            }
+
+
+
+            <!-- BUSINESS -->
+            <div class="nav-section-label">Business</div>
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
+            {
+
+                <a href="@Url.Action("Ticket_History", "Tickets")" class="nav-item-link">
+                    <i class="bi-ticket-detailed nav-icon"></i>
+                    <span class="nav-label">Service Tickets</span>
+                </a>
+
+            }
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
+            {
+                <a href="@Url.Action("AddOnCustomerList", "AddonCustomer")" class="nav-item-link">
+                    <i class="bi bi-person-plus nav-icon"></i>
+                    <span class="nav-label">Customer</span>
+                </a>
+                <a href="@Url.Action("Ticket", "HelpDesk")" class="nav-item-link">
+                    <i class="bi bi-receipt-cutoff nav-icon"></i>
+                    <span class="nav-label">Create Ticket</span>
+                </a>
+                <a href="@Url.Action("SalesheaderList", "HelpdeskSalesInvoice")" class="nav-item-link">
+                    <i class="bi bi-receipt-cutoff nav-icon"></i>
+                    <span class="nav-label">Sales Invoice</span>
+                </a>
+
+                <a href="@Url.Action("Ticket_History", "HelpDesk")" class="nav-item-link">
+                    <i class="bi-ticket-detailed nav-icon"></i>
+                    <span class="nav-label">Service Tickets</span>
+                </a>
+
+
+            }
+
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "accountant")
+            {
+                <a href="@Url.Action("CustomerList", "Contract")" class="nav-item-link">
+                    <i class="bi bi-shield-check nav-icon"></i>
+                    <span class="nav-label">Warranty Products</span>
+                </a>
+
+                <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")" class="nav-item-link">
+                    <i class="bi bi-receipt-cutoff nav-icon"></i>
+                    <span class="nav-label">Sales Invoice</span>
+                </a>
+
+                <a href="@Url.Action("ContractList", "Contract")" class="nav-item-link">
+                    <i class="bi bi-file-earmark-text nav-icon"></i>
+                    <span class="nav-label">Service Contract</span>
+                </a>
+
+                <a href="@Url.Action("Index", "ServiceInvoice")" class="nav-item-link">
+                    <i class="bi bi-tools nav-icon"></i>
+                    <span class="nav-label">Service Invoice</span>
+                </a>
+
+                <a href = "@Url.Action("ContractRenewalNotification", "Contract")" class="nav-item-link">
+                    <i class="bi-ticket-detailed nav-icon"></i>
+                    <span class="nav-label">
+                        Contract Create/Renewal<br />
+                        Notification
+                    </span>
+                </a>
+
+            }
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "accountant" &&
+                 Session["UserRole"].ToString().ToLower() != "user"
+
+                )
+            {
+                if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "sa" && Session["UserRole"].ToString().ToLower() != "helpdesk")
                 {
-                    <img src="data:image/png;base64,@Session["Logo"]" alt="Logo" class="brand-logo" /> 
-                }
-                else
-                {
-                    <div class="brand-icon"><i class="bi bi-ticket-perforated-fill"></i></div>
-                }
-                <span class="brand-text">TICKET SYSTEM</span>
-            </a>
- 
-            <div class="sidebar-scroll">
-
-                <!-- OVERVIEW -->
-                <div class="nav-section-label">Overview</div>
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa")
-                {
-
-
-                    <a href="@Url.Action("SuperAdminCountDashboard", "DashBoard")" class="nav-item-link">
-                        <i class="bi bi-house-door-fill nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                }
-                else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "accountant")
-                {
-
-
-                    <a href="@Url.Action("ContractDashboard", "Contract")" class="nav-item-link">
-                        <i class="bi bi-house-door-fill nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                }
-                else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
-                {
-
-
-                    <a href="@Url.Action("UserDashboardCount", "UserDashboard")" class="nav-item-link">
-                        <i class="bi bi-house-door-fill nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                }
-                else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
-                {
-
-
-                    <a href="@Url.Action("HDDashboard", "HelpDesk")" class="nav-item-link">
-                        <i class="bi bi-house-door-fill nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                }
-                else
-                {
-                    <a href="@Url.Action("Dashboard", "DashBoard")" class="nav-item-link">
-                        <i class="bi bi-house-door-fill nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                }
-
-
-
-                <!-- BUSINESS -->
-                <div class="nav-section-label">Business</div>
-
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
-                {
-
-                    <a href="@Url.Action("Ticket_History", "Tickets")" class="nav-item-link">
+                    <a href="@Url.Action("RecentTicket", "RecentTickets")" class="nav-item-link">
                         <i class="bi-ticket-detailed nav-icon"></i>
-                        <span class="nav-label">Service Tickets</span>
-                    </a>
-
-                }
-
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
-                {
-                    <a href="@Url.Action("AddOnCustomerList", "AddonCustomer")" class="nav-item-link">
-                        <i class="bi bi-person-plus nav-icon"></i>
-                        <span class="nav-label">Customer</span>
-                    </a>
-                    <a href="@Url.Action("Ticket", "HelpDesk")" class="nav-item-link">
-                        <i class="bi bi-receipt-cutoff nav-icon"></i>
-                        <span class="nav-label">Create Ticket</span>
-                    </a>
-                    <a href="@Url.Action("SalesheaderList", "HelpdeskSalesInvoice")" class="nav-item-link">
-                        <i class="bi bi-receipt-cutoff nav-icon"></i>
-                        <span class="nav-label">Sales Invoice</span>
-                    </a>
-                    <a href="@Url.Action("Ticket_History", "HelpDesk")" class="nav-item-link">
-                        <i class="bi-ticket-detailed nav-icon"></i>
-                        <span class="nav-label">Service Tickets</span>
-                    </a>
-
-
-
-                }
-
-
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "accountant")
-                {
-                    <a href="@Url.Action("CustomerList", "Contract")" class="nav-item-link">
-                        <i class="bi bi-shield-check nav-icon"></i>
-                        <span class="nav-label">Warranty Products</span>
-                    </a>
-
-                    <a href="@Url.Action("SalesheaderList", "AccountantCustomerInvoice")" class="nav-item-link">
-                        <i class="bi bi-receipt-cutoff nav-icon"></i>
-                        <span class="nav-label">Sales Invoice</span>
-                    </a>
-
-                    <a href="@Url.Action("ContractList", "Contract")" class="nav-item-link">
-                        <i class="bi bi-file-earmark-text nav-icon"></i>
-                        <span class="nav-label">Service Contract</span>
-                    </a>
-
-                    <a href="@Url.Action("Index", "ServiceInvoice")" class="nav-item-link">
-                        <i class="bi bi-tools nav-icon"></i>
-                        <span class="nav-label">Service Invoice</span>
+                        <span class="nav-label">Service Requests</span>
                     </a>
                 }
 
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "accountant" &&
-                     Session["UserRole"].ToString().ToLower() != "user"
 
-                    )
+                if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "admin" && Session["UserRole"].ToString().ToLower() != "helpdesk")
                 {
-                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "sa" && Session["UserRole"].ToString().ToLower() != "helpdesk")
-                    {
-                        <a href="@Url.Action("RecentTicket", "RecentTickets")" class="nav-item-link">
-                            <i class="bi-ticket-detailed nav-icon"></i>
-                            <span class="nav-label">Service Requests</span>
-                        </a>
-                    }
 
-
-                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "admin" && Session["UserRole"].ToString().ToLower() != "helpdesk")
+                    if (Session["UserRole"].ToString().ToLower() != "manager" && Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "admin" && Session["UserRole"].ToString().ToLower() != "helpdesk")
                     {
                         <a href="@Url.Action("List", "ProductMaster")" class="nav-item-link">
                             <i class="bi bi-shield-check nav-icon"></i>
                             <span class="nav-label">Warranty Products</span>
                         </a>
-                        <a href="@Url.Action("SalesheaderAdminListView", "AccountantCustomerInvoice")" class="nav-item-link">
-                            <i class="bi bi-receipt nav-icon"></i>
-                            <span class="nav-label">Sales Invoice</span>
-                        </a>
-                        <a href="@Url.Action("ContractProductListView", "Contract")" class="nav-item-link">
-                            <i class="bi bi-file-earmark-text nav-icon"></i>
-                            <span class="nav-label">Service Contract</span>
-                        </a>
-                    }
-
-                    if ((Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa") && (Session["MaterialConsumptionFlag"] != null && Session["MaterialConsumptionFlag"].ToString().ToLower() == "y"))
-                    {
-                        <a href="@Url.Action("List", "HSNCategory")" class="nav-item-link">
-                            <i class="bi bi-grid-3x3 nav-icon"></i>
-                            <span class="nav-label">HSN Configuration</span>
-                        </a>
-                        <a href="@Url.Action("List", "ItemGroup")" class="nav-item-link">
-                            <i class="bi bi-cart3 nav-icon"></i>
-                            <span class="nav-label">Item Configuration</span>
-                        </a>
                     }
 
 
-                }
-
-
-                <!-- REPORTS -->
-
-
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "user")
-                {
-                    <div class="nav-section-label">Reports</div>
-                }
-
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa" ||
-                              Session["UserRole"].ToString().ToLower() == "manager")
-                {
-
-                    <a href="@Url.Action("TicketAgeingReportPdf", "RecentTickets")" class="nav-item-link">
-                        <i class="bi bi-clock-history nav-icon"></i>
-                        <span class="nav-label">Aging Reports</span>
+                    <a href="@Url.Action("SalesheaderAdminListView", "AccountantCustomerInvoice")" class="nav-item-link">
+                        <i class="bi bi-receipt nav-icon"></i>
+                        <span class="nav-label">Sales Invoice</span>
                     </a>
-                }
-
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "admin")
-                {
-                    <a href="@Url.Action("ServiceProductReport", "ContractExpiryReport")" class="nav-item-link">
-                        <i class="bi bi-clipboard-data nav-icon"></i>
-                        <span class="nav-label">Service Product Report</span>
-                    </a>
-                }
-
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "admin" ||
-                               Session["UserRole"].ToString().ToLower() == "manager")
-                {
-                    <a href="@Url.Action("PrioritywiseReport", "PriorityWiseReport")" class="nav-item-link">
-                        <i class="bi bi-flag nav-icon"></i>
-                        <span class="nav-label">Priority Based Reports</span>
-                    </a>
-                }
-
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "accountant")
-                {
-                    <a href="@Url.Action("Locklog", "SalesInvoiceProduct")" class="nav-item-link">
-                        <i class="bi bi-clipboard-data nav-icon"></i>
-                        <span class="nav-label">Data Audit</span>
-                    </a>
-
-                    <a href="@Url.Action("ContractExpiryReport", "ContractexpiryReport")" class="nav-item-link">
+                    <a href="@Url.Action("ContractProductListView", "Contract")" class="nav-item-link">
                         <i class="bi bi-file-earmark-text nav-icon"></i>
-                        <span class="nav-label">Contract Expiry Reports</span>
+                        <span class="nav-label">Service Contract</span>
                     </a>
                 }
 
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
+                if ((Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa") && (Session["MaterialConsumptionFlag"] != null && Session["MaterialConsumptionFlag"].ToString().ToLower() == "y"))
                 {
-                    <a href="@Url.Action("PrioritywiseReport", "HelpDesk")" class="nav-item-link">
-                        <i class="bi bi-flag nav-icon"></i>
-                        <span class="nav-label">Priority Based Reports</span>
+                    <a href="@Url.Action("List", "HSNCategory")" class="nav-item-link">
+                        <i class="bi bi-grid-3x3 nav-icon"></i>
+                        <span class="nav-label">HSN Configuration</span>
+                    </a>
+                    <a href="@Url.Action("List", "ItemGroup")" class="nav-item-link">
+                        <i class="bi bi-cart3 nav-icon"></i>
+                        <span class="nav-label">Item Configuration</span>
                     </a>
                 }
 
-                <!-- SETTINGS -->
-                <div class="nav-section-label">Settings</div>
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "user" && Session["UserRole"].ToString().ToLower() != "helpdesk")
+
+            }
+
+
+            <!-- REPORTS -->
+
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "user")
+            {
+                <div class="nav-section-label">Reports</div>
+            }
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "sa" ||
+                          Session["UserRole"].ToString().ToLower() == "manager")
+            {
+
+                <a href="@Url.Action("TicketAgeingReportPdf", "RecentTickets")" class="nav-item-link">
+                    <i class="bi bi-clock-history nav-icon"></i>
+                    <span class="nav-label">Aging Reports</span>
+                </a>
+            }
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "admin")
+            {
+                <a href="@Url.Action("ServiceProductReport", "ContractExpiryReport")" class="nav-item-link">
+                    <i class="bi bi-clipboard-data nav-icon"></i>
+                    <span class="nav-label">Service Product Report</span>
+                </a>
+            }
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "admin" ||
+                           Session["UserRole"].ToString().ToLower() == "manager")
+            {
+                <a href="@Url.Action("PrioritywiseReport", "PriorityWiseReport")" class="nav-item-link">
+                    <i class="bi bi-flag nav-icon"></i>
+                    <span class="nav-label">Priority Based Reports</span>
+                </a>
+            }
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "accountant")
+            {
+                <a href="@Url.Action("Locklog", "SalesInvoiceProduct")" class="nav-item-link">
+                    <i class="bi bi-clipboard-data nav-icon"></i>
+                    <span class="nav-label">Data Audit</span>
+                </a>
+
+                <a href="@Url.Action("ContractExpiryReport", "ContractexpiryReport")" class="nav-item-link">
+                    <i class="bi bi-file-earmark-text nav-icon"></i>
+                    <span class="nav-label">Contract Expiry Reports</span>
+                </a>
+            }
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
+            {
+                <a href="@Url.Action("PrioritywiseReport", "HelpDesk")" class="nav-item-link">
+                    <i class="bi bi-flag nav-icon"></i>
+                    <span class="nav-label">Priority Based Reports</span>
+                </a>
+            }
+
+            <!-- SETTINGS -->
+            <div class="nav-section-label">Settings</div>
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "user" && Session["UserRole"].ToString().ToLower() != "helpdesk")
+            {
+                if (Session["UserRole"].ToString().ToLower() != "manager" && Session["UserRole"].ToString().ToLower() != "helpdesk" && Session["UserRole"].ToString().ToLower() != "accountant" && Session["UserRole"].ToString().ToLower() != "admin")
                 {
-                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "admin" && Session["UserRole"].ToString().ToLower() != "accountant")
-                    {
-                        <a href="@Url.Action("List", "UserGroup")" class="nav-item-link">
-                            <i class="bi bi-people nav-icon"></i>
-                            <span class="nav-label">User Accounts</span>
-                        </a>
-                    }
+                    <a href="@Url.Action("List", "UserGroup")" class="nav-item-link">
+                        <i class="bi bi-people nav-icon"></i>
+                        <span class="nav-label">User Accounts</span>
+                    </a>
 
-                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "accountant")
-                    {
-                        <a href="@Url.Action("Info", "CompanyInfo")" class="nav-item-link">
-                            <i class="bi bi-buildings nav-icon"></i>
-                            <span class="nav-label">Company</span>
-                        </a>
 
-                    }
-                }
-
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
-                {
-                    <a href="@Url.Action("UserChangePassword", "ChangePassword")" class="nav-item-link">
-                        <i class="bi bi-file-earmark-lock nav-icon"></i>
-                        <span class="nav-label">Change Password</span>
+                    <a href="@Url.Action("LocationList", "Location")" class="nav-item-link">
+                        <i class="bi bi-geo-alt nav-icon"></i>
+                        <span class="nav-label">Location</span>
                     </a>
                 }
-                else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
+
+                if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "accountant" && Session["UserRole"].ToString().ToLower() != "admin"&& Session["UserRole"].ToString().ToLower() != "helpdesk")
                 {
-                    <a href="@Url.Action("HelpdeskChangePassword", "ChangePassword")" class="nav-item-link">
-                        <i class="bi bi-file-earmark-lock nav-icon"></i>
-                        <span class="nav-label">Change Password</span>
+                    <a href="@Url.Action("Info", "CompanyInfo")" class="nav-item-link">
+                        <i class="bi bi-buildings nav-icon"></i>
+                        <span class="nav-label">Company</span>
+                    </a>
+
+                }
+            }
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
+            {
+                <a href="@Url.Action("UserChangePassword", "ChangePassword")" class="nav-item-link">
+                    <i class="bi bi-file-earmark-lock nav-icon"></i>
+                    <span class="nav-label">Change Password</span>
+                </a>
+            }
+            else if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "helpdesk")
+            {
+                <a href="@Url.Action("HelpdeskChangePassword", "ChangePassword")" class="nav-item-link">
+                    <i class="bi bi-file-earmark-lock nav-icon"></i>
+                    <span class="nav-label">Change Password</span>
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("ChangePassword", "ChangePassword")" class="nav-item-link">
+                    <i class="bi bi-file-earmark-lock nav-icon"></i>
+                    <span class="nav-label">Change Password</span>
+                </a>
+            }
+
+
+            @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "accountant" && Session["UserRole"].ToString().ToLower() != "helpdesk")
+            {
+                <!-- KNOWLEDGE BASED -->
+                <div class="nav-section-label">KNOWLEDGE BASE</div>
+                if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
+                {
+                    <a href="@Url.Action("FAQ", "Tickets")" class="nav-item-link">
+                        <i class="bi bi-question-circle nav-icon"></i>
+                        <span class="nav-label">FAQ</span>
                     </a>
                 }
                 else
                 {
-                    <a href="@Url.Action("ChangePassword", "ChangePassword")" class="nav-item-link">
-                        <i class="bi bi-file-earmark-lock nav-icon"></i>
-                        <span class="nav-label">Change Password</span>
+                    <a href="@Url.Action("FAQADMIN", "RecentTickets")" class="nav-item-link">
+                        <i class="bi bi-question-circle nav-icon"></i>
+                        <span class="nav-label">FAQ</span>
                     </a>
                 }
 
 
-                @if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "accountant" && Session["UserRole"].ToString().ToLower() != "helpdesk")
+                if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "user")
                 {
-                    <!-- KNOWLEDGE BASED -->
-                    <div class="nav-section-label">KNOWLEDGE BASE</div>
-                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() == "user")
-                    {
-                        <a href="@Url.Action("FAQ", "Tickets")" class="nav-item-link">
-                            <i class="bi bi-question-circle nav-icon"></i>
-                            <span class="nav-label">FAQ</span>
-                        </a>
-                    }
-                    else
-                    {
-                        <a href="@Url.Action("FAQADMIN", "RecentTickets")" class="nav-item-link">
-                            <i class="bi bi-question-circle nav-icon"></i>
-                            <span class="nav-label">FAQ</span>
-                        </a>
-                    }
-
-
-                    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToLower() != "user")
-                    {
-                        <a href="@Url.Action("Whitepaper", "KnowledgeBased")" class="nav-item-link">
-                            <i class="bi bi-file-earmark-text nav-icon"></i>
-                            <span class="nav-label">White Paper</span>
-                        </a>
-                    }
-
+                    <a href="@Url.Action("Whitepaper", "KnowledgeBased")" class="nav-item-link">
+                        <i class="bi bi-file-earmark-text nav-icon"></i>
+                        <span class="nav-label">White Paper</span>
+                    </a>
                 }
 
-            </div>
+            }
+
+        </div>
 
         <!-- Logout -->
         <div class="sidebar-footer">
@@ -366,8 +402,8 @@
                         {@(Session["UserName"].ToString().Length > 0 ? Session["UserName"].ToString().Substring(0, 1).ToUpper() : "U") @(Session["UserName"].ToString().Contains(" ") ? Session["UserName"].ToString().Split(' ')[1].Substring(0, 1).ToUpper() : "") }
                         else
                         {
-            @:U
-        }
+                            @:U
+                        }
                     </div>
                     <div class="user-info d-none d-sm-block">
                         <div class="user-name"> @(Session["UserName"] != null ? Session["UserName"].ToString() : "User")</div>
@@ -584,7 +620,12 @@
             }
         });
     </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 
     @RenderSection("Scripts", required: false)
+
 </body>
 </html>

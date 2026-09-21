@@ -2,7 +2,17 @@
 
 @{ ViewData["Title"] = "Contract Expiry Report";
     ViewBag.PageTitle = "Contract Expiry Report";
-    Layout = "~/Views/Shared/_Layout.cshtml"; }
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Read back the submitted filter values (set by the controller) so the
+    // form re-populates instead of clearing after Filter/PDF is clicked.
+    string fromDateVal = ViewBag.FromDate as string ?? "";
+    string toDateVal = ViewBag.ToDate as string ?? "";
+    string typeVal = ViewBag.Type as string ?? "";
+    string pastExpiryVal = ViewBag.PastExpiry as string ?? "";
+    bool pastExpiryChecked = pastExpiryVal.Equals("checked", StringComparison.OrdinalIgnoreCase)
+                             || pastExpiryVal.Equals("true", StringComparison.OrdinalIgnoreCase)
+                             || pastExpiryVal.Equals("on", StringComparison.OrdinalIgnoreCase); }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -117,6 +127,7 @@
                 <div class="filter-group">
                     <label class="filter-label">From Date</label>
                     <input type="date" name="FromDate" id="fromDate" class="form-input-text"
+                           value="@fromDateVal"
                            style="font-size:12.5px;padding:8px 10px;" />
                 </div>
 
@@ -124,6 +135,7 @@
                 <div class="filter-group">
                     <label class="filter-label">To Date</label>
                     <input type="date" name="ToDate" id="toDate" class="form-input-text"
+                           value="@toDateVal"
                            style="font-size:12.5px;padding:8px 10px;" />
                 </div>
 
@@ -132,10 +144,10 @@
                     <label class="filter-label">Select Type</label>
                     <select id="comboBox" name="Type" class="form-select-input"
                             style="font-size:12.5px;padding:8px 10px;">
-                        <option value="">-- Select Type --</option>
-                        <option value="Today">Today</option>
-                        <option value="This Week">This Week</option>
-                        <option value="This Month">This Month</option>
+                        <option value="" selected="@(string.IsNullOrEmpty(typeVal) ? "selected" : null)">-- Select Type --</option>
+                        <option value="Today" selected="@(typeVal == "Today" ? "selected" : null)">Today</option>
+                        <option value="This Week" selected="@(typeVal == "This Week" ? "selected" : null)">This Week</option>
+                        <option value="This Month" selected="@(typeVal == "This Month" ? "selected" : null)">This Month</option>
                     </select>
                 </div>
 
@@ -146,7 +158,8 @@
                         <input type="checkbox"
                                class="form-check-input"
                                id="PastExpiry"
-                               name="PastExpiry" />
+                               name="PastExpiry"
+                               checked="@(pastExpiryChecked ? "checked" : null)" />
                         <div class="check-row-label">
                             <span>Include past expired</span>
                         </div>

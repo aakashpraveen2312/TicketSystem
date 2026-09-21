@@ -1,8 +1,8 @@
 ﻿@model PSS_CMS.Models.ProductMaster
 
 @{ ViewData["Title"] = "Create Product";
-                ViewBag.PageTitle = "Create Product";
-                Layout = "~/Views/Shared/_Layout.cshtml"; }
+    ViewBag.PageTitle = "Create Product";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -23,154 +23,164 @@
 @using (Html.BeginForm("Create", "ProductMaster", FormMethod.Post,
     new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
 {
-<div class="page-card">
+    <div class="page-card">
 
-    <!-- Header -->
-    <div class="page-card-header">
-        <h6 class="page-card-title">
-            <span class="title-icon">
-                <i class="bi bi-shield-check"></i>
-            </span>
-            Create Warranty Product
-        </h6>
-    </div>
-
-    <!-- Form body -->
-    <div class="form-body">
-
-        <p class="form-section-title">Product Information</p>
-
-        <div class="form-grid">
-
-            <!-- Code -->
-            <div class="form-group">
-                <label class="form-label" for="P_CODE">
-                    @Html.DisplayNameFor(m => m.P_CODE)
-                    <span class="req">*</span>
-                </label>
-                @Html.TextBoxFor(m => m.P_CODE, new
-                {
-                    @class = "form-input-text",
-                    autocomplete = "off",
-                    placeholder = "e.g. WP-001"
-                })
-                @Html.ValidationMessageFor(m => m.P_CODE, "", new { @class = "text-danger", style = "font-size:11px" })
-            </div>
-
-            <!-- Name -->
-            <div class="form-group">
-                <label class="form-label" for="P_NAME">
-                    @Html.DisplayNameFor(m => m.P_NAME)
-                    <span class="req">*</span>
-                </label>
-                @Html.TextBoxFor(m => m.P_NAME, new
-                {
-                    @class = "form-input-text",
-                    autocomplete = "off",
-                    placeholder = "e.g. Air Conditioner Unit"
-                })
-                @Html.ValidationMessageFor(m => m.P_NAME, "", new { @class = "text-danger", style = "font-size:11px" })
-            </div>
-
-            <!-- Duration -->
-            <div class="form-group">
-                <label class="form-label" for="P_DURATION">
-                    @Html.DisplayNameFor(m => m.P_DURATION)
-                    <span class="req">*</span>
-                </label>
-                @Html.TextBoxFor(m => m.P_DURATION, new
-                {
-                    @class = "form-input-num",
-                    autocomplete = "off",
-                    placeholder = "e.g. 24",
-                    type = "number",
-                    min = "0"
-                })
-                @Html.ValidationMessageFor(m => m.P_DURATION, "", new { @class = "text-danger", style = "font-size:11px" })
-            </div>
-
-            <!-- Sort Order -->
-            <div class="form-group">
-                <label class="form-label" for="P_SORTORDER">
-                    @Html.DisplayNameFor(m => m.P_SORTORDER)
-                </label>
-                @Html.TextBoxFor(m => m.P_SORTORDER, new
-                {
-                    @class = "form-input-num",
-                    autocomplete = "off",
-                    placeholder = "0",
-                    type = "number",
-                    min = "0"
-                })
-            </div>
-
+        <!-- Header -->
+        <div class="page-card-header">
+            <h6 class="page-card-title">
+                <span class="title-icon">
+                    <i class="bi bi-shield-check"></i>
+                </span>
+                Create Warranty Product
+            </h6>
         </div>
 
-        <div class="form-divider"></div>
-        <p class="form-section-title">Settings</p>
+        <!-- Form body -->
+        <div class="form-body">
 
-        <div class="form-grid">
+            <p class="form-section-title">Product Information</p>
 
-            <!-- Comprehensive Warranty checkbox -->
-            <label class="check-row" for="P_Comprehensivewarranty">
-                @Html.CheckBoxFor(m => m.P_Comprehensivewarranty,
-                         new { @class = "form-check-input", id = "P_Comprehensivewarranty" })
-                <div class="check-row-label">
-                    <span>@Html.DisplayNameFor(m => m.P_Comprehensivewarranty)</span>
-                    <small>Enable full coverage warranty</small>
+            <div class="form-grid">
+
+                <!-- Code -->
+                <div class="form-group">
+                    <label class="form-label" for="P_CODE">
+                        @Html.DisplayNameFor(m => m.P_CODE)
+                        <span class="req">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.P_CODE, new
+                    {
+                        @class = "form-input-text",
+                        autocomplete = "off",
+                        placeholder = "e.g. WP-001"
+                    })
+                    @Html.ValidationMessageFor(m => m.P_CODE, "", new { @class = "text-danger", style = "font-size:11px" })
                 </div>
-            </label>
 
-            <!-- Disable Product checkbox -->
-            <label class="check-row" for="P_ProductDisable">
-                @Html.CheckBoxFor(m => m.P_ProductDisable,
-                         new { @class = "form-check-input", id = "P_ProductDisable" })
-                <div class="check-row-label">
-                    <span>@Html.DisplayNameFor(m => m.P_ProductDisable)</span>
-                    <small>Hide product from active listings</small>
+                <!-- Name -->
+                <div class="form-group">
+                    <label class="form-label" for="P_NAME">
+                        @Html.DisplayNameFor(m => m.P_NAME)
+                        <span class="req">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.P_NAME, new
+                    {
+                        @class = "form-input-text",
+                        autocomplete = "off",
+                        placeholder = "e.g. Air Conditioner Unit"
+                    })
+                    @Html.ValidationMessageFor(m => m.P_NAME, "", new { @class = "text-danger", style = "font-size:11px" })
                 </div>
-            </label>
+
+                <!-- Duration -->
+                <div class="form-group">
+                    <label class="form-label" for="P_DURATION">
+                        @Html.DisplayNameFor(m => m.P_DURATION)
+                        <span class="req">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.P_DURATION, new
+                    {
+                        @class = "form-input-num",
+                        autocomplete = "off",
+                        placeholder = "e.g. 24",
+                        type = "number",
+                        min = "0"
+                    })
+                    @*@Html.ValidationMessageFor(m => m.P_DURATION, "", new { @class = "text-danger", style = "font-size:11px" })*@
+                </div>
+
+                <!-- Sort Order -->
+                <div class="form-group">
+                    <label class="form-label" for="P_SORTORDER">
+                        @Html.DisplayNameFor(m => m.P_SORTORDER)
+                    </label>
+                    @Html.TextBoxFor(m => m.P_SORTORDER, new
+                    {
+                        @class = "form-input-num",
+                        autocomplete = "off",
+                        placeholder = "0",
+                        type = "number",
+                        min = "0"
+                    })
+                </div>
+
+            </div>
+
+            <div class="form-divider"></div>
+            <p class="form-section-title">Settings</p>
+
+            <div class="form-grid">
+
+                <!-- Comprehensive Warranty checkbox -->
+                <label class="check-row" for="P_Comprehensivewarranty">
+                    @Html.CheckBoxFor(m => m.P_Comprehensivewarranty,
+                             new { @class = "form-check-input", id = "P_Comprehensivewarranty" })
+                    <div class="check-row-label">
+                        <span>@Html.DisplayNameFor(m => m.P_Comprehensivewarranty)</span>
+                        <small>Enable full coverage warranty</small>
+                    </div>
+                </label>
+
+                <!-- Disable Product checkbox -->
+                <label class="check-row" for="P_ProductDisable">
+                    @Html.CheckBoxFor(m => m.P_ProductDisable,
+                             new { @class = "form-check-input", id = "P_ProductDisable" })
+                    <div class="check-row-label">
+                        <span>@Html.DisplayNameFor(m => m.P_ProductDisable)</span>
+                        <small>Hide product from active listings</small>
+                    </div>
+                </label>
+
+            </div>
 
         </div>
 
-    </div>
+        <!-- Field type legend — matches list view legend-bar -->
+        <div class="legend-bar">
 
-    <!-- Field type legend — matches list view legend-bar -->
-    <div class="legend-bar">
+            <div class="legend-item">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+                <span>Text Field</span>
+            </div>
 
-        <div class="legend-item">
-            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
-            <span>Text Field</span>
+            <div class="legend-item">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
+                <span>Number Field</span>
+            </div>
+
         </div>
 
-        <div class="legend-item">
-            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
-            <span>Number Field</span>
+        <!-- Actions -->
+        <div class="form-actions">
+            <button type="button"
+                    class="btn-cancel"
+                    onclick="window.location.href='@Url.Action("List","ProductMaster", new { CompanyRecID = Session["CompanyID"] })'">
+                <i class="bi bi-x-lg"></i> Cancel
+            </button>
+            <button type="submit"
+                    class="btn-save"
+                    id="savebutton">
+                <i class="bi bi-floppy"></i> Save
+            </button>
         </div>
 
-    </div>
-
-    <!-- Actions -->
-    <div class="form-actions">
-        <button type="button"
-                class="btn-cancel"
-                onclick="window.location.href='@Url.Action("List","ProductMaster", new { CompanyRecID = Session["CompanyID"] })'">
-            <i class="bi bi-x-lg"></i> Cancel
-        </button>
-        <button type="submit"
-                class="btn-save"
-                id="savebutton">
-            <i class="bi bi-floppy"></i> Save
-        </button>
-    </div>
-
-</div>}
+    </div>}
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $("#P_DURATION").on("keydown", function (e) {
+            if (e.key === "-") {
+                e.preventDefault();
+            }
+        });
 
+        $("#P_DURATION").on("input", function () {
+            this.value = this.value.replace(/-/g, "");
+        });
+    </script>
     <script>
         $(document).ready(function () {
 
@@ -255,4 +265,7 @@
             }
         });
     </script>
+
+
+
 }

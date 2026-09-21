@@ -122,7 +122,7 @@
     {
 <div class="pdf-action-row">
     <button class="btn-pdf btn-draft download-pdf" type="button">
-        <i class="bi bi-file-earmark-pdf"></i> Draft PDF
+        <i class="bi bi-file-earmark-pdf"></i> Service Invoice Draft
     </button>
 
     @if ((Session["Customertype"]?.ToString() ?? "") == "Contract")
@@ -138,11 +138,11 @@ else
 </div>}
 
     <!-- Ticket thread -->
-<div style="padding:18px;">
-    <div class="ticket-thread">
+    <div style="padding:18px;">
+        <div class="ticket-thread">
 
-        @foreach (var ticket in Model)
-        {
+            @foreach (var ticket in Model)
+            {
 <div class="ticket-row">
 
     @* ── Raised card ── *@
@@ -170,12 +170,19 @@ else
                 if (mime.StartsWith("image/"))
                 {
 <img src="data:@mime;base64,@ticket.TC_REQUEST_ATTPREFIX"
-     alt="Ticket attachment" class="img-thumb" /> }
-<a href="data:@mime;base64,@ticket.TC_REQUEST_ATTPREFIX"
-   download="Attachment.@ft"
-   class="dl-btn">
-    <i class="bi bi-download"></i> Download Attachment
-</a>}
+     alt="Ticket attachment" class="img-thumb" /> } @* ── CHANGED: was <a href="data:...;base64,...">.
+    Large data: URIs on href make the browser treat the click as a
+    page navigation, so the tab's progress bar spins and never
+    properly resolves. Now we just store the base64/mime/filename
+    as data-* attributes and let JS convert it to a Blob and
+    download that instead (see downloadBase64 in Scripts section). ── *@
+                        <a href="javascript:void(0);"
+                           class="dl-btn download-attachment"
+                           data-b64="@ticket.TC_REQUEST_ATTPREFIX"
+                           data-mime="@mime"
+                           data-filename="Attachment.@ft">
+                            <i class="bi bi-download"></i> Download Attachment
+                        </a>}
         </div>
     </div> @* ── Response card (if exists) ── *@
     @if (ticket.TC_RESPONSE_DATETIME != null)
@@ -204,12 +211,14 @@ else
             if (mimer.StartsWith("image/"))
             {
 <img src="data:@mimer;base64,@ticket.TC_RESPONSE_ATTPREFIX"
-     alt="Response attachment" class="img-thumb" /> }
-<a href="data:@mimer;base64,@ticket.TC_RESPONSE_ATTPREFIX"
-   download="Attachment.@ftr"
-   class="dl-btn dl-btn-green">
-    <i class="bi bi-download"></i> Download Attachment
-</a>}
+     alt="Response attachment" class="img-thumb" /> } @* ── CHANGED: same fix as the request attachment above ── *@
+                            <a href="javascript:void(0);"
+                               class="dl-btn dl-btn-green download-attachment"
+                               data-b64="@ticket.TC_RESPONSE_ATTPREFIX"
+                               data-mime="@mimer"
+                               data-filename="Attachment.@ftr">
+                                <i class="bi bi-download"></i> Download Attachment
+                            </a>}
     </div>
 </div>}
 else
@@ -217,24 +226,24 @@ else
                     <div class="ticket-card-empty"></div>}
 
 
-</div>            }
+</div>      }
 
-    </div>
-    @if (lastStatus == "C" || lastStatus == "R")
-    {<!-- Actions -->
-                        <div class="mt-3 d-flex justify-content-end">
-                            <a href="@Url.Action("Ticket_History", "Tickets")"
-                               class="res-btn res-btn-cancel">
-                                <i class="bi bi-x-lg"></i> Cancel
-                            </a>
-                        </div> } @* ── Client response form (partial) ── *@
-    @if (lastStatus != "C" && lastStatus != "O")
-    {
+        </div>
+        @if (lastStatus == "C" || lastStatus == "R")
+        {<!-- Actions -->
+                            <div class="mt-3 d-flex justify-content-end">
+                                <a href="@Url.Action("Ticket_History", "Tickets")"
+                                   class="res-btn res-btn-cancel">
+                                    <i class="bi bi-x-lg"></i> Cancel
+                                </a>
+                            </div> } @* ── Client response form (partial) ── *@
+        @if (lastStatus != "C" && lastStatus != "O")
+        {
 <div style="margin-top:20px;">
     @{ Html.RenderPartial("_ClientResponse", new PSS_CMS.Models.Ticket()); }
 </div>}
 
-</div>
+    </div>
 
 </div>
 
@@ -243,6 +252,47 @@ else
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+
+        /* ── ADDED: Attachment download via Blob ───────────────────
+           Converts a base64 string into a Blob and downloads it via
+           a temporary object URL, instead of putting base64 directly
+           into an <a href="data:..."> link. Large data: URIs on an
+           anchor's href cause the browser to treat the click as page
+           navigation, so the tab's progress/loading indicator spins
+           and never resolves — even though the file itself downloads
+           fine. Blob downloads don't trigger that navigation state. */
+        function downloadBase64(base64Data, mime, filename) {
+            try {
+                var byteChars = atob(base64Data);
+                var byteNumbers = new Array(byteChars.length);
+                for (var i = 0; i < byteChars.length; i++) {
+                    byteNumbers[i] = byteChars.charCodeAt(i);
+                }
+                var byteArray = new Uint8Array(byteNumbers);
+                var blob = new Blob([byteArray], { type: mime });
+                var blobUrl = URL.createObjectURL(blob);
+
+                var link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Free the memory the browser allocated for the blob
+                setTimeout(function () { URL.revokeObjectURL(blobUrl); }, 1000);
+            } catch (err) {
+                console.error('Attachment download failed:', err);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Unable to download attachment.' });
+            }
+        }
+
+        // ── ADDED: delegated click handler for all Download Attachment links ──
+        $(document).on('click', '.download-attachment', function (e) {
+            e.preventDefault();
+            var $this = $(this);
+            downloadBase64($this.data('b64'), $this.data('mime'), $this.data('filename'));
+        });
 
         /* ── Generic PDF handler ─────────────────── */
         function handlePdf(action) {
@@ -263,6 +313,19 @@ else
                 error: function () {
                     Swal.close();
                     Swal.fire({ icon: 'error', title: 'Error', text: 'Something went wrong. Please try again.' });
+                },
+                // ── ADDED: complete runs on BOTH success and error, guaranteed ──
+                // This forces any global full-page loader (from _Layout.cshtml)
+                // to hide itself once this specific ajax call is done, even if
+                // that loader's own ajaxStop logic gets stuck due to another
+                // pending request elsewhere on the page.
+                //
+                // IMPORTANT: replace '#pageLoader' below with the ACTUAL id or
+                // class of your spinner element. Find it via:
+                //   Browser DevTools (F12) -> right-click the spinner -> Inspect
+                // then copy its id="..." or class="..." here.
+                complete: function () {
+                    $('#pageLoader, .page-loader, .global-loader').hide(); // ADDED
                 }
             });
         }

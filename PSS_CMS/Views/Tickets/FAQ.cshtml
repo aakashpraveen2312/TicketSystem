@@ -204,18 +204,18 @@
             @if (projectTypeList != null && projectTypeList.Any())
             {
 @Html.DropDownList("SelectedProjectType1",
-         projectTypeList,
-         new
-         {
-             @class = "filter-select",
-             id = "projectTypeFilter1",
-             data_default = defaultSelected
-         }) }
-            else
-            {
+              projectTypeList,
+              new
+              {
+                  @class = "filter-select",
+                  id = "projectTypeFilter1",
+                  data_default = defaultSelected
+              }) }
+else
+{
 <select class="faq-filter-select" id="projectTypeFilter1" disabled>
     <option>No products available</option>
-</select>            }
+</select>}
 
             <!-- Search -->
             @using (Html.BeginForm("FAQ", "Tickets", FormMethod.Get, new { id = "searchForm" }))
@@ -228,7 +228,7 @@
            placeholder="Search"
            autocomplete="off"
            value="@Request["searchPharse"]" />
-</div>            }
+</div>}
 
         </div>
     </div>
@@ -238,54 +238,55 @@
 
         @if (Model != null && Model.Any())
         {
-foreach (var faq in Model)
-{
-        
-    // ── Detect attachment type ──────────────
-                        string fileType = "unknown";
-                        string mimeType = "application/octet-stream";
-
-                        if (!string.IsNullOrEmpty(faq.F_ATTACHEMENT))
-                        {
-                            var b64 = faq.F_ATTACHEMENT;
-                            if (b64.StartsWith("iVBORw0KGgo")) { fileType = "png"; mimeType = "image/png"; }
-                            else if (b64.StartsWith("/9j/")) { fileType = "jpg"; mimeType = "image/jpeg"; }
-                            else if (b64.StartsWith("JVBER")) { fileType = "pdf"; mimeType = "application/pdf"; }
-                            else if (b64.StartsWith("UEsDB"))
-                            {
-                                if (b64.Contains("word/")) { fileType = "docx"; mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; }
-                                else { fileType = "xlsx"; mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; }
-                            }
-                            else if (b64.StartsWith("U1RB") || b64.StartsWith("R2V0")) { fileType = "txt"; mimeType = "text/plain"; }
-                            else if (b64.StartsWith("Q0N2")) { fileType = "csv"; mimeType = "text/csv"; }
-                        }
-                        
-                      
-
-                    <div class="faq-item" id="faq-@faq.F_RECID">
-                        <div class="faq-question" onclick="toggleFaq(@faq.F_RECID)">
-                            <span class="faq-question-text">@faq.F_QUESTION</span>
-                            <i class="bi bi-chevron-down faq-chevron"></i>
-                        </div>
-                        <div class="faq-answer">
-                            <p>@faq.F_ANSWER</p>
-
-                            @if (!string.IsNullOrEmpty(faq.F_ATTACHEMENT))
-                            {
-        <a href="data:@mimeType;base64,@faq.F_ATTACHEMENT"
-           download="@(faq.F_QUESTION).@fileType"
-           class="faq-dl-btn">
-            <i class="bi bi-download"></i> Download Attachment
-        </a> }
-                            else
-                            {
-        <span class="faq-no-file">
-            <i class="bi bi-paperclip"></i> No attachment available
-        </span>}
-                        </div>
-                    </div>} }
-            else
+            foreach (var faq in Model)
             {
+
+                // ── Detect attachment type ──────────────
+                string fileType = "unknown";
+                string mimeType = "application/octet-stream";
+
+                if (!string.IsNullOrEmpty(faq.F_ATTACHEMENT))
+                {
+                    var b64 = faq.F_ATTACHEMENT;
+                    if (b64.StartsWith("iVBORw0KGgo")) { fileType = "png"; mimeType = "image/png"; }
+                    else if (b64.StartsWith("/9j/")) { fileType = "jpg"; mimeType = "image/jpeg"; }
+                    else if (b64.StartsWith("JVBER")) { fileType = "pdf"; mimeType = "application/pdf"; }
+                    else if (b64.StartsWith("UEsDB"))
+                    {
+                        if (b64.Contains("word/")) { fileType = "docx"; mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; }
+                        else { fileType = "xlsx"; mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; }
+                    }
+                    else if (b64.StartsWith("U1RB") || b64.StartsWith("R2V0")) { fileType = "txt"; mimeType = "text/plain"; }
+                    else if (b64.StartsWith("Q0N2")) { fileType = "csv"; mimeType = "text/csv"; }
+                }
+
+
+
+<div class="faq-item" id="faq-@faq.F_RECID">
+    <div class="faq-question" onclick="toggleFaq(@faq.F_RECID)">
+        <span class="faq-question-text">@faq.F_QUESTION</span>
+        <i class="bi bi-chevron-down faq-chevron"></i>
+    </div>
+    <div class="faq-answer">
+        <p>@faq.F_ANSWER</p>
+
+        @if (!string.IsNullOrEmpty(faq.F_ATTACHEMENT))
+        {
+<a href="data:@mimeType;base64,@faq.F_ATTACHEMENT"
+   download="@(faq.F_QUESTION).@fileType"
+   class="faq-dl-btn no-loader">
+    <i class="bi bi-download"></i> Download Attachment
+</a> }
+else
+{
+<span class="faq-no-file">
+    <i class="bi bi-paperclip"></i> No attachment available
+</span>}
+    </div>
+</div>}
+}
+else
+{
 <div style="padding:48px 20px;text-align:center;color:var(--text-muted);">
     <i class="bi bi-question-circle" style="font-size:36px;display:block;margin-bottom:10px;opacity:.4;"></i>
     <span style="font-size:14px;font-weight:600;">No FAQs available</span>
@@ -309,6 +310,17 @@ foreach (var faq in Model)
             setTimeout(function () {
                 document.getElementById('loadingScreen').style.display = 'none';
             }, 500);
+        });
+
+        // Safety net: any click on a "no-loader" element (e.g. data:-URI
+        // downloads) never triggers a real navigation, so make sure the
+        // loading screen is hidden immediately instead of waiting on a
+        // 'load' event that will never fire again.
+        document.addEventListener('click', function (e) {
+            var trigger = e.target.closest('.no-loader');
+            if (trigger) {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }
         });
     </script>
 
@@ -381,5 +393,5 @@ foreach (var faq in Model)
         });
     </script>
 
-   
+
 }

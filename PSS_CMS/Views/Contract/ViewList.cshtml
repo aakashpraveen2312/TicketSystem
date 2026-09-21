@@ -14,13 +14,19 @@
     var titleText = type == "IN"
         ? "Inclusions"
         : "Exclusions";
+
+    string searchPhrase = Request["searchPhrase"] ?? "";
+
+    var filtered = Model?.Where(m =>
+        string.IsNullOrEmpty(searchPhrase) ||
+        (type == "IN"
+            ? (m.IN_DESCRIPTION != null && m.IN_DESCRIPTION.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+            : (m.EX_DESCRIPTION != null && m.EX_DESCRIPTION.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0))
+    ).ToList() ?? new List<PSS_CMS.Models.Viewlist>();
 }
 
 @section Styles {
-
-    <link href="~/Content/UIListView.css"
-          rel="stylesheet" />
-
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
 }
 
 <!-- Breadcrumb -->
@@ -32,25 +38,19 @@
     <i class="bi bi-chevron-right"></i>
 
     <a href="@Url.Action("CustomerList", "Contract")">
-
         Warranty Products
-
     </a>
 
     <i class="bi bi-chevron-right"></i>
 
     <span>
-
         @productName
-
     </span>
 
     <i class="bi bi-chevron-right"></i>
 
     <span>
-
         @titleText
-
     </span>
 
 </div>
@@ -67,38 +67,32 @@
 
             <!-- Search -->
 
-            @using (Html.BeginForm(
-                "ViewList",
-                "Contract",
-                FormMethod.Get,
-                new { id = "searchForm" }))
-            {
+            <form action="" method="get" id="searchForm">
+
+                <!-- Preserve type so it isn't lost when the search form submits -->
+                <input type="hidden" name="type" value="@type" />
+
                 <div class="search-box">
 
                     <i class="bi bi-search"></i>
 
                     <input type="text"
-                           id="searchPharse"
-                           name="searchPharse"
+                           id="searchPhrase"
+                           name="searchPhrase"
                            placeholder="Search"
                            autocomplete="off"
-                           value="@Request["searchPharse"]"
+                           value="@searchPhrase"
                            onkeyup="autoSubmitSearch(this)" />
 
-                    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
+                    @if (!string.IsNullOrEmpty(searchPhrase))
                     {
-                        <a href="@Url.Action("ViewList","Contract", new { type = type })"
-                           title="Clear">
-
+                        <a href="javascript:void(0);" title="Clear" onclick="clearSearch()">
                             <i class="bi bi-x-circle text-muted"></i>
-
                         </a>
                     }
 
                 </div>
-            }
-
-         
+            </form>
 
         </div>
 
@@ -108,7 +102,7 @@
 
     <div class="grid-wrap table-responsive">
 
-        @if (Model != null && Model.Any())
+        @if (filtered != null && filtered.Any())
         {
             <table class="table align-middle mb-0 tickets-table">
 
@@ -137,14 +131,12 @@
 
                 <tbody>
 
-                    @foreach (var o in Model)
+                    @foreach (var o in filtered)
                     {
                         <tr>
 
                             <td class="text-center">
-
                                 @o.SerialNumber
-
                             </td>
 
                             <td>
@@ -154,15 +146,11 @@
                                     <div class="d-flex align-items-center gap-2">
 
                                         <span class="mini-badge text-success">
-
                                             <i class="bi bi-check-circle-fill"></i>
-
                                         </span>
 
                                         <span>
-
                                             @o.IN_DESCRIPTION
-
                                         </span>
 
                                     </div>
@@ -172,15 +160,11 @@
                                     <div class="d-flex align-items-center gap-2">
 
                                         <span class="mini-badge text-danger">
-
                                             <i class="bi bi-x-circle-fill"></i>
-
                                         </span>
 
                                         <span>
-
                                             @o.EX_DESCRIPTION
-
                                         </span>
 
                                     </div>
@@ -234,9 +218,7 @@
                     </i>
 
                     <p class="mt-2 text-muted fw-semibold">
-
-                        No Inclusions Available
-
+                        @(!string.IsNullOrEmpty(searchPhrase) ? "No matching inclusions found." : "No Inclusions Available")
                     </p>
                 }
                 else
@@ -246,9 +228,7 @@
                     </i>
 
                     <p class="mt-2 text-muted fw-semibold">
-
-                        No Exclusions Available
-
+                        @(!string.IsNullOrEmpty(searchPhrase) ? "No matching exclusions found." : "No Exclusions Available")
                     </p>
                 }
 
@@ -266,29 +246,19 @@
     @if (type == "IN")
     {
         <div class="legend-item">
-
             <span class="mini-badge text-success">
-
                 <i class="bi bi-check-circle-fill"></i>
-
             </span>
-
             Inclusion
-
         </div>
     }
     else
     {
         <div class="legend-item">
-
             <span class="mini-badge text-danger">
-
                 <i class="bi bi-x-circle-fill"></i>
-
             </span>
-
             Exclusion
-
         </div>
     }
 
@@ -300,6 +270,11 @@
 
     <script src="~/Scripts/UIPagination.js"></script>
 
-   
+    <script>
+        function clearSearch() {
+            document.getElementById('searchPhrase').value = '';
+            document.getElementById('searchForm').submit();
+        }
+    </script>
 
 }

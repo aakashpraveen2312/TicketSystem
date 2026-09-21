@@ -1,8 +1,8 @@
 ﻿@model PSS_CMS.Models.HSNMaster
 
 @{ ViewData["Title"] = "Create HSN Master";
-                ViewBag.PageTitle = "Create HSN Master";
-                Layout = "~/Views/Shared/_Layout.cshtml"; }
+    ViewBag.PageTitle = "Create HSN Master";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -14,8 +14,8 @@
     <i class="bi bi-chevron-right"></i>
     @if (Session["HSNC_CATEGORYNAME"] != null)
     {
-<a href="@Url.Action("List","HSNCategory")">HSN Category (@Session["HSNC_CATEGORYNAME"].ToString())</a>
-                <i class="bi bi-chevron-right"></i>}
+        <a href="@Url.Action("List","HSNCategory")">HSN Category (@Session["HSNC_CATEGORYNAME"].ToString())</a>
+        <i class="bi bi-chevron-right"></i>}
     <a href="@Url.Action("List","HSNMaster")">HSN Master</a>
     <i class="bi bi-chevron-right"></i>
     <a href="@Url.Action("List","HSNMaster")">List</a>
@@ -27,139 +27,154 @@
 @using (Html.BeginForm("Create", "HSNMaster", FormMethod.Post,
     new { id = "createform", enctype = "multipart/form-data", @class = "no-preloader" }))
 {
-<div class="page-card">
+    <div class="page-card">
 
-    <!-- Header -->
-    <div class="page-card-header">
-        <h6 class="page-card-title">
-            <span class="title-icon">
-                <i class="bi bi-receipt"></i>
-            </span>
-            Create HSN Master
-        </h6>
-    </div>
-
-    <!-- Form body -->
-    <div class="form-body">
-
-        <p class="form-section-title">HSN Information</p>
-
-        <div class="form-grid">
-
-            <!-- Code -->
-            <div class="form-group">
-                <label class="form-label" for="HM_CODE">
-                    @Html.DisplayNameFor(m => m.HM_CODE)
-                    <span class="req">*</span>
-                </label>
-                @Html.TextBoxFor(m => m.HM_CODE, new
-                {
-                    @class = "form-input-text",
-                    tabindex = "1",
-                    autocomplete = "off",
-                    placeholder = "Enter HSN code"
-                })
-                @Html.ValidationMessageFor(m => m.HM_CODE, "", new { @class = "text-danger", style = "font-size:11px" })
-            </div>
-
-            <!-- Description -->
-            <div class="form-group">
-                <label class="form-label" for="HM_DESCRIPTION">
-                    @Html.DisplayNameFor(m => m.HM_DESCRIPTION)
-                    <span class="req">*</span>
-                </label>
-                @Html.TextBoxFor(m => m.HM_DESCRIPTION, new
-                {
-                    @class = "form-input-text",
-                    tabindex = "2",
-                    autocomplete = "off",
-                    placeholder = "Enter description"
-                })
-                @Html.ValidationMessageFor(m => m.HM_DESCRIPTION, "", new { @class = "text-danger", style = "font-size:11px" })
-            </div>
-
+        <!-- Header -->
+        <div class="page-card-header">
+            <h6 class="page-card-title">
+                <span class="title-icon">
+                    <i class="bi bi-receipt"></i>
+                </span>
+                Create HSN Master
+            </h6>
         </div>
 
-        <div class="form-divider"></div>
-       
-        <div class="form-grid">
+        <!-- Form body -->
+        <div class="form-body">
 
-            <!-- CGST -->
-            <div class="form-group">
-                <label class="form-label" for="HM_CGST">
-                    @Html.DisplayNameFor(m => m.HM_CGST)
-                </label>
-                @Html.TextBoxFor(m => m.HM_CGST, new
-                {
-                    @class = "form-input-num",
-                    id = "HM_CGST",
-                    tabindex = "3",
-                    type = "number",
-                    placeholder = "0.00",
-                    oninput = "calculateGST()",
-                    min = "0",
-                    autocomplete = "off"
-                })
+            <p class="form-section-title">HSN Information</p>
+
+            <div class="form-grid">
+
+                <!-- Code -->
+                <div class="form-group">
+                    <label class="form-label" for="HM_CODE">
+                        @Html.DisplayNameFor(m => m.HM_CODE)
+                        <span class="req">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.HM_CODE, new
+                    {
+                        @class = "form-input-text",
+                        tabindex = "1",
+                        autocomplete = "off",
+                        placeholder = "Enter HSN code"
+                    })
+                    @Html.ValidationMessageFor(m => m.HM_CODE, "", new { @class = "text-danger", style = "font-size:11px" })
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label class="form-label" for="HM_DESCRIPTION">
+                        @Html.DisplayNameFor(m => m.HM_DESCRIPTION)
+                        <span class="req">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.HM_DESCRIPTION, new
+                    {
+                        @class = "form-input-text",
+                        tabindex = "2",
+                        autocomplete = "off",
+                        placeholder = "Enter description"
+                    })
+                    @Html.ValidationMessageFor(m => m.HM_DESCRIPTION, "", new { @class = "text-danger", style = "font-size:11px" })
+                </div>
+
             </div>
 
-            <!-- SGST -->
-            <div class="form-group">
-                <label class="form-label" for="HM_SGST">
-                    @Html.DisplayNameFor(m => m.HM_SGST)
-                </label>
-                @Html.TextBoxFor(m => m.HM_SGST, new
-           {
-               @class = "form-input-num",
-               id = "HM_SGST",
-               tabindex = "4",
-               type = "number",
-               placeholder = "0.00",
-               oninput = "calculateGST()",
-               min = "0",
-               autocomplete = "off"
-           })
+            <div class="form-divider"></div>
+
+            <div class="form-grid">
+
+                <!-- CGST -->
+                <div class="form-group">
+                    <label class="form-label" for="HM_CGST">
+                        @Html.DisplayNameFor(m => m.HM_CGST)
+                        <span class="req">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.HM_CGST, new
+                    {
+                        @class = "form-input-num",
+                        id = "HM_CGST",
+                        tabindex = "3",
+                        type = "number",
+                        placeholder = "0.00",
+                        oninput = "preventNegative(this); calculateGST();",
+                        onkeydown = "blockMinusKey(event)",
+                        onpaste = "return blockNegativePaste(event)",
+                        min = "0",
+                        step = "0.01",
+                        autocomplete = "off"
+                    })
+                    @Html.ValidationMessageFor(m => m.HM_CGST, "", new { @class = "text-danger", style = "font-size:11px" })
+                </div>
+
+                <!-- SGST -->
+                <div class="form-group">
+                    <label class="form-label" for="HM_SGST">
+                        @Html.DisplayNameFor(m => m.HM_SGST)
+                        <span class="req">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.HM_SGST, new
+                    {
+                        @class = "form-input-num",
+                        id = "HM_SGST",
+                        tabindex = "4",
+                        type = "number",
+                        placeholder = "0.00",
+                        oninput = "preventNegative(this); calculateGST();",
+                        onkeydown = "blockMinusKey(event)",
+                        onpaste = "return blockNegativePaste(event)",
+                        min = "0",
+                        step = "0.01",
+                        autocomplete = "off"
+                    })
+                    @Html.ValidationMessageFor(m => m.HM_SGST, "", new { @class = "text-danger", style = "font-size:11px" })
+                </div>
+
+                <!-- IGST -->
+                <div class="form-group">
+                    <label class="form-label" for="HM_IGST">
+                        @Html.DisplayNameFor(m => m.HM_IGST)
+                    </label>
+
+                    @Html.TextBoxFor(m => m.HM_IGST, new
+                    {
+                        @class = "form-input-num",
+                        id = "HM_IGST",
+                        type = "number",
+                        placeholder = "0.00",
+                        min = "0",
+                        autocomplete = "off",
+                        @readonly = "readonly"
+                    })
+
+                    <span class="auto-badge">
+                        <i class="bi bi-calculator"></i> Auto-calculated
+                    </span>
+                </div>
+                <!-- Sort Order -->
+                <div class="form-group">
+                    <label class="form-label" for="HM_SORTORDER">
+                        @Html.DisplayNameFor(m => m.HM_SORTORDER)
+                    </label>
+                    @Html.TextBoxFor(m => m.HM_SORTORDER, new
+               {
+                   @class = "form-input-num",
+                   id = "HM_SORTORDER",
+                   tabindex = "6",
+                   type = "number",
+                   placeholder = "0",
+                   min = "0",
+                   autocomplete = "off"
+               })
+                </div>
+
             </div>
 
-            <!-- IGST -->
-            <div class="form-group">
-                <label class="form-label" for="HM_IGST">
-                    @Html.DisplayNameFor(m => m.HM_IGST)
-                </label>
-                @Html.TextBoxFor(m => m.HM_IGST, new
-           {
-               @class = "form-input-num",
-               id = "HM_IGST",
-               tabindex = "5",
-               type = "number",
-               placeholder = "0.00",
-               min = "0",
-               autocomplete = "off"
-           })
-            </div>
-            <!-- Sort Order -->
-            <div class="form-group">
-                <label class="form-label" for="HM_SORTORDER">
-                    @Html.DisplayNameFor(m => m.HM_SORTORDER)
-                </label>
-                @Html.TextBoxFor(m => m.HM_SORTORDER, new
-           {
-               @class = "form-input-num",
-               id = "HM_SORTORDER",
-               tabindex = "6",
-               type = "number",
-               placeholder = "0",
-               min = "0",
-               autocomplete = "off"
-           })
-            </div>
+            <div class="form-divider"></div>
+            <p class="form-section-title">SETTINGS</p>
 
-        </div>
-
-        <div class="form-divider"></div>
-        <p class="form-section-title">SETTINGS</p>
-
-        <div class="form-grid">
-            <!-- Disable checkbox -->
+            <div class="form-grid">
+                <!-- Disable checkbox -->
                 <label class="check-row" for="IsDisabled">
                     @Html.CheckBoxFor(m => m.IsDisabled,
                              new { @class = "form-check-input", id = "IsDisabled", tabindex = "7" })
@@ -168,39 +183,39 @@
                         <small>Hide this entry from active listings</small>
                     </div>
                 </label>
+            </div>
+
         </div>
 
-    </div>
+        <!-- Legend bar — matches list view style -->
+        <div class="legend-bar">
 
-    <!-- Legend bar — matches list view style -->
-    <div class="legend-bar">
+            <div class="legend-item">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
+                <span>Text Field</span>
+            </div>
 
-        <div class="legend-item">
-            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--primary);flex-shrink:0;"></span>
-            <span>Text Field</span>
+            <div class="legend-item">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
+                <span>Number Field</span>
+            </div>
+
         </div>
 
-        <div class="legend-item">
-            <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#185FA5;flex-shrink:0;"></span>
-            <span>Number Field</span>
+        <!-- Actions -->
+        <div class="form-actions">
+            <a href="@Url.Action("List","HSNMaster")"
+               class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+            <button type="submit"
+                    class="btn-save"
+                    id="savebutton">
+                <i class="bi bi-floppy"></i> Save
+            </button>
         </div>
 
-    </div>
-
-    <!-- Actions -->
-    <div class="form-actions">
-        <a href="@Url.Action("List","HSNMaster")"
-           class="btn-cancel">
-            <i class="bi bi-x-lg"></i> Cancel
-        </a>
-        <button type="submit"
-                class="btn-save"
-                id="savebutton">
-            <i class="bi bi-floppy"></i> Save
-        </button>
-    </div>
-
-</div>}
+    </div>}
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -209,11 +224,51 @@
 
     <script>
 
+        /* ── Block the "-" and "e" keys from being typed at all ── */
+        function blockMinusKey(e) {
+            if (e.key === "-" || e.key === "e" || e.key === "E") {
+                e.preventDefault();
+            }
+        }
+
+        /* ── Block pasting a negative number ── */
+        function blockNegativePaste(e) {
+            var pasted = (e.clipboardData || window.clipboardData).getData("text");
+            if (pasted.indexOf("-") !== -1) {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        }
+
+        /* ── Safety net: clamp to 0 if a negative value slips through ── */
+        function preventNegative(input) {
+            if (input.value !== "" && parseFloat(input.value) < 0) {
+                input.value = 0;
+            }
+        }
+
         /* ── GST total calculator ─────────────────── */
         function calculateGST() {
+
             var cgst = parseFloat(document.getElementById("HM_CGST").value) || 0;
             var sgst = parseFloat(document.getElementById("HM_SGST").value) || 0;
-            document.getElementById("gstTotal").textContent = (cgst + sgst).toFixed(2) + " %";
+
+            if (cgst < 0) cgst = 0;
+            if (sgst < 0) sgst = 0;
+
+            // IGST = CGST + SGST
+            var igst = cgst + sgst;
+
+            // Set calculated IGST
+            document.getElementById("HM_IGST").value = igst.toFixed(2);
+
+            // Optional total display
+            var gstTotal = document.getElementById("gstTotal");
+
+            if (gstTotal) {
+                gstTotal.textContent = igst.toFixed(2) + " %";
+            }
         }
 
         $(document).ready(function () {

@@ -1,0 +1,321 @@
+﻿
+@model IEnumerable<PSS_CMS.Models.ServiceInvoice>
+
+@{ ViewData["Title"] = "Service Invoice";
+    ViewBag.PageTitle = "Service Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string searchPhrase = Request["searchPharse"] ?? "";
+
+    var filtered = Model?.Where(m =>
+        string.IsNullOrEmpty(searchPhrase) ||
+        (m.TC_INVOICENUMBER != null && m.TC_INVOICENUMBER.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0) ||
+        (m.TC_USERNAME != null && m.TC_USERNAME.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0) ||
+        (m.ProductName != null && m.ProductName.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+    ).ToList();
+
+
+    // Helper: resolve status display
+    Func<PSS_CMS.Models.ServiceInvoice, string> getStatus = (o) =>
+    {
+        switch ((o.TC_PaymentStatus ?? "").ToUpper())
+        {
+            case "PARTIALLY PAID": return "Partially Paid";
+            case "FULLY PAID": return "Fully Paid";
+            case "IG": return "Invoice Generated";
+            default:
+                return o.TotalNetAmount == 0m ? "Free Service" : (o.Status ?? "Yet to Generate");
+        }
+    };
+
+    Func<PSS_CMS.Models.ServiceInvoice, string> getStatusCss = (o) =>
+    {
+        switch ((o.TC_PaymentStatus ?? "").ToUpper())
+        {
+            case "FULLY PAID": return "status-processed";
+            case "PARTIALLY PAID": return "status-unlocked";
+            case "IG": return "status-pending";
+            default:
+                return o.TotalNetAmount == 0m ? "status-processed" : "status-pending";
+        }
+    }; }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-receipt nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Service Invoice</span>
+    <i class="bi bi-chevron-right"></i>
+    List
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+            <!-- Search -->
+            @*@using (Html.BeginForm("Index", "InvoiceandContracts", FormMethod.Get, new { id = "searchForm" }))
+            {
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text"
+                           id="searchPharse"
+                           name="searchPharse"
+                           placeholder="Search"
+                           autocomplete="off"
+                           value="@searchPhrase"
+                           onkeyup="autoSubmitSearch(this)" />
+                    @if (!string.IsNullOrEmpty(searchPhrase))
+                    {
+                        <a href="@Url.Action("Index","ServiceInvoice")" title="Clear">
+                            <i class="bi bi-x-circle text-muted"></i>
+                        </a>}
+                </div>      }*@
+        </div>
+
+    </div>
+
+    <!-- Table -->
+    <div class="grid-wrap table-responsive">
+
+        @if (Model != null && Model.Any())
+        {
+            <table class="table align-middle mb-0 tickets-table">
+
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width:55px;">S.No</th>
+                        <th>Invoice No</th>
+                        <th>Ticket Raised Date</th>
+                        <th>Customer Name</th>
+                        <th>Product Name</th>
+                        <th class="text-end" style="width:120px;">Amount (₹)</th>
+                        <th class="text-center" style="width:150px;">Status</th>
+                        <th class="text-center" style="width:110px;">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var o in Model)
+                    {
+                        var statusText = getStatus(o);
+                        var statusCss = getStatusCss(o);
+                        var downloadPdfUrl = "";
+
+                        @* Build action URLs *@
+                        if (o.TotalNetAmount == 0m)
+                        {
+                            downloadPdfUrl = Url.Action("FreeServiceDownaloadPDF", "ServiceInvoice",
+               new { ticketRecID = o.TC_RECID, TC_CRECID = o.TC_CRECID });
+
+                        }
+                        else
+                        {
+
+                            downloadPdfUrl = Url.Action("DownaloadPDF", "ServiceInvoice",
+               new { ticketRecID = o.TC_RECID, TC_CRECID = o.TC_CRECID });
+
+                        }
+
+
+                        string primaryActionUrl = "";
+                        string primaryActionIcon = "";
+                        string primaryActionTitle = "";
+
+                        if (o.TotalNetAmount == 0)
+                        { @* Free service — only PDF *@ }
+                    else if (o.TC_SISTATUS == "YG")
+                    {
+                        primaryActionUrl = Url.Action("GeneratePDF", "ServiceInvoice", new { ticketRecID = o.TC_RECID });
+                        primaryActionIcon = "bi bi-ticket-detailed";
+                        primaryActionTitle = "Invoice Details";
+                    }
+                    else
+                    {
+                        primaryActionUrl = Url.Action("ServiceInvoicePaymentList", "ServiceInvoice", new
+                        {
+                            TC_RECID = o.TC_RECID,
+                            Amount = o.TotalNetAmount,
+                            TC_URECID = o.TC_URECID,
+                            TC_PRECID = o.TC_PRECID,
+                            refnumber = o.TC_REFERENCENO,
+                            invnumber = o.TC_INVOICENUMBER
+                        });
+                        primaryActionIcon = "bi bi-currency-rupee";
+                        primaryActionTitle = "Payment";
+                    }
+
+                    <tr>
+                        <td class="text-center serial-text">@o.SerialNumber</td>
+
+                        <td>
+                            @if (!string.IsNullOrEmpty(o.TC_INVOICENUMBER))
+                            {
+                                <span class="inv-code">@o.TC_INVOICENUMBER</span> }
+                            else
+                            {
+                                <span style="color:var(--text-muted);font-size:12px;font-style:italic;">—</span>}
+                        </td>
+
+                        <td style="font-size:12.5px;">@o.TC_REQUEST_DATETIMES</td>
+                        <td>@o.TC_USERNAME</td>
+                        <td>@o.ProductName</td>
+
+                        <td class="amount-cell">
+                            @(o.TotalNetAmount == 0m ? "Free" : o.TotalNetAmount.ToString("N2"))
+                        </td>
+
+                        <td class="text-center">
+                            <span class="status-badge @statusCss">@statusText</span>
+                        </td>
+
+                        <td>
+                            <div class="action-cell">
+
+                                @* Primary action (Invoice Details or Payment) *@
+                                @*@if (!string.IsNullOrEmpty(primaryActionUrl))
+                                {
+                                    <a href="@primaryActionUrl"
+                                       class="act-btn"
+                                       title="@primaryActionTitle">
+                                        <i class="@primaryActionIcon"
+                                           style="color: @(primaryActionIcon.Contains("ticket") ? "#185FA5" : "#1D9E75")"></i>
+                                    </a>
+                                    
+                                    }*@ @* PDF download (always shown) *@
+
+
+                                <a href="javascript:void(0);"
+                                   class="act-btn"
+                                   onclick="downloadPdfAjax('@downloadPdfUrl')"
+                                   title="Service Invoice Download PDF">
+                                    <i class="bi bi-file-earmark-pdf" style="color:#E24B4A"></i>
+                                </a>
+
+                            </div>
+                        </td>
+                    </tr>
+}
+                </tbody>
+
+            </table> <!-- Pagination -->
+
+            <div class="table-pagination">
+
+                <button id="prevBtn"
+                        class="page-btn">
+
+                    <i class="bi bi-chevron-left"></i>
+
+                    Previous
+
+                </button>
+
+                <span id="pageInfo"
+                      class="page-info">
+                </span>
+
+                <button id="nextBtn"
+                        class="page-btn">
+
+                    Next
+
+                    <i class="bi bi-chevron-right"></i>
+
+                </button>
+
+            </div> }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-inbox" style="font-size:40px;color:var(--text-muted)"></i>
+                <p class="mt-2 text-muted fw-semibold">No service invoices available</p>
+            </div>}
+
+    </div>
+
+</div>
+
+<!-- Legend bar -->
+<div class="legend-bar">
+
+    <div class="legend-item">
+        <i class="bi bi-ticket-detailed" style="color:#185FA5;font-size:15px"></i>
+        <span>Invoice Details (Yet to Generate)</span>
+    </div>
+
+    <div class="legend-item">
+        <i class="bi bi-currency-rupee" style="color:#1D9E75;font-size:15px"></i>
+        <span>Payment</span>
+    </div>
+
+    <div class="legend-item">
+        <i class="bi bi-file-earmark-pdf" style="color:#E24B4A;font-size:15px"></i>
+        <span>Download PDF</span>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Scripts/UIPagination.js"></script>
+    <script>
+
+        /* ── PDF download via AJAX ───────────────── */
+        function downloadPdfAjax(url) {
+            Swal.fire({
+                title: 'Processing…',
+                text: 'Your PDF is being prepared.',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: function () { Swal.showLoading(); }
+            });
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                xhrFields: { responseType: 'blob' },
+                success: function (data, status, xhr) {
+                    Swal.close();
+
+                    var blob = new Blob([data], { type: 'application/pdf' });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+
+                    var disposition = xhr.getResponseHeader('Content-Disposition');
+                    var fileName = 'Invoice.pdf';
+                    if (disposition && disposition.indexOf('filename=') !== -1) {
+                        fileName = disposition.split('filename=')[1].replace(/"/g, '');
+                    }
+
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to download PDF. Please try again.'
+                    });
+                }
+            });
+        }
+
+        /* ── Prevent disabled pagination ────────── */
+        document.querySelectorAll('.page-btn.disabled').forEach(function (el) {
+            el.addEventListener('click', function (e) { e.preventDefault(); });
+        });
+
+    </script>
+}

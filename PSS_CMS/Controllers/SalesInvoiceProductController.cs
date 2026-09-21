@@ -929,6 +929,9 @@ namespace PSS_CMS.Controllers
             return View(Customernotificationlist);
         }
 
+
+
+
         public async Task<ActionResult> PaymentCreate(decimal? amount, string number, string date, int invoiceRecID)
         {
             InvoicePayment model = new InvoicePayment();
@@ -1102,6 +1105,145 @@ namespace PSS_CMS.Controllers
                 return Json(new { success = false, message = "Exception: " + ex.Message });
             }
         }
+
+        //Razor pay
+
+        [HttpPost]
+        public async Task<ActionResult> CreateRazorPayOrder(decimal amount)
+        {
+            string APIKey = Session["APIKEY"].ToString();
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+
+            var CreateRazorPayOrderURL =
+                ConfigurationManager.AppSettings["CreateRazorPayOrder"];
+            PaymentUpdate paymentupdate = new PaymentUpdate();
+            try
+            {
+                var content = $@"{{
+            ""CompanyRecID"": ""{Session["CompanyID"]}"",
+            ""InvoiceNumber"": ""{paymentupdate.TC_InvoiceNumber}"",
+            ""Amount"": ""{amount}""
+        }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(CreateRazorPayOrderURL),
+                    Method = HttpMethod.Post,
+                    Content = new StringContent(
+                        content,
+                        Encoding.UTF8,
+                        "application/json")
+                };
+
+                request.Headers.Add("X-Version", "1");
+
+                using (var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true
+                })
+                using (var client = new HttpClient(handler))
+                {
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                    var response =
+                        await client.SendAsync(request);
+
+                    var responseBody =
+                        await response.Content.ReadAsStringAsync();
+
+                    return Content(
+                        responseBody,
+                        "application/json");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    Status = "N",
+                    Message = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> VerifyRazorPayPayment(
+    InvoicePayment model)
+        {
+            string APIKey = Session["APIKEY"].ToString();
+            string AuthKey = ConfigurationManager.AppSettings["AuthKey"];
+
+            var VerifyRazorPayPaymentURL =
+                ConfigurationManager.AppSettings["VerifyRazorPayPayment"];
+
+            try
+            {
+                var content = $@"{{
+            ""CompanyRecID"": ""{Session["CompanyID"]}"",
+            ""OrderId"": ""{model.OrderId}"",
+            ""PaymentId"": ""{model.PaymentId}"",
+            ""Signature"": ""{model.Signature}"",
+             ""SoFarPaid"": ""{model.PP_SOFARPAID}"",
+            ""InvoiceNumber"": ""{model.PP_INVOICENUMBER}"",
+            ""TotalAmount"": ""{model.PP_TOTALAMOUNT}"",
+            ""PaidAmount"": ""{model.PP_PAIDAMOUNT}"",
+            ""SihRecid"": ""{Session["SalesinvoiceRecID"]}"",
+            ""BalanceAmount"": ""{model.PP_BALANCEAMOUNT}"",
+            ""PaymentStatus"": ""{model.PP_PAYMENTSTATUS}"",
+            ""InvoiceDate"": ""{model.PP_INVOICEDATE}"",
+            ""PaymentDate"": ""{model.PP_DATEOFPAYMENT}"",
+            ""Type"": ""{model.PP_MODEOFPAYMENT}""
+        }}";
+
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(
+                        VerifyRazorPayPaymentURL),
+
+                    Method = HttpMethod.Post,
+
+                    Content = new StringContent(
+                        content,
+                        Encoding.UTF8,
+                        "application/json")
+                };
+
+                request.Headers.Add("X-Version", "1");
+
+                using (var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        (sender, cert, chain, sslPolicyErrors) => true
+                })
+                using (var client = new HttpClient(handler))
+                {
+                    client.DefaultRequestHeaders.Add("ApiKey", APIKey);
+                    client.DefaultRequestHeaders.Add("Authorization", AuthKey);
+
+                    var response =
+                        await client.SendAsync(request);
+
+                    var responseBody =
+                        await response.Content.ReadAsStringAsync();
+
+                    return Content(
+                        responseBody,
+                        "application/json");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    Status = "N",
+                    Message = ex.Message
+                });
+            }
+        }
+
+
 
         public async Task<ActionResult> Locklog(DateTime? fromDate, DateTime? toDate)
         {

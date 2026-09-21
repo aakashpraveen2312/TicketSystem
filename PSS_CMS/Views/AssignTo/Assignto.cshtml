@@ -20,6 +20,14 @@
                 grid-template-columns: 1fr;
             }
         }
+        .swal2-toast {
+            font-family: inherit !important;
+        }
+
+            .swal2-toast .swal2-title {
+                font-size: 14px !important;
+                font-weight: 600 !important;
+            }
     </style>
 }
 
@@ -34,7 +42,9 @@
 
 <!-- Main Card -->
 @using (Html.BeginForm("Assignto", "AssignTo", FormMethod.Post,
-    new { id = "AdminResponseForm", enctype = "multipart/form-data", @class = "no-preloader" }))
+    new { id = "AdminResponseForm", enctype = "multipart/form-data", @class = "no-preloader",
+        novalidate = "novalidate"
+    }))
 {
 <div class="page-card">
 
@@ -245,8 +255,224 @@ else
             if (ed && !ed.value) ed.value = now;
         })();
 
-        /* ── AJAX submit — processing spinner first ── */
+        /* ── AJAX submit — processing spinner first ── Change by aakash 04092026*/
+
+
         $(document).ready(function () {
+
+    $("#AdminResponseForm").submit(function (e) {
+
+        // Stop normal form submission
+        e.preventDefault();
+
+        var btn = $("#submitBtn");
+
+        // Get values
+        var assignedDate = $("#assigneddate").val();
+        var adminId = $("#SelectedAdmin").val();
+        var expectedDate = $("#expecteddate").val();
+        var comments = $("#A_COMMENTS").val().trim();
+
+        // -----------------------------
+        // Validation
+        // -----------------------------
+
+        if (!assignedDate) {
+            showValidationToast("Please select Assigned Date & Time.");
+            $("#assigneddate").focus();
+            return false;
+        }
+
+        if (!adminId) {
+            showValidationToast("Please select an Admin.");
+            $("#SelectedAdmin").focus();
+            return false;
+        }
+
+        if (!expectedDate) {
+            showValidationToast("Please select Expected Completion Date.");
+            $("#expecteddate").focus();
+            return false;
+        }
+
+        if (!comments) {
+            showValidationToast("Please enter assignment comments.");
+            $("#A_COMMENTS").focus();
+            return false;
+        }
+
+        // -----------------------------
+        // Date validation
+        // -----------------------------
+
+        var assigned = new Date(assignedDate);
+        var expected = new Date(expectedDate);
+
+        if (isNaN(assigned.getTime())) {
+            showValidationToast("Please enter a valid Assigned Date & Time.");
+            $("#assigneddate").focus();
+            return false;
+        }
+
+        if (isNaN(expected.getTime())) {
+            showValidationToast("Please enter a valid Expected Completion Date.");
+            $("#expecteddate").focus();
+            return false;
+        }
+
+        // If expected date should not be before assigned date
+        var assignedOnly = new Date(
+            assigned.getFullYear(),
+            assigned.getMonth(),
+            assigned.getDate()
+        );
+
+        var expectedOnly = new Date(
+            expected.getFullYear(),
+            expected.getMonth(),
+            expected.getDate()
+        );
+
+        if (expectedOnly < assignedOnly) {
+            showValidationToast(
+                "Expected Completion Date cannot be before Assigned Date."
+            );
+            $("#expecteddate").focus();
+            return false;
+        }
+
+        // -----------------------------
+        // All validation passed
+        // -----------------------------
+
+        var formData = new FormData(this);
+
+        btn.prop("disabled", true);
+
+        Swal.fire({
+            title: "Processing…",
+            html: "Please wait while we save your changes.",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: function () {
+
+                Swal.showLoading();
+
+                $.ajax({
+                    url: '@Url.Action("Assignto","AssignTo")',
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+
+                    success: function (response) {
+
+                        if (response.success) {
+
+                            setTimeout(function () {
+
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: response.message,
+                                    icon: "success",
+                                    showCancelButton: true,
+                                    confirmButtonText: "Continue",
+                                    cancelButtonText: "Back to List",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    customClass: {
+                                        confirmButton: "swal-btn-continue",
+                                        cancelButton: "swal-btn-back"
+                                    }
+                                }).then(function (result) {
+
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                    else {
+                                        window.location.href =
+                                            '@Url.Action("RecentTicket","RecentTickets")';
+                                    }
+
+                                });
+
+                            }, 800);
+
+                        }
+                        else {
+
+                            Swal.fire({
+                                title: "Message",
+                                text: response.message,
+                                icon: "info",
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+
+                            resetButton();
+                        }
+                    },
+
+                    error: function () {
+
+                        Swal.fire({
+                            title: "Error!",
+                            text: "An unexpected error occurred.",
+                            icon: "error",
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+
+                        resetButton();
+                    }
+                });
+            }
+        });
+
+        return false;
+    });
+
+
+    // -----------------------------------------
+    // SweetAlert Validation Toast
+    // -----------------------------------------
+
+            function showValidationToast(message) {
+
+                Swal.fire({
+                    icon: "warning",
+                    title: "Validation",
+                    text: message,
+                    confirmButtonText: "Ok",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    customClass: {
+                        confirmButton: "swal-btn-ok"
+                    }
+                });
+            }
+
+
+    // -----------------------------------------
+    // Enable button again
+    // -----------------------------------------
+
+    function resetButton() {
+        $("#submitBtn").prop("disabled", false);
+    }
+
+});
+
+
+
+
+
+
+
+
+
+        @*$(document).ready(function () {
 
             $("#AdminResponseForm").submit(function (e) {
                 e.preventDefault();
@@ -319,7 +545,20 @@ else
             });
 
             function resetButton() { $("#submitBtn").prop("disabled", false); }
-        });
+        });*@
+
+
+
+
+
+
+
+
+
+
+
+
+
     </script>
 
     <script>

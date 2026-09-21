@@ -8,6 +8,12 @@
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
     <style>
+
+        .required-label::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: 600;
+        }
         /* ── Loading screen ────────────────────────── */
         #loadingScreen {
             position: fixed;
@@ -144,12 +150,12 @@
     <div class="form-grid" style="margin-bottom:24px;">
 
         <div class="form-group">
-            @Html.LabelFor(m => m.TC_Date, "Date", new { @class = "form-label" })
+            @Html.LabelFor(m => m.TC_Date, "Date", new { @class = "form-label required-label" })
             @Html.TextBoxFor(m => m.TC_Date, new { @class = "form-input-text", id = "date", type = "datetime-local", required = "required", tabindex = "1" })
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.SelectedProjectType, "Product", new { @class = "form-label" })
+            @Html.LabelFor(m => m.SelectedProjectType, "Product", new { @class = "form-label required-label" })
             @if (Model.TicketCombo2.TicketTypes2 != null)
             {
 @Html.DropDownListFor(m => m.SelectedProjectType,
@@ -165,19 +171,19 @@ else
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.TC_SUBJECT, "Subject", new { @class = "form-label" })
+            @Html.LabelFor(m => m.TC_SUBJECT, "Subject", new { @class = "form-label required-label" })
             @Html.TextBoxFor(m => m.TC_SUBJECT, new { @class = "form-input-text", id = "sub", tabindex = "3" })
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.TC_CUSTOMER, "Customer", new { @class = "form-label" })
+            @Html.LabelFor(m => m.TC_CUSTOMER, "Customer", new { @class = "form-label required-label" })
             @Html.DropDownList("SelectedCustomer",
                           new List<SelectListItem> { new SelectListItem { Text = "No Product is selected", Value = "", Selected = true } },
                           new { @class = "form-select-input", id = "CustomerDropdown" })
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.TC_PRIORITYTYPE, "Priority Type", new { @class = "form-label" })
+            @Html.LabelFor(m => m.TC_PRIORITYTYPE, "Priority Type", new { @class = "form-label required-label" })
             @Html.DropDownListFor(m => m.TC_PRIORITYTYPE,
                           new SelectList(new List<string> { "Normal", "Urgent", "Critical", "Emergency" }),
                           "Select Priority Type",
@@ -185,7 +191,7 @@ else
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.SelectedTicketType, "Ticket Type", new { @class = "form-label" })
+            @Html.LabelFor(m => m.SelectedTicketType, "Ticket Type", new { @class = "form-label required-label" })
             @Html.DropDownListFor(m => m.SelectedTicketType,
                           Model.TicketCombo.TicketTypes,
                           "Select Ticket Type",
@@ -218,7 +224,7 @@ else
     <div style="margin-bottom:24px;">
 
         <div class="form-group" style="margin-bottom:16px;">
-            @Html.LabelFor(m => m.TC_COMMENTS, "User Comments", new { @class = "form-label" })
+            @Html.LabelFor(m => m.TC_COMMENTS, "User Comments", new { @class = "form-label required-label" })
             @Html.TextAreaFor(m => m.TC_COMMENTS, new
             {
                 @class = "form-textarea",

@@ -1,24 +1,24 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Faq>
 
 @{ Func<string, string> DecodeJavaScriptString = (input) =>
-                {
-                    if (input == null) return string.Empty;
-                    return input.Replace("\\\"", "\"")
-                                .Replace("\\'", "'")
-                                .Replace("\\(", "(")
-                                .Replace("\\)", ")")
-                                .Replace("\\[", "[")
-                                .Replace("\\]", "]")
-                                .Replace("\\,", ",")
-                                .Replace("\\.", ".")
-                                .Replace("\\\\", "\\")
-                                .Replace("\\n", "\n")
-                                .Replace("\\r", "\r");
-                };
+                   {
+                       if (input == null) return string.Empty;
+                       return input.Replace("\\\"", "\"")
+                                   .Replace("\\'", "'")
+                                   .Replace("\\(", "(")
+                                   .Replace("\\)", ")")
+                                   .Replace("\\[", "[")
+                                   .Replace("\\]", "]")
+                                   .Replace("\\,", ",")
+                                   .Replace("\\.", ".")
+                                   .Replace("\\\\", "\\")
+                                   .Replace("\\n", "\n")
+                                   .Replace("\\r", "\r");
+                   };
 
-                ViewData["Title"] = "FAQ";
-                ViewBag.PageTitle = "FAQ";
-                Layout = "~/Views/Shared/_Layout.cshtml"; }
+    ViewData["Title"] = "FAQ";
+    ViewBag.PageTitle = "FAQ";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -55,13 +55,13 @@
             @if (projectTypeList != null && projectTypeList.Any())
             {
 @Html.DropDownList(
-         "SelectedProjectType1",
-         projectTypeList,
-         new
-         {
-             @class = "filter-select",
-             id = "projectTypeFilter1"
-         }) }
+              "SelectedProjectType1",
+              projectTypeList,
+              new
+              {
+                  @class = "filter-select",
+                  id = "projectTypeFilter1"
+              })}
 
             <!-- Search -->
             @using (Html.BeginForm("FAQADMIN", "RecentTickets", FormMethod.Get, new { id = "searchForm" }))
@@ -73,14 +73,8 @@
            name="searchPharse"
            placeholder="Search"
            autocomplete="off"
-           value="@Request["searchPharse"]"
-           onkeyup="autoSubmitSearch(this)" />
-    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
-    {
-<a href="@Url.Action("FAQADMIN","RecentTickets")" title="Clear">
-    <i class="bi bi-x-circle text-muted"></i>
-</a>}
-</div>      }
+           value="@Request["searchPharse"]" />
+</div>}
 
             <!-- New FAQ -->
             <a href="@Url.Action("FAQADMINPOST","RecentTickets")"
@@ -98,29 +92,29 @@
         @if (Model != null && Model.Any())
         {
 <p class="faq-count">@Model.Count() question@(Model.Count() != 1 ? "s" : "")</p> foreach (var faq in Model)
-{
-    string editUrl = Url.Action("Edit", "RecentTickets", new { F_RECID = faq.F_RECID, F_PRECID = faq.F_PRECID });
-    string deleteUrl = Url.Action("Delete", "RecentTickets", new { F_RECID = faq.F_RECID });
+                {
+                    string editUrl = Url.Action("Edit", "RecentTickets", new { F_RECID = faq.F_RECID, F_PRECID = faq.F_PRECID });
+                    string deleteUrl = Url.Action("Delete", "RecentTickets", new { F_RECID = faq.F_RECID });
 
-    /* Attachment detection */
-    string base64 = faq.F_ATTACHEMENT ?? "";
-    string fileType = "bin", mimeType = "application/octet-stream";
-    bool hasFile = !string.IsNullOrEmpty(base64);
+                    /* Attachment detection */
+                    string base64 = faq.F_ATTACHEMENT ?? "";
+                    string fileType = "bin", mimeType = "application/octet-stream";
+                    bool hasFile = !string.IsNullOrEmpty(base64);
 
-    if (hasFile)
-    {
-        if (base64.StartsWith("iVBORw0KGgo")) { fileType = "png"; mimeType = "image/png"; }
-        else if (base64.StartsWith("/9j/")) { fileType = "jpg"; mimeType = "image/jpeg"; }
-        else if (base64.StartsWith("JVBER")) { fileType = "pdf"; mimeType = "application/pdf"; }
-        else if (base64.StartsWith("UEsDB"))
-        {
-            fileType = "xlsx";
-            mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            if (base64.Contains("word/")) { fileType = "docx"; mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; }
-        }
-        else if (base64.StartsWith("U1RB") || base64.StartsWith("R2V0")) { fileType = "txt"; mimeType = "text/plain"; }
-        else if (base64.StartsWith("Q0N2")) { fileType = "csv"; mimeType = "text/csv"; }
-    }
+                    if (hasFile)
+                    {
+                        if (base64.StartsWith("iVBORw0KGgo")) { fileType = "png"; mimeType = "image/png"; }
+                        else if (base64.StartsWith("/9j/")) { fileType = "jpg"; mimeType = "image/jpeg"; }
+                        else if (base64.StartsWith("JVBER")) { fileType = "pdf"; mimeType = "application/pdf"; }
+                        else if (base64.StartsWith("UEsDB"))
+                        {
+                            fileType = "xlsx";
+                            mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                            if (base64.Contains("word/")) { fileType = "docx"; mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; }
+                        }
+                        else if (base64.StartsWith("U1RB") || base64.StartsWith("R2V0")) { fileType = "txt"; mimeType = "text/plain"; }
+                        else if (base64.StartsWith("Q0N2")) { fileType = "csv"; mimeType = "text/csv"; }
+                    }
 
 <div class="faq-item" id="faq-@faq.F_RECID">
 
@@ -149,7 +143,7 @@
             {
 <a href="data:@mimeType;base64,@faq.F_ATTACHEMENT"
    download="@(faq.F_QUESTION).@fileType"
-   class="dl-btn">
+   class="dl-btn no-loader">
     <i class="bi bi-download"></i>
     Download
 </a> }
@@ -170,7 +164,7 @@ else
                    class="act-btn act-delete no-loader"
                    title="Delete"
                    onclick="return confirmDelete(this);"
-                   data-name="@faq.F_QUESTION">
+                   data-name="@DecodeJavaScriptString(faq.F_QUESTION)">
                     <i class="bx bxs-trash"></i>
                 </a>
 
@@ -253,6 +247,25 @@ else
             function redirectToPage(projectId) {
                 window.location.href = '@Url.Action("FAQADMIN","RecentTickets")' +
                     "?projectID=" + encodeURIComponent(projectId);
+            }
+        });
+    </script>
+
+    <!-- ── Live search filter (fixed) ─────────────── -->
+    <script>
+        document.getElementById("searchPharse").addEventListener("input", function () {
+            var term = this.value.toLowerCase().trim();
+            document.querySelectorAll(".faq-item").forEach(function (item) {
+                var text = item.querySelector(".faq-q-text").textContent.toLowerCase();
+                var answer = item.querySelector(".faq-answer p")?.textContent.toLowerCase() || "";
+                item.style.display = (text.includes(term) || answer.includes(term)) ? "" : "none";
+            });
+        });
+
+        // Submit search on Enter
+        document.getElementById("searchPharse").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                document.getElementById("searchForm").submit();
             }
         });
     </script>

@@ -75,6 +75,58 @@ namespace PSS_CMS.Controllers
 
                             HSNMasterList = rootObjects.Data;
 
+                            if (!string.IsNullOrWhiteSpace(searchPhrase))
+                            {
+                                searchPhrase = searchPhrase.Trim();
+
+                                HSNMasterList = HSNMasterList
+                                    .Where(r =>
+                                        (!string.IsNullOrEmpty(r.HM_CODE) &&
+                                         r.HM_CODE.IndexOf(
+                                             searchPhrase,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+
+                                        ||
+
+                                        r.HM_IGST.ToString()
+                                            .IndexOf(
+                                                searchPhrase,
+                                                StringComparison.OrdinalIgnoreCase) >= 0
+
+                                        ||
+
+                                        r.HM_CGST.ToString()
+                                            .IndexOf(
+                                                searchPhrase,
+                                                StringComparison.OrdinalIgnoreCase) >= 0
+
+                                        ||
+
+                                        r.HM_SGST.ToString()
+                                            .IndexOf(
+                                                searchPhrase,
+                                                StringComparison.OrdinalIgnoreCase) >= 0
+
+                                        ||
+
+                                        r.HM_SORTORDER.ToString()
+                                            .IndexOf(
+                                                searchPhrase,
+                                                StringComparison.OrdinalIgnoreCase) >= 0
+
+                                        ||
+
+                                        (!string.IsNullOrEmpty(r.HM_DESCRIPTION) &&
+                                         r.HM_DESCRIPTION.IndexOf(
+                                             searchPhrase,
+                                             StringComparison.OrdinalIgnoreCase) >= 0)
+                                    )
+                                    .ToList();
+                            }
+
+
+
+
                             if (HSNMasterList.Count > 0)
                             {
                                 // Assign serial numbers
@@ -83,21 +135,7 @@ namespace PSS_CMS.Controllers
                                     HSNMasterList[i].SerialNumber = i + 1;
                                 }
                             }
-                            if (!string.IsNullOrEmpty(searchPhrase))
-                            {
-                                HSNMasterList = HSNMasterList
-                                    .Where(r => r.HM_CODE.ToLower().Contains(searchPhrase.ToLower()) ||
-                                   r.HM_IGST.ToString().ToLower().Contains(searchPhrase.ToLower()) ||
-                                   r.HM_CGST.ToString().ToLower().Contains(searchPhrase.ToLower()) ||
-                                   r.HM_SGST.ToString().ToLower().Contains(searchPhrase.ToLower()) ||
-                                   r.HM_SORTORDER.ToString().ToLower().Contains(searchPhrase.ToLower()) ||
-                                   r.HM_DESCRIPTION.ToLower().Contains(searchPhrase.ToLower()))
-                                    .ToList();
-                            }
-                            else
-                            {
-
-                            }
+                           
                         }
 
                         else
@@ -118,6 +156,7 @@ namespace PSS_CMS.Controllers
 
             return View(HSNMasterList);
         }
+       
         public ActionResult Create()
         {
             return View();

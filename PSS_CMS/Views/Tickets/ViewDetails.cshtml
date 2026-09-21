@@ -295,7 +295,7 @@ else
 
 
 
-        <div class="total-card">
+        @*<div class="total-card">
             <div class="total-card-label">Total CGST</div>
             <div class="total-card-value" style="font-size:18px;">₹ @String.Format("{0:N2}", totalCgst)</div>
         </div>
@@ -303,7 +303,7 @@ else
         <div class="total-card">
             <div class="total-card-label">Total SGST</div>
             <div class="total-card-value" style="font-size:18px;">₹ @String.Format("{0:N2}", totalSgst)</div>
-        </div>
+        </div>*@
 
         <div class="total-card">
             <div class="total-card-label">Total Amount (Before Tax)</div>
@@ -314,8 +314,18 @@ else
             <div class="total-card-label">Net Amount (After Tax)</div>
             <div class="total-card-value">₹ @String.Format("{0:N2}", netAmount)</div>
         </div>
-
+        @Html.Hidden("razorpay_payment_id")
+        @Html.Hidden("razorpay_order_id")
+        @Html.Hidden("razorpay_signature")
     </div>
+
+
+        @*<button type="button"
+                class="btn-save"
+                id="btnPayNow"
+                data-amount="@((int)(netAmount * 100))">
+            <i class="bi bi-credit-card"></i> Pay Now
+        </button>*@
 
         <div class="pane-actions">
             <a href="@Url.Action("Ticket_History","Tickets")" class="btn-cancel">
@@ -339,6 +349,8 @@ else
         <span>Non-Billable</span>
     </div>
 </div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 @section Scripts {
 

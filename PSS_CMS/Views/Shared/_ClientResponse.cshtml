@@ -1,6 +1,11 @@
 ﻿@model PSS_CMS.Models.Ticket
 
 <style>
+    .required-star {
+        color: #e74c3c;
+        font-weight: 700;
+        margin-left: 2px;
+    }
     /* ── Rating Modal ───────────────────────── */
     .rating-overlay {
         position: fixed;
@@ -73,24 +78,29 @@
 
                         <!-- Status -->
                         <div class="form-group">
-                            @Html.LabelFor(m => m.Combo, "Status", new { @class = "form-label" })
+                            @*@Html.LabelFor(m => m.Combo, "Status", new { @class = "form-label" })*@
+                            <label for="statusDropdown" class="form-label">
+                                Status <span class="required-star">*</span>
+                            </label>
                             @Html.DropDownListFor(m => m.Combo,
                                      new SelectList(new List<string> { "Re-open", "Close" }),
                                      "-- Select Status --",
-                                     new { @class = "form-select-input", id = "statusDropdown", required = "required" })
+                                     new { @class = "form-select-input", id = "statusDropdown" })
                         </div>
 
                     </div>
 
                     <!-- Comments -->
                     <div class="form-group" style="margin-bottom:16px;">
-                        @Html.LabelFor(m => m.TC_COMMENTS, "User Comments", new { @class = "form-label" })
+                        @*@Html.LabelFor(m => m.TC_COMMENTS, "User Comments", new { @class = "form-label" })*@
+                        <label for="TC_COMMENTS" class="form-label">
+                            User Comments <span class="required-star">*</span>
+                        </label>
                         @Html.TextAreaFor(m => m.TC_COMMENTS, new
                         {
                             @class = "form-textarea",
                             placeholder = "Please enter your comments here....",
-                            rows = "6",
-                            required = "required"
+                            rows = "6"
                         })
                     </div>
 
@@ -174,6 +184,51 @@
         // ── Form submission ────────────────────────
         $("#ticketForm").submit(function (e) {
             e.preventDefault();
+
+
+
+
+
+            var status = $("#statusDropdown").val();
+            var comments = $("#TC_COMMENTS").val().trim();
+
+            // Status validation
+            if (!status) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Status Required",
+                    text: "Please select a status.",
+                    confirmButtonColor: "#6c5ce7"
+                });
+
+                $("#statusDropdown").focus();
+                return false;
+            }
+
+            // Comments validation
+            if (!comments) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Comments Required",
+                    text: "Please enter your comments.",
+                    confirmButtonColor: "#6c5ce7"
+                });
+
+                $("#TC_COMMENTS").focus();
+                return false;
+            }
+
+
+
+
+
+
+
+
+
+
+
+
 
             var submitBtn = $("#submitBtn");
             submitBtn.prop("disabled", true).html('<i class="bi bi-hourglass-split"></i> Submitting...');

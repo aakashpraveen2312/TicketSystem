@@ -1,16 +1,20 @@
 ﻿@model IEnumerable<PSS_CMS.Models.Contract>
 
-@{ ViewData["Title"] = "Contracts";
-                ViewBag.PageTitle = "Contracts";
-                Layout = "~/Views/Shared/_Layout.cshtml";
+@{ ViewData["Title"] = "Service Contracts";
+    ViewBag.PageTitle = "Service Contracts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 
-                var customerName = Session["CT_CUSTOMERNAME"] != null
-                    ? Session["CT_CUSTOMERNAME"].ToString()
-                    : ""; }
+    var customerName = Session["CT_CUSTOMERNAME"] != null
+        ? Session["CT_CUSTOMERNAME"].ToString()
+        : ""; }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
 }
+
+
+
+
 
 <!-- Breadcrumb -->
 <div class="page-breadcrumb">
@@ -29,52 +33,46 @@
 
     <i class="bi bi-chevron-right"></i>
 
-    <span>Contracts</span>
+    <span>Service Contracts</span>
 
 </div>
 
 <!-- Main Card -->
 <div class="page-card">
 
-    <!-- Header -->
     <div class="page-card-header">
 
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+            <!-- Search -->
 
-            @using (Html.BeginForm("ContractProductList",
+            @using (Html.BeginForm(
+                "ContractProductListView",
                 "Contract",
                 FormMethod.Get,
                 new { id = "searchForm" }))
             {
-<div class="search-box">
+    <div class="search-box">
 
-    <i class="bi bi-search"></i>
+        <i class="bi bi-search"></i>
 
-    <input type="text"
-           id="searchPharse"
-           name="searchPharse"
-           placeholder="Search"
-           autocomplete="off"
-           value="@Request["searchPharse"]"
-           onkeyup="autoSubmitSearch(this)" />
+        <input type="text"
+               id="searchPharse"
+               name="searchPharse"
+               placeholder="Search"
+               autocomplete="off"
+               value="@Request["searchPharse"]"
+               onkeyup="autoSubmitSearch(this)" />
 
-    @if (!string.IsNullOrEmpty(Request["searchPharse"]))
-    {
-<a href="@Url.Action("ContractProductList", "Contract")"
-   title="Clear">
-    <i class="bi bi-x-circle text-muted"></i>
-</a>}
+        @if (!string.IsNullOrEmpty(Request["searchPharse"]))
+        {
+    <a href="@Url.Action("ContractProductListView", "Contract")"
+       title="Clear">
 
-</div>            }
+        <i class="bi bi-x-circle text-muted"></i>
 
-            <a href="@Url.Action("CreateContractProduct", "Contract")"
-               class="btn-add">
+    </a>}
 
-                <i class="bi bi-plus-lg"></i>
-
-                Add Contract
-
-            </a>
+    </div>            }
 
         </div>
 
@@ -85,232 +83,300 @@
 
         @if (Model != null && Model.Any())
         {
-<table class="table align-middle mb-0 tickets-table">
+            <table class="table align-middle mb-0 tickets-table">
 
-    <thead>
+                <thead>
 
-        <tr>
+                    <tr>
 
-            <th class="text-center"
-                style="width:60px;">
-                S.No
-            </th>
+                        <th class="text-center"
+                            style="width:60px;">
+                            S.No
+                        </th>
 
-            <th>
-                Code
-            </th>
+                        <th>
+                            Code
+                        </th>
 
-            <th class="text-center">
-                From Date
-            </th>
+                        <th class="text-center">
+                            From Date
+                        </th>
 
-            <th class="text-center">
-                To Date
-            </th>
+                        <th class="text-center">
+                            To Date
+                        </th>
 
-            <th>
-                Created By
-            </th>
+                        <th>
+                            Created By
+                        </th>
 
-            <th class="text-center">
-                Approved Date
-            </th>
+                        <th class="text-center">
+                            Approved Date
+                        </th>
 
-            <th class="text-right"
-                style="text-align:right;">
-                Amount
-            </th>
+                        <th class="text-right"
+                            style="text-align:right;">
+                            Amount
+                        </th>
 
-            <th class="text-center"
-                style="width:60px;">
-                Sort
-            </th>
+                        <th class="text-center"
+                            style="width:60px;">
+                            Sort
+                        </th>
 
-            <th class="text-center"
-                style="width:160px;">
-                Actions
-            </th>
+                        <th class="text-center"
+                            style="width:160px;">
+                            Actions
+                        </th>
 
-        </tr>
+                    </tr>
 
-    </thead>
+                </thead>
 
-    <tbody>
+                <tbody>
 
-        @foreach (var o in Model)
+                    @foreach (var o in Model)
+                    {
+                        var isProcessed = o.CP_STATUS == "P";
+
+
+                        // Renewal should be available only 10 days before CP_TODATE
+                        bool showRenewal = false;
+
+                        if (isProcessed && !string.IsNullOrWhiteSpace(o.CP_TODATE))
+                        {
+                            DateTime contractToDate;
+
+                            if (DateTime.TryParseExact(
+                                o.CP_TODATE,
+                                "yyyy-MM-dd",
+                                System.Globalization.CultureInfo.InvariantCulture,
+                                System.Globalization.DateTimeStyles.None,
+                                out contractToDate))
+                            {
+                                DateTime renewalStartDate = contractToDate.Date.AddDays(-10);
+
+                                // Show renewal from 10 days before expiry
+                                showRenewal = DateTime.Today >= renewalStartDate;
+                            }
+                        }
+
+
+
+
+
+
+                        var editUrl = Url.Action("EditContractProduct", "Contract", new
+                        {
+                            CP_RECID = o.CP_RECID,
+                            ProductName = o.CP_PRODUCTNAME,
+                            CT_CPRECID = o.CP_CTRECID,
+                            CP_CTURECID = o.CP_CTURECID,
+                            CP_USERTYPE = o.CP_USERTYPE,
+                            CP_PAIDAMOUNT = o.CP_PAIDAMOUNT,
+                            CP_TOTALAMOUNT = o.CP_TOTALAMOUNT,
+                            CP_BALANACEAMOUNT = o.CP_BALANACEAMOUNT
+                        });
+
+                        var RenewalUrl = Url.Action("RenewalContract", "Contract", new
+                        {
+                            CP_RECID = o.CP_RECID,
+                            ProductName = o.CP_PRODUCTNAME,
+                            CT_CPRECID = o.CP_CTRECID,
+                            CP_CTURECID = o.CP_CTURECID,
+                            CP_USERTYPE = o.CP_USERTYPE,
+                            CP_PAIDAMOUNT = o.CP_PAIDAMOUNT,
+                            CP_TOTALAMOUNT = o.CP_TOTALAMOUNT,
+                            CP_BALANACEAMOUNT = o.CP_BALANACEAMOUNT
+                        });
+
+                        var viewUrl = Url.Action("ViewContractProduct", "Contract", new
+                        {
+                            CP_RECID = o.CP_RECID,
+                            ProductName = o.CP_PRODUCTNAME,
+                            CT_CPRECID = o.CP_CTRECID,
+                            CP_CTURECID = o.CP_CTURECID,
+                            CP_USERTYPE = o.CP_USERTYPE,
+                            CP_PAIDAMOUNT = o.CP_PAIDAMOUNT,
+                            CP_TOTALAMOUNT = o.CP_TOTALAMOUNT,
+                            CP_BALANACEAMOUNT = o.CP_BALANACEAMOUNT
+                        });
+
+                        var deleteUrl = Url.Action("DeleteContractProduct", "Contract", new
+                        {
+                            CP_RECID = o.CP_RECID,
+                            CP_PRECID = o.CP_PRECID,
+                            CP_CTURECID = o.CP_CTURECID,
+                            CP_ADMINRECID = o.CP_ADMINRECID
+                        });
+
+                        var processUrl = Url.Action("ContractProcessStatus", "Contract", new { Recid = o.CP_RECID });
+                        var productsUrl = Url.Action("List", "ContractProduct", new { ContractRecid = o.CP_RECID, CP_CODE = o.CP_CODE, CP_STATUS = o.CP_STATUS });
+                        var UserUrl = Url.Action("ContractUserList", "Contract", new { userid = o.CP_RECID });
+                        var pdfUrl = Url.Action("ContractInvoice", "Contract", new { CP_CTURECID = o.CP_CTURECID, CP_CRECID = o.CP_CRECID, CP_RECID = o.CP_RECID });
+                        var InvoiceUrl = Url.Action("List", "SMContractInvoiceHeader", new { CP_CTURECID = o.CP_CTURECID, companyId = o.CP_CRECID, CIH_CONTRACTRECID = o.CP_RECID, invoiceAmt = o.CP_CONTRACTAMOUNT });
+
+                        <tr>
+
+                            <td class="text-center">
+                                <span class="serial-text">@o.SerialNumber</span>
+                            </td>
+
+                            <td>
+                                <span class="contract-code">@o.CP_CODE</span>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="date-cell">@o.FORMATTEDCPFROMDATE</span>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="date-cell">@o.FORMATTEDCPTODATE</span>
+                            </td>
+
+                            <td>@o.CP_CONTRACTCREATEDBY</td>
+
+                            <td class="text-center">
+                                <span class="date-cell">@o.FORMATTEDCONTRACTAPPROVEDDATE</span>
+                            </td>
+
+                            <td class="amount-cell">
+                                @String.Format("{0:N2}", o.CP_CONTRACTAMOUNT)
+                            </td>
+
+                            <td class="text-center">@o.CP_SORT</td>
+
+                            <td>
+
+                                <div class="action-cell">
+
+                                    @if (isProcessed)
+                                    {<!-- View -->
+                                        <a href="@viewUrl"
+                                           title="View"
+                                           class="act-btn act-view">
+                                            <i class='bx bx-show'></i>
+                                        </a>
+                                        <!-- Renewal Contract -->
+                                        if (showRenewal)
+                                        {
+                                            <a href="@RenewalUrl"
+                                               title="Contract Renewal"
+                                               class="act-btn no-loader"
+                                               style="color:#e74c3c;">
+                                                <i class="bi bi-arrow-repeat"></i>
+                                            </a>
+                                        }
+
+
+                                    }
+                                    else
+                                    { <!-- Edit -->
+                                        <a href="@editUrl"
+                                           title="Edit"
+                                           class="act-btn act-edit">
+                                            <i class='bx bxs-pencil'></i>
+                                        </a>
+
+                                        <!-- Process -->
+                                        <a href="javascript:void(0);"
+                                           onclick="confirmProcess('@processUrl')"
+                                           title="Process"
+                                           class="act-btn no-loader"
+                                           style="color:#00b894;">
+                                            <i class='bx bx-check-circle'></i>
+                                        </a>
+
+
+
+                                        <!-- Delete -->
+                                        <a href="@deleteUrl"
+                                           data-id="@o.CP_RECID"
+                                           data-name="@o.CP_CODE"
+                                           title="Delete"
+                                           class="act-btn act-delete no-loader"
+                                           onclick="return confirmDelete(this);">
+                                            <i class='bx bxs-trash'></i>
+                                        </a>}
+
+                                    <!-- Products -->
+                                    <a href="@productsUrl"
+                                       title="Products"
+                                       class="act-btn"
+                                       style="color:#6c5ce7;">
+                                        <i class='bi bi-bag-check'></i>
+                                    </a>
+
+                                    <!-- User -->
+                                    <a href="@UserUrl"
+                                       title="User"
+                                       class="act-btn"
+                                       style="color:#6c5ce7;">
+                                        <i class="bi bi-person-circle"></i>
+                                    </a>
+
+                                    <!-- Download PDF -->
+                                    <a href="javascript:void(0);"
+                                       onclick="downloadPdfAjax('@pdfUrl')"
+                                       title="Download PDF"
+                                       class="act-btn no-loader"
+                                       style="color:#e74c3c;">
+                                        <i class='bi bi-file-earmark-pdf'></i>
+                                    </a>
+                                    @if (isProcessed)
+                                    {
+                                        <!-- Invoice -->
+
+                                        <a href="@InvoiceUrl"
+                                           title="Invoice"
+                                           class="act-btn"
+                                           style="color:#6c5ce7;">
+                                            <i class='bi bi-receipt'></i>
+                                        </a>
+                                    }
+                                    </div>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table> <!-- Pagination -->
+            <div class="table-pagination">
+
+                <button id="prevBtn"
+                        class="page-btn">
+                    <i class="bi bi-chevron-left"></i>
+                    Previous
+                </button>
+
+                <span id="pageInfo"
+                      class="page-info">
+                </span>
+
+                <button id="nextBtn"
+                        class="page-btn">
+                    Next
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div> }
+        else
         {
-            var isProcessed = o.CP_STATUS == "P";
+            <div class="text-center py-5">
 
-            var editUrl = Url.Action("EditContractProduct", "Contract", new
-            {
-                CP_RECID = o.CP_RECID,
-                ProductName = o.CP_PRODUCTNAME,
-                CT_CPRECID = o.CP_CTRECID,
-                CP_CTURECID = o.CP_CTURECID,
-                CP_USERTYPE = o.CP_USERTYPE,
-                CP_PAIDAMOUNT = o.CP_PAIDAMOUNT,
-                CP_TOTALAMOUNT = o.CP_TOTALAMOUNT,
-                CP_BALANACEAMOUNT = o.CP_BALANACEAMOUNT
-            });
+                <i class="bi bi-file-earmark-text"
+                   style="font-size:40px;color:var(--text-muted)"></i>
 
-            var viewUrl = Url.Action("ViewContractProduct", "Contract", new
-            {
-                CP_RECID = o.CP_RECID,
-                ProductName = o.CP_PRODUCTNAME,
-                CT_CPRECID = o.CP_CTRECID,
-                CP_CTURECID = o.CP_CTURECID,
-                CP_USERTYPE = o.CP_USERTYPE,
-                CP_PAIDAMOUNT = o.CP_PAIDAMOUNT,
-                CP_TOTALAMOUNT = o.CP_TOTALAMOUNT,
-                CP_BALANACEAMOUNT = o.CP_BALANACEAMOUNT
-            });
-
-            var deleteUrl = Url.Action("DeleteContractProduct", "Contract", new
-            {
-                CP_RECID = o.CP_RECID,
-                CP_PRECID = o.CP_PRECID,
-                CP_CTURECID = o.CP_CTURECID,
-                CP_ADMINRECID = o.CP_ADMINRECID
-            });
-
-            var processUrl = Url.Action("ContractProcessStatus", "Contract", new { Recid = o.CP_RECID });
-            var productsUrl = Url.Action("List", "ContractProduct", new { ContractRecid = o.CP_RECID, CP_CODE = o.CP_CODE, CP_STATUS = o.CP_STATUS });
-            var UserUrl = Url.Action("ContractUserList", "Contract", new { userid = o.CP_RECID});
-            var pdfUrl = Url.Action("ContractInvoice", "Contract", new { CP_CTURECID = o.CP_CTURECID, CP_CRECID = o.CP_CRECID });
-
-<tr>
-
-    <td class="text-center">
-        <span class="serial-text">@o.SerialNumber</span>
-    </td>
-
-    <td>
-        <span class="contract-code">@o.CP_CODE</span>
-    </td>
-
-    <td class="text-center">
-        <span class="date-cell">@o.FORMATTEDCPFROMDATE</span>
-    </td>
-
-    <td class="text-center">
-        <span class="date-cell">@o.FORMATTEDCPTODATE</span>
-    </td>
-
-    <td>@o.CP_CONTRACTCREATEDBY</td>
-
-    <td class="text-center">
-        <span class="date-cell">@o.FORMATTEDCONTRACTAPPROVEDDATE</span>
-    </td>
-
-    <td class="amount-cell">
-        @String.Format("{0:N2}", o.CP_CONTRACTAMOUNT)
-    </td>
-
-    <td class="text-center">@o.CP_SORT</td>
-
-    <td>
-
-        <div class="action-cell">
-
-            @if (isProcessed)
-            {<!-- View -->
-                <a href="@viewUrl"
-                   title="View"
-                   class="act-btn act-view">
-                    <i class='bx bx-show'></i>
-                </a> }
-            else
-            { <!-- Edit -->
-                <a href="@editUrl"
-                   title="Edit"
-                   class="act-btn act-edit">
-                    <i class='bx bxs-pencil'></i>
-                </a> <!-- Process -->
-                <a href="javascript:void(0);"
-                   onclick="confirmProcess('@processUrl')"
-                   title="Process"
-                   class="act-btn no-loader"
-                   style="color:#00b894;">
-                    <i class='bx bx-check-circle'></i>
-                </a> <!-- Delete -->
-                <a href="@deleteUrl"
-                   data-id="@o.CP_RECID"
-                   data-name="@o.CP_CODE"
-                   title="Delete"
-                   class="act-btn act-delete no-loader"
-                   onclick="return confirmDelete(this);">
-                    <i class='bx bxs-trash'></i>
-                </a>}
-
-            <!-- Products -->
-            <a href="@productsUrl"
-               title="Products"
-               class="act-btn"
-               style="color:#6c5ce7;">
-                <i class='bi bi-bag-check'></i>
-            </a>
-
-            <!-- User -->
-            <a href="@UserUrl"
-               title="User"
-               class="act-btn"
-               style="color:#6c5ce7;">
-                <i class="bi bi-person-circle"></i>
-            </a>
+                <p class="mt-2 text-muted fw-semibold">
+                    No Service Contracts Available
+                </p>
 
 
 
-            <!-- Download PDF -->
-            <a href="javascript:void(0);"
-               onclick="downloadPdfAjax('@pdfUrl')"
-               title="Download PDF"
-               class="act-btn no-loader"
-               style="color:#e74c3c;">
-                <i class='bi bi-file-earmark-pdf'></i>
-            </a>
-
-        </div>
-
-    </td>
-
-</tr>}
-
-    </tbody>
-
-</table> <!-- Pagination -->
-                                <div class="table-pagination">
-
-                                    <button id="prevBtn"
-                                            class="page-btn">
-                                        <i class="bi bi-chevron-left"></i>
-                                        Previous
-                                    </button>
-
-                                    <span id="pageInfo"
-                                          class="page-info">
-                                    </span>
-
-                                    <button id="nextBtn"
-                                            class="page-btn">
-                                        Next
-                                        <i class="bi bi-chevron-right"></i>
-                                    </button>
-
-                                </div> }
-                                            else
-                                            {
-                                <div class="text-center py-5">
-
-                                    <i class="bi bi-file-earmark-text"
-                                       style="font-size:40px;color:var(--text-muted)"></i>
-
-                                    <p class="mt-2 text-muted fw-semibold">
-                                        No contracts available
-                                    </p>
-
-                                   
-
-                                </div>}
+            </div>}
 
     </div>
 
@@ -451,6 +517,10 @@
                 }
             });
         }
+
+
+
+
     </script>
 
 }

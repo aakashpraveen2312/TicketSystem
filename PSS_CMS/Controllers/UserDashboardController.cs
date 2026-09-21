@@ -210,38 +210,38 @@ namespace PSS_CMS.Controllers
 
                             if (status == "TotalTickets")
                             {
-                                Session["Name"] = "TotalTickets";
+                                Session["Name"] = "Total Tickets";
                                 totalticketlist = rootObjects.TotalTickets;
                             }
                             if (status == "OpenTickets")
                             {
-                                Session["Name"] = "OpenTickets";
+                                Session["Name"] = "Open & New Tickets";
                                 totalticketlist = rootObjects.OpenTickets;
                             }
                             if (status == "ResolvedTickets")
                             {
-                                Session["Name"] = "ResolvedTickets";
+                                Session["Name"] = "Resolved Tickets";
                                 totalticketlist = rootObjects.ResolvedTickets;
                             }
                             if (status == "CloseTickets")
                             {
-                                Session["Name"] = "CloseTickets";
+                                Session["Name"] = "Close Tickets";
                                 totalticketlist = rootObjects.CloseTickets;
                             }
 
                             if (status == "OpenDate")
                             {
-                                Session["Name"] = "OpenDate";
+                                Session["Name"] = "Open Date";
                                 totalticketlist = rootObjects.OpenDate;
                             }
                             if (status == "OpenLastweek")
                             {
-                                Session["Name"] = "OpenLastweek";
+                                Session["Name"] = "Open Lastweek";
                                 totalticketlist = rootObjects.OpenLastweek;
                             }
                             if (status == "OpenLastMonth")
                             {
-                                Session["Name"] = "OpenLastMonth";
+                                Session["Name"] = "Open Last Month";
                                 totalticketlist = rootObjects.OpenLastMonth;
                             }
                             if (status != null)

@@ -84,6 +84,9 @@ namespace PSS_CMS.Models
         public int CT_CRECID { get; set; }
         [DisplayName("Sort")]
         public int CT_SORTORDER { get; set; }
+        [DisplayName("Tentative Hike(%)")]
+        public decimal CT_TENTATIVEHIKEPERCENTAGE { get; set; }
+
         public int TotalContractAmount { get; set; }
         public int TotalPaidAmount { get; set; }
         public int PendingAmount { get; set; }
@@ -217,8 +220,9 @@ namespace PSS_CMS.Models
     {
         public string Message { get; set; }
         public string Status { get; set; }
-        public int ExpiredContracts { get; set; }
-        public int YetToExpireContracts { get; set; }
+        public int ActiveContracts { get; set; }
+        public int InactiveContracts { get; set; }
+        public int AboutToExpireContracts { get; set; }
         public Contract Data { get; set; }
     }
 }

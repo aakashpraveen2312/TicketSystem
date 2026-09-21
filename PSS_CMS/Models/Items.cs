@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -28,7 +29,7 @@ namespace PSS_CMS.Models
 
         [DisplayName("Price")]
         //[Required(ErrorMessage = "* Mandatory")]
-
+        [Range(0, double.MaxValue, ErrorMessage = "Price cannot be negative.")]
         public decimal I_PRICE { get; set; }
 
         [DisplayName("Quantity")]
@@ -287,6 +288,7 @@ namespace PSS_CMS.Models
 
         //SERVICE MANAGEMENT
         [DisplayName("Quantity")]
+        [Range(0, int.MaxValue, ErrorMessage = "Quantity cannot be negative.")]
         public decimal I_SMQUANTITY { get; set; }
         [DisplayName("Net Amount")]
         public decimal I_SMNETAMOUNT { get; set; }

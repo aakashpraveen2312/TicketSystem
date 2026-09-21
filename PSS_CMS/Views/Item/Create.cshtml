@@ -1,8 +1,8 @@
 ﻿@model PSS_CMS.Models.Items
 
 @{ ViewData["Title"] = "Create Item";
-                ViewBag.PageTitle = "Create Item";
-                Layout = "~/Views/Shared/_Layout.cshtml"; }
+    ViewBag.PageTitle = "Create Item";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -89,16 +89,16 @@
                                     @Html.DisplayNameFor(m => m.I_CUOM)
                                 </label>
                                 @Html.DropDownListFor(
-                                         m => m.I_CUOM,
-                                         new SelectList(new List<string>
-                                         {
-                            "Pieces", "Kilograms", "Grams", "Litre",
-                            "Milli litre", "Meter", "Centimeter",
-                            "Milli meter", "Box", "Packet", "Set", "NOS"
-                         }),
-                                         "-- Select UOM --",
-                                         new { @class = "form-select", autocomplete = "off" }
-                                     )
+                                              m => m.I_CUOM,
+                                              new SelectList(new List<string>
+                                              {
+                                 "Pieces", "Kilograms", "Grams", "Litre",
+                                 "Milli litre", "Meter", "Centimeter",
+                                 "Milli meter", "Box", "Packet", "Set", "NOS"
+                              }),
+                                              "-- Select UOM --",
+                                              new { @class = "form-select", autocomplete = "off" }
+                                          )
                             </div>
 
                             <!-- Sort Order -->
@@ -111,6 +111,10 @@
                                     @class = "form-input-num",
                                     autocomplete = "off",
                                     type = "number",
+                                    min = "0",
+                                    oninput = "blockNegative(this)",
+                                    onkeydown = "blockMinusKey(event)",
+                                    onpaste = "blockNegativePaste(event)",
                                     placeholder = "0"
                                 })
                             </div>
@@ -120,7 +124,6 @@
                         <div class="form-divider"></div>
 
                         <!-- ── Pricing ──────────────────────── -->
-                     
 
                         <div class="form-grid">
 
@@ -131,27 +134,38 @@
                                     <span class="req">*</span>
                                 </label>
                                 @Html.TextBoxFor(m => m.I_PRICE, new
-                           {
-                               @class = "form-input-num",
-                               autocomplete = "off",
-                               type = "number",
-                               oninput = "Netamount()",
-                               placeholder = "0"
-                           })
+                                {
+                                    @class = "form-input-num",
+                                    autocomplete = "off",
+                                    type = "number",
+                                    min = "0",
+                                    step = "0.01",
+                                    oninput = "blockNegative(this); Netamount();",
+                                    onkeydown = "blockMinusKey(event)",
+                                    onpaste = "blockNegativePaste(event)",
+                                    placeholder = "0"
+                                })
+                                @Html.ValidationMessageFor(m => m.I_PRICE, "", new { @class = "text-danger", style = "font-size:11px" })
                             </div>
 
                             <!-- Quantity -->
                             <div class="form-group">
                                 <label class="form-label" for="I_SMQUANTITY">
                                     @Html.DisplayNameFor(m => m.I_SMQUANTITY)
+                                    <span class="req">*</span>
                                 </label>
                                 @Html.TextBoxFor(m => m.I_SMQUANTITY, new
                                 {
                                     @class = "form-input-num",
                                     autocomplete = "off",
-                                    oninput = "Netamount()",
-                                    type = "number"
+                                    type = "number",
+                                    min = "0",
+                                    step = "1",
+                                    oninput = "blockNegative(this); Netamount();",
+                                    onkeydown = "blockMinusKey(event)",
+                                    onpaste = "blockNegativePaste(event)"
                                 })
+                                @Html.ValidationMessageFor(m => m.I_SMQUANTITY, "", new { @class = "text-danger", style = "font-size:11px" })
                             </div>
 
                             <!-- SGST (readonly) -->
@@ -190,7 +204,7 @@
                         <div class="form-divider"></div>
 
                         <!-- ── Amount Summary ───────────────── -->
-                       
+
                         <div class="form-grid">
                             <div class="amount-summary">
 
@@ -272,6 +286,31 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+
+        /* ── Negative value guards (Price / Quantity / Sort Order) ── */
+
+        // Block typing "-", "+" or "e"/"E" (number inputs allow scientific notation like 1e5)
+        function blockMinusKey(e) {
+            if (e.key === "-" || e.key === "e" || e.key === "E" || e.key === "+") {
+                e.preventDefault();
+            }
+        }
+
+        // Block pasting a value that contains a minus sign
+        function blockNegativePaste(e) {
+            var pasted = (e.clipboardData || window.clipboardData).getData("text");
+            if (/-/.test(pasted)) {
+                e.preventDefault();
+            }
+        }
+
+        // Safety net: clamp to 0 if a negative value slips through
+        // (e.g. spinner arrows, browser autofill, mobile keyboards)
+        function blockNegative(input) {
+            if (input.value !== "" && parseFloat(input.value) < 0) {
+                input.value = 0;
+            }
+        }
 
         /* ── Net Amount Calculation ───────────────── */
         function Netamount() {
@@ -360,6 +399,19 @@
             /* ── AJAX submit — processing spinner shows FIRST ── */
             $("#createform").submit(function (e) {
                 e.preventDefault();
+
+                // Final client-side safety net before submit
+                var price = parseFloat($('#I_PRICE').val());
+                var qty   = parseFloat($('#I_SMQUANTITY').val());
+
+                if (isNaN(price) || price < 0) {
+                    Swal.fire({ title: "Invalid Price", text: "Price cannot be negative.", icon: "warning" });
+                    return;
+                }
+                if (isNaN(qty) || qty < 0) {
+                    Swal.fire({ title: "Invalid Quantity", text: "Quantity cannot be negative.", icon: "warning" });
+                    return;
+                }
 
                 var btn      = $("#savebutton");
                 var formData = new FormData(this);

@@ -1,14 +1,69 @@
 ﻿@model PSS_CMS.Models.CompanyInfo
+@functions {
+
+    public string GetImageSrc(string base64Image)
+    {
+        if (string.IsNullOrWhiteSpace(base64Image))
+        {
+            return "";
+        }
+
+        base64Image = base64Image.Trim();
+
+        // Already contains data:image...
+        if (base64Image.StartsWith(
+            "data:image",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return base64Image;
+        }
+
+        // If value contains something like:
+        // data:image/png;base64,XXXXX
+        // remove the prefix before decoding
+
+        if (base64Image.Contains(","))
+        {
+            base64Image =
+                base64Image.Substring(
+                    base64Image.IndexOf(",") + 1
+                );
+        }
+
+        try
+        {
+            Convert.FromBase64String(base64Image);
+
+            return "data:image/png;base64," + base64Image;
+        }
+        catch
+        {
+            return "";
+        }
+    }
+
+}
+
+
+
 
 @{ ViewData["Title"] = "Company Info";
-                ViewBag.PageTitle = "Company Info";
-                Layout = "~/Views/Shared/_Layout.cshtml"; }
+    ViewBag.PageTitle = "Company Info";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
     <style>
+        #preloader {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
         /* ── Layout ───────────────────────────────────────────── */
-        .form-body  { padding: 22px; }
+        .form-body {
+            padding: 22px;
+        }
 
         .form-grid {
             display: grid;
@@ -17,13 +72,21 @@
         }
 
         @@media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr; }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .col-full { grid-column: 1 / -1; }
+        .col-full {
+            grid-column: 1 / -1;
+        }
 
         /* ── Form Group ───────────────────────────────────────── */
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
 
         .form-label {
             font-size: 11.5px;
@@ -75,7 +138,9 @@
         }
 
         @@media (max-width: 768px) {
-            .logo-inner { grid-template-columns: 1fr; }
+            .logo-inner {
+                grid-template-columns: 1fr;
+            }
         }
 
         .logo-preview-label,
@@ -116,7 +181,9 @@
             font-size: 12px;
         }
 
-            .logo-placeholder i { font-size: 28px; }
+            .logo-placeholder i {
+                font-size: 28px;
+            }
 
         /* Custom file input */
         .file-input-wrap {
@@ -133,8 +200,14 @@
             transition: border-color .15s;
         }
 
-            .file-input-wrap:hover { border-color: var(--primary); }
-            .file-input-wrap i { color: var(--primary); font-size: 16px; }
+            .file-input-wrap:hover {
+                border-color: var(--primary);
+            }
+
+            .file-input-wrap i {
+                color: var(--primary);
+                font-size: 16px;
+            }
 
         .upload-hint {
             font-size: 11.5px;
@@ -167,11 +240,430 @@
             transition: var(--transition);
         }
 
-            .btn-update:hover { background: #5a4bd1; }
+            .btn-update:hover {
+                background: #5a4bd1;
+            }
 
             .btn-update:disabled {
                 opacity: .6;
                 cursor: not-allowed;
+            }
+
+        /* ── Tabs ───────────────────────────────────────────── */
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            padding: 0 22px;
+            border-bottom: 1px solid var(--border-color);
+            background: #fafafa;
+        }
+
+        .tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            border-bottom: 2.5px solid transparent;
+            cursor: pointer;
+            font-family: inherit;
+            transition: color .15s, border-color .15s;
+        }
+
+            .tab-btn i {
+                font-size: 15px;
+            }
+
+            .tab-btn:hover {
+                color: var(--text-dark);
+            }
+
+            .tab-btn.active {
+                color: var(--primary);
+                border-bottom-color: var(--primary);
+            }
+
+        .tab-panel {
+            display: none;
+        }
+
+            .tab-panel.active {
+                display: block;
+            }
+
+        /* ── Bank badge ─────────────────────────────────────── */
+        .readonly-badge.bank {
+            background: #e6f1fb;
+            color: #185fa5;
+        }
+
+        /* ── Reports tab (ci-*) ─────────────────────────────── */
+
+        /* Signatory section (ci-section / ci-grid) */
+        .ci-section {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin: 22px 22px 0;
+            overflow: hidden;
+        }
+
+        .ci-section__head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #fafafa;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+            .ci-section__head i {
+                font-size: 16px;
+                color: #1D9E75;
+            }
+
+        .ci-section__body {
+            padding: 18px 16px;
+        }
+
+        .ci-grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .ci-grid--2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        @@media (max-width: 768px) {
+            .ci-grid--2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ci-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+            .ci-field label {
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--text-muted);
+                margin-bottom: 0;
+            }
+
+        .req {
+            color: #E24B4A;
+            margin-left: 2px;
+        }
+
+        .ci-input {
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--text-dark);
+            background: #fff;
+            outline: none;
+            font-family: inherit;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color .15s, box-shadow .15s;
+        }
+
+            .ci-input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99,89,210,.08);
+            }
+
+        /* legacy aliases kept for compatibility with older markup */
+        .ci-card {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin: 22px 22px 0;
+            overflow: hidden;
+        }
+
+        .ci-card__header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #fafafa;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ci-card__icon {
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        .ci-card__icon--teal {
+            color: #1D9E75;
+        }
+
+        .ci-card__title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .ci-card__body {
+            padding: 18px 16px;
+        }
+
+        .ci-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        @@media (max-width: 768px) {
+            .ci-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ci-form-col {
+            width: 100%;
+        }
+
+        .ci-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .ci-label--required::after {
+            content: "*";
+            color: #E24B4A;
+            margin-left: 3px;
+        }
+
+        .ci-report-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            padding: 18px 22px 22px;
+        }
+
+        .ci-report-grid--2col {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @@media (max-width: 900px) {
+            .ci-report-grid,
+            .ci-report-grid--2col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ci-cert-card {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ci-cert-card__header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .ci-cert-card__header--purple {
+            background: #6c5ce7;
+        }
+
+        .ci-cert-card__header--blue {
+            background: #185FA5;
+        }
+
+        .ci-cert-card__header--teal {
+            background: #1D9E75;
+        }
+
+        .ci-cert-card__header--amber {
+            background: #BA7517;
+        }
+
+        .ci-cert-card__header--pink {
+            background: #d6336c;
+        }
+
+        .ci-cert-card__body {
+            padding: 14px;
+            background: var(--body-bg);
+        }
+
+        .ci-img-preview {
+            width: 100%;
+            height: 120px;
+            border-radius: 8px;
+            border: 1.5px dashed var(--border-color);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .ci-img-preview__img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .ci-img-preview__placeholder {
+            font-size: 26px;
+            color: var(--text-muted);
+        }
+
+        .ci-cert-card__footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+            background: #fff;
+        }
+
+        .ci-file-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            background: #EEEDFE;
+            color: var(--primary);
+            border: 1px solid #AFA9EC;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .12s;
+        }
+
+            .ci-file-btn:hover {
+                background: #CECBF6;
+            }
+
+        .ci-file-input {
+            display: none;
+        }
+
+        .ci-sample-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+            .ci-sample-link:hover {
+                color: var(--primary);
+            }
+
+        .ci-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 16px 22px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .ci-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 10px;
+            padding: 8px 22px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background .15s;
+            border: none;
+        }
+
+        .ci-btn--primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+            .ci-btn--primary:hover {
+                background: #5a4bd1;
+            }
+
+        .ci-btn--ghost {
+            background: var(--body-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+            .ci-btn--ghost:hover {
+                background: var(--border-color);
+            }
+
+        /* Buttons used on the Save/Cancel row of the Reports tab */
+        .btn.btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 22px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background .15s;
+            text-decoration: none;
+        }
+
+            .btn.btn-primary:hover {
+                background: #5a4bd1;
+                color: #fff;
+            }
+
+        .btn.btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--body-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 8px 22px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background .15s;
+            text-decoration: none;
+        }
+
+            .btn.btn-secondary:hover {
+                background: var(--border-color);
+                color: var(--text-dark);
             }
     </style>
 }
@@ -200,102 +692,121 @@
         </h6>
     </div>
 
-    <!-- Read-only Fields -->
-    <div class="form-body">
-        <div class="form-grid">
-
-            <!-- Code -->
-            <div class="form-group">
-                <label class="form-label">
-                    @Html.LabelFor(m => m.C_CODE)
-                </label>
-                @Html.EditorFor(m => m.C_CODE, new
-                {
-                    htmlAttributes = new
-                    {
-                        @class = "field-readonly",
-                        @readonly = "readonly",
-                        autocomplete = "off"
-                    }
-                })
-                @Html.ValidationMessageFor(m => m.C_CODE, "", new { @class = "text-danger" })
-            </div>
-
-            <!-- Name -->
-            <div class="form-group">
-                <label class="form-label">
-                    @Html.LabelFor(m => m.C_NAME)
-                </label>
-                @Html.EditorFor(m => m.C_NAME, new
-                {
-                    htmlAttributes = new
-                    {
-                        @class = "field-readonly",
-                        @readonly = "readonly",
-                        autocomplete = "off"
-                    }
-                })
-                @Html.ValidationMessageFor(m => m.C_NAME, "", new { @class = "text-danger" })
-            </div>
-
-            <!-- Email -->
-            <div class="form-group">
-                <label class="form-label">
-                    @Html.LabelFor(m => m.C_EMAILID)
-                </label>
-                @Html.EditorFor(m => m.C_EMAILID, new
-                {
-                    htmlAttributes = new
-                    {
-                        @class = "field-readonly",
-                        @readonly = "readonly",
-                        autocomplete = "off"
-                    }
-                })
-            </div>
-
-            <!-- Phone -->
-            <div class="form-group">
-                <label class="form-label">
-                    @Html.LabelFor(m => m.C_PHONE)
-                </label>
-                @Html.EditorFor(m => m.C_PHONE, new
-                {
-                    htmlAttributes = new
-                    {
-                        @class = "field-readonly",
-                        @readonly = "readonly",
-                        autocomplete = "off"
-                    }
-                })
-            </div>
-
-            <!-- Address — full width -->
-            <div class="form-group col-full">
-                <label class="form-label">
-                    @Html.LabelFor(m => m.C_ADDRESS)
-                </label>
-                @Html.EditorFor(m => m.C_ADDRESS, new
-                {
-                    htmlAttributes = new
-                    {
-                        @class = "field-readonly",
-                        @readonly = "readonly",
-                        autocomplete = "off"
-                    }
-                })
-            </div>
-
-        </div>
+    <!-- Tabs -->
+    <div class="tab-bar">
+        <button type="button" class="tab-btn active" data-tab="tab-general" onclick="switchTab(this)">
+            <i class="bi bi-building"></i>
+            General Info
+        </button>
+        <button type="button" class="tab-btn" data-tab="tab-bank" onclick="switchTab(this)">
+            <i class="bi bi-bank"></i>
+            Bank Details
+        </button>
+        <button type="button" class="tab-btn" data-tab="tab-report" onclick="switchTab(this)">
+            <i class="bi bi-file-earmark-text"></i>
+            Reports
+        </button>
     </div>
 
-    <!-- Logo Upload (its own form) -->
-    @using (Html.BeginForm(
-        "UpdateLogo",
-        "CompanyInfo",
-        FormMethod.Post,
-        new { id = "logoForm", enctype = "multipart/form-data" }))
-    {
+    <!-- ═══════════════ TAB 1: GENERAL INFO ═══════════════ -->
+    <div id="tab-general" class="tab-panel active">
+
+        <!-- Read-only Fields -->
+        <div class="form-body">
+            <div class="form-grid">
+
+                <!-- Code -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.LabelFor(m => m.C_CODE)
+                    </label>
+                    @Html.EditorFor(m => m.C_CODE, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "field-readonly",
+                            @readonly = "readonly",
+                            autocomplete = "off"
+                        }
+                    })
+                    @Html.ValidationMessageFor(m => m.C_CODE, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Name -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.LabelFor(m => m.C_NAME)
+                    </label>
+                    @Html.EditorFor(m => m.C_NAME, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "field-readonly",
+                            @readonly = "readonly",
+                            autocomplete = "off"
+                        }
+                    })
+                    @Html.ValidationMessageFor(m => m.C_NAME, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.LabelFor(m => m.C_EMAILID)
+                    </label>
+                    @Html.EditorFor(m => m.C_EMAILID, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "field-readonly",
+                            @readonly = "readonly",
+                            autocomplete = "off"
+                        }
+                    })
+                </div>
+
+                <!-- Phone -->
+                <div class="form-group">
+                    <label class="form-label">
+                        @Html.LabelFor(m => m.C_PHONE)
+                    </label>
+                    @Html.EditorFor(m => m.C_PHONE, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "field-readonly",
+                            @readonly = "readonly",
+                            autocomplete = "off"
+                        }
+                    })
+                </div>
+
+                <!-- Address — full width -->
+                <div class="form-group col-full">
+                    <label class="form-label">
+                        @Html.LabelFor(m => m.C_ADDRESS)
+                    </label>
+                    @Html.EditorFor(m => m.C_ADDRESS, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "field-readonly",
+                            @readonly = "readonly",
+                            autocomplete = "off"
+                        }
+                    })
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Logo Upload (its own form) -->
+        @using (Html.BeginForm(
+            "UpdateLogo",
+            "CompanyInfo",
+            FormMethod.Post,
+            new { id = "logoForm", enctype = "multipart/form-data" }))
+        {
 <div class="logo-section">
     <div class="logo-inner">
 
@@ -317,8 +828,8 @@
      src="@src"
      alt="Company Logo"
      style="max-width:100%;max-height:100%;object-fit:contain;" /> }
-                else
-                {
+else
+{
 <div class="logo-placeholder">
     <i class="bi bi-image" aria-hidden="true"></i>
     <span>No logo uploaded</span>
@@ -358,15 +869,593 @@
 
     </div>
 </div> <!-- Footer -->
-                                <div class="footer-actions">
-                                    <button type="button"
-                                            id="saveButton"
-                                            class="btn-update"
-                                            onclick="submitLogo()">
-                                        <i class="bi bi-floppy"></i>
-                                        Update Logo
-                                    </button>
-                                </div>}
+                <div class="footer-actions">
+                    <button type="button"
+                            id="saveButton"
+                            class="btn-update"
+                            onclick="submitLogo()">
+                        <i class="bi bi-floppy"></i>
+                        Update Logo
+                    </button>
+                </div>}
+
+    </div>
+    <!-- ═══════════════ END TAB 1 ═══════════════ -->
+    <!-- ═══════════════ TAB 2: BANK DETAILS ═══════════════ -->
+    <div id="tab-bank" class="tab-panel">
+
+        <div class="page-card-header" style="border-top:1px solid var(--border-color);">
+            <h6 class="page-card-title" style="font-size:13.5px;">
+                <i class="bi bi-bank" style="color:#185FA5"></i>
+                Bank Account Details
+            </h6>
+        </div>
+
+        @using (Html.BeginForm(
+            "UpdateCompaniesBank",
+            "CompanyInfo",
+            FormMethod.Post,
+            new { id = "bankForm" }))
+        {
+<div class="form-body">
+    <div class="form-grid">
+
+        <!-- Bank Name -->
+        <div class="form-group">
+            <label class="form-label">
+                @Html.LabelFor(m => m.C_BANKNAME)
+            </label>
+            @Html.EditorFor(m => m.C_BANKNAME, new
+            {
+                htmlAttributes = new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off"
+                }
+            })
+            @Html.ValidationMessageFor(m => m.C_BANKNAME, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Branch Name -->
+        <div class="form-group">
+            <label class="form-label">
+                @Html.LabelFor(m => m.C_BRANCHNAME)
+            </label>
+            @Html.EditorFor(m => m.C_BRANCHNAME, new
+            {
+                htmlAttributes = new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off"
+                }
+            })
+            @Html.ValidationMessageFor(m => m.C_BRANCHNAME, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Account Name -->
+        <div class="form-group">
+            <label class="form-label">
+                @Html.LabelFor(m => m.C_ACCOUNTNAME)
+            </label>
+            @Html.EditorFor(m => m.C_ACCOUNTNAME, new
+            {
+                htmlAttributes = new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off"
+                }
+            })
+            @Html.ValidationMessageFor(m => m.C_ACCOUNTNAME, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Account No -->
+        <div class="form-group">
+            <label class="form-label">
+                @Html.LabelFor(m => m.C_ACCOUNTNO)
+            </label>
+            @Html.EditorFor(m => m.C_ACCOUNTNO, new
+            {
+                htmlAttributes = new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off"
+                }
+            })
+            @Html.ValidationMessageFor(m => m.C_ACCOUNTNO, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Account Type -->
+        <div class="form-group">
+            <label class="form-label">
+                @Html.LabelFor(m => m.C_ACCOUNTTYPE)
+            </label>
+            @Html.EditorFor(m => m.C_ACCOUNTTYPE, new
+            {
+                htmlAttributes = new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off"
+                }
+            })
+            @Html.ValidationMessageFor(m => m.C_ACCOUNTTYPE, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- IFSC Code -->
+        <div class="form-group">
+            <label class="form-label">
+                @Html.LabelFor(m => m.C_IFSCCODE)
+            </label>
+            @Html.EditorFor(m => m.C_IFSCCODE, new
+            {
+                htmlAttributes = new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off"
+                }
+            })
+            @Html.ValidationMessageFor(m => m.C_IFSCCODE, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Bank Location -->
+        <div class="form-group">
+            <label class="form-label">
+                @Html.LabelFor(m => m.C_BANKLOCATION)
+            </label>
+            @Html.EditorFor(m => m.C_BANKLOCATION, new
+            {
+                htmlAttributes = new
+                {
+                    @class = "form-input-text",
+                    autocomplete = "off"
+                }
+            })
+            @Html.ValidationMessageFor(m => m.C_BANKLOCATION, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Bank Address — full width -->
+        <div class="form-group col-full">
+            <label class="form-label">
+                @Html.LabelFor(m => m.C_BANKADDRESS)
+            </label>
+            @Html.TextAreaFor(m => m.C_BANKADDRESS, new
+            {
+                @class = "form-textarea",
+                style = "min-height:90px;",
+                autocomplete = "off"
+            })
+            @Html.ValidationMessageFor(m => m.C_BANKADDRESS, "", new { @class = "text-danger" })
+        </div>
+
+    </div>
+</div> <!-- Footer -->
+                <div class="footer-actions">
+                    <button type="button"
+                            id="cancelBankButton"
+                            class="btn-cancel"
+                            onclick="cancelBankDetails()">
+                        <i class="bi bi-x-lg"></i>
+                        Cancel
+                    </button>
+                    <button type="button"
+                            id="saveBankButton"
+                            class="btn-update"
+                            onclick="submitBankDetails()">
+                        <i class="bi bi-floppy"></i>
+                        Submit
+                    </button>
+                </div>}
+
+    </div>
+    <!-- ═══════════════ END TAB 2 ═══════════════ -->
+    <!-- ═══════════════ TAB 3: REPORTS ═══════════════ -->
+    <div id="tab-report" class="tab-panel">
+        @using (Html.BeginForm(
+            "UpdatePartyReportS",
+            "CompanyInfo",
+            FormMethod.Post,
+            new
+            {
+                enctype = "multipart/form-data",
+                id = "companyInfoForm"
+            }))
+        {
+@Html.AntiForgeryToken() <!-- ===================================================== --> <!-- AUTHORISED SIGNATORY                                   --> <!-- ===================================================== -->
+                <div class="ci-section">
+                    <div class="ci-section__head">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Authorised Signatory</span>
+                    </div>
+
+                    <div class="ci-section__body">
+                        <div class="ci-grid ci-grid--2">
+
+                            <div class="ci-field">
+                                <label>
+                                    Authorised Signatory
+                                    <span class="req">*</span>
+                                </label>
+
+                                <input type="text"
+                                       name="C_AUTHSIGNNAME"
+                                       value="@Model.C_AUTHSIGNNAME"
+                                       class="ci-input"
+                                       />
+                            </div>
+
+                            <div class="ci-field">
+                                <label>
+                                    Position / Designation
+                                    <span class="req">*</span>
+                                </label>
+
+                                <input type="text"
+                                       name="C_AUTHPOSITION"
+                                       value="@Model.C_AUTHPOSITION"
+                                       class="ci-input"
+                                        />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ===================================================== --> <!-- IMAGE ROW 1                                            --> <!-- ===================================================== -->
+                                <div class="ci-report-grid">
+
+                                    <!-- ================= SIGNATURE ================= -->
+                                    <div class="ci-cert-card">
+
+                                        <div class="ci-cert-card__header ci-cert-card__header--purple">
+
+                                            <i class="bi bi-pen"></i>
+
+                                            <span>Signature Image</span>
+                                            <span class="req">*</span>
+                                        </div>
+
+
+                                        <div class="ci-cert-card__body">
+
+                                            <div class="ci-img-preview">
+
+                                                @{
+                                                    string signImageSrc =
+                                                        GetImageSrc(Model.C_AUTHORIZESIGNATURE);
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(signImageSrc))
+                                                {
+                                                    <img id="signPreview"
+                                                         src="@signImageSrc"
+                                                         alt="Signature Image"
+                                                         class="ci-img-preview__img"
+                                                         style="display:block;" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="ci-img-preview__placeholder">
+
+                                                        <i class="bi bi-pen"></i>
+
+                                                        <span>No Signature Image</span>
+
+                                                    </div>
+                                                }
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="ci-cert-card__footer">
+
+                                            <label class="ci-file-btn"
+                                                   for="Signimg">
+
+                                                <i class="bi bi-upload"></i>
+                                                Upload
+
+                                            </label>
+
+
+                                            <input type="file"
+                                                   id="Signimg"
+                                                   name="Signimg"
+                                                   class="ci-file-input"
+                                                   accept="image/*"
+                                                   onchange="previewImage('Signimg','signPreview')" />
+
+
+                                            <input type="hidden"
+                                                   name="ExistingSignImage"
+                                                   value="@Model.C_AUTHORIZESIGNATURE" />
+
+
+                                           
+
+                                        </div>
+
+                                    </div>
+                                    <!-- ================= HEADER ================= -->
+                                    <div class="ci-cert-card">
+
+                                        <div class="ci-cert-card__header ci-cert-card__header--blue">
+
+                                            <i class="bi bi-image"></i>
+
+                                            <span>Header Image</span>
+                                            <span class="req">*</span>
+                                        </div>
+
+
+                                        <div class="ci-cert-card__body">
+
+                                            <div class="ci-img-preview">
+
+                                                @{
+                                                    string headerImageSrc =
+                                                        GetImageSrc(Model.C_HEADERIMAGE);
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(headerImageSrc))
+                                                {
+                                                    <img id="headerPreview"
+                                                         src="@headerImageSrc"
+                                                         alt="Header Image"
+                                                         class="ci-img-preview__img"
+                                                         style="display:block;"
+                                                         onerror="this.style.display='none';" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="ci-img-preview__placeholder">
+                                                        <i class="bi bi-image"></i>
+                                                        <span>No Header Image</span>
+                                                    </div>
+                                                }
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="ci-cert-card__footer">
+
+                                            <label class="ci-file-btn"
+                                                   for="Headerimg">
+
+                                                <i class="bi bi-upload"></i>
+                                                Upload
+
+                                            </label>
+
+                                            <input type="file"
+                                                   id="Headerimg"
+                                                   name="Headerimg"
+                                                   class="ci-file-input"
+                                                   accept="image/*"
+                                                   onchange="previewImage('Headerimg','headerPreview')" />
+
+
+                                            <!-- EXISTING IMAGE -->
+
+                                            <input type="hidden"
+                                                   name="ExistingHeaderImage"
+                                                   value="@Model.C_HEADERIMAGE" />
+
+
+                                          
+
+                                        </div>
+
+                                    </div>
+                                    <!-- ================= FOOTER ================= -->
+                                    <div class="ci-cert-card">
+
+                                        <div class="ci-cert-card__header ci-cert-card__header--teal">
+
+                                            <i class="bi bi-image"></i>
+
+                                            <span>Footer Image</span>
+                                            <span class="req">*</span>
+                                        </div>
+
+
+                                        <div class="ci-cert-card__body">
+
+                                            <div class="ci-img-preview">
+
+                                                @{
+                                                    string footerImageSrc =
+                                                        GetImageSrc(Model.C_FOOTERIMAGE);
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(footerImageSrc))
+                                                {
+                                                    <img id="footerPreview"
+                                                         src="@footerImageSrc"
+                                                         alt="Footer Image"
+                                                         class="ci-img-preview__img"
+                                                         style="display:block;"
+                                                         onerror="this.style.display='none';" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="ci-img-preview__placeholder">
+
+                                                        <i class="bi bi-image"></i>
+
+                                                        <span>No Footer Image</span>
+
+                                                    </div>
+                                                }
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="ci-cert-card__footer">
+
+                                            <label class="ci-file-btn"
+                                                   for="Footerimg">
+
+                                                <i class="bi bi-upload"></i>
+                                                Upload
+
+                                            </label>
+
+
+                                            <input type="file"
+                                                   id="Footerimg"
+                                                   name="Footerimg"
+                                                   class="ci-file-input"
+                                                   accept="image/*"
+                                                   onchange="previewImage('Footerimg','footerPreview')" />
+
+
+                                            <!-- EXISTING IMAGE -->
+
+                                            <input type="hidden"
+                                                   name="ExistingFooterImage"
+                                                   value="@Model.C_FOOTERIMAGE" />
+
+
+                                         
+
+                                        </div>
+
+                                    </div>
+                                </div> <!-- ===================================================== --> <!-- IMAGE ROW 2                                            --> <!-- ===================================================== -->
+                                                <div class="ci-report-grid ci-report-grid--2col">
+
+                                                    <!-- ================= QR CODE ================= -->
+                                                    <div class="ci-cert-card">
+                                                        <div class="ci-cert-card__header ci-cert-card__header--amber">
+                                                            <i class="bi bi-qr-code"></i>
+                                                            <span>QR Code</span>
+                                                        </div>
+
+                                                        <div class="ci-cert-card__body">
+                                                            <div class="ci-img-preview">
+                                                                @if (!string.IsNullOrWhiteSpace(Model.C_QRIMAGE))
+                                                                {
+                                                <img id="qrPreview"
+                                                     class="ci-img-preview__img"
+                                                     src="@GetImageSrc(Model.C_QRIMAGE)"
+                                                     alt="QR Code"
+                                                     style="display:block;" /> }
+                                            else
+                                            {
+                            <img id="qrPreview"
+                                 class="ci-img-preview__img"
+                                 alt="QR Code"
+                                 style="display:none;" />
+                                                <span class="ci-img-preview__placeholder">
+                                                    <i class="bi bi-qr-code-scan"></i>
+                                                </span>}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="ci-cert-card__footer">
+                                                            <label class="ci-file-btn" for="QRimg">
+                                                                <i class="bi bi-upload"></i>
+                                                                Upload
+                                                            </label>
+
+                                                            <input type="file"
+                                                                   id="QRimg"
+                                                                   name="QRimg"
+                                                                   class="ci-file-input"
+                                                                   accept="image/*"
+                                                                   onchange="previewImage('QRimg','qrPreview')" />
+
+                                                            <input type="hidden"
+                                                                   name="ExistingQrImage"
+                                                                   value="@Model.C_QRIMAGE" />
+
+                                                            @*<a href="@Url.Content("~/images/qr.png")"
+                                                               download
+                                                               class="ci-sample-link">
+                                                                <i class="bi bi-download"></i>
+                                                                Sample
+                                                            </a>*@
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- ================= COMPANY LOGO ================= -->
+                                                    <div class="ci-cert-card">
+                                                        <div class="ci-cert-card__header ci-cert-card__header--pink">
+                                                            <i class="bi bi-badge-cc"></i>
+                                                            <span>Company Logo</span>
+                                                            <span class="req">*</span>
+                                                        </div>
+
+                                                        <div class="ci-cert-card__body">
+                                                            <div class="ci-img-preview">
+                                                                @if (!string.IsNullOrWhiteSpace(Model.C_LOGO))
+                                                                {
+                                                <img id="LogoPreview"
+                                                     class="ci-img-preview__img"
+                                                     src="@GetImageSrc(Model.C_LOGO)"
+                                                     alt="Company Logo"
+                                                     style="display:block;" /> }
+                                            else
+                                            {
+                            <img id="LogoPreview"
+                                 class="ci-img-preview__img"
+                                 alt="Company Logo"
+                                 style="display:none;" />
+                                                <span class="ci-img-preview__placeholder">
+                                                    <i class="bi bi-badge-cc"></i>
+                                                </span>}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="ci-cert-card__footer">
+                                                            <label class="ci-file-btn" for="CompanyLogoimg">
+                                                                <i class="bi bi-upload"></i>
+                                                                Upload
+                                                            </label>
+
+                                                            <input type="file"
+                                                                   id="CompanyLogoimg"
+                                                                   name="CompanyLogoimg"
+                                                                   class="ci-file-input"
+                                                                   accept="image/*"
+                                                                   onchange="previewImage('CompanyLogoimg','LogoPreview')" />
+
+                                                            <input type="hidden"
+                                                                   name="ExistingLogoImage"
+                                                                   value="@Model.C_LOGO" />
+
+                                                            @*<a href="@Url.Content("~/images/bexlogo_wob.png")"
+                                                               download
+                                                               class="ci-sample-link">
+                                                                <i class="bi bi-download"></i>
+                                                                Sample
+                                                            </a>*@
+                                                        </div>
+                                                    </div>
+
+                                                </div> <!-- ===================================================== --> <!-- SAVE / CANCEL                                          --> <!-- ===================================================== -->
+                                                                <div class="ci-form-actions">
+                                                                    @*<button type="submit" class="btn btn-primary">
+                                                                            <i class="bi bi-check-lg"></i>
+                                                                            Save
+                                                                        </button>*@
+
+                                                                    <button type="submit" class="btn btn-primary">
+                                                                        <i class="bi bi-check-lg"></i>
+                                                                        <span id="saveButtonText">Save</span>
+                                                                    </button>
+
+                                                                    <a href="@Url.Action("Info", "CompanyInfo")" class="btn btn-secondary">
+                                                                        Cancel
+                                                                    </a>
+                                                                </div>}
+    </div>
+    <!-- ═══════════════ END TAB 3 ═══════════════ -->
 
 </div>
 
@@ -379,10 +1468,64 @@
         <span>Read Only Fields</span>
     </div>
     <div class="legend-item">
+        <i class="bi bi-pencil" style="color:#185FA5;font-size:14px"></i>
+        <span>Editable Fields</span>
+    </div>
+    <div class="legend-item">
         <i class="bi bi-upload" style="color:#00b894;font-size:14px"></i>
         <span>Logo Upload</span>
     </div>
 </div>
+
+
+@*<div id="successToast"
+     class="toast align-items-center text-bg-success border-0 position-fixed"
+     role="alert"
+     aria-live="assertive"
+     aria-atomic="true"
+     style="top: 20px; right: 20px; z-index: 9999;">
+
+    <div class="d-flex">
+
+        <div class="toast-body">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span id="successToastMessage">
+                Company Info Reported updated successfully
+            </span>
+        </div>
+
+        <button type="button"
+                class="btn-close btn-close-white me-2 m-auto"
+                data-bs-dismiss="toast"
+                aria-label="Close">
+        </button>
+
+    </div>
+</div>*@
+
+
+@*<div id="errorToast"
+     class="toast align-items-center text-bg-danger border-0 position-fixed"
+     role="alert"
+     aria-live="assertive"
+     aria-atomic="true"
+     style="top: 20px; right: 20px; z-index: 9999;">
+
+    <div class="d-flex">
+
+        <div class="toast-body">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+            <span id="errorToastMessage"></span>
+        </div>
+
+        <button type="button"
+                class="btn-close btn-close-white me-2 m-auto"
+                data-bs-dismiss="toast"
+                aria-label="Close">
+        </button>
+
+    </div>
+</div>*@
 
 @section Scripts {
 
@@ -390,6 +1533,66 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        // ── Tab switching ──────────────────────────────────────────
+        function switchTab(btn) {
+            var targetId = btn.getAttribute('data-tab');
+
+            document.querySelectorAll('.tab-btn').forEach(function (b) {
+                b.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-panel').forEach(function (p) {
+                p.classList.remove('active');
+            });
+
+            btn.classList.add('active');
+            document.getElementById(targetId).classList.add('active');
+        }
+
+        // ── Report image previews ─────────────────────────────────────
+        function previewImage(inputId, previewId) {
+
+            var input = document.getElementById(inputId);
+            var preview = document.getElementById(previewId);
+
+            if (!input || !preview) {
+                return;
+            }
+
+            if (input.files && input.files.length > 0) {
+
+                var file = input.files[0];
+
+                if (!file.type.startsWith("image/")) {
+                    alert("Please select an image file.");
+                    input.value = "";
+                    return;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+
+                    var placeholder =
+                        preview.parentElement.querySelector(
+                            ".ci-img-preview__placeholder"
+                        );
+
+                    if (placeholder) {
+                        placeholder.style.display = "none";
+                    }
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showLabels() {
+            // Hook for updating file-name labels next to upload buttons if needed.
+        }
+
         // ── File picker ────────────────────────────────────────────
         function handleFileChange(input) {
             if (!input.files || !input.files[0]) return;
@@ -410,7 +1613,127 @@
         }
 
         // ── AJAX submit ────────────────────────────────────────────
-        function submitLogo() {
+function submitLogo() {
+
+    var btn = document.getElementById('saveButton');
+    var btnText = document.getElementById('saveButtonText');
+    btn.disabled = true;
+    btnText.textContent = "Saving...";
+
+    var formData = new FormData(
+        document.getElementById('logoForm')
+    );
+
+    $.ajax({
+        url: '@Url.Action("UpdateLogo", "CompanyInfo")',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+
+        success: function (res) {
+
+            console.log("API Response:", res);
+
+            // =========================
+            // ERROR / INFORMATION
+            // =========================
+            if (res.status === "error") {
+
+                Swal.fire({
+                    icon: "info",
+                    title: "Information",
+                    text: res.message,
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#6c5ce7",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                });
+
+                return;
+            }
+
+            // =========================
+            // SUCCESS
+            // =========================
+            if (res.status === "success") {
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Success!",
+                    text: res.message,
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#6c5ce7",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then(function () {
+
+                    window.location.href =
+                        '@Url.Action("Info", "CompanyInfo")';
+
+                });
+
+                return;
+            }
+
+            // =========================
+            // UNKNOWN RESPONSE
+            // =========================
+            Swal.fire({
+                icon: "info",
+                title: "Information",
+                text: res.message || "Unable to update company logo.",
+                confirmButtonText: "Ok",
+                confirmButtonColor: "#6c5ce7",
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+        },
+
+        // =========================
+        // AJAX ERROR
+        // =========================
+        error: function (xhr) {
+
+            console.log("AJAX Error:", xhr);
+            console.log("Response:", xhr.responseText);
+
+            var message = "An unexpected error occurred.";
+
+            if (xhr.responseJSON &&
+                xhr.responseJSON.message) {
+
+                message = xhr.responseJSON.message;
+            }
+
+            Swal.fire({
+                icon: "info",
+                title: "Information",
+                text: message,
+                confirmButtonText: "Ok",
+                confirmButtonColor: "#6c5ce7",
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+        },
+
+        // =========================
+        // COMPLETE
+        // =========================
+        complete: function () {
+
+            btn.disabled = false;
+
+            $('body').css(
+                'pointer-events',
+                'auto'
+            );
+        }
+    });
+}
+
+    @*function submitLogo() {
             var btn = document.getElementById('saveButton');
             btn.disabled = true;
 
@@ -475,6 +1798,212 @@
                 btn.disabled = false;
                 $('body').css('pointer-events', 'auto');
             }
+        }*@
+
+        // ── Bank details AJAX submit ─────────────────────────────────
+        function submitBankDetails() {
+
+            var btn = $('#saveBankButton');
+            var form = $('#bankForm');
+
+            // Disable button only
+            btn.prop('disabled', true);
+
+            var formData = form.serialize();
+
+            $.ajax({
+                url: '@Url.Action("UpdateCompaniesBank", "CompanyInfo")',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+
+                success: function (res) {
+
+                    if (res.status === 'success') {
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: res.message,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#6c5ce7',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then(function () {
+
+                            window.location.href =
+                                '@Url.Action("Info", "CompanyInfo")';
+
+                        });
+
+                    } else {
+
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Message',
+                            text: res.message || 'Unable to update bank details.',
+                            confirmButtonColor: '#6c5ce7'
+                        });
+
+                        btn.prop('disabled', false);
+                    }
+                },
+
+                error: function (xhr, status, error) {
+
+                    console.log("AJAX Error:", error);
+                    console.log("Status:", status);
+                    console.log("Response:", xhr.responseText);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: xhr.responseJSON && xhr.responseJSON.message
+                            ? xhr.responseJSON.message
+                            : 'An unexpected error occurred.',
+                        confirmButtonColor: '#6c5ce7'
+                    });
+
+                    btn.prop('disabled', false);
+                }
+            });
+        }
+
+
+        // ── Bank details cancel ───────────────────────────────────────
+
+        function cancelBankDetails() {
+            Swal.fire({
+                icon:              'warning',
+                title:             'Discard changes?',
+                text:              'Any unsaved changes to bank details will be lost.',
+                showCancelButton:  true,
+                confirmButtonText: 'Yes, discard',
+                cancelButtonText:  'Keep editing',
+                confirmButtonColor: '#E24B4A',
+                cancelButtonColor:  '#6c5ce7'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    document.getElementById('bankForm').reset();
+                }
+            });
         }
     </script>
+
+    <script>
+
+ $(document).ready(function () {
+
+    $("#companyInfoForm").on("submit", function (e) {
+
+        e.preventDefault();
+
+        var form = this;
+        var formData = new FormData(form);
+
+        var saveButton = $(form).find("button[type='submit']");
+        var saveButtonText = saveButton.find("#saveButtonText");
+
+        // Disable Save button
+        saveButton.prop("disabled", true);
+        // Change Save -> Saving...
+        saveButtonText.text("Saving...");
+        $.ajax({
+            url: $(form).attr("action"),
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+
+            success: function (response) {
+
+                console.log("Response:", response);
+
+                // ==========================================
+                // SUCCESS
+                // ==========================================
+                if (response.status === "success") {
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Success!",
+                        text: response.message ||
+                              "Company information updated successfully.",
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: "#6c5ce7",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(function () {
+
+                        window.location.href =
+                            '@Url.Action("Info", "CompanyInfo")';
+
+                    });
+
+                    return;
+                }
+
+                // ==========================================
+                // INFORMATION / VALIDATION MESSAGE
+                // ==========================================
+                Swal.fire({
+                    icon: "info",
+                    title: "Information",
+                    text: response.message ||
+                          "Unable to update company information.",
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#6c5ce7",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                });
+
+            },
+
+            // ==========================================
+            // AJAX ERROR
+            // ==========================================
+            error: function (xhr) {
+
+                console.log("AJAX Error:", xhr);
+                console.log("Response:", xhr.responseText);
+
+                var message =
+                    "Something went wrong while updating company information.";
+
+                // If controller returns JSON message
+                if (xhr.responseJSON &&
+                    xhr.responseJSON.message) {
+
+                    message = xhr.responseJSON.message;
+                }
+
+                Swal.fire({
+                    icon: "info",
+                    title: "Information",
+                    text: message,
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#6c5ce7",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                });
+
+            },
+
+            // ==========================================
+            // COMPLETE
+            // ==========================================
+            complete: function () {
+
+                saveButton.prop("disabled", false);
+
+            }
+
+        });
+
+    });
+
+});
+    </script>
+
 }

@@ -1,0 +1,332 @@
+﻿@model IEnumerable<PSS_CMS.Models.Tickethistory>
+
+@{ ViewData["Title"] = "Ticket Details";
+    ViewBag.PageTitle = "Ticket Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string searchPhrase = Request["searchPharse"] ?? "";
+
+    var filtered = Model?.Where(t =>
+        string.IsNullOrEmpty(searchPhrase) ||
+        (t.TC_SUBJECT != null && t.TC_SUBJECT.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0) ||
+        (t.TC_USERNAME != null && t.TC_USERNAME.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0) ||
+        (t.TC_PRODUCTSERIALNUMBER != null && t.TC_PRODUCTSERIALNUMBER.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0) ||
+        (t.TC_TICKETTYPE != null && t.TC_TICKETTYPE.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+    ).ToList(); }
+
+@section Styles {
+    <link href="~/Content/UIListView.css" rel="stylesheet" />
+
+    <style>
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99999;
+        }
+
+        .custom-toast {
+            min-width: 320px;
+            max-width: 450px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+            border-left: 5px solid #20a779;
+            opacity: 0;
+            transform: translateX(120%);
+            pointer-events: none;
+            transition: all 0.35s ease;
+        }
+
+            .custom-toast.show {
+                opacity: 1;
+                transform: translateX(0);
+                pointer-events: auto;
+            }
+
+        .toast-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e8f8f2;
+            color: #20a779;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .toast-close {
+            border: none;
+            background: transparent;
+            font-size: 22px;
+            color: #888;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+            .toast-close:hover {
+                color: #333;
+            }
+
+        /* Error toast */
+        .custom-toast.error {
+            border-left-color: #dc3545;
+        }
+
+            .custom-toast.error .toast-icon {
+                background: #fdecec;
+                color: #dc3545;
+            }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-ticket-detailed nav-icon"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Tickets</span>
+    <i class="bi bi-chevron-right"></i>
+    Details
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+        <h3 class="page-card-title"><i class="bi bi-ticket-detailed"></i> Ticket Details</h3>
+
+        @using (Html.BeginForm("TicketDetails", "Ticket", FormMethod.Get, new { id = "searchForm" }))
+        {
+<div class="search-box">
+    <i class="bi bi-search"></i>
+    <input type="text" id="searchPharse" name="searchPharse" placeholder="Search" autocomplete="off" value="@searchPhrase" />
+    @if (!string.IsNullOrEmpty(searchPhrase))
+    {
+<a href="@Url.Action("TicketDetails", "Ticket")" title="Clear">
+    <i class="bi bi-x-circle text-muted"></i>
+</a>            }
+</div>}
+    </div>
+
+    <!-- Ticket thread -->
+    <div style="padding:18px;">
+        @if (filtered != null && filtered.Any())
+        {
+<div class="ticket-thread">
+    @foreach (var t in filtered)
+    {
+        //var isResponded = !string.IsNullOrEmpty(t.TC_RESPONSECOMMENTS);
+        //var headerClass = isResponded ? "responded" : "raised";
+        //var badgeClass = isResponded ? "badge-responded" : "badge-raised";
+        //var badgeIcon = isResponded ? "bi bi-reply-fill" : "bi bi-send-fill";
+        //var badgeText = isResponded ? "Responded" : "Raised";
+
+        //var priorityClass = t.TC_PRIORITYTYPE == "High" ? "badge-expired"
+        //                   : t.TC_PRIORITYTYPE == "Normal" ? "badge-active"
+        //                   : "badge-warning";
+
+<div class="ticket-card">
+
+    <!-- Header -->
+    <div class="ticket-card-header">
+        <div class="ticket-meta">
+
+            <span class="ticket-by">@t.TC_USERNAME</span>
+            <span class="ticket-date">@DateTime.Parse(t.TC_TICKETDATE).ToString("dd-MM-yyyy")</span>
+        </div>
+        <div class="ticket-meta">
+            <span class="type-badge type-service">@t.TC_TICKETTYPE</span>
+
+            <span class="type-badge type-service">
+                @(t.TC_STATUS == "C" ? "Closed" : t.TC_STATUS)
+            </span>
+
+            @if (t.TC_STATUS != "C")
+            {
+        <button type="button"
+                class="res-btn res-btn-submit"
+                style="padding:5px 14px;font-size:12px;"
+                title="Update this ticket's status"
+                onclick="updateStatus(@t.TC_RECID, this)">
+            <i class="bi bi-arrow-repeat"></i>
+            Update Status
+        </button>}
+        </div>
+
+        @*<div class="ticket-meta">
+                <span class="type-badge type-service">@t.TC_TICKETTYPE</span>
+            </div>*@
+    </div>
+
+    <!-- Body -->
+    <div class="ticket-card-body">
+        <label class="form-label">Subject</label>
+
+        <div class="ticket-subject">@t.TC_SUBJECT</div>
+
+        <div class="form-grid" style="margin-top:12px;margin-bottom:14px;">
+            <div class="form-group">
+                <label class="form-label">Product Serial</label>
+                <span class="product-serial">@t.TC_PRODUCTSERIALNUMBER</span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Customer Type</label>
+                <span class="service-badge">@t.TC_CUSTOMERTYPE</span>
+            </div>
+
+        </div>
+
+        <div class="comments-label">Comments</div>
+        <div class="comments-text">@t.TC_COMMENTS</div>
+
+
+    </div>
+
+</div>          }
+</div> }
+else
+{
+<div class="empty-wrap text-center">
+    <i class="bi bi-inbox"></i>
+    <h5>No tickets available</h5>
+</div>}
+    </div>
+
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer" class="toast-container">
+    <div id="statusToast" class="custom-toast">
+        <div class="toast-icon">
+            <i id="toastIcon" class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="toast-content">
+            <div id="toastMessage">Success</div>
+        </div>
+        <button type="button" class="toast-close" onclick="hideToast()">
+            &times;
+        </button>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script>
+
+        function showToast(message, type) {
+
+            var toast = $("#statusToast");
+            var icon = $("#toastIcon");
+            var messageElement = $("#toastMessage");
+
+            messageElement.text(message);
+
+            // Remove previous state
+            toast.removeClass("error");
+
+            if (type === "error") {
+                toast.addClass("error");
+                icon
+                    .removeClass("bi-check-circle-fill")
+                    .addClass("bi-x-circle-fill");
+            }
+            else {
+                icon
+                    .removeClass("bi-x-circle-fill")
+                    .addClass("bi-check-circle-fill");
+            }
+
+            // Show toast
+            toast.addClass("show");
+
+            // Automatically hide after 3 seconds
+            setTimeout(function () {
+                hideToast();
+            }, 3000);
+        }
+
+
+        function hideToast() {
+            $("#statusToast").removeClass("show");
+        }
+
+
+      function updateStatus(recid, button) {
+
+    $(button).prop("disabled", true);
+
+    var originalText = $(button).html();
+
+    $(button).html(
+        '<i class="bi bi-arrow-repeat"></i> Updating...'
+    );
+
+    $.ajax({
+        url: '@Url.Action("CompleteTicket", "Contract")',
+        type: 'POST',
+
+        data: {
+            Recid: recid
+        },
+
+        success: function (response) {
+
+            if (response.success) {
+
+                // Show success toast
+                showToast(response.message, "success");
+
+                $(button)
+                    .removeClass("res-btn-submit")
+                    .addClass("btn-success");
+
+                $(button).html(
+                    '<i class="bi bi-check-circle"></i> Completed'
+                );
+
+                $(button).prop("disabled", true);
+
+            }
+            else {
+
+                // Show error toast
+                showToast(response.message, "error");
+
+                $(button).prop("disabled", false);
+                $(button).html(originalText);
+            }
+        },
+
+        error: function () {
+
+            showToast(
+                "Something went wrong while updating the ticket.",
+                "error"
+            );
+
+            $(button).prop("disabled", false);
+            $(button).html(originalText);
+        }
+    });
+}
+    </script>
+}
+
+

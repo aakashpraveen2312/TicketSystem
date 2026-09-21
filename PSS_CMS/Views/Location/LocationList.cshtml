@@ -1,0 +1,348 @@
+﻿@model IEnumerable<PSS_CMS.Models.Locations>
+<link href="~/Content/UIListView.css" rel="stylesheet" />
+@{ ViewBag.Title = "Locations";
+    ViewBag.PageTitle = "Locations";
+
+    string searchPhrase = Request["searchPhrase"] ?? "";
+
+    var filtered = Model?.Where(m =>
+        string.IsNullOrEmpty(searchPhrase) ||
+        (m.L_CODE != null && m.L_CODE.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0) ||
+        (m.L_PartnerName != null && m.L_PartnerName.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0) ||
+        (m.L_NAME != null && m.L_NAME.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0) ||
+        (m.L_EmailID != null && m.L_EmailID.IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+    ).ToList(); }
+
+<!-- Breadcrumb -->
+<div class="page-breadcrumb">
+    <i class="bi bi-geo-alt" style="color:#4F46B4"></i>
+    <i class="bi bi-chevron-right"></i>
+    <span>Locations</span>
+    <i class="bi bi-chevron-right"></i>
+    List
+</div>
+
+<!-- Main Card -->
+<div class="page-card">
+
+    <!-- Header -->
+    <div class="page-card-header">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+
+            <!-- Search -->
+            @using (Html.BeginForm("LocationList", "Location", FormMethod.Get, new { id = "searchForm" }))
+            {
+        @Html.AntiForgeryToken()
+                        <div class="search-box">
+                            <i class="bi bi-search"></i>
+                            <input type="text" id="searchPhrase" name="searchPhrase" placeholder="Search locations…" autocomplete="off" value="@searchPhrase" />
+                            @if (!string.IsNullOrEmpty(searchPhrase))
+                            {
+            <a href="@Url.Action("LocationList", "Location")" title="Clear">
+                <i class="bi bi-x-circle" style="color:#9CA3AF"></i>
+            </a>}
+                        </div>      }
+
+            <!-- Add -->
+            <a href="@Url.Action("Create", "Location")" class="btn-add">
+                <i class="bi bi-plus-lg"></i> Add Location
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="grid-wrap">
+        @if (filtered != null && filtered.Any())
+        {
+<table id="locationsTable">
+    <thead>
+        <tr>
+            <th style="width:100px;">Code</th>
+            <th>Partner Name</th>
+            <th>Email</th>
+            <th>Location</th>
+            <th>Location Type</th>
+            <th class="text-center" style="width:70px;">Sort</th>
+            <th class="text-center" style="width:100px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in filtered)
+        {
+            var editUrl = Url.Action("Edit", "Location", new { id = o.L_RECID });
+            var deleteUrl = Url.Action("Delete", "Location", new { id = o.L_RECID });
+
+<tr>
+    <td><span class="serial-text">@o.L_CODE</span></td>
+    <td style="font-weight:500;">@o.L_PartnerName</td>
+    <td style="font-size:12.5px;color:#6B7280;">
+        @if (!string.IsNullOrEmpty(o.L_EmailID))
+        {
+<i class="bi bi-envelope" style="margin-right:4px;color:#4F46B4"></i>@o.L_EmailID}
+    </td>
+    <td>@o.L_NAME</td>
+    <td>
+        @if (!string.IsNullOrEmpty(o.LocationTypeName))
+        {
+<span class="service-badge"><i class="bi bi-tag"></i> @o.LocationTypeName</span>}
+    </td>
+    <td class="text-center" style="font-size:12px;color:#6B7280;">@o.L_SORTORDER</td>
+    <td>
+        <div class="action-cell">
+            <a href="@editUrl" class="act-btn act-edit" title="Edit"><i class="bx bxs-pencil"></i></a>
+            <a href="@deleteUrl" class="act-btn act-delete no-loader" title="Delete" data-name="@o.L_NAME" onclick="return confirmDelete(this);"><i class="bx bxs-trash"></i></a>
+        </div>
+    </td>
+</tr>
+}
+    </tbody>
+</table> <!-- Pagination -->
+                <div class="table-pagination">
+                    <button id="prevBtn" class="page-btn"><i class="bi bi-chevron-left"></i> Previous</button>
+                    <span id="pageInfo" class="page-info"></span>
+                    <button id="nextBtn" class="page-btn">Next <i class="bi bi-chevron-right"></i></button>
+                </div> }
+            else
+            {
+<div class="alert alert-warning text-center m-3">
+    <b>No locations available</b>
+</div>}
+    </div>
+</div>
+
+<!-- Legend -->
+<div class="legend-bar">
+    <div class="legend-item">
+        <span class="act-btn act-edit" style="width:22px;height:22px;font-size:13px"><i class='bx bxs-pencil'></i></span>
+        Edit
+    </div>
+    <div class="legend-item">
+        <span class="act-btn act-delete" style="width:22px;height:22px;font-size:13px"><i class='bx bxs-trash'></i></span>
+        Delete
+    </div>
+</div>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger mt-2" })
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    (function () {
+        // ── Client-side pagination for the locations table ──
+        var pageSize = 10;
+        var table = document.getElementById("locationsTable");
+        if (!table) return;
+
+        var rows = Array.prototype.slice.call(table.querySelectorAll("tbody tr"));
+        var totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+        var currentPage = 1;
+
+        var prevBtn = document.getElementById("prevBtn");
+        var nextBtn = document.getElementById("nextBtn");
+        var pageInfo = document.getElementById("pageInfo");
+
+        function renderPage() {
+            var start = (currentPage - 1) * pageSize;
+            var end = start + pageSize;
+
+            rows.forEach(function (row, idx) {
+                row.style.display = (idx >= start && idx < end) ? "" : "none";
+            });
+
+            pageInfo.textContent = "Page " + currentPage + " of " + totalPages;
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+
+        prevBtn.addEventListener("click", function () {
+            if (currentPage > 1) { currentPage--; renderPage(); }
+        });
+
+        nextBtn.addEventListener("click", function () {
+            if (currentPage < totalPages) { currentPage++; renderPage(); }
+        });
+
+        renderPage();
+    })();
+
+    // ── Delete confirmation ──
+    function confirmDelete(el) {
+
+        var name = el.getAttribute("data-name") || "this location";
+        var href = el.getAttribute("href");
+
+        // Stop normal browser navigation
+        event.preventDefault();
+
+        Swal.fire({
+            title: "Delete " + name + "?",
+            text: "This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#e74c3c",
+            cancelButtonColor: "#6b7280",
+            reverseButtons: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then(function (result) {
+
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            // ==========================================
+            // SHOW DELETING
+            // ==========================================
+
+            Swal.fire({
+                title: "Deleting...",
+                text: "Please wait.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: function () {
+                    Swal.showLoading();
+                }
+            });
+
+            // ==========================================
+            // AJAX DELETE
+            // ==========================================
+
+            $.ajax({
+
+                url: href,
+
+                type: "POST",
+
+                data: {
+                    __RequestVerificationToken:
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+
+                dataType: "json",
+
+                success: function (response) {
+
+                    // ==========================================
+                    // DELETE FAILED / VALIDATION
+                    // ==========================================
+
+                    if (response.Status === "N") {
+
+                        Swal.fire({
+
+                            icon: "info",
+
+                            title: "Information",
+
+                            text: response.Message,
+
+                            confirmButtonText: "Ok",
+
+                            confirmButtonColor: "#6f61b5",
+
+                            allowOutsideClick: false,
+
+                            allowEscapeKey: false
+
+                        });
+
+                        return;
+                    }
+
+                    // ==========================================
+                    // DELETE SUCCESS
+                    // ==========================================
+
+                    if (response.Status === "Y") {
+
+                        Swal.fire({
+
+                            icon: "success",
+
+                            title: "Success!",
+
+                            text: response.Message,
+
+                            confirmButtonText: "Ok",
+
+                            confirmButtonColor: "#65d5d5",
+
+                            allowOutsideClick: false,
+
+                            allowEscapeKey: false
+
+                        }).then(function (result) {
+
+                            if (result.isConfirmed) {
+
+                                window.location.href =
+                                    response.RedirectUrl;
+
+                            }
+
+                        });
+
+                        return;
+                    }
+
+                    // ==========================================
+                    // UNKNOWN RESPONSE
+                    // ==========================================
+
+                    Swal.fire({
+
+                        icon: "error",
+
+                        title: "Error!",
+
+                        text: "Unexpected response from server.",
+
+                        confirmButtonText: "Ok",
+
+                        confirmButtonColor: "#6f61b5",
+
+                        allowOutsideClick: false,
+
+                        allowEscapeKey: false
+
+                    });
+                },
+
+                error: function (xhr) {
+
+                    console.log(xhr.status);
+                    console.log(xhr.responseText);
+
+                    Swal.fire({
+
+                        icon: "error",
+
+                        title: "Error!",
+
+                        text: "Unable to delete the location. Please try again.",
+
+                        confirmButtonText: "Ok",
+
+                        confirmButtonColor: "#6f61b5",
+
+                        allowOutsideClick: false,
+
+                        allowEscapeKey: false
+
+                    });
+
+                }
+
+            });
+
+        });
+
+        return false;
+    }
+
+
+</script>

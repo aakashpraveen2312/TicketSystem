@@ -131,12 +131,14 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--r);
-            padding: 18px 20px 0 20px;
+            padding: 18px 20px 16px 20px; /* add bottom padding back */
             box-shadow: var(--shadow);
             position: relative;
-            overflow: hidden;
+            overflow: visible; /* don't clip content */
             transition: box-shadow .2s, transform .2s;
             min-height: 110px;
+            display: flex;
+            flex-direction: column;
         }
 
             .stat-card:hover {
@@ -153,6 +155,7 @@
                 right: 0;
                 height: 3px;
                 border-radius: var(--r) var(--r) 0 0;
+                overflow: hidden;
             }
 
         .sc-blue::before {
@@ -230,11 +233,14 @@
         }
 
         .sc-value {
-            font-size: 28px;
+            font-size: 22px; /* smaller so big numbers fit */
             font-weight: 800;
             color: var(--text);
-            line-height: 1;
-            letter-spacing: -1px;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+            white-space: nowrap;
+            overflow-wrap: normal;
+            width: 100%;
         }
 
         .sc-sub {
@@ -245,7 +251,7 @@
         }
 
         .sc-currency {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 700;
             vertical-align: super;
             margin-right: 2px;
@@ -259,12 +265,18 @@
         }
 
         /* ══════════════════════════════════════
-           CONTRACT COUNT PILLS (2-col)
+           CONTRACT COUNT PILLS (3-col)
         ══════════════════════════════════════ */
         .pill-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 14px;
+        }
+
+        @@media (max-width: 900px) {
+            .pill-row {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         @@media (max-width: 580px) {
@@ -301,6 +313,11 @@
         .pill-red {
             background: #fff5f3;
             border-color: #fad4cb;
+        }
+
+        .pill-amber {
+            background: #fffaf0;
+            border-color: #f8e2b0;
         }
 
         .pill-spark {
@@ -491,8 +508,6 @@
     <!-- ════════════════════════════════════
             DASHBOARD CONTENT
        ════════════════════════════════════ -->
-   
-
     <!-- ══ FINANCIAL STAT CARDS ══ -->
     <div class="acc-sec">Financial Summary</div>
     <div class="stat-row">
@@ -507,20 +522,21 @@
                 <span class="sc-currency">₹</span><span class="anim-num" data-target="@ViewBag.TotalContractAmount1">0</span>
             </div>
             <div class="sc-sub">All active contracts</div>
-           
+
         </div>
 
         <!-- Total Paid Amount -->
         <div class="stat-card sc-green">
             <div class="sc-top">
-                <span class="sc-label">Total Paid Amount</span>
+                @*<span class="sc-label">Total Paid Amount</span>*@
+                <span class="sc-label"> total amount collected</span>
                 <div class="sc-icon si-green"><i class="bi bi-check-circle-fill"></i></div>
             </div>
             <div class="sc-value">
                 <span class="sc-currency">₹</span><span class="anim-num" data-target="@ViewBag.TotalPaidAmount1">0</span>
             </div>
             <div class="sc-sub">Collected to date</div>
-           
+
         </div>
 
         <!-- Pending Amount -->
@@ -533,7 +549,7 @@
                 <span class="sc-currency">₹</span><span class="anim-num" data-target="@ViewBag.PendingAmount1">0</span>
             </div>
             <div class="sc-sub">Outstanding balance</div>
-           
+
         </div>
 
     </div><!-- /stat-row -->
@@ -541,24 +557,31 @@
     <div class="acc-sec">Contract Status</div>
     <div class="pill-row">
 
-        <!-- Expired -->
+        <!-- Active -->
+        <div class="mini-pill pill-green">
+            <div class="mp-icon si-green"><i class="bi bi-check-circle-fill" style="color:var(--green)"></i></div>
+            <div class="mp-text">
+                <div class="mp-lbl">Active Contracts</div>
+                <div class="mp-val anim-num" data-target="@ViewBag.ActiveContracts">0</div>
+            </div>
+        </div>
+
+        <!-- Inactive -->
         <div class="mini-pill pill-red">
             <div class="mp-icon si-red"><i class="bi bi-x-circle-fill" style="color:var(--red)"></i></div>
             <div class="mp-text">
-                <div class="mp-lbl">Expired Contracts</div>
-                <div class="mp-val anim-num" data-target="@ViewBag.ExpiredContracts">0</div>
+                <div class="mp-lbl">Inactive Contracts</div>
+                <div class="mp-val anim-num" data-target="@ViewBag.InactiveContracts">0</div>
             </div>
-            
         </div>
 
-        <!-- Yet to Expire -->
-        <div class="mini-pill pill-green">
-            <div class="mp-icon si-green"><i class="bi bi-clock-history" style="color:var(--green)"></i></div>
+        <!-- About to Expire -->
+        <div class="mini-pill pill-amber">
+            <div class="mp-icon si-amber"><i class="bi bi-clock-history" style="color:var(--amber)"></i></div>
             <div class="mp-text">
-                <div class="mp-lbl">Yet to Expire</div>
-                <div class="mp-val anim-num" data-target="@ViewBag.YetToExpireContracts">0</div>
+                <div class="mp-lbl">About to Expire</div>
+                <div class="mp-val anim-num" data-target="@ViewBag.AboutToExpireContracts">0</div>
             </div>
-           
         </div>
 
     </div><!-- /pill-row -->
@@ -614,14 +637,19 @@
                                 <td><span class="badge-amber">Pending</span></td>
                             </tr>
                             <tr>
-                                <td><i class="bi bi-x-circle me-2" style="color:var(--red)"></i>Expired Contracts</td>
-                                <td><strong>@ViewBag.ExpiredContracts</strong></td>
-                                <td><span class="badge-red">Expired</span></td>
+                                <td><i class="bi bi-check-circle me-2" style="color:var(--green)"></i>Active Contracts</td>
+                                <td><strong>@ViewBag.ActiveContracts</strong></td>
+                                <td><span class="badge-green">Active</span></td>
                             </tr>
                             <tr>
-                                <td><i class="bi bi-clock-history me-2" style="color:var(--green)"></i>Yet to Expire</td>
-                                <td><strong>@ViewBag.YetToExpireContracts</strong></td>
-                                <td><span class="badge-green">Active</span></td>
+                                <td><i class="bi bi-x-circle me-2" style="color:var(--red)"></i>Inactive Contracts</td>
+                                <td><strong>@ViewBag.InactiveContracts</strong></td>
+                                <td><span class="badge-red">Inactive</span></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-clock-history me-2" style="color:var(--amber)"></i>About to Expire</td>
+                                <td><strong>@ViewBag.AboutToExpireContracts</strong></td>
+                                <td><span class="badge-amber">Expiring Soon</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -637,63 +665,65 @@
 
 @section Scripts {
     <script>
-/* ── Date label ── */
-    document.addEventListener('DOMContentLoaded', function () {
-        var el = document.getElementById('accDateLabel');
-        if (el) el.textContent = new Date().toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'numeric' });
+        /* ── Date label ── */
+        document.addEventListener('DOMContentLoaded', function () {
+            var el = document.getElementById('accDateLabel');
+            if (el) el.textContent = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
 
-        /* ── Animated counters ── */
-        document.querySelectorAll('.anim-num').forEach(function (el) {
-            var target = parseFloat(el.getAttribute('data-target')) || 0;
-            var start  = 0;
-            var inc    = target / (900 / (1000 / 60));
-            function tick() {
-                start += inc;
-                if (start >= target) { el.textContent = Math.round(target).toLocaleString('en-IN'); return; }
-                el.textContent = Math.round(start).toLocaleString('en-IN');
+            /* ── Animated counters ── */
+            document.querySelectorAll('.anim-num').forEach(function (el) {
+
+                var raw = (el.getAttribute('data-target') || '0').replace(/,/g, '');
+                var target = parseFloat(raw) || 0;
+                var start = 0;
+                var inc = target / (900 / (1000 / 60));
+                function tick() {
+                    start += inc;
+                    if (start >= target) { el.textContent = Math.round(target).toLocaleString('en-IN'); return; }
+                    el.textContent = Math.round(start).toLocaleString('en-IN');
+                    requestAnimationFrame(tick);
+                }
                 requestAnimationFrame(tick);
-            }
-            requestAnimationFrame(tick);
+            });
         });
-    });
 
-    /* ── Doughnut chart ── */
-    const ctx = document.getElementById('paymentPieChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Paid', 'Pending'],
-            datasets: [{
-                data: [@ViewBag.TotalPaidAmount, @ViewBag.PendingAmount],
-                backgroundColor: ['#00b894', '#f39c12'],
-                hoverBackgroundColor: ['#00cba7', '#f5ab35'],
-                borderWidth: 3,
-                borderColor: '#ffffff'
-            }]
-        },
-        options: {
-            cutout: '72%',
-            animation: { duration: 1000, easing: 'easeOutQuart' },
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        padding: 20,
-                        font: { family: "'Plus Jakarta Sans', sans-serif", size: 13 }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function (ctx) {
-                            return ctx.label + ': ₹ ' + ctx.parsed.toLocaleString('en-IN');
+        /* ── Doughnut chart ── */
+        const ctx = document.getElementById('paymentPieChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Paid', 'Pending'],
+                datasets: [{
+                    data: [@ViewBag.TotalPaidAmount, @ViewBag.PendingAmount],
+                    backgroundColor: ['#00b894', '#f39c12'],
+                    hoverBackgroundColor: ['#00cba7', '#f5ab35'],
+                    borderWidth: 3,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                cutout: '72%',
+                animation: { duration: 1000, easing: 'easeOutQuart' },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20,
+                            font: { family: "'Plus Jakarta Sans', sans-serif", size: 13 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (ctx) {
+                                return ctx.label + ': ₹ ' + ctx.parsed.toLocaleString('en-IN');
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
 
     </script>
 }

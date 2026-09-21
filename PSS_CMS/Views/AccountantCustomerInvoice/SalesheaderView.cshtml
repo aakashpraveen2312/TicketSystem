@@ -3,6 +3,7 @@
 @{ ViewData["Title"] = "Sales Invoice View";
     ViewBag.PageTitle = "Sales Invoice View";
     Layout = "~/Views/Shared/_Layout.cshtml"; }
+@*<script src="~/Scripts/Inactivitylogout.js"></script>*@
 
 @section Styles {
     <link href="~/Content/UIListView.css" rel="stylesheet" />
@@ -14,7 +15,6 @@
             border-bottom: 2px solid var(--border-color);
             padding: 0 20px;
             background: #fafafa;
-            
         }
 
         .inv-tab-link {
@@ -444,7 +444,7 @@
             var f = document.getElementById("invoiceAmountField");
             if (f && f.value) f.value = parseFloat(f.value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         });
-       
+
     </script>
 
 
